@@ -1,0 +1,145 @@
+name: Update Lesson List
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  update-lessons:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Generate lesson list
+      run: |
+        node << 'EOF'
+        const fs = require('fs');
+        const path = require('path');
+        
+        // Read all HTML files in the root directory
+        const files = fs.readdirSync('.')
+          .filter(file => file.endsWith('.html') && file !== 'index.html');
+        
+        const lessons = [];
+        
+        // Parse each HTML file to extract lesson information
+        files.forEach(filename => {
+          const content = fs.readFileSync(filename, 'utf8');
+          
+          // Extract title from <title> tag
+          const titleMatch = content.match(/<title>(.*?)<\/title>/);
+          const title = titleMatch ? titleMatch[1] : filename.replace('.html', '');
+          
+          // Try to extract metadata from meta tags or data attributes
+          const descMatch = content.match(/<meta name="description" content="(.*?)"/);
+          const description = descMatch ? descMatch[1] : '';
+          
+          // Extract class info from title or content
+          let classInfo = '';
+          const classMatch = title.match(/Y(\d+)\s*(\w+)/i);
+          if (classMatch) {
+            classInfo = `Y${classMatch[1]} ${classMatch[2]}`;
+          }
+          
+          // Extract date from filename (assuming format like Y8ScienceNov17)
+          let date = '';
+          const dateMatch = filename.match(/([A-Z][a-z]{2})(\d{2})/);
+          if (dateMatch) {
+            const months = {
+              'Jan': 'January', 'Feb': 'February', 'Mar': 'March',
+              'Apr': 'April', 'May': 'May', 'Jun': 'June',
+              'Jul': 'July', 'Aug': 'August', 'Sep': 'September',
+              'Oct': 'October', 'Nov': 'November', 'Dec': 'December'
+            };
+            const month = months[dateMatch[1]] || dateMatch[1];
+            const day = dateMatch[2];
+            date = `${month} ${day}, 2025`;
+          }
+          
+          // Extract tags
+          const tags = [];
+          
+          // Add year tag
+          const yearMatch = filename.match(/Y(\d+)/);
+          if (yearMatch) tags.push(`Year ${yearMatch[1]}`);
+          
+          // Add subject tag
+          if (filename.toLowerCase().includes('science')) tags.push('Science');
+          if (filename.toLowerCase().includes('math')) tags.push('Math');
+          if (filename.toLowerCase().includes('english')) tags.push('English');
+          
+          // Extract additional tags from content
+          const tagMatch = content.match(/data-tags="(.*?)"/);
+          if (tagMatch) {
+            const additionalTags = tagMatch[1].split(',').map(t => t.trim());
+            tags.push(...additionalTags);
+          }
+          
+          lessons.push({
+            filename,
+            title,
+            description,
+            date,
+            classInfo,
+            tags
+          });
+        });
+        
+        // Sort lessons by date (newest first)
+        lessons.sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateB - dateA;
+        });
+        
+        // Write lessons to a JSON file
+        fs.writeFileSync('lessons.json', JSON.stringify(lessons, null, 2));
+        
+        console.log(`Generated lessons.json with ${lessons.length} lessons`);
+        console.log(JSON.stringify(lessons, null, 2));
+        EOF
+    
+    - name: Update index.html
+      run: |
+        node << 'EOF'
+        const fs = require('fs');
+        
+        // Read the lessons data
+        const lessons = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
+        
+        // Read the index.html file
+        let indexContent = fs.readFileSync('index.html', 'utf8');
+        
+        // Replace the lessons array in index.html
+        const lessonsJson = JSON.stringify(lessons, null, 4)
+          .split('\n')
+          .map((line, i) => i === 0 ? line : '  ' + line)
+          .join('\n');
+        
+        const regex = /const lessons = \[[\s\S]*?\];/;
+        indexContent = indexContent.replace(regex, `const lessons = ${lessonsJson};`);
+        
+        // Write the updated index.html
+        fs.writeFileSync('index.html', indexContent);
+        
+        console.log('Updated index.html with lesson data');
+        EOF
+    
+    - name: Commit changes
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add lessons.json index.html
+        git diff --staged --quiet || git commit -m "Auto-update lesson list"
+        git push
+
+permissions:
+  contents: write
