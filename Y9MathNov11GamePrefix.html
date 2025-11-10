@@ -1,0 +1,959 @@
+<!DOCTYPE html><html lang="en"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Conversion Challenge - Year 9 Mathematics</title>
+    <meta name="description" content="Interactive game for converting between metric units with different prefixes">
+    <meta name="subject" content="Mathematics">
+    <meta name="year" content="Year 9">
+    <meta name="unit" content="7.3">
+    <meta name="type" content="game">
+    <meta name="date" content="November 11, 2025">
+    <meta name="tags" content="Metric Prefixes, Unit Conversion, Measurement, Powers of Ten, Game">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+    
+  <style>
+    :root {
+      --primary: #6366F1;
+      --purple: #8B5CF6;
+      --orange: #F97316;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+      --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+      --gradient-orange: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+      --gradient-primary: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+      --gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--gradient-primary);
+      color: var(--gray-900);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .game-badge {
+      background: var(--gradient-success);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 1rem;
+      white-space: nowrap;
+    }
+
+    .game-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    .score-display {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .score-item {
+      text-align: center;
+    }
+
+    .score-label {
+      font-size: 0.9rem;
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+
+    .score-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .streak-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--orange);
+    }
+
+    /* Main Content */
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .game-container {
+      background: white;
+      border-radius: 1.5rem;
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 1200px;
+      min-height: 500px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Menu Screen */
+    .menu-screen {
+      padding: 3rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .menu-title {
+      font-size: 4rem;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .menu-subtitle {
+      font-size: 1.8rem;
+      color: var(--gray-700);
+      margin-bottom: 3rem;
+    }
+
+    .difficulty-buttons {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .difficulty-btn {
+      padding: 2rem 3rem;
+      border: none;
+      border-radius: 1rem;
+      font-size: 1.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-xl);
+      color: white;
+      min-width: 180px;
+    }
+
+    .difficulty-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 30px -5px rgb(0 0 0 / 0.2);
+    }
+
+    .easy-btn {
+      background: var(--gradient-success);
+    }
+
+    .medium-btn {
+      background: var(--gradient-orange);
+    }
+
+    .hard-btn {
+      background: var(--gradient-purple);
+    }
+
+    .difficulty-info {
+      max-width: 800px;
+      text-align: left;
+      margin-top: 2rem;
+    }
+
+    .info-item {
+      background: var(--gray-50);
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--primary);
+    }
+
+    .info-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-desc {
+      font-size: 1.1rem;
+      color: var(--gray-700);
+    }
+
+    /* Game Screen */
+    .game-screen {
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 500px;
+    }
+
+    .difficulty-badge {
+      display: inline-block;
+      padding: 0.5rem 1.5rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: white;
+    }
+
+    .question-card {
+      background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+      border: 3px solid var(--primary);
+      padding: 3rem;
+      border-radius: 1.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .question-text {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--gray-800);
+      margin-bottom: 2rem;
+    }
+
+    .conversion-display {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .conversion-value {
+      white-space: nowrap;
+    }
+
+    .conversion-equals {
+      font-size: 3rem;
+    }
+
+    .answer-input {
+      font-size: 2.5rem;
+      padding: 1rem 2rem;
+      border: 3px solid var(--primary);
+      border-radius: 1rem;
+      text-align: center;
+      width: 200px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .answer-input:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+
+    .answer-input::placeholder {
+      color: #CBD5E1;
+      font-weight: 600;
+    }
+
+    .answer-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .submit-btn {
+      padding: 1.5rem 4rem;
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      border-radius: 1rem;
+      font-size: 1.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 25px 30px -5px rgb(0 0 0 / 0.2);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .feedback-box {
+      min-height: 100px;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .feedback-correct {
+      background: var(--gradient-success);
+      color: white;
+    }
+
+    .feedback-incorrect {
+      background: var(--gradient-orange);
+      color: white;
+    }
+
+    .feedback-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .feedback-text {
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .hint-box {
+      background: rgba(255, 255, 255, 0.2);
+      border-left: 4px solid white;
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+      text-align: left;
+    }
+
+    .hint-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .hint-text {
+      font-size: 1.1rem;
+      color: white;
+      opacity: 0.95;
+    }
+
+    .next-btn {
+      padding: 1.2rem 3rem;
+      background: white;
+      color: var(--success);
+      border: none;
+      border-radius: 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .next-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    /* Reference Table */
+    .reference-toggle {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 1rem 2rem;
+      background: var(--gradient-purple);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-xl);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .reference-toggle:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 25px 30px -5px rgb(0 0 0 / 0.2);
+    }
+
+    .reference-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 2rem;
+    }
+
+    .reference-modal.active {
+      display: flex;
+    }
+
+    .reference-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      width: 100%;
+    }
+
+    .reference-content h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+    }
+
+    .reference-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    .reference-table th {
+      background: var(--primary);
+      color: white;
+      padding: 0.8rem;
+      font-size: 1.2rem;
+      text-align: left;
+    }
+
+    .reference-table td {
+      padding: 0.8rem;
+      border-bottom: 2px solid var(--gray-100);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .reference-table tr:nth-child(even) {
+      background: var(--gray-50);
+    }
+
+    .close-modal {
+      padding: 0.8rem 2rem;
+      background: var(--gray-800);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 1rem;
+      width: 100%;
+      font-size: 1.1rem;
+    }
+
+    .close-modal:hover {
+      background: var(--gray-700);
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pulse {
+      animation: pulse 0.5s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .shake {
+      animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .difficulty-buttons { 
+        flex-direction: column;
+        align-items: center;
+      }
+      .difficulty-btn {
+        width: 100%;
+        max-width: 300px;
+      }
+      .menu-title { font-size: 2.5rem; }
+      .question-text { font-size: 1.8rem; }
+      .conversion-display { font-size: 2rem; }
+      .answer-input { 
+        font-size: 2rem;
+        width: 150px;
+      }
+      .score-display { gap: 1rem; }
+      .game-title { font-size: 1.2rem; }
+      .reference-toggle {
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+      }
+    }
+
+    .unit-label {
+      font-size: 2rem;
+      color: var(--gray-600);
+      font-weight: 700;
+    }
+  </style>
+<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.3f7572448765332f3047.js"></script></head>
+<body>
+
+<div class="app-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <span class="game-badge">Year 9 Game</span>
+      <div class="game-title">Unit Conversion Challenge</div>
+      <div class="score-display">
+        <div class="score-item">
+          <div class="score-label">Total Score</div>
+          <div class="score-value" id="total-score">0</div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">🔥 Streak</div>
+          <div class="streak-value" id="streak">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    <div class="game-container">
+      <!-- Menu Screen -->
+      <div class="menu-screen" id="menu-screen">
+        <h1 class="menu-title">Unit Conversion Challenge</h1>
+        <p class="menu-subtitle">Master metric prefixes and unit conversions!</p>
+        
+        <div class="difficulty-buttons">
+          <button class="difficulty-btn easy-btn" onclick="startGame('easy')">
+            🌱 Easy
+          </button>
+          <button class="difficulty-btn medium-btn" onclick="startGame('medium')">
+            🔥 Medium
+          </button>
+          <button class="difficulty-btn hard-btn" onclick="startGame('hard')">
+            ⚡ Hard
+          </button>
+        </div>
+
+        <div class="difficulty-info">
+          <div class="info-item">
+            <div class="info-title">🌱 Easy Mode</div>
+            <div class="info-desc">Convert prefix units to standard units (e.g., kilometres to metres)</div>
+          </div>
+          <div class="info-item">
+            <div class="info-title">🔥 Medium Mode</div>
+            <div class="info-desc">Convert standard units to prefix units (e.g., metres to kilometres)</div>
+          </div>
+          <div class="info-item">
+            <div class="info-title">⚡ Hard Mode</div>
+            <div class="info-desc">Convert between different prefix units (e.g., millimetres to kilometres)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Screen -->
+      <div class="game-screen" id="game-screen" style="display: none;">
+        <div style="text-align: center;">
+          <span class="difficulty-badge" id="difficulty-display"></span>
+        </div>
+
+        <div class="question-card">
+          <div class="question-text">Convert:</div>
+          <div class="conversion-display" id="conversion-display"></div>
+        </div>
+
+        <div class="answer-section">
+          <button class="submit-btn" id="submit-btn" onclick="checkAnswer()">Submit Answer ✓</button>
+        </div>
+
+        <div class="feedback-box" id="feedback-box"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reference Table Button -->
+  <button class="reference-toggle" onclick="toggleReference()">📊 Prefix Table</button>
+
+  <!-- Reference Modal -->
+  <div class="reference-modal" id="reference-modal" onclick="toggleReference()">
+    <div class="reference-content" onclick="event.stopPropagation()">
+      <h2>Metric Prefix Reference</h2>
+      
+      <table class="reference-table">
+        <thead>
+          <tr>
+            <th>Prefix</th>
+            <th>Symbol</th>
+            <th>Multiply by</th>
+            <th>Power of 10</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>tera</td><td>T</td><td>1,000,000,000,000</td><td>10<sup>12</sup></td></tr>
+          <tr><td>giga</td><td>G</td><td>1,000,000,000</td><td>10<sup>9</sup></td></tr>
+          <tr><td>mega</td><td>M</td><td>1,000,000</td><td>10<sup>6</sup></td></tr>
+          <tr><td>kilo</td><td>k</td><td>1,000</td><td>10<sup>3</sup></td></tr>
+          <tr><td>hecto</td><td>h</td><td>100</td><td>10<sup>2</sup></td></tr>
+          <tr><td>deca</td><td>da</td><td>10</td><td>10<sup>1</sup></td></tr>
+          <tr><td>-</td><td>-</td><td>1</td><td>10<sup>0</sup></td></tr>
+          <tr><td>deci</td><td>d</td><td>0.1</td><td>10<sup>-1</sup></td></tr>
+          <tr><td>centi</td><td>c</td><td>0.01</td><td>10<sup>-2</sup></td></tr>
+          <tr><td>milli</td><td>m</td><td>0.001</td><td>10<sup>-3</sup></td></tr>
+          <tr><td>micro</td><td>μ</td><td>0.000001</td><td>10<sup>-6</sup></td></tr>
+          <tr><td>nano</td><td>n</td><td>0.000000001</td><td>10<sup>-9</sup></td></tr>
+        </tbody>
+      </table>
+
+      <button class="close-modal" onclick="toggleReference()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Game state
+  let currentDifficulty = '';
+  let totalScore = 0;
+  let currentStreak = 0;
+  let currentQuestion = null;
+  let attemptsOnCurrentQuestion = 0;
+
+  // Prefix data
+  const prefixes = {
+    'tera': { symbol: 'T', multiplier: 1e12 },
+    'giga': { symbol: 'G', multiplier: 1e9 },
+    'mega': { symbol: 'M', multiplier: 1e6 },
+    'kilo': { symbol: 'k', multiplier: 1e3 },
+    'hecto': { symbol: 'h', multiplier: 1e2 },
+    'deca': { symbol: 'da', multiplier: 1e1 },
+    'deci': { symbol: 'd', multiplier: 1e-1 },
+    'centi': { symbol: 'c', multiplier: 1e-2 },
+    'milli': { symbol: 'm', multiplier: 1e-3 },
+    'micro': { symbol: 'μ', multiplier: 1e-6 },
+    'nano': { symbol: 'n', multiplier: 1e-9 }
+  };
+
+  const units = ['metre', 'gram', 'litre', 'watt', 'byte'];
+  const unitSymbols = { 'metre': 'm', 'gram': 'g', 'litre': 'L', 'watt': 'W', 'byte': 'B' };
+
+  function formatNumber(num) {
+    // Remove scientific notation and format nicely
+    if (num === 0) return '0';
+    
+    // For very large or very small numbers, use regular notation with appropriate decimal places
+    const absNum = Math.abs(num);
+    
+    if (absNum >= 1000000000000) {
+      return num.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    } else if (absNum >= 1000) {
+      return num.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    } else if (absNum >= 1) {
+      return num.toLocaleString('en-US', { maximumFractionDigits: 3 });
+    } else if (absNum >= 0.001) {
+      return num.toFixed(6).replace(/\.?0+$/, '');
+    } else if (absNum >= 0.000001) {
+      return num.toFixed(9).replace(/\.?0+$/, '');
+    } else {
+      return num.toFixed(12).replace(/\.?0+$/, '');
+    }
+  }
+
+  function startGame(difficulty) {
+    currentDifficulty = difficulty;
+    document.getElementById('menu-screen').style.display = 'none';
+    document.getElementById('game-screen').style.display = 'flex';
+    
+    const badge = document.getElementById('difficulty-display');
+    if (difficulty === 'easy') {
+      badge.textContent = '🌱 Easy Mode';
+      badge.style.background = 'var(--gradient-success)';
+    } else if (difficulty === 'medium') {
+      badge.textContent = '🔥 Medium Mode';
+      badge.style.background = 'var(--gradient-orange)';
+    } else {
+      badge.textContent = '⚡ Hard Mode';
+      badge.style.background = 'var(--gradient-purple)';
+    }
+    
+    generateQuestion();
+  }
+
+  function generateQuestion() {
+    attemptsOnCurrentQuestion = 0;
+    document.getElementById('feedback-box').innerHTML = '';
+    document.getElementById('submit-btn').style.display = 'block';
+    
+    const unit = units[Math.floor(Math.random() * units.length)];
+    const prefixKeys = Object.keys(prefixes);
+    
+    if (currentDifficulty === 'easy') {
+      // Prefix unit to standard unit
+      const prefix = prefixKeys[Math.floor(Math.random() * prefixKeys.length)];
+      const value = Math.random() < 0.5 
+        ? Math.floor(Math.random() * 9) + 1 
+        : parseFloat((Math.random() * 9 + 1).toFixed(1));
+      
+      const fromUnit = prefix + unit;
+      const toUnit = unit;
+      const answer = parseFloat(value) * prefixes[prefix].multiplier;
+      
+      currentQuestion = {
+        value,
+        fromUnit,
+        toUnit,
+        fromSymbol: prefixes[prefix].symbol + unitSymbols[unit],
+        toSymbol: unitSymbols[unit],
+        answer,
+        prefix,
+        multiplier: prefixes[prefix].multiplier
+      };
+      
+      displayQuestion();
+        
+    } else if (currentDifficulty === 'medium') {
+      // Standard unit to prefix unit
+      const prefix = prefixKeys[Math.floor(Math.random() * prefixKeys.length)];
+      const multiplier = prefixes[prefix].multiplier;
+      const baseValue = Math.random() < 0.5 
+        ? Math.floor(Math.random() * 9) + 1 
+        : parseFloat((Math.random() * 9 + 1).toFixed(1));
+      const value = parseFloat(baseValue) * multiplier;
+      
+      const fromUnit = unit;
+      const toUnit = prefix + unit;
+      const answer = parseFloat(baseValue);
+      
+      currentQuestion = {
+        value,
+        fromUnit,
+        toUnit,
+        fromSymbol: unitSymbols[unit],
+        toSymbol: prefixes[prefix].symbol + unitSymbols[unit],
+        answer,
+        prefix,
+        multiplier
+      };
+      
+      displayQuestion();
+        
+    } else {
+      // Prefix to prefix
+      const prefix1 = prefixKeys[Math.floor(Math.random() * prefixKeys.length)];
+      let prefix2 = prefixKeys[Math.floor(Math.random() * prefixKeys.length)];
+      while (prefix1 === prefix2) {
+        prefix2 = prefixKeys[Math.floor(Math.random() * prefixKeys.length)];
+      }
+      
+      const value = Math.random() < 0.5 
+        ? Math.floor(Math.random() * 9) + 1 
+        : parseFloat((Math.random() * 9 + 1).toFixed(1));
+      
+      const fromUnit = prefix1 + unit;
+      const toUnit = prefix2 + unit;
+      const answer = parseFloat(value) * prefixes[prefix1].multiplier / prefixes[prefix2].multiplier;
+      
+      currentQuestion = {
+        value,
+        fromUnit,
+        toUnit,
+        fromSymbol: prefixes[prefix1].symbol + unitSymbols[unit],
+        toSymbol: prefixes[prefix2].symbol + unitSymbols[unit],
+        answer,
+        prefix1,
+        prefix2,
+        multiplier1: prefixes[prefix1].multiplier,
+        multiplier2: prefixes[prefix2].multiplier
+      };
+      
+      displayQuestion();
+    }
+  }
+
+  function displayQuestion() {
+    const display = document.getElementById('conversion-display');
+    const inputId = 'answer-input-' + Date.now();
+    
+    display.innerHTML = `
+      <span class="conversion-value">${formatNumber(currentQuestion.value)} ${currentQuestion.fromUnit}s</span>
+      <span class="conversion-equals">=</span>
+      <input type="number" class="answer-input" id="${inputId}" placeholder="?" step="any" autofocus>
+      <span class="unit-label">${currentQuestion.toUnit}s</span>
+    `;
+    
+    // Focus the input
+    setTimeout(() => {
+      const input = document.getElementById(inputId);
+      if (input) {
+        input.focus();
+        // Add enter key listener
+        input.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            checkAnswer();
+          }
+        });
+      }
+    }, 100);
+  }
+
+  function checkAnswer() {
+    const input = document.querySelector('.answer-input');
+    if (!input) return;
+    
+    const userAnswer = parseFloat(input.value);
+    const feedbackBox = document.getElementById('feedback-box');
+    
+    if (isNaN(userAnswer)) {
+      feedbackBox.innerHTML = `
+        <div class="feedback-incorrect shake">
+          <div class="feedback-title">⚠️ Invalid Input</div>
+          <div class="feedback-text">Please enter a number!</div>
+        </div>
+      `;
+      input.focus();
+      return;
+    }
+    
+    attemptsOnCurrentQuestion++;
+    
+    // Check if answer is close enough (accounting for floating point)
+    const tolerance = Math.abs(currentQuestion.answer) * 0.001 || 0.001;
+    const isCorrect = Math.abs(userAnswer - currentQuestion.answer) < tolerance;
+    
+    if (isCorrect) {
+      // Correct answer
+      const points = attemptsOnCurrentQuestion === 1 ? 10 : 5;
+      totalScore += points;
+      currentStreak++;
+      
+      document.getElementById('total-score').textContent = totalScore;
+      document.getElementById('streak').textContent = currentStreak;
+      document.getElementById('total-score').className = 'score-value pulse';
+      document.getElementById('streak').className = 'streak-value pulse';
+      
+      feedbackBox.innerHTML = `
+        <div class="feedback-correct pulse">
+          <div class="feedback-title">🎉 Correct! +${points} points</div>
+          <div class="feedback-text">
+            ${formatNumber(currentQuestion.value)} ${currentQuestion.fromSymbol} = ${formatNumber(currentQuestion.answer)} ${currentQuestion.toSymbol}
+          </div>
+          <button class="next-btn" onclick="generateQuestion()">Next Question ➡️</button>
+        </div>
+      `;
+      
+      document.getElementById('submit-btn').style.display = 'none';
+      
+    } else {
+      // Incorrect answer
+      if (attemptsOnCurrentQuestion === 1) {
+        currentStreak = 0;
+        document.getElementById('streak').textContent = currentStreak;
+      }
+      
+      const hint = generateHint();
+      
+      feedbackBox.innerHTML = `
+        <div class="feedback-incorrect shake">
+          <div class="feedback-title">❌ Not quite right</div>
+          <div class="feedback-text">Try again! You've got this! 💪</div>
+          <div class="hint-box">
+            <div class="hint-title">💡 Hint:</div>
+            <div class="hint-text">${hint}</div>
+          </div>
+        </div>
+      `;
+      
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  function generateHint() {
+    if (currentDifficulty === 'easy') {
+      const multiplierStr = formatNumber(currentQuestion.multiplier);
+      return `Remember: ${currentQuestion.prefix} means multiply by ${multiplierStr}. 
+              So multiply ${currentQuestion.value} by ${multiplierStr}.`;
+    } else if (currentDifficulty === 'medium') {
+      const multiplierStr = formatNumber(currentQuestion.multiplier);
+      return `Remember: ${currentQuestion.prefix} means multiply by ${multiplierStr}. 
+              Since you're converting TO ${currentQuestion.prefix}${currentQuestion.toUnit}s, divide by ${multiplierStr}.`;
+    } else {
+      return `First convert ${currentQuestion.value} ${currentQuestion.fromUnit}s to the base ${currentQuestion.fromUnit.replace(currentQuestion.prefix1, '')}s, 
+              then convert to ${currentQuestion.toUnit}s. Check the prefix table!`;
+    }
+  }
+
+  function toggleReference() {
+    const modal = document.getElementById('reference-modal');
+    modal.classList.toggle('active');
+  }
+</script>
+
+
+
+</body></html>
