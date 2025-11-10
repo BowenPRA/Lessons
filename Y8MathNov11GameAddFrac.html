@@ -310,6 +310,19 @@
       color: var(--primary);
     }
 
+    .mixed-number {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .whole-part {
+      font-size: 1.8rem;
+    }
+
     .numerator {
       padding-bottom: 0.2rem;
     }
@@ -329,6 +342,97 @@
       font-size: 2rem;
       font-weight: 700;
       color: var(--gray-700);
+    }
+
+    /* Step 2 - Conversion Display */
+    .conversion-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+
+    .conversion-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .fraction-large {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .mixed-number-large {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .whole-part-large {
+      font-size: 2.5rem;
+    }
+
+    .fraction-line-large {
+      width: 100%;
+      height: 3px;
+      background: var(--gray-800);
+      margin: 0.2rem 0;
+    }
+
+    .multiply-symbol {
+      font-size: 2rem;
+      color: var(--orange);
+      font-weight: 700;
+    }
+
+    .multiplier-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--orange);
+    }
+
+    .equals-symbol {
+      font-size: 2rem;
+      color: var(--gray-700);
+      font-weight: 700;
+    }
+
+    .result-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .result-fraction-large {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    /* Step 3 - Addition Display */
+    .addition-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
     }
 
     /* Compact Step Container */
@@ -799,6 +903,26 @@
       .info-desc {
         font-size: 0.8rem;
       }
+      .fraction-large {
+        font-size: 2rem;
+      }
+      .mixed-number-large {
+        font-size: 2rem;
+      }
+      .whole-part-large {
+        font-size: 2rem;
+      }
+      .multiplier-fraction {
+        font-size: 1.5rem;
+      }
+      .conversion-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .addition-display {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
     }
 
     @media (max-height: 700px) {
@@ -866,15 +990,15 @@
         <div class="difficulty-info">
           <div class="info-item">
             <div class="info-title">🌱 Easy Mode</div>
-            <div class="info-desc">Simple denominators (2-12) with common factors. Starts with fractions already in simplest form. Example: 1/4 + 1/2</div>
+            <div class="info-desc">Simple proper fractions with denominators (2-12). Example: 1/4 + 1/2</div>
           </div>
           <div class="info-item">
             <div class="info-title">🔥 Medium Mode</div>
-            <div class="info-desc">Larger denominators (2-20) that may require more work. Example: 2/5 + 3/8</div>
+            <div class="info-desc">Larger proper fractions with denominators (2-20). Example: 2/5 + 3/8</div>
           </div>
           <div class="info-item">
             <div class="info-title">⚡ Hard Mode</div>
-            <div class="info-desc">Complex denominators (2-30) and larger numerators. Example: 5/12 + 7/18</div>
+            <div class="info-desc">Mixed numbers with complex denominators (2-15). Example: 1 2/3 + 2 1/4</div>
           </div>
         </div>
       </div>
@@ -918,6 +1042,12 @@
       <h2>How to Add Fractions</h2>
       
       <div class="help-section">
+        <h3>Step 0: Convert Mixed Numbers (Hard Mode)</h3>
+        <p>If you have mixed numbers, convert them to improper fractions first.</p>
+        <div class="example">Example: 2 1/3 = (2 × 3 + 1)/3 = 7/3</div>
+      </div>
+
+      <div class="help-section">
         <h3>Step 1: Find the LCD (Lowest Common Denominator)</h3>
         <p>Find the smallest number that both denominators can divide into evenly.</p>
         <div class="example">Example: For 1/4 + 1/6<br>Multiples of 4: 4, 8, 12, 16...<br>Multiples of 6: 6, 12, 18...<br>LCD = 12</div>
@@ -937,8 +1067,8 @@
 
       <div class="help-section">
         <h3>Step 4: Simplify (if needed)</h3>
-        <p>Reduce the fraction to its simplest form by dividing both numerator and denominator by their GCD.</p>
-        <div class="example">6/12 = 1/2 (divide both by 6)</div>
+        <p>Reduce the fraction to its simplest form by dividing both numerator and denominator by their GCD. Convert back to mixed number if improper.</p>
+        <div class="example">6/12 = 1/2 (divide both by 6)<br>7/3 = 2 1/3 (improper to mixed)</div>
       </div>
 
       <button class="close-modal" onclick="toggleHelp()">Close</button>
@@ -953,7 +1083,7 @@
   let currentStreak = 0;
   let currentQuestion = null;
   let currentStep = 1;
-  let stepAttempts = [0, 0, 0, 0];
+  let stepAttempts = [0, 0, 0, 0, 0]; // Added step 0 for mixed numbers
   let questionsCompleted = 0;
 
   // GCD function
@@ -979,6 +1109,23 @@
     return {
       numerator: num / divisor,
       denominator: den / divisor
+    };
+  }
+
+  // Convert improper to mixed
+  function toMixedNumber(num, den) {
+    if (num < den) return null; // Proper fraction
+    const whole = Math.floor(num / den);
+    const remainder = num % den;
+    if (remainder === 0) return { whole, numerator: 0, denominator: 1 };
+    return { whole, numerator: remainder, denominator: den };
+  }
+
+  // Convert mixed to improper
+  function toImproper(whole, num, den) {
+    return {
+      numerator: whole * den + num,
+      denominator: den
     };
   }
 
@@ -1018,14 +1165,14 @@
   }
 
   function generateQuestion() {
-    currentStep = 1;
-    stepAttempts = [0, 0, 0, 0];
+    currentStep = currentDifficulty === 'hard' ? 0 : 1; // Start at step 0 for hard mode
+    stepAttempts = [0, 0, 0, 0, 0];
     document.getElementById('next-btn').style.display = 'none';
     document.getElementById('completion-area').innerHTML = '';
     
     let num1, den1, num2, den2;
+    let whole1 = 0, whole2 = 0;
     
-    // For the first 3 questions in any mode, generate fractions already in simplest form
     const forceSimplified = questionsCompleted < 3;
     
     if (currentDifficulty === 'easy') {
@@ -1047,31 +1194,56 @@
         num2 = Math.floor(Math.random() * (den2 - 1)) + 1;
       } while (forceSimplified && (!isSimplified(num1, den1) || !isSimplified(num2, den2)));
       
-    } else {
+    } else { // hard mode - mixed numbers
       do {
-        den1 = Math.floor(Math.random() * 29) + 2;
-        den2 = Math.floor(Math.random() * 29) + 2;
-        num1 = Math.floor(Math.random() * Math.max(den1 - 1, 1)) + 1;
-        num2 = Math.floor(Math.random() * Math.max(den2 - 1, 1)) + 1;
+        whole1 = Math.floor(Math.random() * 3) + 1; // 1-3
+        whole2 = Math.floor(Math.random() * 3) + 1; // 1-3
+        den1 = Math.floor(Math.random() * 14) + 2; // 2-15
+        den2 = Math.floor(Math.random() * 14) + 2; // 2-15
+        num1 = Math.floor(Math.random() * (den1 - 1)) + 1;
+        num2 = Math.floor(Math.random() * (den2 - 1)) + 1;
       } while (forceSimplified && (!isSimplified(num1, den1) || !isSimplified(num2, den2)));
     }
     
-    const lcd = lcm(den1, den2);
-    const newNum1 = num1 * (lcd / den1);
-    const newNum2 = num2 * (lcd / den2);
+    // For hard mode, convert to improper fractions
+    let improper1Num = num1, improper1Den = den1;
+    let improper2Num = num2, improper2Den = den2;
+    
+    if (currentDifficulty === 'hard') {
+      const imp1 = toImproper(whole1, num1, den1);
+      const imp2 = toImproper(whole2, num2, den2);
+      improper1Num = imp1.numerator;
+      improper1Den = imp1.denominator;
+      improper2Num = imp2.numerator;
+      improper2Den = imp2.denominator;
+    }
+    
+    const lcd = lcm(improper1Den, improper2Den);
+    const newNum1 = improper1Num * (lcd / improper1Den);
+    const newNum2 = improper2Num * (lcd / improper2Den);
     const sumNum = newNum1 + newNum2;
     const simplified = simplifyFraction(sumNum, lcd);
+    const finalMixed = toMixedNumber(simplified.numerator, simplified.denominator);
     
     currentQuestion = {
-      num1, den1,
-      num2, den2,
+      // Original display
+      whole1, num1, den1,
+      whole2, num2, den2,
+      // Improper forms
+      improper1Num, improper1Den,
+      improper2Num, improper2Den,
+      // LCD work
       lcd,
+      multiplier1: lcd / improper1Den,
+      multiplier2: lcd / improper2Den,
       newNum1, newDen1: lcd,
       newNum2, newDen2: lcd,
       sumNum, sumDen: lcd,
       finalNum: simplified.numerator,
       finalDen: simplified.denominator,
-      needsSimplification: (sumNum !== simplified.numerator)
+      finalMixed: finalMixed,
+      needsSimplification: (sumNum !== simplified.numerator),
+      isMixed: currentDifficulty === 'hard'
     };
     
     displayQuestion();
@@ -1081,30 +1253,61 @@
 
   function displayQuestion() {
     const display = document.getElementById('fraction-problem');
-    display.innerHTML = `
-      <div class="fraction">
-        <div class="numerator">${currentQuestion.num1}</div>
-        <div class="fraction-line"></div>
-        <div class="denominator">${currentQuestion.den1}</div>
-      </div>
-      <div class="operator">+</div>
-      <div class="fraction">
-        <div class="numerator">${currentQuestion.num2}</div>
-        <div class="fraction-line"></div>
-        <div class="denominator">${currentQuestion.den2}</div>
-      </div>
-      <div class="operator">=</div>
-      <div class="operator">?</div>
-    `;
+    
+    if (currentQuestion.isMixed) {
+      display.innerHTML = `
+        <div class="mixed-number">
+          <span class="whole-part">${currentQuestion.whole1}</span>
+          <div class="fraction">
+            <div class="numerator">${currentQuestion.num1}</div>
+            <div class="fraction-line"></div>
+            <div class="denominator">${currentQuestion.den1}</div>
+          </div>
+        </div>
+        <div class="operator">+</div>
+        <div class="mixed-number">
+          <span class="whole-part">${currentQuestion.whole2}</span>
+          <div class="fraction">
+            <div class="numerator">${currentQuestion.num2}</div>
+            <div class="fraction-line"></div>
+            <div class="denominator">${currentQuestion.den2}</div>
+          </div>
+        </div>
+        <div class="operator">=</div>
+        <div class="operator">?</div>
+      `;
+    } else {
+      display.innerHTML = `
+        <div class="fraction">
+          <div class="numerator">${currentQuestion.num1}</div>
+          <div class="fraction-line"></div>
+          <div class="denominator">${currentQuestion.den1}</div>
+        </div>
+        <div class="operator">+</div>
+        <div class="fraction">
+          <div class="numerator">${currentQuestion.num2}</div>
+          <div class="fraction-line"></div>
+          <div class="denominator">${currentQuestion.den2}</div>
+        </div>
+        <div class="operator">=</div>
+        <div class="operator">?</div>
+      `;
+    }
   }
 
   function updateProgressBar() {
+    const totalSteps = currentQuestion.isMixed ? 5 : 4;
+    const startStep = currentQuestion.isMixed ? 0 : 1;
+    
     for (let i = 1; i <= 4; i++) {
       const dot = document.getElementById(`progress-${i}`);
       dot.classList.remove('active', 'completed');
-      if (i < currentStep) {
+      
+      const adjustedStep = currentQuestion.isMixed ? i : i + 1;
+      
+      if (adjustedStep < currentStep + 1) {
         dot.classList.add('completed');
-      } else if (i === currentStep) {
+      } else if (adjustedStep === currentStep + 1) {
         dot.classList.add('active');
       }
     }
@@ -1113,14 +1316,58 @@
   function displayCurrentStep() {
     const container = document.getElementById('step-container');
     
-    if (currentStep === 1) {
+    if (currentStep === 0) { // Convert mixed numbers to improper
+      container.innerHTML = `
+        <div class="step-header">
+          <div class="step-number">0</div>
+          <div class="step-title">Convert Mixed Numbers to Improper Fractions</div>
+        </div>
+        <div class="step-content">
+          <div class="step-question">Convert each mixed number to an improper fraction:</div>
+          
+          <div class="input-section">
+            <span class="input-label">${currentQuestion.whole1} ${currentQuestion.num1}/${currentQuestion.den1} =</span>
+            <div class="fraction-input-display">
+              <input type="number" class="step-input" id="improper1-num" min="1">
+              <div style="height: 2px; width: 80px; background: var(--gray-800);"></div>
+              <input type="number" class="step-input" value="${currentQuestion.den1}" readonly>
+            </div>
+          </div>
+
+          <div class="input-section">
+            <span class="input-label">${currentQuestion.whole2} ${currentQuestion.num2}/${currentQuestion.den2} =</span>
+            <div class="fraction-input-display">
+              <input type="number" class="step-input" id="improper2-num" min="1">
+              <div style="height: 2px; width: 80px; background: var(--gray-800);"></div>
+              <input type="number" class="step-input" value="${currentQuestion.den2}" readonly>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="check-btn" onclick="checkStep0()">Check Answers</button>
+          </div>
+          <div id="step-feedback"></div>
+        </div>
+      `;
+      setTimeout(() => document.getElementById('improper1-num')?.focus(), 100);
+      document.getElementById('improper1-num')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('improper2-num')?.focus();
+      });
+      document.getElementById('improper2-num')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkStep0();
+      });
+      
+    } else if (currentStep === 1) {
+      const den1 = currentQuestion.isMixed ? currentQuestion.improper1Den : currentQuestion.den1;
+      const den2 = currentQuestion.isMixed ? currentQuestion.improper2Den : currentQuestion.den2;
+      
       container.innerHTML = `
         <div class="step-header">
           <div class="step-number">1</div>
           <div class="step-title">Find the LCD (Lowest Common Denominator)</div>
         </div>
         <div class="step-content">
-          <div class="step-question">What is the LCD of ${currentQuestion.den1} and ${currentQuestion.den2}?</div>
+          <div class="step-question">What is the LCD of ${den1} and ${den2}?</div>
           <div class="input-section">
             <span class="input-label">LCD =</span>
             <input type="number" class="step-input" id="lcd-input" min="1">
@@ -1137,6 +1384,11 @@
       });
       
     } else if (currentStep === 2) {
+      const num1 = currentQuestion.isMixed ? currentQuestion.improper1Num : currentQuestion.num1;
+      const den1 = currentQuestion.isMixed ? currentQuestion.improper1Den : currentQuestion.den1;
+      const num2 = currentQuestion.isMixed ? currentQuestion.improper2Num : currentQuestion.num2;
+      const den2 = currentQuestion.isMixed ? currentQuestion.improper2Den : currentQuestion.den2;
+      
       container.innerHTML = `
         <div class="step-header">
           <div class="step-number completed">2</div>
@@ -1145,21 +1397,51 @@
         <div class="step-content">
           <div class="step-question">Convert both fractions to have denominator ${currentQuestion.lcd}:</div>
           
-          <div class="input-section">
-            <span class="input-label">${currentQuestion.num1}/${currentQuestion.den1} =</span>
-            <div class="fraction-input-display">
-              <input type="number" class="step-input" id="new-num1" min="0">
-              <div style="height: 2px; width: 80px; background: var(--gray-800);"></div>
-              <input type="number" class="step-input" value="${currentQuestion.lcd}" readonly>
+          <div class="conversion-container">
+            <div class="conversion-item">
+              <div class="fraction-large">
+                <div class="numerator">${num1}</div>
+                <div class="fraction-line-large"></div>
+                <div class="denominator">${den1}</div>
+              </div>
+              <span class="multiply-symbol">×</span>
+              <div class="multiplier-fraction">
+                <div class="numerator">${currentQuestion.multiplier1}</div>
+                <div class="fraction-line-large"></div>
+                <div class="denominator">${currentQuestion.multiplier1}</div>
+              </div>
+              <span class="equals-symbol">=</span>
+              <div class="result-fraction">
+                <div class="fraction-input-display">
+                  <input type="number" class="step-input" id="new-num1" min="0">
+                  <div style="height: 2px; width: 80px; background: var(--gray-800);"></div>
+                  <input type="number" class="step-input" value="${currentQuestion.lcd}" readonly>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="input-section">
-            <span class="input-label">${currentQuestion.num2}/${currentQuestion.den2} =</span>
-            <div class="fraction-input-display">
-              <input type="number" class="step-input" id="new-num2" min="0">
-              <div style="height: 2px; width: 80px; background: var(--gray-800);"></div>
-              <input type="number" class="step-input" value="${currentQuestion.lcd}" readonly>
+          <div class="conversion-container">
+            <div class="conversion-item">
+              <div class="fraction-large">
+                <div class="numerator">${num2}</div>
+                <div class="fraction-line-large"></div>
+                <div class="denominator">${den2}</div>
+              </div>
+              <span class="multiply-symbol">×</span>
+              <div class="multiplier-fraction">
+                <div class="numerator">${currentQuestion.multiplier2}</div>
+                <div class="fraction-line-large"></div>
+                <div class="denominator">${currentQuestion.multiplier2}</div>
+              </div>
+              <span class="equals-symbol">=</span>
+              <div class="result-fraction">
+                <div class="fraction-input-display">
+                  <input type="number" class="step-input" id="new-num2" min="0">
+                  <div style="height: 2px; width: 80px; background: var(--gray-800);"></div>
+                  <input type="number" class="step-input" value="${currentQuestion.lcd}" readonly>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1184,11 +1466,23 @@
           <div class="step-title">Add the Numerators</div>
         </div>
         <div class="step-content">
-          <div class="step-question">Add: ${currentQuestion.newNum1}/${currentQuestion.lcd} + ${currentQuestion.newNum2}/${currentQuestion.lcd} = ?</div>
-          <div class="input-section">
-            <div class="fraction-input-display">
+          <div class="step-question">Add the fractions:</div>
+          <div class="addition-display">
+            <div class="fraction-large">
+              <div class="numerator">${currentQuestion.newNum1}</div>
+              <div class="fraction-line-large"></div>
+              <div class="denominator">${currentQuestion.lcd}</div>
+            </div>
+            <span class="operator">+</span>
+            <div class="fraction-large">
+              <div class="numerator">${currentQuestion.newNum2}</div>
+              <div class="fraction-line-large"></div>
+              <div class="denominator">${currentQuestion.lcd}</div>
+            </div>
+            <span class="equals-symbol">=</span>
+            <div class="result-fraction-large">
               <input type="number" class="step-input" id="sum-num" min="0">
-              <div style="height: 2px; width: 80px; background: var(--gray-800);"></div>
+              <div class="fraction-line-large" style="width: 90px;"></div>
               <input type="number" class="step-input" value="${currentQuestion.lcd}" readonly>
             </div>
           </div>
@@ -1204,20 +1498,35 @@
       });
       
     } else if (currentStep === 4) {
+      const questionText = currentQuestion.isMixed 
+        ? `Simplify ${currentQuestion.sumNum}/${currentQuestion.sumDen} to lowest terms (as a mixed number if improper):`
+        : `Simplify ${currentQuestion.sumNum}/${currentQuestion.sumDen} to lowest terms:`;
+        
       container.innerHTML = `
         <div class="step-header">
           <div class="step-number completed">4</div>
           <div class="step-title">Simplify (if needed)</div>
         </div>
         <div class="step-content">
-          <div class="step-question">Simplify ${currentQuestion.sumNum}/${currentQuestion.sumDen} to lowest terms:</div>
+          <div class="step-question">${questionText}</div>
+          ${currentQuestion.finalMixed ? `
+          <div class="input-section">
+            <div class="fraction-input-display">
+              <input type="number" class="step-input" id="final-whole" min="0" placeholder="Whole">
+              <div class="fraction-large" style="font-size: 1.5rem;">
+                <input type="number" class="step-input" id="final-num" min="0" placeholder="Num">
+                <div class="fraction-line-large" style="width: 90px;"></div>
+                <input type="number" class="step-input" id="final-den" min="1" placeholder="Den">
+              </div>
+            </div>
+          </div>` : `
           <div class="input-section">
             <div class="fraction-input-display">
               <input type="number" class="step-input" id="final-num" min="0">
               <div style="height: 2px; width: 80px; background: var(--gray-800);"></div>
               <input type="number" class="step-input" id="final-den" min="1">
             </div>
-          </div>
+          </div>`}
           <div class="action-buttons">
             <button class="check-btn" onclick="checkStep4()">Check Answer</button>
             <button class="no-simplify-btn" onclick="noSimplificationNeeded()">Already Simplified ✓</button>
@@ -1225,18 +1534,72 @@
           <div id="step-feedback"></div>
         </div>
       `;
-      setTimeout(() => document.getElementById('final-num')?.focus(), 100);
-      document.getElementById('final-num')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') document.getElementById('final-den')?.focus();
-      });
-      document.getElementById('final-den')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkStep4();
-      });
+      
+      if (currentQuestion.finalMixed) {
+        setTimeout(() => document.getElementById('final-whole')?.focus(), 100);
+        document.getElementById('final-whole')?.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') document.getElementById('final-num')?.focus();
+        });
+        document.getElementById('final-num')?.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') document.getElementById('final-den')?.focus();
+        });
+        document.getElementById('final-den')?.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') checkStep4();
+        });
+      } else {
+        setTimeout(() => document.getElementById('final-num')?.focus(), 100);
+        document.getElementById('final-num')?.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') document.getElementById('final-den')?.focus();
+        });
+        document.getElementById('final-den')?.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') checkStep4();
+        });
+      }
+    }
+  }
+
+  function checkStep0() {
+    stepAttempts[0]++;
+    const improper1Num = parseInt(document.getElementById('improper1-num').value);
+    const improper2Num = parseInt(document.getElementById('improper2-num').value);
+    const feedback = document.getElementById('step-feedback');
+    
+    if (improper1Num === currentQuestion.improper1Num && improper2Num === currentQuestion.improper2Num) {
+      feedback.innerHTML = `<div class="step-feedback correct">✅ Perfect! Both mixed numbers converted correctly!</div>`;
+      document.getElementById('improper1-num').classList.add('correct');
+      document.getElementById('improper2-num').classList.add('correct');
+      
+      const points = stepAttempts[0] === 1 ? 5 : 2;
+      totalScore += points;
+      updateScore();
+      
+      setTimeout(() => {
+        currentStep = 1;
+        updateProgressBar();
+        displayCurrentStep();
+      }, 1000);
+    } else {
+      let hint = '';
+      if (improper1Num !== currentQuestion.improper1Num) {
+        hint += `For ${currentQuestion.whole1} ${currentQuestion.num1}/${currentQuestion.den1}: (${currentQuestion.whole1} × ${currentQuestion.den1} + ${currentQuestion.num1})/${currentQuestion.den1}. `;
+      }
+      if (improper2Num !== currentQuestion.improper2Num) {
+        hint += `For ${currentQuestion.whole2} ${currentQuestion.num2}/${currentQuestion.den2}: (${currentQuestion.whole2} × ${currentQuestion.den2} + ${currentQuestion.num2})/${currentQuestion.den2}.`;
+      }
+      
+      feedback.innerHTML = `
+        <div class="step-feedback incorrect">❌ Not quite right. Check your work!</div>
+        <div class="hint-box">
+          <div class="hint-title">💡 Hint:</div>
+          <div class="hint-text">${hint}</div>
+        </div>
+      `;
     }
   }
 
   function checkStep1() {
-    stepAttempts[0]++;
+    const stepIndex = currentQuestion.isMixed ? 1 : 0;
+    stepAttempts[stepIndex]++;
     const input = parseInt(document.getElementById('lcd-input').value);
     const feedback = document.getElementById('step-feedback');
     
@@ -1244,7 +1607,7 @@
       feedback.innerHTML = `<div class="step-feedback correct">✅ Correct! The LCD is ${currentQuestion.lcd}</div>`;
       document.getElementById('lcd-input').classList.add('correct');
       
-      const points = stepAttempts[0] === 1 ? 5 : 2;
+      const points = stepAttempts[stepIndex] === 1 ? 5 : 2;
       totalScore += points;
       updateScore();
       
@@ -1254,11 +1617,14 @@
         displayCurrentStep();
       }, 1000);
     } else {
+      const den1 = currentQuestion.isMixed ? currentQuestion.improper1Den : currentQuestion.den1;
+      const den2 = currentQuestion.isMixed ? currentQuestion.improper2Den : currentQuestion.den2;
+      
       feedback.innerHTML = `
         <div class="step-feedback incorrect">❌ Not quite. Try again!</div>
         <div class="hint-box">
           <div class="hint-title">💡 Hint:</div>
-          <div class="hint-text">Find the smallest number that both ${currentQuestion.den1} and ${currentQuestion.den2} divide into evenly. Try listing multiples of each number!</div>
+          <div class="hint-text">Find the smallest number that both ${den1} and ${den2} divide into evenly. Try listing multiples of each number!</div>
         </div>
       `;
       document.getElementById('lcd-input').classList.add('incorrect');
@@ -1271,7 +1637,8 @@
   }
 
   function checkStep2() {
-    stepAttempts[1]++;
+    const stepIndex = currentQuestion.isMixed ? 2 : 1;
+    stepAttempts[stepIndex]++;
     const num1 = parseInt(document.getElementById('new-num1').value);
     const num2 = parseInt(document.getElementById('new-num2').value);
     const feedback = document.getElementById('step-feedback');
@@ -1281,7 +1648,7 @@
       document.getElementById('new-num1').classList.add('correct');
       document.getElementById('new-num2').classList.add('correct');
       
-      const points = stepAttempts[1] === 1 ? 5 : 2;
+      const points = stepAttempts[stepIndex] === 1 ? 5 : 2;
       totalScore += points;
       updateScore();
       
@@ -1293,12 +1660,10 @@
     } else {
       let hint = '';
       if (num1 !== currentQuestion.newNum1) {
-        const multiplier = currentQuestion.lcd / currentQuestion.den1;
-        hint += `For ${currentQuestion.num1}/${currentQuestion.den1}: multiply both top and bottom by ${multiplier}. `;
+        hint += `Multiply ${currentQuestion.isMixed ? currentQuestion.improper1Num : currentQuestion.num1} by ${currentQuestion.multiplier1}. `;
       }
       if (num2 !== currentQuestion.newNum2) {
-        const multiplier = currentQuestion.lcd / currentQuestion.den2;
-        hint += `For ${currentQuestion.num2}/${currentQuestion.den2}: multiply both top and bottom by ${multiplier}.`;
+        hint += `Multiply ${currentQuestion.isMixed ? currentQuestion.improper2Num : currentQuestion.num2} by ${currentQuestion.multiplier2}.`;
       }
       
       feedback.innerHTML = `
@@ -1312,7 +1677,8 @@
   }
 
   function checkStep3() {
-    stepAttempts[2]++;
+    const stepIndex = currentQuestion.isMixed ? 3 : 2;
+    stepAttempts[stepIndex]++;
     const sumNum = parseInt(document.getElementById('sum-num').value);
     const feedback = document.getElementById('step-feedback');
     
@@ -1320,7 +1686,7 @@
       feedback.innerHTML = `<div class="step-feedback correct">✅ Excellent! ${currentQuestion.newNum1} + ${currentQuestion.newNum2} = ${currentQuestion.sumNum}</div>`;
       document.getElementById('sum-num').classList.add('correct');
       
-      const points = stepAttempts[2] === 1 ? 5 : 2;
+      const points = stepAttempts[stepIndex] === 1 ? 5 : 2;
       totalScore += points;
       updateScore();
       
@@ -1341,44 +1707,79 @@
   }
 
   function noSimplificationNeeded() {
-    if (!currentQuestion.needsSimplification) {
-      checkStep4FromButton(currentQuestion.sumNum, currentQuestion.sumDen);
+    if (!currentQuestion.needsSimplification && !currentQuestion.finalMixed) {
+      checkStep4FromButton(currentQuestion.sumNum, currentQuestion.sumDen, null);
     } else {
       const feedback = document.getElementById('step-feedback');
-      const divisor = gcd(currentQuestion.sumNum, currentQuestion.sumDen);
+      let message = '';
+      if (currentQuestion.finalMixed) {
+        message = `This is an improper fraction! Convert to mixed number: ${currentQuestion.finalMixed.whole} ${currentQuestion.finalMixed.numerator}/${currentQuestion.finalMixed.denominator}`;
+      } else {
+        const divisor = gcd(currentQuestion.sumNum, currentQuestion.sumDen);
+        message = `This fraction can be simplified! The GCD of ${currentQuestion.sumNum} and ${currentQuestion.sumDen} is ${divisor}. Divide both by ${divisor}.`;
+      }
+      
       feedback.innerHTML = `
-        <div class="step-feedback incorrect">❌ This fraction can be simplified!</div>
+        <div class="step-feedback incorrect">❌ ${currentQuestion.finalMixed ? 'This needs to be converted!' : 'This can be simplified!'}</div>
         <div class="hint-box">
           <div class="hint-title">💡 Hint:</div>
-          <div class="hint-text">The GCD of ${currentQuestion.sumNum} and ${currentQuestion.sumDen} is ${divisor}. Divide both by ${divisor}.</div>
+          <div class="hint-text">${message}</div>
         </div>
       `;
     }
   }
 
   function checkStep4() {
-    stepAttempts[3]++;
-    const finalNum = parseInt(document.getElementById('final-num').value);
-    const finalDen = parseInt(document.getElementById('final-den').value);
-    checkStep4FromButton(finalNum, finalDen);
+    const stepIndex = currentQuestion.isMixed ? 4 : 3;
+    stepAttempts[stepIndex]++;
+    
+    if (currentQuestion.finalMixed) {
+      const whole = parseInt(document.getElementById('final-whole').value) || 0;
+      const finalNum = parseInt(document.getElementById('final-num').value);
+      const finalDen = parseInt(document.getElementById('final-den').value);
+      checkStep4FromButton(finalNum, finalDen, whole);
+    } else {
+      const finalNum = parseInt(document.getElementById('final-num').value);
+      const finalDen = parseInt(document.getElementById('final-den').value);
+      checkStep4FromButton(finalNum, finalDen, null);
+    }
   }
 
-  function checkStep4FromButton(finalNum, finalDen) {
+  function checkStep4FromButton(finalNum, finalDen, finalWhole) {
     const feedback = document.getElementById('step-feedback');
     
-    if (finalNum === currentQuestion.finalNum && finalDen === currentQuestion.finalDen) {
-      const wasSimplified = currentQuestion.needsSimplification;
-      const message = wasSimplified 
-        ? `✅ Perfect! You correctly simplified ${currentQuestion.sumNum}/${currentQuestion.sumDen} to ${currentQuestion.finalNum}/${currentQuestion.finalDen}`
-        : `✅ Correct! This fraction is already in simplest form.`;
+    let isCorrect = false;
+    
+    if (currentQuestion.finalMixed) {
+      isCorrect = (finalWhole === currentQuestion.finalMixed.whole && 
+                   finalNum === currentQuestion.finalMixed.numerator && 
+                   finalDen === currentQuestion.finalMixed.denominator);
+    } else {
+      isCorrect = (finalNum === currentQuestion.finalNum && finalDen === currentQuestion.finalDen);
+    }
+    
+    if (isCorrect) {
+      let message = '';
+      if (currentQuestion.finalMixed) {
+        message = `✅ Perfect! You correctly converted to ${currentQuestion.finalMixed.whole} ${currentQuestion.finalMixed.numerator}/${currentQuestion.finalMixed.denominator}`;
+      } else if (currentQuestion.needsSimplification) {
+        message = `✅ Perfect! You correctly simplified ${currentQuestion.sumNum}/${currentQuestion.sumDen} to ${currentQuestion.finalNum}/${currentQuestion.finalDen}`;
+      } else {
+        message = `✅ Correct! This fraction is already in simplest form.`;
+      }
       
       feedback.innerHTML = `<div class="step-feedback correct">${message}</div>`;
+      
       if (document.getElementById('final-num')) {
         document.getElementById('final-num').classList.add('correct');
         document.getElementById('final-den').classList.add('correct');
+        if (document.getElementById('final-whole')) {
+          document.getElementById('final-whole').classList.add('correct');
+        }
       }
       
-      const points = stepAttempts[3] === 1 ? 10 : 5;
+      const stepIndex = currentQuestion.isMixed ? 4 : 3;
+      const points = stepAttempts[stepIndex] === 1 ? 10 : 5;
       totalScore += points;
       currentStreak++;
       updateScore();
@@ -1387,12 +1788,16 @@
       
       setTimeout(() => showCompletion(), 800);
     } else {
-      const divisor = gcd(currentQuestion.sumNum, currentQuestion.sumDen);
       let hint = '';
-      if (divisor > 1) {
-        hint = `The GCD of ${currentQuestion.sumNum} and ${currentQuestion.sumDen} is ${divisor}. Divide both by ${divisor}.`;
+      if (currentQuestion.finalMixed) {
+        hint = `Convert ${currentQuestion.sumNum}/${currentQuestion.sumDen} to a mixed number. The answer is ${currentQuestion.finalMixed.whole} ${currentQuestion.finalMixed.numerator}/${currentQuestion.finalMixed.denominator}`;
       } else {
-        hint = `This fraction is already in simplest form. The answer is ${currentQuestion.sumNum}/${currentQuestion.sumDen}`;
+        const divisor = gcd(currentQuestion.sumNum, currentQuestion.sumDen);
+        if (divisor > 1) {
+          hint = `The GCD of ${currentQuestion.sumNum} and ${currentQuestion.sumDen} is ${divisor}. Divide both by ${divisor}.`;
+        } else {
+          hint = `This fraction is already in simplest form. The answer is ${currentQuestion.sumNum}/${currentQuestion.sumDen}`;
+        }
       }
       
       feedback.innerHTML = `
@@ -1406,17 +1811,32 @@
   }
 
   function showCompletion() {
+    const stepCounts = currentQuestion.isMixed ? 5 : 4;
+    const stepPoints = currentQuestion.isMixed ? [5, 5, 5, 5, 10] : [5, 5, 5, 10];
     const totalPoints = stepAttempts.reduce((sum, attempts, i) => {
-      const stepPoints = [5, 5, 5, 10];
+      if (i >= stepPoints.length) return sum;
       return sum + (attempts === 1 ? stepPoints[i] : (attempts > 0 ? Math.floor(stepPoints[i] / 2) : 0));
     }, 0);
+    
+    let answerDisplay = '';
+    if (currentQuestion.isMixed) {
+      const m1 = `${currentQuestion.whole1} ${currentQuestion.num1}/${currentQuestion.den1}`;
+      const m2 = `${currentQuestion.whole2} ${currentQuestion.num2}/${currentQuestion.den2}`;
+      if (currentQuestion.finalMixed) {
+        answerDisplay = `${m1} + ${m2} = ${currentQuestion.finalMixed.whole} ${currentQuestion.finalMixed.numerator}/${currentQuestion.finalMixed.denominator}`;
+      } else {
+        answerDisplay = `${m1} + ${m2} = ${currentQuestion.finalNum}/${currentQuestion.finalDen}`;
+      }
+    } else {
+      answerDisplay = `${currentQuestion.num1}/${currentQuestion.den1} + ${currentQuestion.num2}/${currentQuestion.den2} = ${currentQuestion.finalNum}/${currentQuestion.finalDen}`;
+    }
     
     document.getElementById('completion-area').innerHTML = `
       <div class="completion-message pulse">
         <div class="completion-title">🎉 Problem Complete!</div>
         <div class="completion-text">You earned ${totalPoints} points this round!</div>
         <div class="completion-text" style="margin-top: 1rem;">
-          ${currentQuestion.num1}/${currentQuestion.den1} + ${currentQuestion.num2}/${currentQuestion.den2} = ${currentQuestion.finalNum}/${currentQuestion.finalDen}
+          ${answerDisplay}
         </div>
       </div>
     `;
