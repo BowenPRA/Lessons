@@ -1,0 +1,884 @@
+<!DOCTYPE html><html lang="en"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Learn about the reactivity series of metals and displacement reactions">
+  <meta name="subject" content="Science">
+  <meta name="year" content="Year 9">
+  <meta name="type" content="lesson">
+  <meta name="date" content="November 11, 2024">
+  <meta name="unit" content="5.1">
+  <meta name="tags" content="Reactivity, Reactivity Series, Displacement Reactions, Metals, Chemical Reactions">
+  <title>Reactivity and Displacement Reactions - Year 9 Science</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366F1;
+      --purple: #8B5CF6;
+      --orange: #F97316;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+      --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+      --gradient-orange: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+      --gradient-primary: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--gradient-primary);
+      color: var(--gray-900);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .app-container {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      flex-shrink: 0;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .lesson-badge {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .lesson-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    /* Main Content */
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow: hidden;
+    }
+
+    .slide-container {
+      background: white;
+      border-radius: 1.5rem;
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 1200px;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 2.5rem;
+      scroll-behavior: smooth;
+    }
+
+    /* Typography - TV OPTIMIZED */
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 2rem;
+      line-height: 1.1;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--gray-800);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    p, li {
+      font-size: 1.4rem;
+      line-height: 1.8;
+      color: var(--gray-700);
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .large-text {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    /* Title Slide */
+    .title-slide {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .title-header {
+      margin-bottom: 3rem;
+    }
+
+    .school-name {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--gray-800);
+      margin-bottom: 1rem;
+    }
+
+    .class-info {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      margin-bottom: 0.5rem;
+    }
+
+    .lesson-date {
+      font-size: 1.5rem;
+      color: var(--gray-500);
+      margin-bottom: 2rem;
+    }
+
+    .unit-topic {
+      font-size: 3rem;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 3rem;
+    }
+
+    .title-boxes {
+      display: flex;
+      gap: 2rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .objective-box {
+      background: var(--gradient-purple);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      flex: 1;
+    }
+
+    .warmup-box {
+      background: var(--gradient-orange);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      flex: 1;
+    }
+
+    .box-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .box-content {
+      font-size: 1.3rem;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    /* Content Cards */
+    .vocab-card {
+      background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+      border: 3px solid var(--primary);
+      padding: 2rem;
+      border-radius: 1rem;
+      margin: 1.5rem 0;
+      text-align: center;
+    }
+
+    .vocab-term {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .vocab-definition {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      line-height: 1.6;
+    }
+
+    .concept-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      margin: 1.5rem 0;
+      border-left: 6px solid var(--success);
+    }
+
+    .example-box {
+      background: var(--warning);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .question-box {
+      background: var(--danger);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      margin: 2rem 0;
+    }
+
+    .exit-ticket-box {
+      background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      margin: 2rem 0;
+    }
+
+    .reactivity-list {
+      background: linear-gradient(135deg, #E0E7FF 0%, #F3E8FF 100%);
+      padding: 2rem;
+      border-radius: 1rem;
+      margin: 2rem 0;
+      border: 3px solid var(--purple);
+    }
+
+    .reactivity-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .reactivity-list li {
+      font-size: 1.6rem;
+      font-weight: 700;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      background: white;
+      border-radius: 0.5rem;
+      text-align: center;
+    }
+
+    .most-reactive {
+      background: linear-gradient(135deg, #FEE2E2 0%, #FED7AA 100%) !important;
+    }
+
+    .least-reactive {
+      background: linear-gradient(135deg, #DBEAFE 0%, #E0E7FF 100%) !important;
+    }
+
+    .equation-box {
+      background: var(--gray-100);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-align: center;
+      margin: 1rem 0;
+      border: 2px solid var(--primary);
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      border-left: 6px solid var(--warning);
+      margin: 1.5rem 0;
+    }
+
+    .highlight-box p {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 1.3rem;
+    }
+
+    th {
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    td {
+      padding: 1rem;
+      border: 2px solid var(--gray-100);
+      font-size: 1.3rem;
+    }
+
+    tr:nth-child(even) {
+      background: var(--gray-50);
+    }
+
+    .method-steps {
+      background: linear-gradient(135deg, #DBEAFE 0%, #E0E7FF 100%);
+      padding: 2rem;
+      border-radius: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .method-steps ol {
+      padding-left: 2rem;
+    }
+
+    .method-steps li {
+      font-size: 1.4rem;
+      margin: 1rem 0;
+      font-weight: 600;
+    }
+
+    /* Navigation */
+    .navigation {
+      background: white;
+      border-top: 1px solid #E5E7EB;
+      padding: 1rem 2rem;
+      box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.1);
+      flex-shrink: 0;
+    }
+
+    .navigation-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .progress-container {
+      flex: 1;
+      max-width: 500px;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #E5E7EB;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gradient-primary);
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      background: white;
+      border: 2px solid #D1D5DB;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .title-boxes { flex-direction: column; }
+      h1 { font-size: 2.5rem; }
+      h2 { font-size: 2rem; }
+      .school-name { font-size: 2rem; }
+      .unit-topic { font-size: 2.5rem; }
+      .slide { padding: 1.5rem; }
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.8rem; }
+      p, li { font-size: 1.2rem; }
+      .vocab-term { font-size: 1.8rem; }
+      .vocab-definition { font-size: 1.3rem; }
+    }
+
+    /* Scrollbar Styling */
+    .slide::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .slide::-webkit-scrollbar-track {
+      background: var(--gray-100);
+      border-radius: 10px;
+    }
+
+    .slide::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+
+    .slide::-webkit-scrollbar-thumb:hover {
+      background: var(--purple);
+    }
+  </style>
+<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.3f7572448765332f3047.js"></script></head>
+<body>
+
+<div class="app-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <span class="lesson-badge">Year 9</span>
+      <div class="lesson-title">Unit 5.1: Reactivity</div>
+      <div>📅 November 11, 2024</div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    <div class="slide-container">
+      <div class="slide" id="slide-content">
+        <!-- Dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="navigation">
+    <div class="navigation-content">
+      <div class="progress-container">
+        <div class="progress-info">
+          <span id="current-slide">Slide 1</span>
+          <span id="total-slides">of 12</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)" disabled="">⬅ Previous</button>
+        <button class="nav-btn" id="next-btn" onclick="changeSlide(1)">Next ➡</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const slides = [
+    {
+      title: "Welcome",
+      content: `
+        <div class="title-slide">
+          <div class="title-header">
+            <div class="school-name">Palm River Academy</div>
+            <div class="class-info">Year 9 Science</div>
+            <div class="lesson-date">November 11, 2024</div>
+            <div class="unit-topic">Unit 5.1: Reactivity and Displacement Reactions</div>
+          </div>
+          
+          <div class="title-boxes">
+            <div class="objective-box">
+              <div class="box-title">Objective</div>
+              <div class="box-content">Use the reactivity series of metals to predict which metals will displace others from a solution of their salts.</div>
+            </div>
+            
+            <div class="warmup-box">
+              <div class="box-title">Warm Up Question</div>
+              <div class="box-content">Discuss with a partner: How can you tell if a chemical reaction has taken place? Share your ideas with the class.</div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Key Vocabulary",
+      content: `
+        <h2>Key Vocabulary</h2>
+        <div class="vocab-card">
+          <div class="vocab-term">Reactivity</div>
+          <div class="vocab-definition">How easily a substance reacts with other substances. Some metals react more easily than others.</div>
+        </div>
+        <div class="vocab-card">
+          <div class="vocab-term">Reactivity Series</div>
+          <div class="vocab-definition">A list of metals arranged in order of their reactivity, with the most reactive at the top and the least reactive at the bottom.</div>
+        </div>
+        <div class="vocab-card">
+          <div class="vocab-term">Displacement Reaction</div>
+          <div class="vocab-definition">A reaction where a more reactive metal replaces (pushes out) a less reactive metal from its salt solution.</div>
+        </div>
+      `
+    },
+    {
+      title: "What is Reactivity?",
+      content: `
+        <h2>Understanding Reactivity</h2>
+        <div class="concept-card">
+          <p>In Stage 8, you learnt that some metals are more reactive than others by looking at their reactions with:</p>
+          <ul>
+            <li>Oxygen</li>
+            <li>Water (or steam)</li>
+            <li>Dilute acid</li>
+          </ul>
+        </div>
+        <div class="highlight-box">
+          <p>Some metals react much more vigorously than others. We can use the results from these investigations to place metals in order of their <strong>reactivity</strong>.</p>
+        </div>
+      `
+    },
+    {
+      title: "The Reactivity Series",
+      content: `
+        <h2>The Reactivity Series of Metals</h2>
+        <div class="reactivity-list">
+          <ul>
+            <li class="most-reactive">Potassium (K) ⬅ MOST REACTIVE</li>
+            <li>Sodium (Na)</li>
+            <li>Calcium (Ca)</li>
+            <li>Magnesium (Mg)</li>
+            <li>Zinc (Zn)</li>
+            <li>Iron (Fe)</li>
+            <li>Copper (Cu)</li>
+            <li>Silver (Ag)</li>
+            <li class="least-reactive">Gold (Au) ⬅ LEAST REACTIVE</li>
+          </ul>
+        </div>
+        <div class="highlight-box">
+          <p><strong>Remember:</strong> This list is called the <strong>reactivity series</strong>. It has the most reactive metals at the top and the least reactive at the bottom.</p>
+        </div>
+      `
+    },
+    {
+      title: "Reactions Summary Table",
+      content: `
+        <h2>How Metals React</h2>
+        <p style="text-align: center; margin-bottom: 1.5rem;">This table shows a summary of the reactions of metals in the reactivity series:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Metal</th>
+              <th>With Oxygen</th>
+              <th>With Water</th>
+              <th>With Dilute Acid</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Potassium</strong></td>
+              <td>Burns brightly when heated to form an oxide</td>
+              <td>Very vigorous reaction in cold water, hydroxide is formed</td>
+              <td>Violent reaction and very vigorous</td>
+            </tr>
+            <tr>
+              <td><strong>Sodium</strong></td>
+              <td>Burns brightly when heated to form an oxide</td>
+              <td>Very vigorous reaction in cold water, hydroxide is formed</td>
+              <td>Violent reaction and very vigorous</td>
+            </tr>
+            <tr>
+              <td><strong>Calcium</strong></td>
+              <td>Burns brightly in air when heated to form an oxide</td>
+              <td>Slow reaction in cold water to form the hydroxide</td>
+              <td>Reaction becomes less vigorous as you go down the list</td>
+            </tr>
+            <tr>
+              <td><strong>Magnesium</strong></td>
+              <td>Burns brightly in air when heated to form an oxide</td>
+              <td>Slow reaction in cold water to form the hydroxide</td>
+              <td>Reaction becomes less vigorous as you go down the list</td>
+            </tr>
+            <tr>
+              <td><strong>Zinc</strong></td>
+              <td>Slow reaction when heated to form an oxide</td>
+              <td>Reacts with steam but not water to form an oxide</td>
+              <td>Reaction becomes less vigorous as you go down the list</td>
+            </tr>
+            <tr>
+              <td><strong>Iron</strong></td>
+              <td>Slow reaction when heated to form an oxide</td>
+              <td>Reacts with steam but not water to form an oxide</td>
+              <td>Reaction becomes less vigorous as you go down the list</td>
+            </tr>
+            <tr>
+              <td><strong>Copper</strong></td>
+              <td>Slow reaction when heated to form an oxide</td>
+              <td>No reaction with steam or water</td>
+              <td>No reaction</td>
+            </tr>
+            <tr>
+              <td><strong>Silver</strong></td>
+              <td>No reaction</td>
+              <td>No reaction with steam or water</td>
+              <td>No reaction</td>
+            </tr>
+            <tr>
+              <td><strong>Gold</strong></td>
+              <td>No reaction</td>
+              <td>No reaction with steam or water</td>
+              <td>No reaction</td>
+            </tr>
+          </tbody>
+        </table>
+      `
+    },
+    {
+      title: "Check Understanding - Reactivity",
+      content: `
+        <h2>Think-Pair-Share Activity</h2>
+        <div class="question-box">
+          <h3 style="color: white; margin-bottom: 1.5rem;">Questions to Discuss</h3>
+          <p style="font-size: 1.5rem; margin: 1rem 0;">1. Which metal is missing from the reactivity list? Where should it be placed?</p>
+          <p style="font-size: 1.5rem; margin: 1rem 0;">2. Platinum is a precious metal used for jewellery. It stays shiny for a long time. Where in the list would you place platinum?</p>
+          <p style="font-size: 1.5rem; margin: 1rem 0;">3. Look at the table showing reactions. What pattern do you notice as you go down the list?</p>
+        </div>
+        <div class="highlight-box">
+          <p><strong>Instructions:</strong> Think about your answer (30 seconds) → Discuss with your partner (1 minute) → Share with the class</p>
+        </div>
+      `
+    },
+    {
+      title: "What is a Displacement Reaction?",
+      content: `
+        <h2>Displacement Reactions</h2>
+        <div class="concept-card">
+          <p>If you place a clean iron nail in a beaker containing copper sulfate solution, there is an interesting reaction.</p>
+          <p style="margin-top: 1rem;">The blue copper sulfate solution changes to a paler colour. The most remarkable thing is that the nail looks a different colour. <strong>It has become copper coloured.</strong></p>
+        </div>
+        <div class="highlight-box">
+          <p><strong>What has happened?</strong></p>
+          <p>The iron nail has become coated with copper. Iron is more reactive than copper, so it has 'pushed out' the copper from the copper sulfate solution and has reacted to form iron sulfate.</p>
+        </div>
+      `
+    },
+    {
+      title: "Displacement Reaction Equation",
+      content: `
+        <h2>The Chemical Equation</h2>
+        <div class="concept-card">
+          <p style="text-align: center; margin-bottom: 1.5rem;">The word and symbol equations for this reaction are:</p>
+          <div class="equation-box">
+            copper sulfate + iron → iron sulfate + copper
+          </div>
+          <div class="equation-box">
+            CuSO₄ + Fe → FeSO₄ + Cu
+          </div>
+        </div>
+        <div class="highlight-box">
+          <p><strong>This 'pushing out' is called displacement</strong>, so this type of reaction is called a <strong>displacement reaction</strong>.</p>
+          <p style="margin-top: 1rem;"><strong>Key Rule:</strong> A more reactive metal can replace a less reactive one in a salt.</p>
+        </div>
+        <div class="example-box">
+          <h3 style="color: white;">Important!</h3>
+          <p style="font-size: 1.5rem; color: white;">If a copper nail was placed in a solution of iron sulfate there would be no reaction because copper is less reactive than iron. Copper cannot displace the iron in the iron sulfate.</p>
+        </div>
+      `
+    },
+    {
+      title: "Practical Investigation",
+      content: `
+        <h2>Investigation: Displacing Metals</h2>
+        <div class="highlight-box">
+          <p><strong>You will need:</strong> solutions of copper sulfate, magnesium sulfate, iron sulfate and zinc sulfate; small pieces of the metals iron, zinc, copper and magnesium; test tubes, test tube rack, forceps, safety glasses.</p>
+        </div>
+        <div class="method-steps">
+          <h3>Method:</h3>
+          <ol>
+            <li>Read through all the instructions and prepare a results table (you will need to think about this carefully – there are lots of different results to record)</li>
+            <li>Pour copper sulfate solution into three test tubes so that each is about a third full</li>
+            <li>Add a small piece of iron to one test tube, a small piece of magnesium to the second and a small piece of zinc to the third test tube</li>
+            <li>Leave the test tubes for a few minutes</li>
+            <li>Observe carefully and record your observations</li>
+            <li>Repeat steps 2 to 5 using magnesium sulfate solution and the three metals copper, iron and zinc</li>
+            <li>Repeat steps 2 to 5 using iron sulfate solution and the three metals copper, magnesium and zinc</li>
+            <li>Repeat steps 2 to 5 using zinc sulfate solution and the three metals copper, iron and magnesium</li>
+          </ol>
+        </div>
+      `
+    },
+    {
+      title: "Investigation Questions",
+      content: `
+        <h2>Think Like a Scientist</h2>
+        <div class="question-box">
+          <h3 style="color: white; margin-bottom: 1.5rem;">Questions to Answer:</h3>
+          <p style="font-size: 1.5rem; margin: 1rem 0; color: white;">1. How do you know that one metal has displaced another from its salt?</p>
+          <p style="font-size: 1.5rem; margin: 1rem 0; color: white;">2. Which of the four metals was the most reactive?</p>
+          <p style="font-size: 1.5rem; margin: 1rem 0; color: white;">3. Which of the four metals was the least reactive?</p>
+        </div>
+        <div class="highlight-box">
+          <p><strong>Evidence of a reaction:</strong> Look for colour changes in the solution or on the metal surface. A displacement has occurred when you see these changes!</p>
+        </div>
+      `
+    },
+    {
+      title: "Using the Reactivity Series",
+      content: `
+        <h2>Predicting Displacement Reactions</h2>
+        <div class="concept-card">
+          <p>Use the reactivity series to answer these questions:</p>
+        </div>
+        <div class="question-box">
+          <p style="font-size: 1.5rem; margin: 1rem 0; color: white;"><strong>Question 6:</strong> Which is the more reactive metal: zinc or copper?</p>
+          <p style="font-size: 1.5rem; margin: 1rem 0; color: white;"><strong>Question 7:</strong> Can zinc displace the copper in copper sulfate?</p>
+          <p style="font-size: 1.5rem; margin: 1rem 0; color: white;"><strong>Question 8:</strong> Which is more reactive – silver or magnesium?</p>
+          <p style="font-size: 1.5rem; margin: 1rem 0; color: white;"><strong>Question 9:</strong> Can silver displace the magnesium in magnesium sulfate?</p>
+        </div>
+        <div class="highlight-box">
+          <p><strong>Strategy:</strong> Look at the reactivity series. The metal higher up in the series can displace metals lower down from their salt solutions.</p>
+        </div>
+      `
+    },
+    {
+      title: "Exit Ticket & Homework",
+      content: `
+        <h2>Exit Ticket - Show What You Know!</h2>
+        <div class="exit-ticket-box">
+          <h3 style="color: white; margin-bottom: 1.5rem;">Answer This Question Before You Leave:</h3>
+          <p style="font-size: 1.6rem; margin: 1.5rem 0; color: white;"><strong>If you placed a piece of magnesium metal into a beaker of zinc sulfate solution, would a displacement reaction occur? Explain your answer using the reactivity series.</strong></p>
+          <p style="font-size: 1.3rem; margin-top: 2rem; color: white; font-style: italic;">Write your answer on the exit ticket card and hand it in as you leave.</p>
+        </div>
+        <div class="highlight-box">
+          <h3>📚 Homework Assignment</h3>
+          <p style="font-size: 1.5rem; font-weight: 700;">Complete the textbook pages posted on Google Classroom and answer questions 1-9.</p>
+          <p style="margin-top: 1rem; font-size: 1.4rem;">These questions will help you practice using the reactivity series to predict displacement reactions.</p>
+          <p style="margin-top: 1rem; font-size: 1.3rem;"><strong>Due:</strong> Next lesson</p>
+        </div>
+      `
+    }
+  ];
+
+  let currentSlide = 0;
+
+  function updateSlide() {
+    const slideContent = document.getElementById('slide-content');
+    slideContent.innerHTML = slides[currentSlide].content;
+    slideContent.className = 'slide fade-in';
+    slideContent.scrollTop = 0; // Reset scroll to top
+    
+    const progress = ((currentSlide + 1) / slides.length) * 100;
+    document.getElementById('progress-fill').style.width = `${progress}%`;
+    document.getElementById('current-slide').textContent = `Slide ${currentSlide + 1}`;
+    document.getElementById('total-slides').textContent = `of ${slides.length}`;
+    
+    document.getElementById('prev-btn').disabled = currentSlide === 0;
+    document.getElementById('next-btn').disabled = currentSlide === slides.length - 1;
+  }
+
+  function changeSlide(direction) {
+    const newSlide = currentSlide + direction;
+    if (newSlide >= 0 && newSlide < slides.length) {
+      currentSlide = newSlide;
+      updateSlide();
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') changeSlide(-1);
+    if (e.key === 'ArrowRight') changeSlide(1);
+  });
+
+  updateSlide();
+</script>
+
+
+
+</body></html>
