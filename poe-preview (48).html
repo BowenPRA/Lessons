@@ -1,0 +1,1115 @@
+<!DOCTYPE html><html lang="en"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Jeopardy Game - Year 8-9 Multi-Subject</title>
+    <meta name="description" content="Interactive Jeopardy-style game covering Biology, Physics &amp; Chemistry, Mathematics, Literature, Music, and TV &amp; Film for Year 8-9 students">
+    <meta name="subject" content="Multi-Subject">
+    <meta name="year" content="Year 8-9">
+    <meta name="unit" content="Cross-Curricular">
+    <meta name="type" content="game">
+    <meta name="date" content="November 14, 2025">
+    <meta name="tags" content="Jeopardy, Quiz Game, Biology, Physics, Chemistry, Mathematics, Literature, Music, TV &amp; Film, Team Game, Interactive">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .setup-screen, .game-screen {
+            min-height: 100vh;
+            padding: clamp(15px, 3vw, 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .setup-screen {
+            align-items: center;
+            justify-content: center;
+        }
+
+        .setup-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: clamp(25px, 5vw, 50px);
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: clamp(2em, 6vw, 4em);
+            margin-bottom: clamp(20px, 4vw, 40px);
+            font-weight: 900;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s ease infinite;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            letter-spacing: 2px;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .setup-group {
+            margin-bottom: clamp(20px, 3vw, 30px);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: clamp(1em, 2vw, 1.3em);
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: clamp(12px, 2vw, 16px);
+            font-size: clamp(1em, 1.8vw, 1.2em);
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        input:focus {
+            outline: none;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .team-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .team-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .team-input input {
+            flex: 1;
+        }
+
+        .remove-team {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            border: none;
+            padding: clamp(10px, 1.5vw, 14px) clamp(12px, 2vw, 18px);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: clamp(0.9em, 1.5vw, 1.1em);
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .remove-team:hover {
+            transform: scale(1.05) rotate(-5deg);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+        }
+
+        .add-team, .start-game {
+            width: 100%;
+            padding: clamp(14px, 2vw, 18px);
+            font-size: clamp(1.1em, 2vw, 1.4em);
+            font-weight: 700;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-team {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .start-game {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            font-size: clamp(1.3em, 2.5vw, 1.8em);
+            margin-top: clamp(20px, 3vw, 30px);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .add-team:hover, .start-game:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .start-game:hover {
+            background: linear-gradient(135deg, #ffed4e, #ffd700);
+        }
+
+        .game-screen {
+            display: none;
+        }
+
+        .scoreboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: clamp(10px, 2vw, 20px);
+            margin-bottom: clamp(20px, 3vw, 40px);
+            padding: clamp(15px, 2vw, 25px);
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .team-score {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            padding: clamp(15px, 2vw, 25px);
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .team-score::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+
+        .team-score:hover::before {
+            left: 100%;
+        }
+
+        .team-score:hover {
+            transform: scale(1.03);
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+
+        .team-score.active {
+            transform: scale(1.08);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.6), 0 0 60px rgba(255, 215, 0, 0.4);
+            border: 3px solid #ffd700;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 237, 78, 0.3));
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.6), 0 0 60px rgba(255, 215, 0, 0.4); }
+            50% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.8), 0 0 80px rgba(255, 215, 0, 0.6); }
+        }
+
+        .team-name {
+            font-size: clamp(1em, 2vw, 1.4em);
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .team-points {
+            font-size: clamp(1.5em, 3vw, 2.5em);
+            color: #ffd700;
+            font-weight: 900;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr));
+            gap: clamp(8px, 1.5vw, 15px);
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .board {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        .category {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            padding: clamp(15px, 2vw, 25px) clamp(8px, 1vw, 15px);
+            text-align: center;
+            font-size: clamp(0.85em, 1.6vw, 1.3em);
+            font-weight: 900;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .category:hover::before {
+            left: 100%;
+        }
+
+        .question-cell {
+            background: linear-gradient(135deg, rgba(30, 60, 114, 0.95), rgba(42, 82, 152, 0.95));
+            padding: clamp(20px, 3vw, 40px) clamp(10px, 1.5vw, 15px);
+            text-align: center;
+            font-size: clamp(1.5em, 3vw, 2.5em);
+            font-weight: 900;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            border: 3px solid #ffd700;
+            position: relative;
+            overflow: hidden;
+            color: #ffd700;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .question-cell::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .question-cell:hover:not(.answered)::before {
+            width: 300%;
+            height: 300%;
+        }
+
+        .question-cell:hover:not(.answered) {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.6);
+            border-color: #ffed4e;
+        }
+
+        .question-cell.answered {
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.6), rgba(44, 62, 80, 0.6));
+            color: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+            border-color: rgba(127, 140, 141, 0.5);
+            transform: scale(0.95);
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .question-cell.answered::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(2em, 4vw, 3em);
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: clamp(25px, 4vw, 50px);
+            border-radius: 30px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 80px rgba(255, 215, 0, 0.4);
+            border: 3px solid #ffd700;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: clamp(20px, 3vw, 35px);
+        }
+
+        .modal-category {
+            color: #ffd700;
+            font-size: clamp(1.3em, 2.5vw, 2em);
+            margin-bottom: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-value {
+            font-size: clamp(2em, 4vw, 3.5em);
+            color: white;
+            font-weight: 900;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-question {
+            font-size: clamp(1.3em, 2.5vw, 2em);
+            text-align: center;
+            margin: clamp(20px, 3vw, 35px) 0;
+            padding: clamp(20px, 3vw, 30px);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            line-height: 1.5;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-answer {
+            display: none;
+            font-size: clamp(1.2em, 2.2vw, 1.8em);
+            text-align: center;
+            margin: clamp(20px, 3vw, 35px) 0;
+            padding: clamp(20px, 3vw, 30px);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 237, 78, 0.3));
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            color: #ffd700;
+            border: 3px solid #ffd700;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            animation: revealAnswer 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes revealAnswer {
+            from {
+                opacity: 0;
+                transform: scale(0.8) rotateX(-90deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotateX(0);
+            }
+        }
+
+        .modal-answer.visible {
+            display: block;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: clamp(10px, 2vw, 15px);
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: clamp(20px, 3vw, 35px);
+        }
+
+        .modal-button {
+            padding: clamp(12px, 2vw, 18px) clamp(20px, 3vw, 35px);
+            font-size: clamp(1em, 1.8vw, 1.3em);
+            font-weight: 700;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: clamp(120px, 20vw, 160px);
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .reveal-btn {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .correct-btn {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white;
+        }
+
+        .incorrect-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+        }
+
+        .steal-btn {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            color: white;
+        }
+
+        .close-btn {
+            background: linear-gradient(135deg, #a8a8a8, #8c8c8c);
+            color: white;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-button:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .steal-section {
+            display: none;
+            margin-top: clamp(20px, 3vw, 30px);
+            padding: clamp(20px, 3vw, 30px);
+            background: rgba(250, 112, 154, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 3px solid #fa709a;
+            animation: slideUp 0.4s ease;
+        }
+
+        .steal-section.visible {
+            display: block;
+        }
+
+        .steal-title {
+            text-align: center;
+            font-size: clamp(1.1em, 2vw, 1.5em);
+            margin-bottom: clamp(15px, 2vw, 20px);
+            color: #fee140;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .steal-teams {
+            display: flex;
+            gap: clamp(8px, 1.5vw, 12px);
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: clamp(15px, 2vw, 20px);
+        }
+
+        .steal-team-btn {
+            padding: clamp(10px, 1.5vw, 14px) clamp(18px, 2.5vw, 28px);
+            font-size: clamp(0.95em, 1.6vw, 1.2em);
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            color: white;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 15px rgba(250, 112, 154, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .steal-team-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(250, 112, 154, 0.6);
+        }
+
+        .steal-team-btn.selected {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            box-shadow: 0 0 30px rgba(67, 233, 123, 0.8);
+            transform: scale(1.1);
+        }
+
+        .steal-team-btn.selected::after {
+            content: '✓';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+        }
+
+        .steal-confirm {
+            display: none;
+            gap: clamp(8px, 1.5vw, 12px);
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        .steal-confirm.visible {
+            display: flex;
+        }
+
+        .confirm-steal-btn {
+            padding: clamp(12px, 2vw, 16px) clamp(25px, 3vw, 40px);
+            font-size: clamp(1em, 1.8vw, 1.3em);
+            font-weight: 700;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 6px 20px rgba(67, 233, 123, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .confirm-steal-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(67, 233, 123, 0.6);
+        }
+
+        .cancel-steal-btn {
+            padding: clamp(12px, 2vw, 16px) clamp(25px, 3vw, 40px);
+            font-size: clamp(1em, 1.8vw, 1.3em);
+            font-weight: 700;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #a8a8a8, #8c8c8c);
+            color: white;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cancel-steal-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .modal-buttons {
+                flex-direction: column;
+            }
+
+            .modal-button {
+                width: 100%;
+                min-width: unset;
+            }
+
+            .steal-teams {
+                flex-direction: column;
+            }
+
+            .steal-team-btn {
+                width: 100%;
+            }
+
+            .steal-confirm {
+                flex-direction: column;
+            }
+
+            .confirm-steal-btn, .cancel-steal-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .category:nth-child(n+3) {
+                grid-column: span 1;
+            }
+        }
+    </style>
+<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.3f7572448765332f3047.js"></script></head>
+<body>
+    <div class="setup-screen" id="setupScreen">
+        <div class="setup-container">
+            <h1>🎮 JEOPARDY! 🎮</h1>
+            
+            <div class="setup-group">
+                <label>Number of Teams:</label>
+                <input type="number" id="numTeams" min="2" max="6" value="3">
+            </div>
+
+            <div class="setup-group">
+                <label>Team Names:</label>
+                <div class="team-inputs" id="teamInputs"></div>
+                <button class="add-team" onclick="addTeamInput()">+ Add Team</button>
+            </div>
+
+            <button class="start-game" onclick="startGame()">START GAME!</button>
+        </div>
+    </div>
+
+    <div class="game-screen" id="gameScreen">
+        <h1>JEOPARDY!</h1>
+        
+        <div class="scoreboard" id="scoreboard"></div>
+
+        <div class="board" id="board"></div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-category" id="modalCategory"></div>
+                <div class="modal-value" id="modalValue"></div>
+            </div>
+
+            <div class="modal-question" id="modalQuestion"></div>
+            <div class="modal-answer" id="modalAnswer"></div>
+
+            <div class="modal-buttons">
+                <button class="modal-button reveal-btn" id="revealBtn" onclick="revealAnswer()">Reveal Answer</button>
+                <button class="modal-button correct-btn" id="correctBtn" onclick="markCorrect()" style="display:none;">✓ Correct</button>
+                <button class="modal-button incorrect-btn" id="incorrectBtn" onclick="markIncorrect()" style="display:none;">✗ Incorrect</button>
+                <button class="modal-button close-btn" onclick="closeModal()">Close</button>
+            </div>
+
+            <div class="steal-section" id="stealSection">
+                <div class="steal-title">🎯 Select team(s) who stole the points</div>
+                <div class="steal-teams" id="stealTeams"></div>
+                <div class="steal-confirm" id="stealConfirm">
+                    <button class="confirm-steal-btn" onclick="confirmSteal()">✓ Award Points</button>
+                    <button class="cancel-steal-btn" onclick="cancelSteal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const categories = [
+            {
+                name: "BIOLOGY",
+                questions: [
+                    { value: 100, question: "This organ pumps blood around the body.", answer: "What is the heart?" },
+                    { value: 200, question: "The powerhouse of the cell, responsible for producing energy (ATP).", answer: "What are mitochondria?" },
+                    { value: 300, question: "This gas is taken in by plants during photosynthesis and released by animals during respiration.", answer: "What is carbon dioxide?" },
+                    { value: 400, question: "The molecule that carries genetic information in all living organisms, with a double helix structure.", answer: "What is DNA?" },
+                    { value: 500, question: "The tissue in plants responsible for transporting water and minerals from roots to leaves.", answer: "What is xylem?" }
+                ]
+            },
+            {
+                name: "PHYSICS & CHEMISTRY",
+                questions: [
+                    { value: 100, question: "This force pulls objects towards the Earth.", answer: "What is gravity?" },
+                    { value: 200, question: "The three states of matter.", answer: "What are solid, liquid, and gas?" },
+                    { value: 300, question: "The unit used to measure force.", answer: "What is a Newton (N)?" },
+                    { value: 400, question: "When an acid and a base react together, they undergo this type of reaction.", answer: "What is neutralisation?" },
+                    { value: 500, question: "According to this law, energy cannot be created or destroyed, only transferred or transformed.", answer: "What is the law of conservation of energy?" }
+                ]
+            },
+            {
+                name: "MATHS TRIVIA",
+                questions: [
+                    { value: 100, question: "The number of degrees in a right angle.", answer: "What is 90 degrees?" },
+                    { value: 200, question: "The formula for the area of a rectangle.", answer: "What is length × width (or l × w)?" },
+                    { value: 300, question: "The name for a triangle with all three sides equal.", answer: "What is an equilateral triangle?" },
+                    { value: 400, question: "This metric prefix means one million (1,000,000) and is abbreviated with capital M.", answer: "What is mega?" },
+                    { value: 500, question: "This metric prefix means one billionth (0.000000001) and is commonly used in nanotechnology.", answer: "What is nano?" }
+                ]
+            },
+            {
+                name: "LITERATURE",
+                questions: [
+                    { value: 100, question: "The author of the 'Harry Potter' series.", answer: "Who is J.K. Rowling?" },
+                    { value: 200, question: "The young hobbit in 'The Lord of the Rings' who carries the ring.", answer: "Who is Frodo?" },
+                    { value: 300, question: "Shakespeare's play about a Danish prince seeking revenge.", answer: "What is Hamlet?" },
+                    { value: 400, question: "The author of 'To Kill a Mockingbird'.", answer: "Who is Harper Lee?" },
+                    { value: 500, question: "The epic poem by Homer about a Greek hero's journey home.", answer: "What is The Odyssey?" }
+                ]
+            },
+            {
+                name: "MUSIC",
+                questions: [
+                    { value: 100, question: "This British rock band, formed in 1970, sang 'Bohemian Rhapsody' and had a lead singer named Freddie Mercury.", answer: "Who is Queen?" },
+                    { value: 200, question: "This K-pop group, one of the biggest boy bands in the world, has hits including 'Dynamite' and 'Butter'.", answer: "Who is BTS?" },
+                    { value: 300, question: "This artist broke records with her 2022 album 'Midnights' and is known for re-recording her earlier albums.", answer: "Who is Taylor Swift?" },
+                    { value: 400, question: "This band sang 'Yellow' and 'Viva la Vida' and was formed in London in 1997.", answer: "Who is Coldplay?" },
+                    { value: 500, question: "This musical term refers to the speed at which a piece of music is played.", answer: "What is tempo?" }
+                ]
+            },
+            {
+                name: "TV & FILM",
+                questions: [
+                    { value: 100, question: "This Netflix series features the Upside Down and characters named Eleven, Mike, and Dustin.", answer: "What is Stranger Things?" },
+                    { value: 200, question: "In this Disney film series, Elsa has the power to create ice and snow.", answer: "What is Frozen?" },
+                    { value: 300, question: "This HBO fantasy series, based on George R.R. Martin's books, featured dragons and the Iron Throne.", answer: "What is Game of Thrones?" },
+                    { value: 400, question: "This Christopher Nolan film features dreams within dreams and stars Leonardo DiCaprio.", answer: "What is Inception?" },
+                    { value: 500, question: "This 2023 film directed by Greta Gerwig became a cultural phenomenon and stars Margot Robbie in the title role.", answer: "What is Barbie?" }
+                ]
+            }
+        ];
+
+        let teams = [];
+        let currentTeamIndex = 0;
+        let currentQuestion = null;
+        let lastClickTime = 0;
+        let lastClickedTeam = null;
+        let selectedStealTeams = new Set();
+
+        function initTeamInputs() {
+            const numTeams = document.getElementById('numTeams').value;
+            const container = document.getElementById('teamInputs');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < numTeams; i++) {
+                addTeamInput();
+            }
+        }
+
+        function addTeamInput() {
+            const container = document.getElementById('teamInputs');
+            const teamNum = container.children.length + 1;
+            
+            const div = document.createElement('div');
+            div.className = 'team-input';
+            div.innerHTML = `
+                <input type="text" placeholder="Team ${teamNum} Name" value="Team ${teamNum}">
+                ${teamNum > 2 ? '<button class="remove-team" onclick="removeTeamInput(this)">✕</button>' : ''}
+            `;
+            container.appendChild(div);
+        }
+
+        function removeTeamInput(btn) {
+            btn.parentElement.remove();
+            updateTeamNumbers();
+        }
+
+        function updateTeamNumbers() {
+            const inputs = document.querySelectorAll('.team-input input');
+            inputs.forEach((input, index) => {
+                if (!input.value || input.value.startsWith('Team ')) {
+                    input.placeholder = `Team ${index + 1} Name`;
+                }
+            });
+        }
+
+        function startGame() {
+            const teamInputs = document.querySelectorAll('.team-input input');
+            teams = Array.from(teamInputs).map((input, index) => ({
+                name: input.value || `Team ${index + 1}`,
+                score: 0
+            }));
+
+            if (teams.length < 2) {
+                alert('Please add at least 2 teams!');
+                return;
+            }
+
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'flex';
+
+            renderScoreboard();
+            renderBoard();
+        }
+
+        function renderScoreboard() {
+            const scoreboard = document.getElementById('scoreboard');
+            scoreboard.innerHTML = teams.map((team, index) => `
+                <div class="team-score ${index === currentTeamIndex ? 'active' : ''}" 
+                     id="team-${index}"
+                     onclick="handleTeamClick(${index})">
+                    <div class="team-name">${team.name}</div>
+                    <div class="team-points">$${team.score}</div>
+                </div>
+            `).join('');
+        }
+
+        function handleTeamClick(teamIndex) {
+            const currentTime = new Date().getTime();
+            const timeDiff = currentTime - lastClickTime;
+
+            // Check for double-click (within 500ms)
+            if (lastClickedTeam === teamIndex && timeDiff < 500) {
+                // Override turn order
+                currentTeamIndex = teamIndex;
+                renderScoreboard();
+                
+                // Visual feedback
+                const teamElement = document.getElementById(`team-${teamIndex}`);
+                teamElement.style.transform = 'scale(1.15)';
+                setTimeout(() => {
+                    teamElement.style.transform = '';
+                }, 300);
+            }
+
+            lastClickTime = currentTime;
+            lastClickedTeam = teamIndex;
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('board');
+            let html = '';
+
+            // Render category headers
+            categories.forEach(cat => {
+                html += `<div class="category">${cat.name}</div>`;
+            });
+
+            // Render questions
+            for (let i = 0; i < 5; i++) {
+                categories.forEach((cat, catIndex) => {
+                    const question = cat.questions[i];
+                    html += `
+                        <div class="question-cell" onclick="openQuestion(${catIndex}, ${i})" id="cell-${catIndex}-${i}">
+                            $${question.value}
+                        </div>
+                    `;
+                });
+            }
+
+            board.innerHTML = html;
+        }
+
+        function openQuestion(catIndex, qIndex) {
+            const cell = document.getElementById(`cell-${catIndex}-${qIndex}`);
+            if (cell.classList.contains('answered')) return;
+
+            const category = categories[catIndex];
+            const question = category.questions[qIndex];
+            currentQuestion = { catIndex, qIndex, question };
+
+            document.getElementById('modalCategory').textContent = category.name;
+            document.getElementById('modalValue').textContent = `$${question.value}`;
+            document.getElementById('modalQuestion').textContent = question.question;
+            document.getElementById('modalAnswer').textContent = question.answer;
+            document.getElementById('modalAnswer').classList.remove('visible');
+            
+            document.getElementById('revealBtn').style.display = 'block';
+            document.getElementById('correctBtn').style.display = 'none';
+            document.getElementById('incorrectBtn').style.display = 'none';
+            document.getElementById('stealSection').classList.remove('visible');
+            selectedStealTeams.clear();
+
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function revealAnswer() {
+            document.getElementById('modalAnswer').classList.add('visible');
+            document.getElementById('revealBtn').style.display = 'none';
+            document.getElementById('correctBtn').style.display = 'block';
+            document.getElementById('incorrectBtn').style.display = 'block';
+        }
+
+        function markCorrect() {
+            const points = currentQuestion.question.value;
+            teams[currentTeamIndex].score += points;
+            
+            const cell = document.getElementById(`cell-${currentQuestion.catIndex}-${currentQuestion.qIndex}`);
+            cell.classList.add('answered');
+            
+            renderScoreboard();
+            closeModal();
+            nextTeam();
+        }
+
+        function markIncorrect() {
+            document.getElementById('correctBtn').style.display = 'none';
+            document.getElementById('incorrectBtn').style.display = 'none';
+            showStealOptions();
+        }
+
+        function showStealOptions() {
+            const stealSection = document.getElementById('stealSection');
+            const stealTeams = document.getElementById('stealTeams');
+            
+            stealTeams.innerHTML = teams.map((team, index) => {
+                if (index !== currentTeamIndex) {
+                    return `<button class="steal-team-btn" id="steal-btn-${index}" onclick="toggleStealTeam(${index})">${team.name}</button>`;
+                }
+                return '';
+            }).join('');
+            
+            stealSection.classList.add('visible');
+        }
+
+        function toggleStealTeam(teamIndex) {
+            const btn = document.getElementById(`steal-btn-${teamIndex}`);
+            
+            if (selectedStealTeams.has(teamIndex)) {
+                selectedStealTeams.delete(teamIndex);
+                btn.classList.remove('selected');
+            } else {
+                selectedStealTeams.add(teamIndex);
+                btn.classList.add('selected');
+            }
+
+            // Show confirm buttons if at least one team is selected
+            const confirmSection = document.getElementById('stealConfirm');
+            if (selectedStealTeams.size > 0) {
+                confirmSection.classList.add('visible');
+            } else {
+                confirmSection.classList.remove('visible');
+            }
+        }
+
+        function confirmSteal() {
+            if (selectedStealTeams.size === 0) {
+                return;
+            }
+
+            const points = currentQuestion.question.value;
+            
+            // Award points to all selected teams
+            selectedStealTeams.forEach(teamIndex => {
+                teams[teamIndex].score += points;
+            });
+            
+            const cell = document.getElementById(`cell-${currentQuestion.catIndex}-${currentQuestion.qIndex}`);
+            cell.classList.add('answered');
+            
+            selectedStealTeams.clear();
+            renderScoreboard();
+            closeModal();
+            nextTeam();
+        }
+
+        function cancelSteal() {
+            const cell = document.getElementById(`cell-${currentQuestion.catIndex}-${currentQuestion.qIndex}`);
+            cell.classList.add('answered');
+            selectedStealTeams.clear();
+            closeModal();
+            nextTeam();
+        }
+
+        function nextTeam() {
+            currentTeamIndex = (currentTeamIndex + 1) % teams.length;
+            renderScoreboard();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            currentQuestion = null;
+            selectedStealTeams.clear();
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize with default teams
+        document.getElementById('numTeams').addEventListener('change', initTeamInputs);
+        initTeamInputs();
+    </script>
+
+
+</body></html>
