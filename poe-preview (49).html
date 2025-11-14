@@ -1,0 +1,1416 @@
+<!DOCTYPE html><html lang="en"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chemical Naming - Year 8 Science</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366F1;
+      --purple: #8B5CF6;
+      --orange: #F97316;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+      --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+      --gradient-orange: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+      --gradient-primary: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--gradient-primary);
+      color: var(--gray-900);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .app-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .lesson-badge {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .lesson-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    /* Main Content */
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .slide-container {
+      background: white;
+      border-radius: 1.5rem;
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 1200px;
+      height: calc(100vh - 200px);
+      max-height: 700px;
+      overflow: hidden;
+    }
+
+    .slide {
+      height: 100%;
+      overflow-y: auto;
+      padding: 3rem;
+      scroll-behavior: smooth;
+    }
+
+    /* Typography - TV OPTIMIZED */
+    h1 {
+      font-size: 4.5rem;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 2rem;
+      line-height: 1.1;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--gray-800);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    p, li {
+      font-size: 1.5rem;
+      line-height: 1.8;
+      color: var(--gray-700);
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .large-text {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    /* Title Slide */
+    .title-slide {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .title-header {
+      margin-bottom: 3rem;
+    }
+
+    .school-name {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--gray-800);
+      margin-bottom: 1rem;
+    }
+
+    .class-info {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      margin-bottom: 0.5rem;
+    }
+
+    .lesson-date {
+      font-size: 1.5rem;
+      color: var(--gray-500);
+      margin-bottom: 2rem;
+    }
+
+    .unit-topic {
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 3rem;
+    }
+
+    .title-boxes {
+      display: flex;
+      gap: 2rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .objective-box {
+      background: var(--gradient-purple);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      flex: 1;
+    }
+
+    .warmup-box {
+      background: var(--gradient-orange);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      flex: 1;
+    }
+
+    .box-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .box-content {
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    /* Content Cards */
+    .vocab-card {
+      background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+      border: 3px solid var(--primary);
+      padding: 2rem;
+      border-radius: 1rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .vocab-term {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .vocab-definition {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      line-height: 1.6;
+    }
+
+    .concept-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: var(--shadow-xl);
+      margin: 2rem 0;
+      border-top: 6px solid var(--success);
+    }
+
+    .example-box {
+      background: var(--warning);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .question-box {
+      background: var(--danger);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .formula-box {
+      background: #E0E7FF;
+      border: 3px solid var(--primary);
+      padding: 2.5rem;
+      border-radius: 1rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .formula-text {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      font-family: 'Courier New', monospace;
+    }
+
+    .pattern-box {
+      background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+      border-left: 6px solid var(--primary);
+      padding: 2rem;
+      margin: 2rem 0;
+      border-radius: 0.5rem;
+    }
+
+    .pattern-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .column-card {
+      background: var(--gray-50);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 2px solid var(--gray-100);
+    }
+
+    .highlight-box {
+      background: #FEF3C7;
+      border: 3px solid var(--warning);
+      padding: 2rem;
+      border-radius: 1rem;
+      margin: 2rem 0;
+    }
+
+    .steps-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      margin: 2rem 0;
+    }
+
+    .step {
+      background: var(--gray-50);
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border-left: 6px solid var(--success);
+      border-radius: 0.5rem;
+    }
+
+    .step-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--success);
+      margin-bottom: 0.5rem;
+    }
+
+    .practice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .practice-item {
+      background: var(--gray-50);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      border: 2px solid var(--gray-100);
+      text-align: center;
+    }
+
+    .answer-reveal {
+      background: var(--success);
+      color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+      font-weight: 700;
+    }
+
+    /* Navigation */
+    .navigation {
+      background: white;
+      border-top: 1px solid #E5E7EB;
+      padding: 1rem 2rem;
+      box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .navigation-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .progress-container {
+      flex: 1;
+      max-width: 500px;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #E5E7EB;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gradient-primary);
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      background: white;
+      border: 2px solid #D1D5DB;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    ul {
+      padding-left: 2rem;
+    }
+
+    li {
+      margin-bottom: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .title-boxes { flex-direction: column; }
+      .two-column { grid-template-columns: 1fr; }
+      .practice-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 3rem; }
+      h2 { font-size: 2.5rem; }
+      .school-name { font-size: 2rem; }
+      .unit-topic { font-size: 2.5rem; }
+    }
+  </style>
+<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.3f7572448765332f3047.js"></script></head>
+<body>
+
+<div class="app-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <span class="lesson-badge">Year 8</span>
+      <div class="lesson-title">Chemical Naming &amp; Reactions</div>
+      <div>📅 Today</div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    <div class="slide-container">
+      <div class="slide" id="slide-content">
+        <!-- Dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="navigation">
+    <div class="navigation-content">
+      <div class="progress-container">
+        <div class="progress-info">
+          <span id="current-slide">Slide 1</span>
+          <span id="total-slides">of 25</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)" disabled="">⬅ Previous</button>
+        <button class="nav-btn" id="next-btn" onclick="changeSlide(1)">Next ➡</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const slides = [
+    {
+      title: "Welcome",
+      content: `
+        <div class="title-slide">
+          <div class="title-header">
+            <div class="school-name">Palm River Academy</div>
+            <div class="class-info">Year 8 Science</div>
+            <div class="lesson-date">Chemical Naming & Displacement Reactions</div>
+            <div class="unit-topic">Unit 8.3: Reactivity Series</div>
+          </div>
+          
+          <div class="title-boxes">
+            <div class="objective-box">
+              <div class="box-title">Objective</div>
+              <div class="box-content">Write and interpret chemical names using correct prefixes, suffixes, and word equations for displacement reactions</div>
+            </div>
+            
+            <div class="warmup-box">
+              <div class="box-title">Warm Up Question</div>
+              <div class="box-content">If iron replaces copper in copper sulfate, what do you think the new substance would be called?</div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "What is Chemical Naming?",
+      content: `
+        <h2>What is Chemical Naming? 🧪</h2>
+        
+        <div class="concept-card">
+          <h3>Chemical Names Tell Us What's Inside</h3>
+          <p style="font-size: 1.8rem; text-align: center;">Just like your name tells people who you are, chemical names tell us what elements or compounds are in a substance!</p>
+        </div>
+
+        <div class="two-column">
+          <div class="column-card">
+            <h3 style="color: var(--success);">✓ Example: Water</h3>
+            <p><strong>Common name:</strong> Water</p>
+            <p><strong>Chemical name:</strong> Hydrogen oxide</p>
+            <p style="font-size: 1.3rem; margin-top: 1rem;">Contains: Hydrogen + Oxygen</p>
+          </div>
+          
+          <div class="column-card">
+            <h3 style="color: var(--primary);">✓ Example: Table Salt</h3>
+            <p><strong>Common name:</strong> Salt</p>
+            <p><strong>Chemical name:</strong> Sodium chloride</p>
+            <p style="font-size: 1.3rem; margin-top: 1rem;">Contains: Sodium + Chlorine</p>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <p style="font-size: 2rem; font-weight: 700; text-align: center; color: var(--warning);">
+            Today we focus on SALTS formed in displacement reactions!
+          </p>
+        </div>
+      `
+    },
+    {
+      title: "Key Vocabulary - Reactivity",
+      content: `
+        <h2>Key Vocabulary 📚</h2>
+        
+        <div class="vocab-card">
+          <div class="vocab-term">Reactivity</div>
+          <div class="vocab-definition">How easily a substance reacts with other substances (like oxygen, water, or acids)</div>
+        </div>
+
+        <div class="example-box">
+          <h3 style="color: white;">Examples of Reactivity</h3>
+          <p style="font-size: 1.6rem; color: white;">🔥 <strong>High Reactivity:</strong> Sodium explodes in water!</p>
+          <p style="font-size: 1.6rem; color: white;">😴 <strong>Low Reactivity:</strong> Gold stays shiny forever</p>
+        </div>
+
+        <div class="vocab-card">
+          <div class="vocab-term">Reactivity Series</div>
+          <div class="vocab-definition">A list of metals arranged from MOST reactive (top) to LEAST reactive (bottom)</div>
+        </div>
+      `
+    },
+    {
+      title: "The Reactivity Series",
+      content: `
+        <h2>The Reactivity Series 📊</h2>
+        
+        <div class="formula-box" style="background: linear-gradient(180deg, #FEE2E2 0%, #FCA5A5 50%, #FBBF24 70%, #A3E635 90%, #34D399 100%); border: 4px solid var(--gray-800);">
+          <h3 style="color: var(--gray-900); margin-bottom: 2rem;">MOST Reactive (Top) ⬇ LEAST Reactive (Bottom)</h3>
+          <div style="font-size: 2.2rem; font-weight: 800; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); line-height: 2;">
+            <div style="background: rgba(220, 38, 38, 0.8); padding: 0.5rem; margin: 0.5rem; border-radius: 0.5rem;">Potassium (K)</div>
+            <div style="background: rgba(239, 68, 68, 0.8); padding: 0.5rem; margin: 0.5rem; border-radius: 0.5rem;">Sodium (Na)</div>
+            <div style="background: rgba(251, 146, 60, 0.8); padding: 0.5rem; margin: 0.5rem; border-radius: 0.5rem;">Calcium (Ca)</div>
+            <div style="background: rgba(252, 211, 77, 0.8); padding: 0.5rem; margin: 0.5rem; border-radius: 0.5rem;">Magnesium (Mg)</div>
+            <div style="background: rgba(132, 204, 22, 0.8); padding: 0.5rem; margin: 0.5rem; border-radius: 0.5rem;">Zinc (Zn)</div>
+            <div style="background: rgba(34, 197, 94, 0.8); padding: 0.5rem; margin: 0.5rem; border-radius: 0.5rem;">Iron (Fe)</div>
+            <div style="background: rgba(59, 130, 246, 0.8); padding: 0.5rem; margin: 0.5rem; border-radius: 0.5rem;">Copper (Cu)</div>
+            <div style="background: rgba(139, 92, 246, 0.8); padding: 0.5rem; margin: 0.5rem; border-radius: 0.5rem;">Silver (Ag)</div>
+            <div style="background: rgba(168, 85, 247, 0.8); padding: 0.5rem; margin: 0.5rem; border-radius: 0.5rem;">Gold (Au)</div>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <p style="font-size: 2rem; font-weight: 700; text-align: center;">
+            ⚡ Metals at the TOP react easily<br>
+            😴 Metals at the BOTTOM barely react
+          </p>
+        </div>
+      `
+    },
+    {
+      title: "Key Vocabulary - Displacement",
+      content: `
+        <h2>Key Vocabulary 📚</h2>
+        
+        <div class="vocab-card">
+          <div class="vocab-term">Displacement Reaction</div>
+          <div class="vocab-definition">When a MORE reactive metal replaces (pushes out) a LESS reactive metal from its compound</div>
+        </div>
+
+        <div class="example-box">
+          <h3 style="color: white;">Think of it Like a Queue!</h3>
+          <p style="font-size: 1.8rem; color: white; line-height: 2;">
+            A MORE REACTIVE metal is like a pushy person who cuts in line<br><br>
+            They PUSH OUT the less reactive metal from the compound<br><br>
+            A LESS REACTIVE metal is too polite - they can't push anyone out!
+          </p>
+        </div>
+      `
+    },
+    {
+      title: "Parts of a Chemical Name",
+      content: `
+        <h2>Parts of a Chemical Name 🔤</h2>
+        
+        <div class="pattern-box">
+          <div class="pattern-title">All Chemical Names Have TWO Parts:</div>
+          <div style="font-size: 2rem; margin-top: 1.5rem; text-align: center; line-height: 2;">
+            <strong style="color: var(--success);">PART 1: The Metal</strong> (comes first)<br>
+            <strong style="color: var(--primary);">PART 2: The Non-metal</strong> (comes second, with suffix)
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-text" style="font-size: 3rem;">
+            <span style="color: var(--success);">METAL</span> + 
+            <span style="color: var(--primary);">NON-METAL SUFFIX</span>
+          </div>
+        </div>
+
+        <div class="two-column">
+          <div class="column-card" style="border: 3px solid var(--success);">
+            <h3 style="color: var(--success);">PART 1: Metal Names</h3>
+            <p style="font-size: 1.6rem;">✓ Copper</p>
+            <p style="font-size: 1.6rem;">✓ Iron</p>
+            <p style="font-size: 1.6rem;">✓ Zinc</p>
+            <p style="font-size: 1.6rem;">✓ Magnesium</p>
+            <p style="font-size: 1.3rem; margin-top: 1rem; color: var(--gray-600);">Metal names stay the same!</p>
+          </div>
+
+          <div class="column-card" style="border: 3px solid var(--primary);">
+            <h3 style="color: var(--primary);">PART 2: Non-Metal Changes</h3>
+            <p style="font-size: 1.6rem;">Sulfur → Sulf<strong>ate</strong></p>
+            <p style="font-size: 1.6rem;">Chlorine → Chlor<strong>ide</strong></p>
+            <p style="font-size: 1.6rem;">Oxygen → Ox<strong>ide</strong></p>
+            <p style="font-size: 1.6rem;">Nitrogen → Nitr<strong>ate</strong></p>
+            <p style="font-size: 1.3rem; margin-top: 1rem; color: var(--gray-600);">Non-metals get suffixes!</p>
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Suffix Rules - The -IDE Family",
+      content: `
+        <h2>Suffix: -IDE Family 🏠</h2>
+        
+        <div class="vocab-card" style="border-color: var(--success);">
+          <div class="vocab-term">-IDE Suffix Rule</div>
+          <div class="vocab-definition">Use "-ide" when the compound contains ONLY TWO elements (metal + non-metal)</div>
+        </div>
+
+        <div class="pattern-box" style="background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); border-color: var(--success);">
+          <div class="pattern-title" style="color: var(--success);">Common -IDE Endings:</div>
+          <div style="font-size: 1.8rem; margin-top: 1rem; line-height: 2;">
+            <p>Oxygen → Ox<strong>ide</strong></p>
+            <p>Chlorine → Chlor<strong>ide</strong></p>
+            <p>Bromine → Brom<strong>ide</strong></p>
+            <p>Iodine → Iod<strong>ide</strong></p>
+          </div>
+        </div>
+
+        <div class="example-box" style="background: var(--success);">
+          <h3 style="color: white;">-IDE Examples</h3>
+          <div style="font-size: 1.8rem; color: white; line-height: 2.5;">
+            <p>Sodium + Chlorine = Sodium chlor<strong>ide</strong></p>
+            <p>Magnesium + Oxygen = Magnesium ox<strong>ide</strong></p>
+            <p>Zinc + Oxygen = Zinc ox<strong>ide</strong></p>
+            <p>Copper + Oxygen = Copper ox<strong>ide</strong></p>
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Suffix Rules - The -ATE Family",
+      content: `
+        <h2>Suffix: -ATE Family 🏠</h2>
+        
+        <div class="vocab-card" style="border-color: var(--primary);">
+          <div class="vocab-term">-ATE Suffix Rule</div>
+          <div class="vocab-definition">Use "-ate" when the compound contains THREE elements: metal + non-metal + OXYGEN</div>
+        </div>
+
+        <div class="pattern-box" style="background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);">
+          <div class="pattern-title">Common -ATE Endings:</div>
+          <div style="font-size: 1.8rem; margin-top: 1rem; line-height: 2;">
+            <p>Sulfur + Oxygen → Sulf<strong>ate</strong></p>
+            <p>Nitrogen + Oxygen → Nitr<strong>ate</strong></p>
+            <p>Carbon + Oxygen → Carbon<strong>ate</strong></p>
+          </div>
+        </div>
+
+        <div class="example-box" style="background: var(--primary);">
+          <h3 style="color: white;">-ATE Examples (Most Common in Displacement!)</h3>
+          <div style="font-size: 1.8rem; color: white; line-height: 2.5;">
+            <p>Copper + Sulfate = Copper sulf<strong>ate</strong></p>
+            <p>Zinc + Sulfate = Zinc sulf<strong>ate</strong></p>
+            <p>Iron + Sulfate = Iron sulf<strong>ate</strong></p>
+            <p>Magnesium + Sulfate = Magnesium sulf<strong>ate</strong></p>
+            <p>Sodium + Nitrate = Sodium nitr<strong>ate</strong></p>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <p style="font-size: 1.8rem; font-weight: 700; text-align: center;">
+            🎯 In displacement reactions, we usually use SULFATES!<br>
+            Remember: sulfur + oxygen = sulf<strong>ate</strong>
+          </p>
+        </div>
+      `
+    },
+    {
+      title: "Practice: -IDE vs -ATE",
+      content: `
+        <h2>Quick Check: -IDE or -ATE? 🤔</h2>
+        
+        <div class="question-box">
+          <h3 style="color: white; margin-bottom: 2rem;">How many elements are there?</h3>
+          <div style="font-size: 2rem; color: white; line-height: 2.5;">
+            <p>2 elements (metal + non-metal) = <strong>-IDE</strong></p>
+            <p>3 elements (metal + non-metal + oxygen) = <strong>-ATE</strong></p>
+          </div>
+        </div>
+
+        <div class="practice-grid">
+          <div class="practice-item">
+            <p style="font-size: 1.6rem; font-weight: 700; color: var(--primary);">Iron + Oxygen</p>
+            <p style="font-size: 1.4rem; margin-top: 1rem;">How many elements? 2</p>
+            <div class="answer-reveal">Iron oxide (-IDE)</div>
+          </div>
+
+          <div class="practice-item">
+            <p style="font-size: 1.6rem; font-weight: 700; color: var(--primary);">Zinc + Sulfur + Oxygen</p>
+            <p style="font-size: 1.4rem; margin-top: 1rem;">How many elements? 3</p>
+            <div class="answer-reveal">Zinc sulfate (-ATE)</div>
+          </div>
+
+          <div class="practice-item">
+            <p style="font-size: 1.6rem; font-weight: 700; color: var(--primary);">Sodium + Chlorine</p>
+            <p style="font-size: 1.4rem; margin-top: 1rem;">How many elements? 2</p>
+            <div class="answer-reveal">Sodium chloride (-IDE)</div>
+          </div>
+
+          <div class="practice-item">
+            <p style="font-size: 1.6rem; font-weight: 700; color: var(--primary);">Copper + Sulfur + Oxygen</p>
+            <p style="font-size: 1.4rem; margin-top: 1rem;">How many elements? 3</p>
+            <div class="answer-reveal">Copper sulfate (-ATE)</div>
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "What is a Salt?",
+      content: `
+        <h2>What is a Salt? 🧂</h2>
+        
+        <div class="vocab-card">
+          <div class="vocab-term">Salt (in Chemistry)</div>
+          <div class="vocab-definition">A compound formed when a metal combines with a non-metal (or non-metal group)</div>
+        </div>
+
+        <div class="highlight-box">
+          <p style="font-size: 1.8rem; font-weight: 700; text-align: center; line-height: 2;">
+            ⚠️ NOT just table salt!<br><br>
+            In chemistry, "salt" means ANY compound with:<br>
+            <span style="color: var(--success);">Metal</span> + <span style="color: var(--primary);">Non-metal(s)</span>
+          </p>
+        </div>
+
+        <div class="two-column">
+          <div class="column-card" style="background: #FEF3C7;">
+            <h3>Common Salts (with -IDE)</h3>
+            <p style="font-size: 1.5rem;">Sodium chlor<strong>ide</strong> (table salt)</p>
+            <p style="font-size: 1.5rem;">Magnesium ox<strong>ide</strong></p>
+            <p style="font-size: 1.5rem;">Zinc ox<strong>ide</strong></p>
+          </div>
+
+          <div class="column-card" style="background: #DBEAFE;">
+            <h3>Common Salts (with -ATE)</h3>
+            <p style="font-size: 1.5rem;">Copper sulf<strong>ate</strong> (blue crystals)</p>
+            <p style="font-size: 1.5rem;">Zinc sulf<strong>ate</strong></p>
+            <p style="font-size: 1.5rem;">Iron sulf<strong>ate</strong></p>
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Word Equations - Introduction",
+      content: `
+        <h2>Word Equations ✍️</h2>
+        
+        <div class="vocab-card">
+          <div class="vocab-term">Word Equation</div>
+          <div class="vocab-definition">A sentence that describes a chemical reaction using the names of substances (not symbols)</div>
+        </div>
+
+        <div class="formula-box">
+          <div style="font-size: 2.2rem; font-weight: 800; color: var(--gray-800); line-height: 2;">
+            REACTANTS → PRODUCTS<br>
+            <span style="font-size: 1.6rem; color: var(--gray-600);">(what you START with → what you END with)</span>
+          </div>
+        </div>
+
+        <div class="pattern-box">
+          <div class="pattern-title">The Arrow (→) Means:</div>
+          <p style="font-size: 1.8rem; text-align: center; margin-top: 1rem;">
+            "reacts to produce" or "yields" or "makes"
+          </p>
+        </div>
+
+        <div class="example-box">
+          <h3 style="color: white;">Simple Example</h3>
+          <div style="font-size: 2rem; color: white; margin-top: 1rem;">
+            hydrogen + oxygen → water
+          </div>
+          <p style="font-size: 1.5rem; color: white; margin-top: 1rem;">
+            We START with hydrogen and oxygen<br>
+            We END with water
+          </p>
+        </div>
+      `
+    },
+    {
+      title: "Word Equations for Displacement",
+      content: `
+        <h2>Displacement Reaction Pattern 🔄</h2>
+        
+        <div class="formula-box" style="background: #FEF3C7; border-color: var(--warning);">
+          <div class="formula-text" style="font-size: 2rem; color: var(--gray-900); font-weight: 800; line-height: 2;">
+            SALT of LESS REACTIVE METAL<br>
+            +<br>
+            MORE REACTIVE METAL<br>
+            →<br>
+            SALT of MORE REACTIVE METAL<br>
+            +<br>
+            LESS REACTIVE METAL
+          </div>
+        </div>
+
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">STEP 1:</div>
+            <p>Identify which metal is MORE reactive (check reactivity series)</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 2:</div>
+            <p>The MORE reactive metal "kicks out" the less reactive metal</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 3:</div>
+            <p>The MORE reactive metal takes the place in the salt</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 4:</div>
+            <p>The LESS reactive metal is released on its own</p>
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Example 1 - Iron and Copper Sulfate",
+      content: `
+        <h2>Example 1: Iron + Copper Sulfate 🔵</h2>
+        
+        <div class="highlight-box" style="background: #DBEAFE; border-color: var(--primary);">
+          <p style="font-size: 1.8rem; font-weight: 700; text-align: center;">
+            Question: What happens when iron is placed in copper sulfate solution?
+          </p>
+        </div>
+
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">STEP 1: Check Reactivity</div>
+            <p>Iron is ABOVE copper in the series → Iron is MORE reactive ✓</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 2: Identify Starting Materials</div>
+            <p><strong>Reactant 1:</strong> Copper sulfate (the salt)</p>
+            <p><strong>Reactant 2:</strong> Iron (the more reactive metal)</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 3: What Gets Displaced?</div>
+            <p>Iron (more reactive) pushes out copper (less reactive)</p>
+            <p>Iron takes copper's place in the sulfate</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 4: Identify Products</div>
+            <p><strong>Product 1:</strong> Iron sulfate (new salt)</p>
+            <p><strong>Product 2:</strong> Copper (metal released)</p>
+          </div>
+        </div>
+
+        <div class="formula-box" style="background: var(--success); border: none;">
+          <div style="font-size: 2.2rem; font-weight: 800; color: white;">
+            copper sulfate + iron → iron sulfate + copper
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Example 2 - Zinc and Copper Sulfate",
+      content: `
+        <h2>Example 2: Zinc + Copper Sulfate 🔵</h2>
+        
+        <div class="highlight-box" style="background: #DBEAFE; border-color: var(--primary);">
+          <p style="font-size: 1.8rem; font-weight: 700; text-align: center;">
+            Can zinc displace copper from copper sulfate?
+          </p>
+        </div>
+
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">STEP 1: Check Reactivity</div>
+            <p>Zinc is ABOVE copper → Zinc is MORE reactive ✓</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 2: Starting Materials</div>
+            <p>Copper sulfate + Zinc</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 3: Displacement Happens!</div>
+            <p>Zinc (more reactive) replaces copper</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 4: Products</div>
+            <p>Zinc sulfate + Copper</p>
+          </div>
+        </div>
+
+        <div class="formula-box" style="background: var(--success); border: none;">
+          <div style="font-size: 2.2rem; font-weight: 800; color: white;">
+            copper sulfate + zinc → zinc sulfate + copper
+          </div>
+        </div>
+
+        <div class="example-box">
+          <h3 style="color: white;">What You Would See:</h3>
+          <p style="font-size: 1.6rem; color: white; line-height: 2;">
+            ✓ Blue solution (copper sulfate) becomes paler<br>
+            ✓ Brown copper metal coats the zinc<br>
+            ✓ Solution becomes colorless (zinc sulfate is colorless)
+          </p>
+        </div>
+      `
+    },
+    {
+      title: "Example 3 - Magnesium and Zinc Sulfate",
+      content: `
+        <h2>Example 3: Magnesium + Zinc Sulfate ⚪</h2>
+        
+        <div class="highlight-box" style="background: #DBEAFE; border-color: var(--primary);">
+          <p style="font-size: 1.8rem; font-weight: 700; text-align: center;">
+            Can magnesium displace zinc from zinc sulfate?
+          </p>
+        </div>
+
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">STEP 1: Check Reactivity</div>
+            <p>Magnesium is ABOVE zinc → Magnesium is MORE reactive ✓</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 2: Starting Materials</div>
+            <p>Zinc sulfate + Magnesium</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 3: Displacement Happens!</div>
+            <p>Magnesium (more reactive) replaces zinc</p>
+          </div>
+
+          <div class="step">
+            <div class="step-number">STEP 4: Products</div>
+            <p>Magnesium sulfate + Zinc</p>
+          </div>
+        </div>
+
+        <div class="formula-box" style="background: var(--success); border: none;">
+          <div style="font-size: 2.2rem; font-weight: 800; color: white;">
+            zinc sulfate + magnesium → magnesium sulfate + zinc
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Non-Example - Silver and Magnesium",
+      content: `
+        <h2>Non-Example: Silver + Magnesium Sulfate ❌</h2>
+        
+        <div class="highlight-box" style="background: #FEE2E2; border-color: var(--danger);">
+          <p style="font-size: 1.8rem; font-weight: 700; text-align: center; color: var(--danger);">
+            Can silver displace magnesium from magnesium sulfate?
+          </p>
+        </div>
+
+        <div class="steps-container">
+          <div class="step" style="border-color: var(--danger);">
+            <div class="step-number" style="color: var(--danger);">STEP 1: Check Reactivity</div>
+            <p>Silver is BELOW magnesium → Silver is LESS reactive ❌</p>
+          </div>
+
+          <div class="step" style="border-color: var(--danger);">
+            <div class="step-number" style="color: var(--danger);">STEP 2: Can Displacement Happen?</div>
+            <p><strong style="color: var(--danger);">NO!</strong> Less reactive metals CANNOT displace more reactive metals</p>
+          </div>
+
+          <div class="step" style="border-color: var(--danger);">
+            <div class="step-number" style="color: var(--danger);">STEP 3: What Happens?</div>
+            <p>NOTHING - No reaction occurs</p>
+          </div>
+        </div>
+
+        <div class="question-box">
+          <div style="font-size: 2.5rem; font-weight: 800; color: white;">
+            NO REACTION
+          </div>
+          <p style="font-size: 1.6rem; color: white; margin-top: 1rem;">
+            Silver stays as silver<br>
+            Magnesium sulfate stays as magnesium sulfate<br>
+            Nothing changes!
+          </p>
+        </div>
+      `
+    },
+    {
+      title: "Quick Check Rule",
+      content: `
+        <h2>The Golden Rule ⭐</h2>
+        
+        <div class="formula-box" style="background: linear-gradient(135deg, #FDE68A 0%, #FCD34D 100%); border: 4px solid var(--warning);">
+          <div style="font-size: 2.5rem; font-weight: 900; color: var(--gray-900); line-height: 2;">
+            For displacement to happen:<br><br>
+            <span style="color: var(--danger);">MORE REACTIVE</span><br>
+            must be ADDED to<br>
+            <span style="color: var(--primary);">LESS REACTIVE</span>'s salt
+          </div>
+        </div>
+
+        <div class="two-column" style="margin-top: 3rem;">
+          <div class="column-card" style="background: #D1FAE5; border: 3px solid var(--success);">
+            <h3 style="color: var(--success); text-align: center;">✓ WILL React</h3>
+            <p style="font-size: 1.5rem; text-align: center; margin-top: 1rem;">
+              Adding metal HIGHER in series<br>to<br>salt of metal LOWER in series
+            </p>
+          </div>
+
+          <div class="column-card" style="background: #FEE2E2; border: 3px solid var(--danger);">
+            <h3 style="color: var(--danger); text-align: center;">✗ WON'T React</h3>
+            <p style="font-size: 1.5rem; text-align: center; margin-top: 1rem;">
+              Adding metal LOWER in series<br>to<br>salt of metal HIGHER in series
+            </p>
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Practice Problems - Set 1",
+      content: `
+        <h2>Practice: Will it React? 🤔</h2>
+        
+        <div class="practice-grid">
+          <div class="practice-item">
+            <p style="font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem;">Iron + Copper sulfate</p>
+            <p style="font-size: 1.3rem; color: var(--gray-600);">Iron is ABOVE copper</p>
+            <div class="answer-reveal">✓ YES - Reaction occurs!</div>
+          </div>
+
+          <div class="practice-item">
+            <p style="font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem;">Copper + Iron sulfate</p>
+            <p style="font-size: 1.3rem; color: var(--gray-600);">Copper is BELOW iron</p>
+            <div class="answer-reveal" style="background: var(--danger);">✗ NO - No reaction</div>
+          </div>
+
+          <div class="practice-item">
+            <p style="font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem;">Calcium + Magnesium sulfate</p>
+            <p style="font-size: 1.3rem; color: var(--gray-600);">Calcium is ABOVE magnesium</p>
+            <div class="answer-reveal">✓ YES - Reaction occurs!</div>
+          </div>
+
+          <div class="practice-item">
+            <p style="font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem;">Zinc + Sodium chloride</p>
+            <p style="font-size: 1.3rem; color: var(--gray-600);">Zinc is BELOW sodium</p>
+            <div class="answer-reveal" style="background: var(--danger);">✗ NO - No reaction</div>
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Practice Problems - Set 2",
+      content: `
+        <h2>Practice: Write the Word Equation ✍️</h2>
+        
+        <div class="question-box">
+          <h3 style="color: white;">Problem 1</h3>
+          <p style="font-size: 1.6rem; color: white;">Magnesium is added to copper sulfate solution</p>
+        </div>
+        
+        <div class="steps-container">
+          <div class="step">
+            <p><strong>Check:</strong> Magnesium is ABOVE copper ✓</p>
+          </div>
+          <div class="step">
+            <p><strong>Reactants:</strong> copper sulfate + magnesium</p>
+          </div>
+          <div class="step">
+            <p><strong>Products:</strong> magnesium sulfate + copper</p>
+          </div>
+        </div>
+
+        <div class="formula-box" style="background: var(--success); border: none; margin-top: 2rem;">
+          <div style="font-size: 2rem; font-weight: 800; color: white;">
+            copper sulfate + magnesium<br>→<br>magnesium sulfate + copper
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Practice Problems - Set 3",
+      content: `
+        <h2>Practice: Write the Word Equation ✍️</h2>
+        
+        <div class="question-box">
+          <h3 style="color: white;">Problem 2</h3>
+          <p style="font-size: 1.6rem; color: white;">Zinc is placed in iron sulfate solution</p>
+        </div>
+        
+        <div class="steps-container">
+          <div class="step">
+            <p><strong>Check:</strong> Zinc is ABOVE iron ✓</p>
+          </div>
+          <div class="step">
+            <p><strong>Reactants:</strong> iron sulfate + zinc</p>
+          </div>
+          <div class="step">
+            <p><strong>Products:</strong> zinc sulfate + iron</p>
+          </div>
+        </div>
+
+        <div class="formula-box" style="background: var(--success); border: none; margin-top: 2rem;">
+          <div style="font-size: 2rem; font-weight: 800; color: white;">
+            iron sulfate + zinc<br>→<br>zinc sulfate + iron
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Common Mistakes to Avoid",
+      content: `
+        <h2>Common Mistakes ⚠️</h2>
+        
+        <div class="highlight-box" style="background: #FEE2E2; border-color: var(--danger);">
+          <h3 style="color: var(--danger); margin-bottom: 1.5rem;">Mistake #1: Wrong Suffix</h3>
+          <p style="font-size: 1.6rem; color: var(--gray-800); line-height: 2;">
+            ❌ Iron sulfide (Wrong!)<br>
+            ✓ Iron sulfate (Correct!)<br><br>
+            <strong>Why?</strong> Sulfate has sulfur + oxygen (3 elements) so use -ATE
+          </p>
+        </div>
+
+        <div class="highlight-box" style="background: #FEE2E2; border-color: var(--danger); margin-top: 2rem;">
+          <h3 style="color: var(--danger); margin-bottom: 1.5rem;">Mistake #2: Mixing Up Products</h3>
+          <p style="font-size: 1.6rem; color: var(--gray-800); line-height: 2;">
+            ❌ copper sulfate + iron → copper + iron (Wrong!)<br>
+            ✓ copper sulfate + iron → iron sulfate + copper (Correct!)<br><br>
+            <strong>Why?</strong> The MORE reactive metal (iron) takes the sulfate!
+          </p>
+        </div>
+
+        <div class="highlight-box" style="background: #FEE2E2; border-color: var(--danger); margin-top: 2rem;">
+          <h3 style="color: var(--danger); margin-bottom: 1.5rem;">Mistake #3: Forgetting to Check Reactivity</h3>
+          <p style="font-size: 1.6rem; color: var(--gray-800); line-height: 2;">
+            Always check the reactivity series FIRST!<br>
+            If the added metal is BELOW (less reactive), NO REACTION happens!
+          </p>
+        </div>
+      `
+    },
+    {
+      title: "Evidence of Reactions",
+      content: `
+        <h2>How Do We Know a Reaction Happened? 👀</h2>
+        
+        <div class="vocab-card">
+          <div class="vocab-term">Evidence</div>
+          <div class="vocab-definition">Observable changes that show a chemical reaction has occurred</div>
+        </div>
+
+        <div class="two-column" style="margin-top: 2rem;">
+          <div class="column-card" style="background: #DBEAFE; border: 3px solid var(--primary);">
+            <h3 style="color: var(--primary);">Visual Evidence</h3>
+            <p style="font-size: 1.5rem; margin-top: 1rem;">
+              🔵 Color change in solution<br><br>
+              Example: Blue copper sulfate → Colorless zinc sulfate
+            </p>
+          </div>
+
+          <div class="column-card" style="background: #FED7AA; border: 3px solid var(--warning);">
+            <h3 style="color: var(--warning);">Physical Evidence</h3>
+            <p style="font-size: 1.5rem; margin-top: 1rem;">
+              ✨ Metal coating forms<br><br>
+              Example: Brown copper coats iron nail
+            </p>
+          </div>
+        </div>
+
+        <div class="example-box" style="margin-top: 2rem;">
+          <h3 style="color: white;">Iron + Copper Sulfate Evidence</h3>
+          <p style="font-size: 1.6rem; color: white; line-height: 2;">
+            BEFORE: Blue solution, grey iron nail<br><br>
+            AFTER: Paler blue solution, nail coated with brown copper<br><br>
+            This proves displacement happened!
+          </p>
+        </div>
+      `
+    },
+    {
+      title: "Metal Reactions Beyond Displacement",
+      content: `
+        <h2>How Else Do Metals React? 🔥</h2>
+        
+        <div class="pattern-box">
+          <div class="pattern-title">Metals React with Different Substances:</div>
+        </div>
+
+        <div class="two-column">
+          <div class="column-card" style="background: #FEE2E2;">
+            <h3>Reaction with Oxygen</h3>
+            <p style="font-size: 1.4rem; margin-top: 1rem;">
+              More reactive metals (like potassium, sodium) burn brightly<br><br>
+              Forms: Metal oxide<br><br>
+              Example: magnesium + oxygen → magnesium oxide
+            </p>
+          </div>
+
+          <div class="column-card" style="background: #DBEAFE;">
+            <h3>Reaction with Water</h3>
+            <p style="font-size: 1.4rem; margin-top: 1rem;">
+              Very reactive metals (potassium, sodium) react with COLD water<br><br>
+              Moderately reactive (zinc, iron) react with STEAM only
+            </p>
+          </div>
+        </div>
+
+        <div class="two-column" style="margin-top: 1rem;">
+          <div class="column-card" style="background: #D1FAE5;">
+            <h3>Reaction with Dilute Acid</h3>
+            <p style="font-size: 1.4rem; margin-top: 1rem;">
+              Reactive metals fizz in acid<br><br>
+              Unreactive metals (copper, silver, gold) don't react with dilute acid
+            </p>
+          </div>
+
+          <div class="column-card" style="background: #FEF3C7;">
+            <h3>Precious Metals</h3>
+            <p style="font-size: 1.4rem; margin-top: 1rem;">
+              Gold, silver, platinum stay shiny<br><br>
+              Very low reactivity = very valuable!
+            </p>
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Summary Slide",
+      content: `
+        <h2>Lesson Summary 📝</h2>
+        
+        <div class="concept-card">
+          <h3>Key Learning Points:</h3>
+          <ul style="margin-top: 1rem;">
+            <li>Chemical names have TWO parts: Metal + Non-metal (with suffix)</li>
+            <li>Use <strong>-ide</strong> for 2 elements (e.g., sodium chloride)</li>
+            <li>Use <strong>-ate</strong> for 3 elements with oxygen (e.g., copper sulfate)</li>
+            <li>Reactivity series orders metals from most to least reactive</li>
+            <li>More reactive metals displace less reactive metals from salts</li>
+            <li>Word equations show: reactants → products</li>
+            <li>Pattern: salt + more reactive metal → new salt + displaced metal</li>
+          </ul>
+        </div>
+
+        <div class="formula-box" style="background: var(--gradient-primary); border: none; margin-top: 2rem;">
+          <div style="font-size: 2.2rem; font-weight: 800; color: white; line-height: 2;">
+            Always check reactivity series FIRST!<br><br>
+            Higher = More reactive = Can displace<br>
+            Lower = Less reactive = Cannot displace
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Practice Quiz Preview",
+      content: `
+        <h2>Ready for the Quiz? 🎯</h2>
+        
+        <div class="highlight-box">
+          <h3 style="text-align: center; margin-bottom: 2rem;">You Should Be Able To:</h3>
+          <ul style="font-size: 1.6rem; line-height: 2.5;">
+            <li>✓ Identify which metal is more/less reactive using the series</li>
+            <li>✓ Predict if a displacement reaction will occur</li>
+            <li>✓ Write correct chemical names with proper suffixes</li>
+            <li>✓ Write word equations for displacement reactions</li>
+            <li>✓ Explain what happens during a reaction</li>
+            <li>✓ Recognize evidence that a reaction occurred</li>
+          </ul>
+        </div>
+
+        <div class="example-box" style="margin-top: 2rem;">
+          <h3 style="color: white;">Sample Quiz Question:</h3>
+          <p style="font-size: 1.8rem; color: white; line-height: 2; margin-top: 1rem;">
+            "Can magnesium displace zinc from zinc sulfate solution?"<br><br>
+            Answer: YES - Magnesium is ABOVE zinc in the reactivity series, so it is more reactive and can displace zinc!
+          </p>
+        </div>
+
+        <div class="question-box" style="margin-top: 2rem;">
+          <p style="font-size: 2rem; color: white; font-weight: 700;">
+            Good luck! Remember to check the reactivity series for every question! 🌟
+          </p>
+        </div>
+      `
+    }
+  ];
+
+  let currentSlide = 0;
+
+  function updateSlide() {
+    const slideContent = document.getElementById('slide-content');
+    slideContent.innerHTML = slides[currentSlide].content;
+    slideContent.className = 'slide fade-in';
+    
+    const progress = ((currentSlide + 1) / slides.length) * 100;
+    document.getElementById('progress-fill').style.width = `${progress}%`;
+    document.getElementById('current-slide').textContent = `Slide ${currentSlide + 1}`;
+    document.getElementById('total-slides').textContent = `of ${slides.length}`;
+    
+    document.getElementById('prev-btn').disabled = currentSlide === 0;
+    document.getElementById('next-btn').disabled = currentSlide === slides.length - 1;
+  }
+
+  function changeSlide(direction) {
+    const newSlide = currentSlide + direction;
+    if (newSlide >= 0 && newSlide < slides.length) {
+      currentSlide = newSlide;
+      updateSlide();
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') changeSlide(-1);
+    if (e.key === 'ArrowRight') changeSlide(1);
+  });
+
+  updateSlide();
+</script>
+
+
+
+</body></html>
