@@ -77,6 +77,9 @@
       box-shadow: var(--shadow-md);
       flex-shrink: 0;
       border-bottom: 1px solid var(--gray-200);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     .header-content {
@@ -314,7 +317,7 @@
       display: flex;
       flex-direction: column;
       gap: 1.75rem;
-      min-height: 650px;
+      min-height: 500px;
     }
 
     .difficulty-badge {
@@ -352,7 +355,7 @@
     }
 
     .problem-label {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: var(--primary);
       text-transform: uppercase;
@@ -369,13 +372,13 @@
       margin: 0.5rem 0;
       position: relative;
       z-index: 1;
+      line-height: 1.4;
     }
 
     .current-step-container {
       background: white;
       border-radius: 1rem;
       padding: 2rem 1.5rem;
-      min-height: 350px;
       display: flex;
       flex-direction: column;
       border: 2px solid var(--gray-200);
@@ -422,8 +425,7 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      gap: 2rem;
+      gap: 1.75rem;
     }
 
     .step-instruction {
@@ -453,7 +455,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
     .equation-row {
@@ -465,30 +467,43 @@
       font-family: 'Courier New', monospace;
       font-weight: 700;
       flex-wrap: wrap;
+      position: relative;
+    }
+
+    .equation-side {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
 
     .operation-row {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      gap: 3rem;
+      gap: 0.75rem;
       font-size: 1.75rem;
       font-family: 'Courier New', monospace;
       font-weight: 700;
       color: var(--danger);
       border-top: 3px dashed var(--gray-300);
-      padding-top: 1rem;
+      padding-top: 0.75rem;
       width: 100%;
-      max-width: 500px;
     }
 
     .operation-side {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.5rem;
       padding: 0.5rem 1rem;
       background: rgba(239, 68, 68, 0.1);
       border-radius: 0.5rem;
+      min-width: 120px;
+    }
+
+    .operation-spacer {
+      min-width: 90px;
+      visibility: hidden;
     }
 
     .term {
@@ -734,6 +749,7 @@
       font-family: 'Courier New', monospace;
       font-weight: 800;
       color: var(--gray-800);
+      line-height: 1.4;
     }
 
     .progress-bar {
@@ -764,19 +780,21 @@
     }
 
     .next-question-btn {
-      padding: 1.25rem 3.5rem;
+      padding: 1.5rem 4rem;
       background: var(--gradient-success);
       color: white;
       border: none;
-      border-radius: 0.75rem;
-      font-size: 1.3rem;
-      font-weight: 800;
+      border-radius: 1rem;
+      font-size: 1.4rem;
+      font-weight: 900;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: var(--shadow-xl);
       align-self: center;
       position: relative;
       overflow: hidden;
+      letter-spacing: 0.025em;
+      text-transform: uppercase;
     }
 
     .next-question-btn::before {
@@ -794,17 +812,17 @@
       left: 100%;
     }
 
-    .next-question-btn:hover {
-      transform: translateY(-3px);
+    .next-question-btn:hover:not(:disabled) {
+      transform: translateY(-3px) scale(1.02);
       box-shadow: 0 30px 40px -10px rgba(16, 185, 129, 0.4);
     }
 
-    .next-question-btn:active {
-      transform: translateY(-1px);
+    .next-question-btn:active:not(:disabled) {
+      transform: translateY(-1px) scale(1.01);
     }
 
     .next-question-btn:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: not-allowed;
       transform: none;
     }
@@ -812,23 +830,36 @@
     .completion-message {
       background: var(--gradient-success);
       color: white;
-      padding: 2rem 1.5rem;
+      padding: 2.5rem 2rem;
       border-radius: 1.25rem;
       text-align: center;
       box-shadow: var(--shadow-xl);
       animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 4px solid rgba(255, 255, 255, 0.3);
     }
 
     .completion-title {
-      font-size: 2.25rem;
+      font-size: 2.5rem;
       font-weight: 900;
-      margin-bottom: 0.75rem;
+      margin-bottom: 1rem;
       letter-spacing: -0.025em;
     }
 
     .completion-text {
       font-size: 1.3rem;
       font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .completion-answer {
+      font-family: 'Courier New', monospace;
+      font-size: 1.5rem;
+      font-weight: 900;
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 0.75rem;
+      border: 2px dashed rgba(255, 255, 255, 0.5);
     }
 
     .help-toggle {
@@ -921,6 +952,7 @@
       font-size: 0.95rem;
       border-left: 4px solid var(--primary);
       box-shadow: var(--shadow-sm);
+      line-height: 1.8;
     }
 
     .close-modal {
@@ -984,7 +1016,7 @@
 
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.08); }
+      50% { transform: scale(1.1); }
     }
 
     @keyframes successPulse {
@@ -1048,6 +1080,9 @@
       .equals {
         font-size: 2rem;
       }
+      .operation-row {
+        font-size: 1.4rem;
+      }
       .work-equation {
         font-size: 1.4rem;
       }
@@ -1057,17 +1092,12 @@
       }
       .current-step-container {
         padding: 1.5rem 1rem;
-        min-height: auto;
       }
       .step-title {
         font-size: 1.2rem;
       }
       .instruction-text {
         font-size: 1.1rem;
-      }
-      .operation-row {
-        font-size: 1.4rem;
-        gap: 2rem;
       }
       .header-content {
         justify-content: center;
@@ -1090,6 +1120,20 @@
         right: 1.5rem;
         padding: 0.85rem 1.5rem;
         font-size: 0.9rem;
+      }
+      .next-question-btn {
+        width: 100%;
+        padding: 1.25rem 2rem;
+        font-size: 1.2rem;
+      }
+      .completion-title {
+        font-size: 2rem;
+      }
+      .completion-text {
+        font-size: 1.1rem;
+      }
+      .completion-answer {
+        font-size: 1.3rem;
       }
     }
 
@@ -1114,11 +1158,11 @@
         <div class="game-title">Algebra Master</div>
       </div>
       <button class="home-btn" id="home-btn" onclick="goHome()" style="display: none;">
-        🏠 Back to Menu
+        🏠 Menu
       </button>
       <div class="score-display">
         <div class="score-item">
-          <div class="score-label">Total Score</div>
+          <div class="score-label">Score</div>
           <div class="score-value" id="total-score">0</div>
         </div>
         <div class="score-item">
@@ -1133,7 +1177,7 @@
     <div class="game-container">
       <div class="menu-screen" id="menu-screen">
         <h1 class="menu-title">Algebra Master</h1>
-        <p class="menu-subtitle">Master algebra step by step!</p>
+        <p class="menu-subtitle">Choose your challenge and master algebra step-by-step!</p>
         
         <div class="difficulty-buttons">
           <button class="difficulty-btn easy-btn" onclick="startGame('easy')">
@@ -1149,16 +1193,16 @@
 
         <div class="difficulty-info">
           <div class="info-item">
-            <div class="info-title">🌱 Easy: Simplifying Expressions</div>
-            <div class="info-desc">Combine like terms with a single variable. Example: 3x + 5x + 7 → 8x + 7</div>
+            <div class="info-title">🌱 Easy: Solving Linear Equations</div>
+            <div class="info-desc">Master the fundamentals! Solve one-step and two-step equations with guidance. Perfect for building confidence with negatives and inverse operations. Example: 3x - 7 = 11</div>
           </div>
           <div class="info-item">
-            <div class="info-title">🔥 Medium: Solving Linear Equations</div>
-            <div class="info-desc">Solve equations step-by-step. Example: 2x + 5 = 13 → x = 4</div>
+            <div class="info-title">🔥 Medium: Simplifying Expressions</div>
+            <div class="info-desc">Sharpen your skills! Combine like terms with multiple variables and constants, including negatives and subtraction. Example: 5x - 2x + 8 - 3 → 3x + 5</div>
           </div>
           <div class="info-item">
             <div class="info-title">⚡ Hard: Multi-Step Equations</div>
-            <div class="info-desc">Combine terms on both sides and solve. Example: 4x + 7 = 2x + 15 → x = 4</div>
+            <div class="info-desc">Take on the challenge! Solve complex equations with variables and constants on both sides. Requires combining all your algebra skills. Example: 5x - 4 = 2x + 8</div>
           </div>
         </div>
       </div>
@@ -1169,57 +1213,72 @@
         </div>
 
         <div class="problem-display">
-          <div class="problem-label">Original Problem</div>
+          <div class="problem-label">Problem #<span id="problem-number">1</span></div>
           <div class="expression" id="problem-expression"></div>
         </div>
 
         <div class="progress-bar" id="progress-bar"></div>
 
-        <div class="current-step-container fade-in" id="step-container"></div>
+        <div class="current-step-container" id="step-container"></div>
 
         <button class="next-question-btn" id="next-btn" style="display: none;" onclick="nextQuestion()">
-          Next Question ➡️
+          Next Problem ➡️
         </button>
-
-        <div id="completion-area" style="min-height: 0;"></div>
       </div>
     </div>
   </div>
 
-  <button class="help-toggle" onclick="toggleHelp()">📚 How to Solve</button>
+  <button class="help-toggle" onclick="toggleHelp()">📚 Help Guide</button>
 
-  <div class="help-modal" id="help-modal" onclick="toggleHelp()">
+  <div class="help-modal" id="help-modal" onclick="closeHelpIfBackground(event)">
     <div class="help-content" onclick="event.stopPropagation()">
-      <h2>📖 How to Solve Algebra Problems</h2>
+      <h2>📖 Algebra Solving Guide</h2>
       
       <div class="help-section">
-        <h3>🌱 Easy: Simplifying Expressions</h3>
-        <p>Combine like terms by adding their coefficients together.</p>
+        <h3>🎯 Golden Rules of Algebra</h3>
+        <p><strong>1. Balance is Everything:</strong> Whatever you do to one side of an equation, you MUST do to the other side.<br>
+        <strong>2. Work Backwards:</strong> Use inverse operations (opposite operations) to isolate the variable.<br>
+        <strong>3. Watch the Signs:</strong> Pay close attention to positive and negative signs!</p>
+      </div>
+
+      <div class="help-section">
+        <h3>🌱 Easy: Solving Linear Equations</h3>
+        <p>Start by undoing addition/subtraction, then undo multiplication/division.</p>
         <div class="example">
-          <strong>Example:</strong> 3x + 5x + 7<br>
-          <strong>Step 1:</strong> Add coefficients: 3 + 5 = 8<br>
-          <strong>Answer:</strong> 8x + 7
+          <strong>Example:</strong> 3x - 7 = 11<br>
+          <strong>Step 1:</strong> Add 7 to both sides<br>
+          &nbsp;&nbsp;3x - 7 + 7 = 11 + 7<br>
+          &nbsp;&nbsp;3x = 18<br>
+          <strong>Step 2:</strong> Divide both sides by 3<br>
+          &nbsp;&nbsp;3x ÷ 3 = 18 ÷ 3<br>
+          &nbsp;&nbsp;<strong>x = 6</strong>
         </div>
       </div>
 
       <div class="help-section">
-        <h3>🔥 Medium: Solving Linear Equations</h3>
-        <p>Isolate the variable by using inverse operations step by step.</p>
+        <h3>🔥 Medium: Simplifying Expressions</h3>
+        <p>Combine all terms with the same variable, then combine all constant numbers.</p>
         <div class="example">
-          <strong>Example:</strong> 2x + 5 = 13<br>
-          <strong>Step 1:</strong> Subtract 5 from both sides → 2x = 8<br>
-          <strong>Step 2:</strong> Divide both sides by 2 → x = 4
+          <strong>Example:</strong> 5x - 2x + 8 - 3<br>
+          <strong>Step 1:</strong> Combine x terms<br>
+          &nbsp;&nbsp;5x - 2x = 3x<br>
+          <strong>Step 2:</strong> Combine constants<br>
+          &nbsp;&nbsp;8 - 3 = 5<br>
+          <strong>Answer:</strong> <strong>3x + 5</strong>
         </div>
       </div>
 
       <div class="help-section">
         <h3>⚡ Hard: Multi-Step Equations</h3>
-        <p>Combine like terms, move variables to one side, then solve.</p>
+        <p>First collect all variable terms on one side and constants on the other, then solve.</p>
         <div class="example">
-          <strong>Example:</strong> 4x + 7 = 2x + 15<br>
-          <strong>Step 1:</strong> Subtract 2x from both sides → 2x + 7 = 15<br>
-          <strong>Step 2:</strong> Subtract 7 from both sides → 2x = 8<br>
-          <strong>Step 3:</strong> Divide both sides by 2 → x = 4
+          <strong>Example:</strong> 5x - 4 = 2x + 8<br>
+          <strong>Step 1:</strong> Subtract 2x from both sides<br>
+          &nbsp;&nbsp;3x - 4 = 8<br>
+          <strong>Step 2:</strong> Add 4 to both sides<br>
+          &nbsp;&nbsp;3x = 12<br>
+          <strong>Step 3:</strong> Divide both sides by 3<br>
+          &nbsp;&nbsp;<strong>x = 4</strong>
         </div>
       </div>
 
@@ -1236,10 +1295,10 @@
   let currentStep = 1;
   let stepAttempts = [];
   let questionsCompleted = 0;
-  let questionCompleted = false; // Prevent duplicate scoring
+  let questionCompleted = false;
 
   function goHome() {
-    if (confirm('Are you sure you want to return to the menu? Your current progress will be saved.')) {
+    if (confirm('Return to menu? Your progress will be saved.')) {
       document.getElementById('game-screen').style.display = 'none';
       document.getElementById('menu-screen').style.display = 'flex';
       document.getElementById('home-btn').style.display = 'none';
@@ -1255,10 +1314,10 @@
     
     const badge = document.getElementById('difficulty-display');
     if (difficulty === 'easy') {
-      badge.textContent = '🌱 Easy: Simplifying Expressions';
+      badge.textContent = '🌱 Easy: Solving Equations';
       badge.style.background = 'var(--gradient-success)';
     } else if (difficulty === 'medium') {
-      badge.textContent = '🔥 Medium: Solving Equations';
+      badge.textContent = '🔥 Medium: Simplifying Expressions';
       badge.style.background = 'var(--gradient-orange)';
     } else {
       badge.textContent = '⚡ Hard: Multi-Step Equations';
@@ -1273,8 +1332,8 @@
     stepAttempts = [0, 0, 0, 0];
     questionCompleted = false;
     document.getElementById('next-btn').style.display = 'none';
-    document.getElementById('completion-area').innerHTML = '';
-    document.getElementById('completion-area').style.minHeight = '0';
+    
+    document.getElementById('problem-number').textContent = questionsCompleted + 1;
     
     if (currentDifficulty === 'easy') {
       generateEasyQuestion();
@@ -1290,71 +1349,163 @@
   }
 
   function nextQuestion() {
-    if (!questionCompleted) return; // Extra safety check
+    if (!questionCompleted) return;
+    
+    const btn = document.getElementById('next-btn');
+    btn.disabled = true;
+    
     generateQuestion();
   }
 
+  function formatTerm(coef, showPlus = false) {
+    if (coef === 0) return '';
+    if (coef > 0 && showPlus) return `+ ${coef}`;
+    if (coef > 0) return `${coef}`;
+    return `- ${Math.abs(coef)}`;
+  }
+
+  function formatVarTerm(coef, variable, showPlus = false) {
+    if (coef === 0) return '';
+    const sign = coef > 0 ? (showPlus ? '+ ' : '') : '- ';
+    const absCoef = Math.abs(coef);
+    return `${sign}${absCoef}${variable}`;
+  }
+
   function generateEasyQuestion() {
-    const coef1 = Math.floor(Math.random() * 9) + 1;
-    const coef2 = Math.floor(Math.random() * 9) + 1;
-    const constant = Math.floor(Math.random() * 20) + 1;
+    const m = Math.floor(Math.random() * 8) + 2;
+    const isNegativeM = Math.random() > 0.7;
+    const finalM = isNegativeM ? -m : m;
     
-    const combineCoef = coef1 + coef2;
+    const b = Math.floor(Math.random() * 20) + 1;
+    const isNegativeB = Math.random() > 0.5;
+    const finalB = isNegativeB ? -b : b;
+    
+    const x = Math.floor(Math.random() * 12) + 1;
+    const result = finalM * x + finalB;
+    
+    const stepResult = result - finalB;
+    
+    let expr = formatVarTerm(finalM, 'x', false) + ' ';
+    expr += formatTerm(finalB, true) + ' = ' + result;
     
     currentQuestion = {
       type: 'easy',
-      coef1, coef2, constant,
-      combineCoef,
-      steps: 1,
-      expression: `${coef1}x + ${coef2}x + ${constant}`,
-      answer: `${combineCoef}x + ${constant}`
-    };
-  }
-
-  function generateMediumQuestion() {
-    const m = Math.floor(Math.random() * 8) + 2;
-    const b = Math.floor(Math.random() * 15) + 1;
-    const result = Math.floor(Math.random() * 30) + 10;
-    
-    const x = (result - b) / m;
-    
-    if (x !== Math.floor(x) || x <= 0) {
-      return generateMediumQuestion();
-    }
-    
-    const subtractB = result - b;
-    
-    currentQuestion = {
-      type: 'medium',
-      m, b, result, x,
-      subtractB,
+      m: finalM,
+      b: finalB,
+      result,
+      x,
+      stepResult,
       steps: 2,
-      expression: `${m}x + ${b} = ${result}`,
+      expression: expr.trim(),
       answer: `x = ${x}`
     };
   }
 
-  function generateHardQuestion() {
-    const coef1 = Math.floor(Math.random() * 6) + 2;
-    const coef2 = Math.floor(Math.random() * (coef1 - 1)) + 1;
-    const const1 = Math.floor(Math.random() * 15) + 1;
-    const const2 = Math.floor(Math.random() * 15) + 1;
+  function generateMediumQuestion() {
+    const numVarTerms = Math.floor(Math.random() * 3) + 2;
+    const numConstTerms = Math.floor(Math.random() * 3) + 1;
     
-    const x = Math.floor(Math.random() * 10) + 1;
+    let varTerms = [];
+    let totalCoef = 0;
+    
+    for (let i = 0; i < numVarTerms; i++) {
+      const coef = Math.floor(Math.random() * 10) + 1;
+      const isNegative = Math.random() > 0.6;
+      const finalCoef = isNegative ? -coef : coef;
+      varTerms.push(finalCoef);
+      totalCoef += finalCoef;
+    }
+    
+    let constTerms = [];
+    let totalConst = 0;
+    
+    for (let i = 0; i < numConstTerms; i++) {
+      const val = Math.floor(Math.random() * 15) + 1;
+      const isNegative = Math.random() > 0.5;
+      const finalVal = isNegative ? -val : val;
+      constTerms.push(finalVal);
+      totalConst += finalVal;
+    }
+    
+    let allTerms = [];
+    varTerms.forEach(c => allTerms.push({type: 'var', value: c}));
+    constTerms.forEach(c => allTerms.push({type: 'const', value: c}));
+    
+    for (let i = allTerms.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allTerms[i], allTerms[j]] = [allTerms[j], allTerms[i]];
+    }
+    
+    let expr = '';
+    allTerms.forEach((term, idx) => {
+      if (term.type === 'var') {
+        expr += formatVarTerm(term.value, 'x', idx > 0) + ' ';
+      } else {
+        expr += formatTerm(term.value, idx > 0) + ' ';
+      }
+    });
+    
+    let answer = '';
+    if (totalCoef !== 0) {
+      answer += formatVarTerm(totalCoef, 'x', false);
+    }
+    if (totalConst !== 0) {
+      if (answer !== '') {
+        answer += ' ' + formatTerm(totalConst, true);
+      } else {
+        answer += totalConst;
+      }
+    }
+    if (answer === '') answer = '0';
+    
+    currentQuestion = {
+      type: 'medium',
+      varTerms,
+      constTerms,
+      totalCoef,
+      totalConst,
+      steps: 1,
+      expression: expr.trim(),
+      answer: answer.trim()
+    };
+  }
+
+  function generateHardQuestion() {
+    const coef1 = Math.floor(Math.random() * 8) + 3;
+    const coef2 = Math.floor(Math.random() * (coef1 - 1)) + 1;
+    
+    const const1 = Math.floor(Math.random() * 20) + 1;
+    const isNegConst1 = Math.random() > 0.5;
+    const finalConst1 = isNegConst1 ? -const1 : const1;
+    
+    const const2 = Math.floor(Math.random() * 20) + 1;
+    const isNegConst2 = Math.random() > 0.5;
+    const finalConst2 = isNegConst2 ? -const2 : const2;
     
     const newCoef = coef1 - coef2;
-    const newConst = const2 - const1;
+    const newConst = finalConst2 - finalConst1;
     
-    if (newConst % newCoef !== 0 || newConst / newCoef !== x || newConst <= 0) {
+    if (newConst % newCoef !== 0 || newConst / newCoef <= 0) {
       return generateHardQuestion();
     }
     
+    const x = newConst / newCoef;
+    
+    let expr = formatVarTerm(coef1, 'x', false) + ' ';
+    expr += formatTerm(finalConst1, true) + ' = ';
+    expr += formatVarTerm(coef2, 'x', false) + ' ';
+    expr += formatTerm(finalConst2, true);
+    
     currentQuestion = {
       type: 'hard',
-      coef1, coef2, const1, const2, x,
-      newCoef, newConst,
+      coef1, coef2,
+      const1: finalConst1,
+      const2: finalConst2,
+      x,
+      newCoef,
+      newConst,
       steps: 3,
-      expression: `${coef1}x + ${const1} = ${coef2}x + ${const2}`,
+      expression: expr.trim(),
       answer: `x = ${x}`
     };
   }
@@ -1396,50 +1547,11 @@
   }
 
   function displayEasyStep(container) {
-    container.innerHTML = `
-      <div class="step-header">
-        <div class="step-number">1</div>
-        <div class="step-title">Simplify the Expression</div>
-      </div>
-      <div class="step-content">
-        <div class="step-instruction">
-          <div class="instruction-text">Combine the x terms and write the simplified expression</div>
-          <div class="instruction-subtext">Add the coefficients together, then add the constant</div>
-        </div>
-        
-        <div class="work-display">
-          <div class="work-title">Original Expression</div>
-          <div class="work-equation">${currentQuestion.coef1}x + ${currentQuestion.coef2}x + ${currentQuestion.constant}</div>
-        </div>
-
-        <div class="equation-row">
-          <div class="term">
-            <input type="number" class="coefficient-input" id="final-coef" min="0" placeholder="?">
-            <span class="variable">x</span>
-          </div>
-          <span class="operator">+</span>
-          <div class="term">
-            <input type="number" class="constant-input" id="final-const" min="0" placeholder="?">
-          </div>
-        </div>
-
-        <div class="hint-box">
-          <div class="hint-title">💡 Hint</div>
-          <div class="hint-text">Add the coefficients of the x terms: ${currentQuestion.coef1} + ${currentQuestion.coef2} = ?x. Then add the constant ${currentQuestion.constant}.</div>
-        </div>
-
-        <div class="action-buttons">
-          <button class="check-btn" onclick="checkEasyStep()">Check Answer ✓</button>
-        </div>
-        <div id="step-feedback"></div>
-      </div>
-    `;
-    setTimeout(() => document.getElementById('final-coef')?.focus(), 100);
-    setupEnterKeyHandlers('final-coef', 'final-const', checkEasyStep);
-  }
-
-  function displayMediumStep(container) {
     if (currentStep === 1) {
+      const operation = currentQuestion.b >= 0 ? 'Subtract' : 'Add';
+      const opValue = Math.abs(currentQuestion.b);
+      const opSymbol = currentQuestion.b >= 0 ? '−' : '+';
+      
       container.innerHTML = `
         <div class="step-header">
           <div class="step-number">1</div>
@@ -1447,57 +1559,76 @@
         </div>
         <div class="step-content">
           <div class="step-instruction">
-            <div class="instruction-text">Subtract ${currentQuestion.b} from both sides</div>
-            <div class="instruction-subtext">This will isolate the ${currentQuestion.m}x term on the left</div>
+            <div class="instruction-text">${operation} ${opValue} from both sides</div>
+            <div class="instruction-subtext">This isolates the ${currentQuestion.m < 0 ? '-' : ''}${Math.abs(currentQuestion.m)}x term</div>
           </div>
           
           <div class="equation-with-operation">
             <div class="equation-row">
-              <div class="term">
-                <div class="coefficient-box">${currentQuestion.m}</div>
-                <span class="variable">x</span>
-              </div>
-              <span class="operator">+</span>
-              <div class="term">
-                <div class="constant-box">${currentQuestion.b}</div>
+              <div class="equation-side">
+                <div class="term">
+                  ${currentQuestion.m < 0 ? '<span class="operator">−</span>' : ''}
+                  <div class="coefficient-box">${Math.abs(currentQuestion.m)}</div>
+                  <span class="variable">x</span>
+                </div>
+                <span class="operator">${currentQuestion.b >= 0 ? '+' : '−'}</span>
+                <div class="term">
+                  <div class="constant-box">${Math.abs(currentQuestion.b)}</div>
+                </div>
               </div>
               <span class="equals">=</span>
-              <div class="term">
-                <div class="constant-box">${currentQuestion.result}</div>
+              <div class="equation-side">
+                <div class="term">
+                  ${currentQuestion.result < 0 ? '<span class="operator">−</span>' : ''}
+                  <div class="constant-box">${Math.abs(currentQuestion.result)}</div>
+                </div>
               </div>
             </div>
             
             <div class="operation-row">
-              <div class="operation-side">
-                <span class="operator">−</span>
-                <span>${currentQuestion.b}</span>
+              <div class="equation-side">
+                <div class="operation-spacer"></div>
+                <div class="operation-side">
+                  <span class="operator">${opSymbol}</span>
+                  <span>${opValue}</span>
+                </div>
               </div>
-              <div class="operation-side">
-                <span class="operator">−</span>
-                <span>${currentQuestion.b}</span>
+              <span class="equals" style="visibility: hidden;">=</span>
+              <div class="equation-side">
+                <div class="operation-side">
+                  <span class="operator">${opSymbol}</span>
+                  <span>${opValue}</span>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="equation-row" style="margin-top: 1.5rem;">
             <div class="term">
-              <div class="coefficient-box">${currentQuestion.m}</div>
+              ${currentQuestion.m < 0 ? '<span class="operator">−</span>' : ''}
+              <div class="coefficient-box">${Math.abs(currentQuestion.m)}</div>
               <span class="variable">x</span>
             </div>
             <span class="equals">=</span>
             <div class="term">
-              <input type="number" class="constant-input" id="subtract-result" placeholder="?">
+              <input type="number" class="constant-input" id="subtract-result" placeholder="?" autocomplete="off">
             </div>
           </div>
 
           <div class="action-buttons">
-            <button class="check-btn" onclick="checkMediumStep1()">Check Answer ✓</button>
+            <button class="check-btn" onclick="checkEasyStep1()">Check Answer ✓</button>
           </div>
           <div id="step-feedback"></div>
         </div>
       `;
-      setTimeout(() => document.getElementById('subtract-result')?.focus(), 100);
-      setupEnterKeyHandlers('subtract-result', null, checkMediumStep1);
+      setTimeout(() => {
+        const input = document.getElementById('subtract-result');
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }, 100);
+      setupEnterKeyHandlers('subtract-result', null, checkEasyStep1);
     } else if (currentStep === 2) {
       container.innerHTML = `
         <div class="step-header">
@@ -1506,37 +1637,122 @@
         </div>
         <div class="step-content">
           <div class="step-instruction">
-            <div class="instruction-text">Divide both sides by ${currentQuestion.m}</div>
-            <div class="instruction-subtext">This will give you the value of x</div>
+            <div class="instruction-text">Divide both sides by ${currentQuestion.m < 0 ? '−' : ''}${Math.abs(currentQuestion.m)}</div>
+            <div class="instruction-subtext">This gives you the value of x</div>
           </div>
           
-          <div class="work-display">
-            <div class="work-title">Your work so far</div>
-            <div class="work-equation">${currentQuestion.m}x = ${currentQuestion.subtractB}</div>
+          <div class="equation-with-operation">
+            <div class="equation-row">
+              <div class="equation-side">
+                <div class="term">
+                  ${currentQuestion.m < 0 ? '<span class="operator">−</span>' : ''}
+                  <div class="coefficient-box">${Math.abs(currentQuestion.m)}</div>
+                  <span class="variable">x</span>
+                </div>
+              </div>
+              <span class="equals">=</span>
+              <div class="equation-side">
+                <div class="term">
+                  ${currentQuestion.stepResult < 0 ? '<span class="operator">−</span>' : ''}
+                  <div class="constant-box">${Math.abs(currentQuestion.stepResult)}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="operation-row">
+              <div class="equation-side">
+                <div class="operation-side">
+                  <span class="operator">÷</span>
+                  <span>${currentQuestion.m < 0 ? '−' : ''}${Math.abs(currentQuestion.m)}</span>
+                </div>
+              </div>
+              <span class="equals" style="visibility: hidden;">=</span>
+              <div class="equation-side">
+                <div class="operation-side">
+                  <span class="operator">÷</span>
+                  <span>${currentQuestion.m < 0 ? '−' : ''}${Math.abs(currentQuestion.m)}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="equation-row">
+          <div class="equation-row" style="margin-top: 1.5rem;">
             <span class="variable">x</span>
             <span class="equals">=</span>
             <div class="term">
-              <input type="number" class="constant-input" id="final-x" placeholder="?">
+              <input type="number" class="constant-input" id="final-x" placeholder="?" autocomplete="off">
             </div>
           </div>
 
           <div class="hint-box">
-            <div class="hint-title">💡 Hint</div>
-            <div class="hint-text">Divide both sides by ${currentQuestion.m}: ${currentQuestion.subtractB} ÷ ${currentQuestion.m} = ?</div>
+            <div class="hint-title">💡 Remember</div>
+            <div class="hint-text">${currentQuestion.stepResult} ÷ ${currentQuestion.m < 0 ? '(' : ''}${currentQuestion.m < 0 ? '−' : ''}${Math.abs(currentQuestion.m)}${currentQuestion.m < 0 ? ')' : ''} = ?</div>
           </div>
 
           <div class="action-buttons">
-            <button class="check-btn" onclick="checkMediumStep2()">Check Answer ✓</button>
+            <button class="check-btn" onclick="checkEasyStep2()">Check Answer ✓</button>
           </div>
           <div id="step-feedback"></div>
         </div>
       `;
-      setTimeout(() => document.getElementById('final-x')?.focus(), 100);
-      setupEnterKeyHandlers('final-x', null, checkMediumStep2);
+      setTimeout(() => {
+        const input = document.getElementById('final-x');
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }, 100);
+      setupEnterKeyHandlers('final-x', null, checkEasyStep2);
     }
+  }
+
+  function displayMediumStep(container) {
+    container.innerHTML = `
+      <div class="step-header">
+        <div class="step-number">1</div>
+        <div class="step-title">Combine Like Terms</div>
+      </div>
+      <div class="step-content">
+        <div class="step-instruction">
+          <div class="instruction-text">Combine all x terms, then all constant numbers</div>
+          <div class="instruction-subtext">Watch for positive and negative signs!</div>
+        </div>
+        
+        <div class="work-display">
+          <div class="work-title">Original Expression</div>
+          <div class="work-equation">${currentQuestion.expression}</div>
+        </div>
+
+        <div class="equation-row">
+          <div class="term">
+            <input type="number" class="coefficient-input" id="final-coef" placeholder="?" autocomplete="off">
+            <span class="variable">x</span>
+          </div>
+          <span class="operator">+</span>
+          <div class="term">
+            <input type="number" class="constant-input" id="final-const" placeholder="?" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="hint-box">
+          <div class="hint-title">💡 Strategy</div>
+          <div class="hint-text">First add/subtract all the x coefficients together. Then add/subtract all the constant numbers together.</div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="check-btn" onclick="checkMediumStep()">Check Answer ✓</button>
+        </div>
+        <div id="step-feedback"></div>
+      </div>
+    `;
+    setTimeout(() => {
+      const input = document.getElementById('final-coef');
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 100);
+    setupEnterKeyHandlers('final-coef', 'final-const', checkMediumStep);
   }
 
   function displayHardStep(container) {
@@ -1549,55 +1765,76 @@
         <div class="step-content">
           <div class="step-instruction">
             <div class="instruction-text">Subtract ${currentQuestion.coef2}x from both sides</div>
-            <div class="instruction-subtext">This collects all x terms on the left side</div>
+            <div class="instruction-subtext">This collects all x terms on the left</div>
           </div>
           
           <div class="equation-with-operation">
             <div class="equation-row">
-              <div class="term">
-                <div class="coefficient-box">${currentQuestion.coef1}</div>
-                <span class="variable">x</span>
-              </div>
-              <span class="operator">+</span>
-              <div class="term">
-                <div class="constant-box">${currentQuestion.const1}</div>
+              <div class="equation-side">
+                <div class="term">
+                  <div class="coefficient-box">${currentQuestion.coef1}</div>
+                  <span class="variable">x</span>
+                </div>
+                <span class="operator">${currentQuestion.const1 >= 0 ? '+' : '−'}</span>
+                <div class="term">
+                  <div class="constant-box">${Math.abs(currentQuestion.const1)}</div>
+                </div>
               </div>
               <span class="equals">=</span>
-              <div class="term">
-                <div class="coefficient-box">${currentQuestion.coef2}</div>
-                <span class="variable">x</span>
-              </div>
-              <span class="operator">+</span>
-              <div class="term">
-                <div class="constant-box">${currentQuestion.const2}</div>
+              <div class="equation-side">
+                <div class="term">
+                  <div class="coefficient-box">${currentQuestion.coef2}</div>
+                  <span class="variable">x</span>
+                </div>
+                <span class="operator">${currentQuestion.const2 >= 0 ? '+' : '−'}</span>
+                <div class="term">
+                  <div class="constant-box">${Math.abs(currentQuestion.const2)}</div>
+                </div>
               </div>
             </div>
             
             <div class="operation-row">
-              <div class="operation-side">
-                <span class="operator">−</span>
-                <span>${currentQuestion.coef2}x</span>
+              <div class="equation-side">
+                <div class="operation-side">
+                  <span class="operator">−</span>
+                  <span>${currentQuestion.coef2}x</span>
+                </div>
+                <div class="operation-spacer"></div>
               </div>
-              <div class="operation-side">
-                <span class="operator">−</span>
-                <span>${currentQuestion.coef2}x</span>
+              <span class="equals" style="visibility: hidden;">=</span>
+              <div class="equation-side">
+                <div class="operation-side">
+                  <span class="operator">−</span>
+                  <span>${currentQuestion.coef2}x</span>
+                </div>
+                <div class="operation-spacer"></div>
               </div>
             </div>
           </div>
 
           <div class="equation-row" style="margin-top: 1.5rem;">
-            <div class="term">
-              <input type="number" class="coefficient-input" id="new-coef" placeholder="?">
-              <span class="variable">x</span>
-            </div>
-            <span class="operator">+</span>
-            <div class="term">
-              <div class="constant-box">${currentQuestion.const1}</div>
+            <div class="equation-side">
+              <div class="term">
+                <input type="number" class="coefficient-input" id="new-coef" placeholder="?" autocomplete="off">
+                <span class="variable">x</span>
+              </div>
+              <span class="operator">${currentQuestion.const1 >= 0 ? '+' : '−'}</span>
+              <div class="term">
+                <div class="constant-box">${Math.abs(currentQuestion.const1)}</div>
+              </div>
             </div>
             <span class="equals">=</span>
-            <div class="term">
-              <div class="constant-box">${currentQuestion.const2}</div>
+            <div class="equation-side">
+              <div class="term">
+                ${currentQuestion.const2 < 0 ? '<span class="operator">−</span>' : ''}
+                <div class="constant-box">${Math.abs(currentQuestion.const2)}</div>
+              </div>
             </div>
+          </div>
+
+          <div class="hint-box">
+            <div class="hint-title">💡 Remember</div>
+            <div class="hint-text">${currentQuestion.coef1} − ${currentQuestion.coef2} = ?</div>
           </div>
 
           <div class="action-buttons">
@@ -1606,9 +1843,19 @@
           <div id="step-feedback"></div>
         </div>
       `;
-      setTimeout(() => document.getElementById('new-coef')?.focus(), 100);
+      setTimeout(() => {
+        const input = document.getElementById('new-coef');
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }, 100);
       setupEnterKeyHandlers('new-coef', null, checkHardStep1);
     } else if (currentStep === 2) {
+      const operation = currentQuestion.const1 >= 0 ? 'Subtract' : 'Add';
+      const opValue = Math.abs(currentQuestion.const1);
+      const opSymbol = currentQuestion.const1 >= 0 ? '−' : '+';
+      
       container.innerHTML = `
         <div class="step-header">
           <div class="step-number completed">2</div>
@@ -1616,47 +1863,67 @@
         </div>
         <div class="step-content">
           <div class="step-instruction">
-            <div class="instruction-text">Subtract ${currentQuestion.const1} from both sides</div>
-            <div class="instruction-subtext">This collects all constants on the right side</div>
+            <div class="instruction-text">${operation} ${opValue} from both sides</div>
+            <div class="instruction-subtext">This isolates the variable term</div>
           </div>
           
           <div class="equation-with-operation">
             <div class="equation-row">
-              <div class="term">
-                <div class="coefficient-box">${currentQuestion.newCoef}</div>
-                <span class="variable">x</span>
-              </div>
-              <span class="operator">+</span>
-              <div class="term">
-                <div class="constant-box">${currentQuestion.const1}</div>
+              <div class="equation-side">
+                <div class="term">
+                  <div class="coefficient-box">${currentQuestion.newCoef}</div>
+                  <span class="variable">x</span>
+                </div>
+                <span class="operator">${currentQuestion.const1 >= 0 ? '+' : '−'}</span>
+                <div class="term">
+                  <div class="constant-box">${Math.abs(currentQuestion.const1)}</div>
+                </div>
               </div>
               <span class="equals">=</span>
-              <div class="term">
-                <div class="constant-box">${currentQuestion.const2}</div>
+              <div class="equation-side">
+                <div class="term">
+                  ${currentQuestion.const2 < 0 ? '<span class="operator">−</span>' : ''}
+                  <div class="constant-box">${Math.abs(currentQuestion.const2)}</div>
+                </div>
               </div>
             </div>
             
             <div class="operation-row">
-              <div class="operation-side">
-                <span class="operator">−</span>
-                <span>${currentQuestion.const1}</span>
+              <div class="equation-side">
+                <div class="operation-spacer"></div>
+                <div class="operation-side">
+                  <span class="operator">${opSymbol}</span>
+                  <span>${opValue}</span>
+                </div>
               </div>
-              <div class="operation-side">
-                <span class="operator">−</span>
-                <span>${currentQuestion.const1}</span>
+              <span class="equals" style="visibility: hidden;">=</span>
+              <div class="equation-side">
+                <div class="operation-side">
+                  <span class="operator">${opSymbol}</span>
+                  <span>${opValue}</span>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="equation-row" style="margin-top: 1.5rem;">
-            <div class="term">
-              <div class="coefficient-box">${currentQuestion.newCoef}</div>
-              <span class="variable">x</span>
+            <div class="equation-side">
+              <div class="term">
+                <div class="coefficient-box">${currentQuestion.newCoef}</div>
+                <span class="variable">x</span>
+              </div>
             </div>
             <span class="equals">=</span>
-            <div class="term">
-              <input type="number" class="constant-input" id="new-const" placeholder="?">
+            <div class="equation-side">
+              <div class="term">
+                <input type="number" class="constant-input" id="new-const" placeholder="?" autocomplete="off">
+              </div>
             </div>
+          </div>
+
+          <div class="hint-box">
+            <div class="hint-title">💡 Remember</div>
+            <div class="hint-text">${currentQuestion.const2} ${currentQuestion.const1 >= 0 ? '−' : '+'} ${Math.abs(currentQuestion.const1)} = ?</div>
           </div>
 
           <div class="action-buttons">
@@ -1665,7 +1932,13 @@
           <div id="step-feedback"></div>
         </div>
       `;
-      setTimeout(() => document.getElementById('new-const')?.focus(), 100);
+      setTimeout(() => {
+        const input = document.getElementById('new-const');
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }, 100);
       setupEnterKeyHandlers('new-const', null, checkHardStep2);
     } else if (currentStep === 3) {
       container.innerHTML = `
@@ -1676,25 +1949,54 @@
         <div class="step-content">
           <div class="step-instruction">
             <div class="instruction-text">Divide both sides by ${currentQuestion.newCoef}</div>
-            <div class="instruction-subtext">This gives you the final value of x</div>
+            <div class="instruction-subtext">Final step to find x!</div>
           </div>
           
-          <div class="work-display">
-            <div class="work-title">Your work so far</div>
-            <div class="work-equation">${currentQuestion.newCoef}x = ${currentQuestion.newConst}</div>
+          <div class="equation-with-operation">
+            <div class="equation-row">
+              <div class="equation-side">
+                <div class="term">
+                  <div class="coefficient-box">${currentQuestion.newCoef}</div>
+                  <span class="variable">x</span>
+                </div>
+              </div>
+              <span class="equals">=</span>
+              <div class="equation-side">
+                <div class="term">
+                  ${currentQuestion.newConst < 0 ? '<span class="operator">−</span>' : ''}
+                  <div class="constant-box">${Math.abs(currentQuestion.newConst)}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="operation-row">
+              <div class="equation-side">
+                <div class="operation-side">
+                  <span class="operator">÷</span>
+                  <span>${currentQuestion.newCoef}</span>
+                </div>
+              </div>
+              <span class="equals" style="visibility: hidden;">=</span>
+              <div class="equation-side">
+                <div class="operation-side">
+                  <span class="operator">÷</span>
+                  <span>${currentQuestion.newCoef}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="equation-row">
+          <div class="equation-row" style="margin-top: 1.5rem;">
             <span class="variable">x</span>
             <span class="equals">=</span>
             <div class="term">
-              <input type="number" class="constant-input" id="final-x" placeholder="?">
+              <input type="number" class="constant-input" id="final-x" placeholder="?" autocomplete="off">
             </div>
           </div>
 
           <div class="hint-box">
-            <div class="hint-title">💡 Hint</div>
-            <div class="hint-text">Divide both sides by ${currentQuestion.newCoef}: ${currentQuestion.newConst} ÷ ${currentQuestion.newCoef} = ?</div>
+            <div class="hint-title">💡 Remember</div>
+            <div class="hint-text">${currentQuestion.newConst} ÷ ${currentQuestion.newCoef} = ?</div>
           </div>
 
           <div class="action-buttons">
@@ -1703,7 +2005,13 @@
           <div id="step-feedback"></div>
         </div>
       `;
-      setTimeout(() => document.getElementById('final-x')?.focus(), 100);
+      setTimeout(() => {
+        const input = document.getElementById('final-x');
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }, 100);
       setupEnterKeyHandlers('final-x', null, checkHardStep3);
     }
   }
@@ -1717,6 +2025,7 @@
         if (e.key === 'Enter') {
           if (second) {
             second.focus();
+            second.select();
           } else {
             checkFunction();
           }
@@ -1731,7 +2040,83 @@
     }
   }
 
-  function checkEasyStep() {
+  function checkEasyStep1() {
+    stepAttempts[0]++;
+    const input = parseInt(document.getElementById('subtract-result').value);
+    const feedback = document.getElementById('step-feedback');
+    const inputEl = document.getElementById('subtract-result');
+    
+    if (input === currentQuestion.stepResult) {
+      feedback.innerHTML = `<div class="step-feedback correct">✅ Perfect! ${currentQuestion.result} ${currentQuestion.b >= 0 ? '−' : '+'} ${Math.abs(currentQuestion.b)} = ${currentQuestion.stepResult}</div>`;
+      inputEl.classList.add('correct');
+      inputEl.disabled = true;
+      
+      const points = stepAttempts[0] === 1 ? 5 : 2;
+      totalScore += points;
+      updateScore();
+      
+      setTimeout(() => {
+        currentStep = 2;
+        updateProgressBar();
+        displayCurrentStep();
+      }, 1500);
+    } else {
+      currentStreak = 0;
+      updateScore();
+      feedback.innerHTML = `
+        <div class="step-feedback incorrect">❌ Not quite! Think it through again.</div>
+        <div class="hint-box" style="margin-top: 1rem;">
+          <div class="hint-title">💡 Hint</div>
+          <div class="hint-text">What is ${currentQuestion.result} ${currentQuestion.b >= 0 ? '−' : '+'} ${Math.abs(currentQuestion.b)}?</div>
+        </div>
+      `;
+      inputEl.classList.add('incorrect');
+      setTimeout(() => {
+        inputEl.classList.remove('incorrect');
+        inputEl.value = '';
+        inputEl.focus();
+      }, 2000);
+    }
+  }
+
+  function checkEasyStep2() {
+    stepAttempts[1]++;
+    const input = parseInt(document.getElementById('final-x').value);
+    const feedback = document.getElementById('step-feedback');
+    const inputEl = document.getElementById('final-x');
+    
+    if (input === currentQuestion.x) {
+      feedback.innerHTML = `<div class="step-feedback correct">🎉 Excellent! x = ${currentQuestion.x}</div>`;
+      inputEl.classList.add('correct');
+      inputEl.disabled = true;
+      
+      const points = stepAttempts[1] === 1 ? 10 : 5;
+      totalScore += points;
+      currentStreak++;
+      updateScore();
+      
+      questionsCompleted++;
+      setTimeout(() => showCompletion(), 1200);
+    } else {
+      currentStreak = 0;
+      updateScore();
+      feedback.innerHTML = `
+        <div class="step-feedback incorrect">❌ Not quite! Try again.</div>
+        <div class="hint-box" style="margin-top: 1rem;">
+          <div class="hint-title">💡 Hint</div>
+          <div class="hint-text">What is ${currentQuestion.stepResult} ÷ ${currentQuestion.m < 0 ? '(' : ''}${currentQuestion.m < 0 ? '−' : ''}${Math.abs(currentQuestion.m)}${currentQuestion.m < 0 ? ')' : ''}?</div>
+        </div>
+      `;
+      inputEl.classList.add('incorrect');
+      setTimeout(() => {
+        inputEl.classList.remove('incorrect');
+        inputEl.value = '';
+        inputEl.focus();
+      }, 2000);
+    }
+  }
+
+  function checkMediumStep() {
     stepAttempts[0]++;
     const coefInput = parseInt(document.getElementById('final-coef').value);
     const constInput = parseInt(document.getElementById('final-const').value);
@@ -1739,8 +2124,8 @@
     const coefEl = document.getElementById('final-coef');
     const constEl = document.getElementById('final-const');
     
-    if (coefInput === currentQuestion.combineCoef && constInput === currentQuestion.constant) {
-      feedback.innerHTML = `<div class="step-feedback correct">✅ Perfect! ${currentQuestion.coef1}x + ${currentQuestion.coef2}x + ${currentQuestion.constant} = ${currentQuestion.combineCoef}x + ${currentQuestion.constant}</div>`;
+    if (coefInput === currentQuestion.totalCoef && constInput === currentQuestion.totalConst) {
+      feedback.innerHTML = `<div class="step-feedback correct">🎉 Outstanding! Your simplified answer is correct: ${currentQuestion.answer}</div>`;
       coefEl.classList.add('correct');
       constEl.classList.add('correct');
       coefEl.disabled = true;
@@ -1752,19 +2137,22 @@
       updateScore();
       
       questionsCompleted++;
-      setTimeout(() => showCompletion(), 1000);
+      setTimeout(() => showCompletion(), 1200);
     } else {
+      currentStreak = 0;
+      updateScore();
       let hint = '';
-      if (coefInput !== currentQuestion.combineCoef) {
-        hint += `The coefficient should be ${currentQuestion.coef1} + ${currentQuestion.coef2} = ${currentQuestion.combineCoef}. `;
-      }
-      if (constInput !== currentQuestion.constant) {
-        hint += `The constant should remain ${currentQuestion.constant}.`;
+      if (coefInput !== currentQuestion.totalCoef && constInput !== currentQuestion.totalConst) {
+        hint = 'Check both your x coefficient and constant term.';
+      } else if (coefInput !== currentQuestion.totalCoef) {
+        hint = `The x coefficient should be ${currentQuestion.totalCoef}.`;
+      } else {
+        hint = `The constant should be ${currentQuestion.totalConst}.`;
       }
       
       feedback.innerHTML = `
-        <div class="step-feedback incorrect">❌ Not quite right! Try again.</div>
-        <div class="hint-box">
+        <div class="step-feedback incorrect">❌ Not quite right! Review your work.</div>
+        <div class="hint-box" style="margin-top: 1rem;">
           <div class="hint-title">💡 Hint</div>
           <div class="hint-text">${hint}</div>
         </div>
@@ -1777,79 +2165,7 @@
         coefEl.value = '';
         constEl.value = '';
         coefEl.focus();
-      }, 2000);
-    }
-  }
-
-  function checkMediumStep1() {
-    stepAttempts[0]++;
-    const input = parseInt(document.getElementById('subtract-result').value);
-    const feedback = document.getElementById('step-feedback');
-    const inputEl = document.getElementById('subtract-result');
-    
-    if (input === currentQuestion.subtractB) {
-      feedback.innerHTML = `<div class="step-feedback correct">✅ Correct! ${currentQuestion.result} − ${currentQuestion.b} = ${currentQuestion.subtractB}</div>`;
-      inputEl.classList.add('correct');
-      inputEl.disabled = true;
-      
-      const points = stepAttempts[0] === 1 ? 5 : 2;
-      totalScore += points;
-      updateScore();
-      
-      setTimeout(() => {
-        currentStep = 2;
-        updateProgressBar();
-        displayCurrentStep();
-      }, 1200);
-    } else {
-      feedback.innerHTML = `
-        <div class="step-feedback incorrect">❌ Try again!</div>
-        <div class="hint-box">
-          <div class="hint-title">💡 Hint</div>
-          <div class="hint-text">Subtract the constant from both sides: ${currentQuestion.result} − ${currentQuestion.b} = ?</div>
-        </div>
-      `;
-      inputEl.classList.add('incorrect');
-      setTimeout(() => {
-        inputEl.classList.remove('incorrect');
-        inputEl.value = '';
-        inputEl.focus();
-      }, 2000);
-    }
-  }
-
-  function checkMediumStep2() {
-    stepAttempts[1]++;
-    const input = parseInt(document.getElementById('final-x').value);
-    const feedback = document.getElementById('step-feedback');
-    const inputEl = document.getElementById('final-x');
-    
-    if (input === currentQuestion.x) {
-      feedback.innerHTML = `<div class="step-feedback correct">✅ Perfect! x = ${currentQuestion.x}</div>`;
-      inputEl.classList.add('correct');
-      inputEl.disabled = true;
-      
-      const points = stepAttempts[1] === 1 ? 10 : 5;
-      totalScore += points;
-      currentStreak++;
-      updateScore();
-      
-      questionsCompleted++;
-      setTimeout(() => showCompletion(), 1000);
-    } else {
-      feedback.innerHTML = `
-        <div class="step-feedback incorrect">❌ Not quite!</div>
-        <div class="hint-box">
-          <div class="hint-title">💡 Hint</div>
-          <div class="hint-text">Divide both sides by ${currentQuestion.m}: ${currentQuestion.subtractB} ÷ ${currentQuestion.m} = ?</div>
-        </div>
-      `;
-      inputEl.classList.add('incorrect');
-      setTimeout(() => {
-        inputEl.classList.remove('incorrect');
-        inputEl.value = '';
-        inputEl.focus();
-      }, 2000);
+      }, 2500);
     }
   }
 
@@ -1872,13 +2188,15 @@
         currentStep = 2;
         updateProgressBar();
         displayCurrentStep();
-      }, 1200);
+      }, 1500);
     } else {
+      currentStreak = 0;
+      updateScore();
       feedback.innerHTML = `
-        <div class="step-feedback incorrect">❌ Try again!</div>
-        <div class="hint-box">
+        <div class="step-feedback incorrect">❌ Not quite! Think it through.</div>
+        <div class="hint-box" style="margin-top: 1rem;">
           <div class="hint-title">💡 Hint</div>
-          <div class="hint-text">Subtract the coefficients: ${currentQuestion.coef1} − ${currentQuestion.coef2} = ?</div>
+          <div class="hint-text">What is ${currentQuestion.coef1} − ${currentQuestion.coef2}?</div>
         </div>
       `;
       inputEl.classList.add('incorrect');
@@ -1897,7 +2215,7 @@
     const inputEl = document.getElementById('new-const');
     
     if (input === currentQuestion.newConst) {
-      feedback.innerHTML = `<div class="step-feedback correct">✅ Correct! ${currentQuestion.const2} − ${currentQuestion.const1} = ${currentQuestion.newConst}</div>`;
+      feedback.innerHTML = `<div class="step-feedback correct">✅ Perfect! The result is ${currentQuestion.newConst}</div>`;
       inputEl.classList.add('correct');
       inputEl.disabled = true;
       
@@ -1909,13 +2227,15 @@
         currentStep = 3;
         updateProgressBar();
         displayCurrentStep();
-      }, 1200);
+      }, 1500);
     } else {
+      currentStreak = 0;
+      updateScore();
       feedback.innerHTML = `
-        <div class="step-feedback incorrect">❌ Try again!</div>
-        <div class="hint-box">
+        <div class="step-feedback incorrect">❌ Try again! Check your work.</div>
+        <div class="hint-box" style="margin-top: 1rem;">
           <div class="hint-title">💡 Hint</div>
-          <div class="hint-text">Subtract the constants: ${currentQuestion.const2} − ${currentQuestion.const1} = ?</div>
+          <div class="hint-text">What is ${currentQuestion.const2} ${currentQuestion.const1 >= 0 ? '−' : '+'} ${Math.abs(currentQuestion.const1)}?</div>
         </div>
       `;
       inputEl.classList.add('incorrect');
@@ -1934,7 +2254,7 @@
     const inputEl = document.getElementById('final-x');
     
     if (input === currentQuestion.x) {
-      feedback.innerHTML = `<div class="step-feedback correct">✅ Perfect! x = ${currentQuestion.x}</div>`;
+      feedback.innerHTML = `<div class="step-feedback correct">🎉 Brilliant work! x = ${currentQuestion.x}</div>`;
       inputEl.classList.add('correct');
       inputEl.disabled = true;
       
@@ -1944,13 +2264,15 @@
       updateScore();
       
       questionsCompleted++;
-      setTimeout(() => showCompletion(), 1000);
+      setTimeout(() => showCompletion(), 1200);
     } else {
+      currentStreak = 0;
+      updateScore();
       feedback.innerHTML = `
-        <div class="step-feedback incorrect">❌ Not quite!</div>
-        <div class="hint-box">
+        <div class="step-feedback incorrect">❌ Not quite! One more try.</div>
+        <div class="hint-box" style="margin-top: 1rem;">
           <div class="hint-title">💡 Hint</div>
-          <div class="hint-text">Divide both sides by ${currentQuestion.newCoef}: ${currentQuestion.newConst} ÷ ${currentQuestion.newCoef} = ?</div>
+          <div class="hint-text">What is ${currentQuestion.newConst} ÷ ${currentQuestion.newCoef}?</div>
         </div>
       `;
       inputEl.classList.add('incorrect');
@@ -1963,23 +2285,25 @@
   }
 
   function showCompletion() {
-    if (questionCompleted) return; // Prevent duplicate
+    if (questionCompleted) return;
     questionCompleted = true;
     
-    document.getElementById('completion-area').style.minHeight = 'auto';
-    document.getElementById('completion-area').innerHTML = `
+    const container = document.getElementById('step-container');
+    container.innerHTML = `
       <div class="completion-message">
         <div class="completion-title">🎉 Problem Complete!</div>
-        <div class="completion-text">Excellent work!</div>
-        <div class="completion-text" style="margin-top: 1.25rem; font-family: 'Courier New', monospace;">
-          ${currentQuestion.expression} → ${currentQuestion.answer}
-        </div>
+        <div class="completion-text">Great job solving this problem!</div>
+        <div class="completion-answer">${currentQuestion.expression}<br>→<br>${currentQuestion.answer}</div>
       </div>
     `;
     
     const nextBtn = document.getElementById('next-btn');
     nextBtn.style.display = 'block';
     nextBtn.disabled = false;
+    
+    setTimeout(() => {
+      nextBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
   }
 
   function updateScore() {
@@ -1992,9 +2316,19 @@
   function toggleHelp() {
     const modal = document.getElementById('help-modal');
     modal.classList.toggle('active');
+    if (modal.classList.contains('active')) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
   }
 
-  // Close help modal with Escape key
+  function closeHelpIfBackground(event) {
+    if (event.target === event.currentTarget) {
+      toggleHelp();
+    }
+  }
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       const modal = document.getElementById('help-modal');
