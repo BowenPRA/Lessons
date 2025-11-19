@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebra Master - Year 9 Mathematics</title>
+    <meta name="description" content="Interactive game for mastering algebra expressions and equations">
+    <meta name="subject" content="Mathematics">
+    <meta name="year" content="Year 9">
+    <meta name="unit" content="Algebra">
+    <meta name="type" content="game">
+    <meta name="date" content="November 19, 2025">
+    <meta name="tags" content="Algebra, Expressions, Equations, Simplification, Game">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+  <style>
+    :root {
+      --primary: #6366F1;
+      --purple: #8B5CF6;
+      --orange: #F97316;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-400: #9CA3AF;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+      --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+      --gradient-orange: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+      --gradient-primary: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+      --gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--gradient-primary);
+      color: var(--gray-900);
+      overflow-x: hidden;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 0.75rem 1.5rem;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      flex-shrink: 0;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .game-badge {
+      background: var(--gradient-success);
+      color: white;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    .game-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    .home-btn {
+      padding: 0.5rem 1rem;
+      background: var(--gray-700);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .home-btn:hover {
+      background: var(--gray-800);
+      transform: translateY(-2px);
+    }
+
+    .score-display {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .score-item {
+      text-align: center;
+    }
+
+    .score-label {
+      font-size: 0.7rem;
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+
+    .score-value {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .streak-value {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--orange);
+    }
+
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+      overflow-y: auto;
+    }
+
+    .game-container {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 900px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      margin: auto;
+    }
+
+    .menu-screen {
+      padding: 2rem 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+    }
+
+    .menu-title {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .menu-subtitle {
+      font-size: 1.2rem;
+      color: var(--gray-700);
+      margin-bottom: 1.5rem;
+    }
+
+    .difficulty-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .difficulty-btn {
+      padding: 1.25rem 2rem;
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-xl);
+      color: white;
+      min-width: 140px;
+    }
+
+    .difficulty-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 25px 30px -5px rgb(0 0 0 / 0.2);
+    }
+
+    .easy-btn {
+      background: var(--gradient-success);
+    }
+
+    .medium-btn {
+      background: var(--gradient-orange);
+    }
+
+    .hard-btn {
+      background: var(--gradient-purple);
+    }
+
+    .difficulty-info {
+      max-width: 800px;
+      text-align: left;
+      margin-top: 1rem;
+    }
+
+    .info-item {
+      background: var(--gray-50);
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 0.75rem;
+      border-left: 4px solid var(--primary);
+    }
+
+    .info-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-desc {
+      font-size: 0.9rem;
+      color: var(--gray-700);
+    }
+
+    .game-screen {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-height: 600px;
+    }
+
+    .difficulty-badge {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: white;
+      align-self: center;
+    }
+
+    .problem-display {
+      background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+      border: 3px solid var(--primary);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      text-align: center;
+    }
+
+    .expression {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Courier New', monospace;
+      margin: 0.5rem 0;
+    }
+
+    .current-step-container {
+      background: white;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      border: 2px solid var(--gray-200);
+      position: relative;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--gray-200);
+    }
+
+    .step-number {
+      background: var(--primary);
+      color: white;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .step-number.completed {
+      background: var(--success);
+    }
+
+    .step-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    .step-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .step-question {
+      font-size: 1.05rem;
+      color: var(--gray-700);
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .equation-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      font-size: 2rem;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      flex-wrap: wrap;
+    }
+
+    .term {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .coefficient-box {
+      background: white;
+      border: 3px solid var(--primary);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      min-width: 70px;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .coefficient-input {
+      background: #FEF3C7;
+      border: 3px solid var(--warning);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      min-width: 80px;
+      max-width: 100px;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+      transition: all 0.3s ease;
+    }
+
+    .coefficient-input:focus {
+      outline: none;
+      border-color: var(--orange);
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
+      background: white;
+    }
+
+    .coefficient-input.correct {
+      border-color: var(--success);
+      background: #D1FAE5;
+    }
+
+    .coefficient-input.incorrect {
+      border-color: var(--danger);
+      background: #FEE2E2;
+    }
+
+    .variable {
+      color: var(--primary);
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .operator {
+      color: var(--gray-700);
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 0.25rem;
+    }
+
+    .equals {
+      color: var(--gray-700);
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0 0.5rem;
+    }
+
+    .constant-box {
+      background: white;
+      border: 3px solid var(--purple);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      min-width: 70px;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--purple);
+    }
+
+    .constant-input {
+      background: #F3E8FF;
+      border: 3px solid var(--purple);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      min-width: 80px;
+      max-width: 100px;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+      transition: all 0.3s ease;
+    }
+
+    .constant-input:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+      background: white;
+    }
+
+    .constant-input.correct {
+      border-color: var(--success);
+      background: #D1FAE5;
+    }
+
+    .constant-input.incorrect {
+      border-color: var(--danger);
+      background: #FEE2E2;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .check-btn {
+      padding: 0.85rem 2.5rem;
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .check-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    .check-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .step-feedback {
+      padding: 1rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .step-feedback.correct {
+      background: #D1FAE5;
+      color: #065F46;
+      border: 3px solid var(--success);
+    }
+
+    .step-feedback.incorrect {
+      background: #FEE2E2;
+      color: #991B1B;
+      border: 3px solid var(--danger);
+    }
+
+    .hint-box {
+      background: #FEF3C7;
+      border-left: 4px solid var(--warning);
+      padding: 1rem 1.25rem;
+      border-radius: 0.5rem;
+    }
+
+    .hint-title {
+      font-weight: 700;
+      color: var(--gray-800);
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .hint-text {
+      color: var(--gray-700);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .work-display {
+      background: var(--gray-50);
+      border: 2px dashed var(--gray-300);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .work-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .work-equation {
+      font-size: 1.5rem;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      color: var(--gray-700);
+    }
+
+    .progress-bar {
+      display: flex;
+      gap: 0.4rem;
+      justify-content: center;
+    }
+
+    .progress-dot {
+      width: 40px;
+      height: 6px;
+      background: var(--gray-300);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .progress-dot.completed {
+      background: var(--success);
+    }
+
+    .progress-dot.active {
+      background: var(--primary);
+      width: 55px;
+    }
+
+    .next-question-btn {
+      padding: 1rem 3rem;
+      background: var(--gradient-success);
+      color: white;
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-xl);
+      align-self: center;
+    }
+
+    .next-question-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 25px 30px -5px rgb(0 0 0 / 0.2);
+    }
+
+    .completion-message {
+      background: var(--gradient-success);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      text-align: center;
+    }
+
+    .completion-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .completion-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .help-toggle {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--gradient-purple);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-xl);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .help-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 25px 30px -5px rgb(0 0 0 / 0.2);
+    }
+
+    .help-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .help-modal.active {
+      display: flex;
+    }
+
+    .help-content {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      max-width: 700px;
+      max-height: 85vh;
+      overflow-y: auto;
+      width: 100%;
+    }
+
+    .help-content h2 {
+      text-align: center;
+      margin-bottom: 1.25rem;
+      font-size: 1.5rem;
+    }
+
+    .help-section {
+      margin-bottom: 1.25rem;
+    }
+
+    .help-section h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+      color: var(--primary);
+    }
+
+    .help-section p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--gray-700);
+    }
+
+    .example {
+      background: var(--gray-50);
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin: 0.75rem 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+
+    .close-modal {
+      padding: 0.65rem 1.5rem;
+      background: var(--gray-800);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 0.75rem;
+      width: 100%;
+      font-size: 0.95rem;
+    }
+
+    .close-modal:hover {
+      background: var(--gray-700);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pulse {
+      animation: pulse 0.5s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .shake {
+      animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    @media (max-width: 768px) {
+      .menu-title { font-size: 2rem; }
+      .menu-subtitle { font-size: 1rem; }
+      .difficulty-buttons { 
+        flex-direction: column;
+        align-items: center;
+      }
+      .difficulty-btn {
+        width: 100%;
+        max-width: 280px;
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+      }
+      .expression {
+        font-size: 1.5rem;
+      }
+      .game-title {
+        font-size: 1rem;
+      }
+      .score-display {
+        gap: 1rem;
+      }
+      .equation-row {
+        font-size: 1.5rem;
+        gap: 0.5rem;
+      }
+      .coefficient-box, .constant-box {
+        font-size: 1.5rem;
+        min-width: 60px;
+        padding: 0.4rem 0.6rem;
+      }
+      .coefficient-input, .constant-input {
+        font-size: 1.5rem;
+        min-width: 70px;
+        padding: 0.4rem 0.6rem;
+      }
+      .variable {
+        font-size: 1.5rem;
+      }
+      .operator {
+        font-size: 1.5rem;
+      }
+      .equals {
+        font-size: 2rem;
+      }
+      .work-equation {
+        font-size: 1.2rem;
+      }
+      .game-screen {
+        padding: 1rem;
+        min-height: auto;
+      }
+      .current-step-container {
+        padding: 1rem;
+        min-height: auto;
+      }
+      .header-content {
+        justify-content: center;
+      }
+      .header-left {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+      }
+      .home-btn {
+        order: 1;
+      }
+      .score-display {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="header">
+    <div class="header-content">
+      <div class="header-left">
+        <span class="game-badge">Year 9 Game</span>
+        <div class="game-title">Algebra Master</div>
+      </div>
+      <button class="home-btn" id="home-btn" onclick="goHome()" style="display: none;">
+        🏠 Back to Menu
+      </button>
+      <div class="score-display">
+        <div class="score-item">
+          <div class="score-label">Total Score</div>
+          <div class="score-value" id="total-score">0</div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">🔥 Streak</div>
+          <div class="streak-value" id="streak">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="game-container">
+      <div class="menu-screen" id="menu-screen">
+        <h1 class="menu-title">Algebra Master</h1>
+        <p class="menu-subtitle">Master algebra step by step!</p>
+        
+        <div class="difficulty-buttons">
+          <button class="difficulty-btn easy-btn" onclick="startGame('easy')">
+            🌱 Easy
+          </button>
+          <button class="difficulty-btn medium-btn" onclick="startGame('medium')">
+            🔥 Medium
+          </button>
+          <button class="difficulty-btn hard-btn" onclick="startGame('hard')">
+            ⚡ Hard
+          </button>
+        </div>
+
+        <div class="difficulty-info">
+          <div class="info-item">
+            <div class="info-title">🌱 Easy: Simplifying Expressions</div>
+            <div class="info-desc">Combine like terms with a single variable. Example: 3x + 5x + 7</div>
+          </div>
+          <div class="info-item">
+            <div class="info-title">🔥 Medium: Solving Linear Equations</div>
+            <div class="info-desc">Solve equations in the form y = mx + b. Example: 2x + 5 = 13</div>
+          </div>
+          <div class="info-item">
+            <div class="info-title">⚡ Hard: Multi-Step Equations</div>
+            <div class="info-desc">Combine terms on both sides and solve. Example: 4x + 7 = 2x + 15</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-screen" id="game-screen" style="display: none;">
+        <div style="text-align: center;">
+          <span class="difficulty-badge" id="difficulty-display"></span>
+        </div>
+
+        <div class="problem-display">
+          <div class="expression" id="problem-expression"></div>
+        </div>
+
+        <div class="progress-bar" id="progress-bar"></div>
+
+        <div class="current-step-container fade-in" id="step-container"></div>
+
+        <button class="next-question-btn" id="next-btn" style="display: none;" onclick="generateQuestion()">
+          Next Question ➡️
+        </button>
+
+        <div id="completion-area" style="min-height: 0;"></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="help-toggle" onclick="toggleHelp()">📚 How to Solve</button>
+
+  <div class="help-modal" id="help-modal" onclick="toggleHelp()">
+    <div class="help-content" onclick="event.stopPropagation()">
+      <h2>How to Solve Algebra Problems</h2>
+      
+      <div class="help-section">
+        <h3>Easy: Simplifying Expressions</h3>
+        <p>Combine like terms by adding their coefficients.</p>
+        <div class="example">Example: 3x + 5x + 7<br>Step 1: Add coefficients: 3 + 5 = 8<br>Answer: 8x + 7</div>
+      </div>
+
+      <div class="help-section">
+        <h3>Medium: Solving Linear Equations</h3>
+        <p>Isolate the variable by using inverse operations.</p>
+        <div class="example">Example: 2x + 5 = 13<br>Step 1: Subtract 5 from both sides: 2x = 8<br>Step 2: Divide both sides by 2: x = 4</div>
+      </div>
+
+      <div class="help-section">
+        <h3>Hard: Multi-Step Equations</h3>
+        <p>Combine like terms, move variables to one side, then solve.</p>
+        <div class="example">Example: 4x + 7 = 2x + 15<br>Step 1: Subtract 2x from both sides: 2x + 7 = 15<br>Step 2: Subtract 7 from both sides: 2x = 8<br>Step 3: Divide both sides by 2: x = 4</div>
+      </div>
+
+      <button class="close-modal" onclick="toggleHelp()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentDifficulty = '';
+  let totalScore = 0;
+  let currentStreak = 0;
+  let currentQuestion = null;
+  let currentStep = 1;
+  let stepAttempts = [];
+  let questionsCompleted = 0;
+
+  function goHome() {
+    if (confirm('Are you sure you want to return to the menu? Your current progress will be saved.')) {
+      document.getElementById('game-screen').style.display = 'none';
+      document.getElementById('menu-screen').style.display = 'flex';
+      document.getElementById('home-btn').style.display = 'none';
+    }
+  }
+
+  function startGame(difficulty) {
+    currentDifficulty = difficulty;
+    questionsCompleted = 0;
+    document.getElementById('menu-screen').style.display = 'none';
+    document.getElementById('game-screen').style.display = 'flex';
+    document.getElementById('home-btn').style.display = 'block';
+    
+    const badge = document.getElementById('difficulty-display');
+    if (difficulty === 'easy') {
+      badge.textContent = '🌱 Easy: Simplifying Expressions';
+      badge.style.background = 'var(--gradient-success)';
+    } else if (difficulty === 'medium') {
+      badge.textContent = '🔥 Medium: Solving Equations';
+      badge.style.background = 'var(--gradient-orange)';
+    } else {
+      badge.textContent = '⚡ Hard: Multi-Step Equations';
+      badge.style.background = 'var(--gradient-purple)';
+    }
+    
+    generateQuestion();
+  }
+
+  function generateQuestion() {
+    currentStep = 1;
+    stepAttempts = [0, 0, 0, 0];
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('completion-area').innerHTML = '';
+    document.getElementById('completion-area').style.minHeight = '0';
+    
+    if (currentDifficulty === 'easy') {
+      generateEasyQuestion();
+    } else if (currentDifficulty === 'medium') {
+      generateMediumQuestion();
+    } else {
+      generateHardQuestion();
+    }
+    
+    displayQuestion();
+    updateProgressBar();
+    displayCurrentStep();
+  }
+
+  function generateEasyQuestion() {
+    const coef1 = Math.floor(Math.random() * 9) + 1;
+    const coef2 = Math.floor(Math.random() * 9) + 1;
+    const constant = Math.floor(Math.random() * 20) + 1;
+    
+    const combineCoef = coef1 + coef2;
+    
+    currentQuestion = {
+      type: 'easy',
+      coef1, coef2, constant,
+      combineCoef,
+      steps: 1,  // Changed from 2 to 1 - only one step needed for Easy
+      expression: `${coef1}x + ${coef2}x + ${constant}`,
+      answer: `${combineCoef}x + ${constant}`
+    };
+  }
+
+  function generateMediumQuestion() {
+    const m = Math.floor(Math.random() * 8) + 2;
+    const b = Math.floor(Math.random() * 15) + 1;
+    const result = Math.floor(Math.random() * 30) + 10;
+    
+    const x = (result - b) / m;
+    
+    if (x !== Math.floor(x) || x <= 0) {
+      return generateMediumQuestion();
+    }
+    
+    const subtractB = result - b;
+    
+    currentQuestion = {
+      type: 'medium',
+      m, b, result, x,
+      subtractB,
+      steps: 2,
+      expression: `${m}x + ${b} = ${result}`,
+      answer: `x = ${x}`
+    };
+  }
+
+  function generateHardQuestion() {
+    const coef1 = Math.floor(Math.random() * 6) + 2;
+    const coef2 = Math.floor(Math.random() * (coef1 - 1)) + 1;
+    const const1 = Math.floor(Math.random() * 15) + 1;
+    const const2 = Math.floor(Math.random() * 15) + 1;
+    
+    const x = Math.floor(Math.random() * 10) + 1;
+    const result1 = coef1 * x + const1;
+    const result2 = coef2 * x + const2;
+    
+    if (result1 !== result2) {
+      return generateHardQuestion();
+    }
+    
+    const newCoef = coef1 - coef2;
+    const newConst = const2 - const1;
+    
+    currentQuestion = {
+      type: 'hard',
+      coef1, coef2, const1, const2, x,
+      newCoef, newConst,
+      steps: 3,
+      expression: `${coef1}x + ${const1} = ${coef2}x + ${const2}`,
+      answer: `x = ${x}`
+    };
+  }
+
+  function displayQuestion() {
+    document.getElementById('problem-expression').textContent = currentQuestion.expression;
+  }
+
+  function updateProgressBar() {
+    const progressBar = document.getElementById('progress-bar');
+    progressBar.innerHTML = '';
+    
+    for (let i = 1; i <= currentQuestion.steps; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'progress-dot';
+      dot.id = `progress-${i}`;
+      
+      if (i < currentStep) {
+        dot.classList.add('completed');
+      } else if (i === currentStep) {
+        dot.classList.add('active');
+      }
+      
+      progressBar.appendChild(dot);
+    }
+  }
+
+  function displayCurrentStep() {
+    const container = document.getElementById('step-container');
+    
+    if (currentQuestion.type === 'easy') {
+      displayEasyStep(container);
+    } else if (currentQuestion.type === 'medium') {
+      displayMediumStep(container);
+    } else {
+      displayHardStep(container);
+    }
+  }
+
+  // FIXED EASY MODE - SINGLE STEP
+  function displayEasyStep(container) {
+    container.innerHTML = `
+      <div class="step-header">
+        <div class="step-number">1</div>
+        <div class="step-title">Simplify the Expression</div>
+      </div>
+      <div class="step-content">
+        <div class="step-question">Combine the x terms and write the simplified expression:</div>
+        
+        <div class="work-display">
+          <div class="work-title">Original Expression</div>
+          <div class="work-equation">${currentQuestion.coef1}x + ${currentQuestion.coef2}x + ${currentQuestion.constant}</div>
+        </div>
+
+        <div class="equation-row">
+          <div class="term">
+            <input type="number" class="coefficient-input" id="final-coef" min="0" placeholder="?">
+            <span class="variable">x</span>
+          </div>
+          <span class="operator">+</span>
+          <div class="term">
+            <input type="number" class="constant-input" id="final-const" min="0" placeholder="?">
+          </div>
+        </div>
+
+        <div class="hint-box">
+          <div class="hint-title">💡 Hint:</div>
+          <div class="hint-text">Add the coefficients of the x terms: ${currentQuestion.coef1} + ${currentQuestion.coef2} = ?x. Then add the constant ${currentQuestion.constant}.</div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="check-btn" onclick="checkEasyStep()">Check Answer ✓</button>
+        </div>
+        <div id="step-feedback"></div>
+      </div>
+    `;
+    setTimeout(() => document.getElementById('final-coef')?.focus(), 100);
+    document.getElementById('final-coef')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') document.getElementById('final-const')?.focus();
+    });
+    document.getElementById('final-const')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') checkEasyStep();
+    });
+  }
+
+  function displayMediumStep(container) {
+    if (currentStep === 1) {
+      container.innerHTML = `
+        <div class="step-header">
+          <div class="step-number">1</div>
+          <div class="step-title">Isolate the Variable Term</div>
+        </div>
+        <div class="step-content">
+          <div class="step-question">Subtract ${currentQuestion.b} from both sides to isolate the ${currentQuestion.m}x term:</div>
+          
+          <div class="work-display">
+            <div class="work-title">Original equation</div>
+            <div class="work-equation">${currentQuestion.m}x + ${currentQuestion.b} = ${currentQuestion.result}</div>
+          </div>
+
+          <div class="equation-row">
+            <div class="term">
+              <div class="coefficient-box">${currentQuestion.m}</div>
+              <span class="variable">x</span>
+            </div>
+            <span class="equals">=</span>
+            <div class="term">
+              <input type="number" class="constant-input" id="subtract-result" placeholder="?">
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="check-btn" onclick="checkMediumStep1()">Check Answer ✓</button>
+          </div>
+          <div id="step-feedback"></div>
+        </div>
+      `;
+      setTimeout(() => document.getElementById('subtract-result')?.focus(), 100);
+      document.getElementById('subtract-result')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkMediumStep1();
+      });
+    } else if (currentStep === 2) {
+      container.innerHTML = `
+        <div class="step-header">
+          <div class="step-number completed">2</div>
+          <div class="step-title">Solve for x</div>
+        </div>
+        <div class="step-content">
+          <div class="step-question">Divide both sides by ${currentQuestion.m} to find the value of x:</div>
+          
+          <div class="work-display">
+            <div class="work-title">Your work so far</div>
+            <div class="work-equation">${currentQuestion.m}x = ${currentQuestion.subtractB}</div>
+          </div>
+
+          <div class="equation-row">
+            <span class="variable">x</span>
+            <span class="equals">=</span>
+            <div class="term">
+              <input type="number" class="constant-input" id="final-x" placeholder="?">
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="check-btn" onclick="checkMediumStep2()">Check Answer ✓</button>
+          </div>
+          <div id="step-feedback"></div>
+        </div>
+      `;
+      setTimeout(() => document.getElementById('final-x')?.focus(), 100);
+      document.getElementById('final-x')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkMediumStep2();
+      });
+    }
+  }
+
+  function displayHardStep(container) {
+    if (currentStep === 1) {
+      container.innerHTML = `
+        <div class="step-header">
+          <div class="step-number">1</div>
+          <div class="step-title">Collect Variable Terms on One Side</div>
+        </div>
+        <div class="step-content">
+          <div class="step-question">Subtract ${currentQuestion.coef2}x from both sides to collect all x terms on the left:</div>
+          
+          <div class="work-display">
+            <div class="work-title">Original equation</div>
+            <div class="work-equation">${currentQuestion.coef1}x + ${currentQuestion.const1} = ${currentQuestion.coef2}x + ${currentQuestion.const2}</div>
+          </div>
+
+          <div class="equation-row">
+            <div class="term">
+              <input type="number" class="coefficient-input" id="new-coef" placeholder="?">
+              <span class="variable">x</span>
+            </div>
+            <span class="operator">+</span>
+            <div class="term">
+              <div class="constant-box">${currentQuestion.const1}</div>
+            </div>
+            <span class="equals">=</span>
+            <div class="term">
+              <div class="constant-box">${currentQuestion.const2}</div>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="check-btn" onclick="checkHardStep1()">Check Answer ✓</button>
+          </div>
+          <div id="step-feedback"></div>
+        </div>
+      `;
+      setTimeout(() => document.getElementById('new-coef')?.focus(), 100);
+      document.getElementById('new-coef')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkHardStep1();
+      });
+    } else if (currentStep === 2) {
+      container.innerHTML = `
+        <div class="step-header">
+          <div class="step-number completed">2</div>
+          <div class="step-title">Collect Constant Terms</div>
+        </div>
+        <div class="step-content">
+          <div class="step-question">Subtract ${currentQuestion.const1} from both sides to collect constants on the right:</div>
+          
+          <div class="work-display">
+            <div class="work-title">Your work so far</div>
+            <div class="work-equation">${currentQuestion.newCoef}x + ${currentQuestion.const1} = ${currentQuestion.const2}</div>
+          </div>
+
+          <div class="equation-row">
+            <div class="term">
+              <div class="coefficient-box">${currentQuestion.newCoef}</div>
+              <span class="variable">x</span>
+            </div>
+            <span class="equals">=</span>
+            <div class="term">
+              <input type="number" class="constant-input" id="new-const" placeholder="?">
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="check-btn" onclick="checkHardStep2()">Check Answer ✓</button>
+          </div>
+          <div id="step-feedback"></div>
+        </div>
+      `;
+      setTimeout(() => document.getElementById('new-const')?.focus(), 100);
+      document.getElementById('new-const')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkHardStep2();
+      });
+    } else if (currentStep === 3) {
+      container.innerHTML = `
+        <div class="step-header">
+          <div class="step-number completed">3</div>
+          <div class="step-title">Solve for x</div>
+        </div>
+        <div class="step-content">
+          <div class="step-question">Divide both sides by ${currentQuestion.newCoef} to find the value of x:</div>
+          
+          <div class="work-display">
+            <div class="work-title">Your work so far</div>
+            <div class="work-equation">${currentQuestion.newCoef}x = ${currentQuestion.newConst}</div>
+          </div>
+
+          <div class="equation-row">
+            <span class="variable">x</span>
+            <span class="equals">=</span>
+            <div class="term">
+              <input type="number" class="constant-input" id="final-x" placeholder="?">
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="check-btn" onclick="checkHardStep3()">Check Answer ✓</button>
+          </div>
+          <div id="step-feedback"></div>
+        </div>
+      `;
+      setTimeout(() => document.getElementById('final-x')?.focus(), 100);
+      document.getElementById('final-x')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkHardStep3();
+      });
+    }
+  }
+
+  // FIXED EASY CHECK - SINGLE STEP
+  function checkEasyStep() {
+    stepAttempts[0]++;
+    const coefInput = parseInt(document.getElementById('final-coef').value);
+    const constInput = parseInt(document.getElementById('final-const').value);
+    const feedback = document.getElementById('step-feedback');
+    const coefEl = document.getElementById('final-coef');
+    const constEl = document.getElementById('final-const');
+    
+    if (coefInput === currentQuestion.combineCoef && constInput === currentQuestion.constant) {
+      feedback.innerHTML = `<div class="step-feedback correct">✅ Perfect! ${currentQuestion.coef1}x + ${currentQuestion.coef2}x + ${currentQuestion.constant} = ${currentQuestion.combineCoef}x + ${currentQuestion.constant}</div>`;
+      coefEl.classList.add('correct');
+      constEl.classList.add('correct');
+      
+      const points = stepAttempts[0] === 1 ? 15 : 7;
+      totalScore += points;
+      currentStreak++;
+      updateScore();
+      
+      questionsCompleted++;
+      setTimeout(() => showCompletion(), 1000);
+    } else {
+      let hint = '';
+      if (coefInput !== currentQuestion.combineCoef) {
+        hint += `The coefficient should be ${currentQuestion.coef1} + ${currentQuestion.coef2} = ${currentQuestion.combineCoef}. `;
+      }
+      if (constInput !== currentQuestion.constant) {
+        hint += `The constant should be ${currentQuestion.constant}.`;
+      }
+      
+      feedback.innerHTML = `
+        <div class="step-feedback incorrect">❌ Not quite right!</div>
+        <div class="hint-box">
+          <div class="hint-title">💡 Hint:</div>
+          <div class="hint-text">${hint}</div>
+        </div>
+      `;
+      coefEl.classList.add('incorrect');
+      constEl.classList.add('incorrect');
+      setTimeout(() => {
+        coefEl.classList.remove('incorrect');
+        constEl.classList.remove('incorrect');
+        coefEl.value = '';
+        constEl.value = '';
+        coefEl.focus();
+      }, 2000);
+    }
+  }
+
+  function checkMediumStep1() {
+    stepAttempts[0]++;
+    const input = parseInt(document.getElementById('subtract-result').value);
+    const feedback = document.getElementById('step-feedback');
+    const inputEl = document.getElementById('subtract-result');
+    
+    if (input === currentQuestion.subtractB) {
+      feedback.innerHTML = `<div class="step-feedback correct">✅ Correct! ${currentQuestion.result} - ${currentQuestion.b} = ${currentQuestion.subtractB}</div>`;
+      inputEl.classList.add('correct');
+      
+      const points = stepAttempts[0] === 1 ? 5 : 2;
+      totalScore += points;
+      updateScore();
+      
+      setTimeout(() => {
+        currentStep = 2;
+        updateProgressBar();
+        displayCurrentStep();
+      }, 1200);
+    } else {
+      feedback.innerHTML = `
+        <div class="step-feedback incorrect">❌ Try again!</div>
+        <div class="hint-box">
+          <div class="hint-title">💡 Hint:</div>
+          <div class="hint-text">Subtract the constant from both sides: ${currentQuestion.result} - ${currentQuestion.b} = ?</div>
+        </div>
+      `;
+      inputEl.classList.add('incorrect');
+      setTimeout(() => {
+        inputEl.classList.remove('incorrect');
+        inputEl.value = '';
+        inputEl.focus();
+      }, 2000);
+    }
+  }
+
+  function checkMediumStep2() {
+    stepAttempts[1]++;
+    const input = parseInt(document.getElementById('final-x').value);
+    const feedback = document.getElementById('step-feedback');
+    const inputEl = document.getElementById('final-x');
+    
+    if (input === currentQuestion.x) {
+      feedback.innerHTML = `<div class="step-feedback correct">✅ Perfect! x = ${currentQuestion.x}</div>`;
+      inputEl.classList.add('correct');
+      
+      const points = stepAttempts[1] === 1 ? 10 : 5;
+      totalScore += points;
+      currentStreak++;
+      updateScore();
+      
+      questionsCompleted++;
+      setTimeout(() => showCompletion(), 1000);
+    } else {
+      feedback.innerHTML = `
+        <div class="step-feedback incorrect">❌ Not quite!</div>
+        <div class="hint-box">
+          <div class="hint-title">💡 Hint:</div>
+          <div class="hint-text">Divide both sides by ${currentQuestion.m}: ${currentQuestion.subtractB} ÷ ${currentQuestion.m} = ?</div>
+        </div>
+      `;
+      inputEl.classList.add('incorrect');
+      setTimeout(() => {
+        inputEl.classList.remove('incorrect');
+        inputEl.value = '';
+        inputEl.focus();
+      }, 2000);
+    }
+  }
+
+  function checkHardStep1() {
+    stepAttempts[0]++;
+    const input = parseInt(document.getElementById('new-coef').value);
+    const feedback = document.getElementById('step-feedback');
+    const inputEl = document.getElementById('new-coef');
+    
+    if (input === currentQuestion.newCoef) {
+      feedback.innerHTML = `<div class="step-feedback correct">✅ Correct! ${currentQuestion.coef1}x - ${currentQuestion.coef2}x = ${currentQuestion.newCoef}x</div>`;
+      inputEl.classList.add('correct');
+      
+      const points = stepAttempts[0] === 1 ? 5 : 2;
+      totalScore += points;
+      updateScore();
+      
+      setTimeout(() => {
+        currentStep = 2;
+        updateProgressBar();
+        displayCurrentStep();
+      }, 1200);
+    } else {
+      feedback.innerHTML = `
+        <div class="step-feedback incorrect">❌ Try again!</div>
+        <div class="hint-box">
+          <div class="hint-title">💡 Hint:</div>
+          <div class="hint-text">Subtract the coefficients: ${currentQuestion.coef1} - ${currentQuestion.coef2} = ?</div>
+        </div>
+      `;
+      inputEl.classList.add('incorrect');
+      setTimeout(() => {
+        inputEl.classList.remove('incorrect');
+        inputEl.value = '';
+        inputEl.focus();
+      }, 2000);
+    }
+  }
+
+  function checkHardStep2() {
+    stepAttempts[1]++;
+    const input = parseInt(document.getElementById('new-const').value);
+    const feedback = document.getElementById('step-feedback');
+    const inputEl = document.getElementById('new-const');
+    
+    if (input === currentQuestion.newConst) {
+      feedback.innerHTML = `<div class="step-feedback correct">✅ Correct! ${currentQuestion.const2} - ${currentQuestion.const1} = ${currentQuestion.newConst}</div>`;
+      inputEl.classList.add('correct');
+      
+      const points = stepAttempts[1] === 1 ? 5 : 2;
+      totalScore += points;
+      updateScore();
+      
+      setTimeout(() => {
+        currentStep = 3;
+        updateProgressBar();
+        displayCurrentStep();
+      }, 1200);
+    } else {
+      feedback.innerHTML = `
+        <div class="step-feedback incorrect">❌ Try again!</div>
+        <div class="hint-box">
+          <div class="hint-title">💡 Hint:</div>
+          <div class="hint-text">Subtract the constants: ${currentQuestion.const2} - ${currentQuestion.const1} = ?</div>
+        </div>
+      `;
+      inputEl.classList.add('incorrect');
+      setTimeout(() => {
+        inputEl.classList.remove('incorrect');
+        inputEl.value = '';
+        inputEl.focus();
+      }, 2000);
+    }
+  }
+
+  function checkHardStep3() {
+    stepAttempts[2]++;
+    const input = parseInt(document.getElementById('final-x').value);
+    const feedback = document.getElementById('step-feedback');
+    const inputEl = document.getElementById('final-x');
+    
+    if (input === currentQuestion.x) {
+      feedback.innerHTML = `<div class="step-feedback correct">✅ Perfect! x = ${currentQuestion.x}</div>`;
+      inputEl.classList.add('correct');
+      
+      const points = stepAttempts[2] === 1 ? 10 : 5;
+      totalScore += points;
+      currentStreak++;
+      updateScore();
+      
+      questionsCompleted++;
+      setTimeout(() => showCompletion(), 1000);
+    } else {
+      feedback.innerHTML = `
+        <div class="step-feedback incorrect">❌ Not quite!</div>
+        <div class="hint-box">
+          <div class="hint-title">💡 Hint:</div>
+          <div class="hint-text">Divide both sides by ${currentQuestion.newCoef}: ${currentQuestion.newConst} ÷ ${currentQuestion.newCoef} = ?</div>
+        </div>
+      `;
+      inputEl.classList.add('incorrect');
+      setTimeout(() => {
+        inputEl.classList.remove('incorrect');
+        inputEl.value = '';
+        inputEl.focus();
+      }, 2000);
+    }
+  }
+
+  function showCompletion() {
+    document.getElementById('completion-area').style.minHeight = 'auto';
+    document.getElementById('completion-area').innerHTML = `
+      <div class="completion-message pulse">
+        <div class="completion-title">🎉 Problem Complete!</div>
+        <div class="completion-text">Great work!</div>
+        <div class="completion-text" style="margin-top: 1rem;">
+          ${currentQuestion.expression} → ${currentQuestion.answer}
+        </div>
+      </div>
+    `;
+    
+    document.getElementById('next-btn').style.display = 'block';
+  }
+
+  function updateScore() {
+    document.getElementById('total-score').textContent = totalScore;
+    document.getElementById('streak').textContent = currentStreak;
+    document.getElementById('total-score').classList.add('pulse');
+    setTimeout(() => document.getElementById('total-score').classList.remove('pulse'), 500);
+  }
+
+  function toggleHelp() {
+    const modal = document.getElementById('help-modal');
+    modal.classList.toggle('active');
+  }
+</script>
+
+</body>
+</html>
