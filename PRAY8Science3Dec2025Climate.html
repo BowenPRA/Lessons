@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="x-poe-datastore-behavior" content="local_only">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com https://docs.google.com https://share.google; frame-src 'self' https://www.youtube.com https://docs.google.com https://share.google https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    
+    <title>Climate Zones - Year 8 Science</title>
+    <meta name="description" content="Understanding Earth's climate zones and their characteristics">
+    <meta name="subject" content="Science">
+    <meta name="year" content="Year 8">
+    <meta name="type" content="lesson">
+    <meta name="date" content="3 December 2025">
+    <meta name="unit" content="5">
+    <meta name="tags" content="Climate Zones, Weather, Climate, Environment, Earth Science">
+    <meta name="author" content="Palm River Academy">
+    <meta name="school" content="Palm River Academy">
+    <meta name="curriculum" content="Cambridge International">
+    <meta name="level" content="Year 8">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0EA5E9;
+            --primary-dark: #0284C7;
+            --secondary: #8B5CF6;
+            --secondary-dark: #7C3AED;
+            --accent: #F59E0B;
+            --accent-dark: #D97706;
+            --success: #10B981;
+            --pink: #EC4899;
+            --pink-dark: #DB2777;
+            --teal: #14B8A6;
+            --indigo: #6366F1;
+            --red: #EF4444;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+            --gradient-primary: linear-gradient(135deg, #0EA5E9 0%, #8B5CF6 100%);
+            --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
+            --gradient-cool: linear-gradient(135deg, #14B8A6 0%, #6366F1 100%);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0EA5E9 0%, #8B5CF6 50%, #EC4899 100%);
+            color: var(--gray-900);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .app-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: clamp(0.75rem, 2vmin, 1.25rem) clamp(1rem, 3vmin, 2.5rem);
+            box-shadow: 0 4px 12px rgb(0 0 0 / 0.08);
+            border-bottom: 3px solid transparent;
+            border-image: var(--gradient-primary) 1;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: clamp(1rem, 2vw, 2rem);
+            flex-wrap: wrap;
+        }
+
+        .lesson-badge {
+            background: var(--gradient-primary);
+            color: white;
+            padding: clamp(0.5rem, 1vmin, 0.625rem) clamp(0.875rem, 2vmin, 1.25rem);
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: clamp(0.9375rem, 1.6vmin, 1.125rem);
+            box-shadow: var(--shadow-md);
+            white-space: nowrap;
+        }
+
+        .lesson-title {
+            font-size: clamp(1.0625rem, 2.15vmin, 1.625rem);
+            font-weight: 800;
+            color: var(--gray-800);
+            flex: 1;
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .lesson-date {
+            font-size: clamp(0.9375rem, 1.6vmin, 1.125rem);
+            font-weight: 600;
+            color: var(--gray-600);
+            white-space: nowrap;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(1rem, 2.5vmin, 2.5rem);
+            min-height: 0;
+        }
+
+        .slide-container {
+            background: white;
+            border-radius: clamp(1rem, 2vmin, 2rem);
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            width: 100%;
+            max-width: 1300px;
+            height: 100%;
+            max-height: 800px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: clamp(1.5rem, 3.5vmin, 3.5rem) clamp(1.5rem, 4vmin, 4rem);
+            scroll-behavior: smooth;
+        }
+
+        .slide::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .slide::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+
+        .slide::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: clamp(2.125rem, 6.3vmin, 4.75rem);
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: clamp(1rem, 2vmin, 2rem);
+            line-height: 1.1;
+            text-align: center;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: clamp(1.875rem, 4.75vmin, 3.5rem);
+            font-weight: 800;
+            color: var(--gray-800);
+            margin-bottom: clamp(1.25rem, 2.5vmin, 2.5rem);
+            text-align: center;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        h3 {
+            font-size: clamp(1.375rem, 3.25vmin, 2.5rem);
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: clamp(0.75rem, 1.5vmin, 1.5rem);
+            line-height: 1.3;
+        }
+
+        p, li {
+            font-size: clamp(1.0625rem, 2.15vmin, 1.625rem);
+            line-height: 1.7;
+            color: var(--gray-700);
+            margin-bottom: clamp(0.75rem, 1.25vmin, 1rem);
+            font-weight: 500;
+        }
+
+        .title-slide {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            padding: clamp(1rem, 2vmin, 2rem);
+        }
+
+        .title-header {
+            margin-bottom: clamp(2rem, 4vmin, 4rem);
+            width: 100%;
+        }
+
+        .school-name {
+            font-size: clamp(1.625rem, 4.25vmin, 3rem);
+            font-weight: 900;
+            color: var(--gray-800);
+            margin-bottom: clamp(0.5rem, 1vmin, 1rem);
+            letter-spacing: -0.01em;
+        }
+
+        .class-info {
+            font-size: clamp(1.375rem, 3.25vmin, 2.25rem);
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: clamp(0.25rem, 0.5vmin, 0.5rem);
+        }
+
+        .title-date {
+            font-size: clamp(1.0625rem, 2.15vmin, 1.625rem);
+            color: var(--gray-600);
+            font-weight: 600;
+            margin-bottom: clamp(1.5rem, 2.5vmin, 2.5rem);
+        }
+
+        .unit-topic {
+            font-size: clamp(2.125rem, 5.75vmin, 4.75rem);
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: clamp(2rem, 4vmin, 4rem);
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+
+        .title-boxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(1.5rem, 3vmin, 2rem);
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .objective-box {
+            background: var(--gradient-primary);
+            color: white;
+            padding: clamp(1.5rem, 3vmin, 2.5rem);
+            border-radius: clamp(0.75rem, 1.5vmin, 1.5rem);
+            box-shadow: var(--shadow-xl);
+            transition: transform 0.3s ease;
+        }
+
+        .warmup-box {
+            background: var(--gradient-warm);
+            color: white;
+            padding: clamp(1.5rem, 3vmin, 2.5rem);
+            border-radius: clamp(0.75rem, 1.5vmin, 1.5rem);
+            box-shadow: var(--shadow-xl);
+            transition: transform 0.3s ease;
+        }
+
+        .objective-box:hover, .warmup-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .box-title {
+            font-size: clamp(1.375rem, 2.75vmin, 2.125rem);
+            font-weight: 800;
+            margin-bottom: clamp(0.75rem, 1.25vmin, 1.25rem);
+            letter-spacing: -0.01em;
+        }
+
+        .box-content {
+            font-size: clamp(1.0625rem, 2.15vmin, 1.625rem);
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        .warmup-banner {
+            background: var(--gradient-warm);
+            color: white;
+            padding: clamp(1rem, 2vmin, 1.5rem);
+            border-radius: clamp(0.75rem, 1.5vmin, 1rem);
+            font-weight: 800;
+            font-size: clamp(1.25rem, 2.75vmin, 2rem);
+            text-align: center;
+            margin-bottom: clamp(1.5rem, 3vmin, 2rem);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .question-card {
+            background: linear-gradient(to bottom, white, var(--gray-50));
+            border: 4px solid var(--primary);
+            border-radius: clamp(0.75rem, 1.5vmin, 1.5rem);
+            padding: clamp(2rem, 4vmin, 3rem);
+            margin: clamp(1.5rem, 3vmin, 2rem) 0;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .question-text {
+            font-size: clamp(1.25rem, 2.75vmin, 2rem);
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: clamp(1.5rem, 3vmin, 2rem);
+            text-align: center;
+        }
+
+        .reveal-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: clamp(1rem, 2vmin, 1.5rem) clamp(2rem, 4vmin, 3rem);
+            border-radius: clamp(0.5rem, 1vmin, 0.75rem);
+            font-size: clamp(1.0625rem, 2.15vmin, 1.5rem);
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .reveal-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .answer-box {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border-left: 6px solid var(--success);
+            padding: clamp(1.5rem, 3vmin, 2rem);
+            border-radius: clamp(0.5rem, 1vmin, 0.75rem);
+            margin-top: clamp(1.5rem, 3vmin, 2rem);
+            display: none;
+            animation: slideDown 0.5s ease;
+        }
+
+        .answer-box.show {
+            display: block;
+        }
+
+        .answer-text {
+            font-size: clamp(1.125rem, 2.5vmin, 1.75rem);
+            font-weight: 600;
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        .write-down-note {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 3px solid var(--accent);
+            padding: clamp(0.75rem, 1.5vmin, 1rem);
+            border-radius: clamp(0.5rem, 1vmin, 0.75rem);
+            margin-top: clamp(1rem, 2vmin, 1.25rem);
+            text-align: center;
+        }
+
+        .write-down-note p {
+            font-size: clamp(1rem, 2.15vmin, 1.375rem);
+            font-weight: 800;
+            color: var(--gray-900);
+            margin: 0;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .notes-banner {
+            background: var(--gradient-warm);
+            color: white;
+            padding: clamp(0.75rem, 1.25vmin, 1rem) clamp(1.25rem, 2vmin, 1.5rem);
+            border-radius: clamp(0.5rem, 1vmin, 0.75rem);
+            font-weight: 800;
+            font-size: clamp(1rem, 2.15vmin, 1.375rem);
+            text-align: center;
+            margin-bottom: clamp(1rem, 2vmin, 1.5rem);
+            box-shadow: var(--shadow-md);
+            display: inline-block;
+        }
+
+        .highlight-term {
+            background: linear-gradient(120deg, #FEF3C7 0%, #FDE68A 100%);
+            padding: clamp(0.125rem, 0.25vmin, 0.25rem) clamp(0.375rem, 0.75vmin, 0.5rem);
+            border-radius: clamp(0.25rem, 0.5vmin, 0.375rem);
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .definition-box {
+            background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);
+            border: 4px solid var(--indigo);
+            border-radius: clamp(0.75rem, 1.5vmin, 1rem);
+            padding: clamp(1.5rem, 3vmin, 2rem);
+            margin: clamp(1.5rem, 3vmin, 2rem) 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .definition-term {
+            font-size: clamp(1.5rem, 3.5vmin, 2.5rem);
+            font-weight: 900;
+            color: var(--indigo);
+            margin-bottom: clamp(0.75rem, 1.5vmin, 1rem);
+            text-align: center;
+        }
+
+        .definition-text {
+            font-size: clamp(1.125rem, 2.5vmin, 1.75rem);
+            font-weight: 600;
+            color: var(--gray-800);
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .climate-map-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: clamp(2rem, 4vmin, 3rem) auto;
+            border-radius: clamp(0.75rem, 1.5vmin, 1rem);
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            border: 4px solid var(--primary);
+        }
+
+        .climate-map-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 900px;
+            margin: clamp(2rem, 4vmin, 3rem) auto;
+            aspect-ratio: 16 / 9;
+            border-radius: clamp(0.75rem, 1.5vmin, 1rem);
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .climate-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: clamp(2rem, 4vmin, 3rem) 0;
+            border-radius: clamp(0.75rem, 1.5vmin, 1rem);
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .climate-table th {
+            background: var(--gradient-primary);
+            color: white;
+            padding: clamp(1rem, 2vmin, 1.5rem);
+            font-size: clamp(1.125rem, 2.5vmin, 1.75rem);
+            font-weight: 800;
+            text-align: left;
+        }
+
+        .climate-table td {
+            background: white;
+            border-bottom: 2px solid var(--gray-200);
+            padding: clamp(1rem, 2vmin, 1.5rem);
+            font-size: clamp(1.0625rem, 2.15vmin, 1.5rem);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .climate-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .climate-table td:first-child {
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .key-point {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border-left: clamp(4px, 0.75vmin, 6px) solid var(--accent);
+            padding: clamp(1rem, 2vmin, 1.5rem);
+            margin: clamp(1rem, 2vmin, 1.5rem) 0;
+            border-radius: clamp(0.5rem, 1vmin, 0.75rem);
+            box-shadow: var(--shadow-md);
+        }
+
+        .key-point p {
+            font-size: clamp(1.0625rem, 2.15vmin, 1.5rem);
+            font-weight: 700;
+            color: var(--gray-800);
+            margin: 0;
+        }
+
+        .summative-banner {
+            background: var(--gradient-cool);
+            color: white;
+            padding: clamp(1rem, 2vmin, 1.5rem);
+            border-radius: clamp(0.75rem, 1.5vmin, 1rem);
+            font-weight: 800;
+            font-size: clamp(1.25rem, 2.75vmin, 2rem);
+            text-align: center;
+            margin-bottom: clamp(1.5rem, 3vmin, 2rem);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .writing-box {
+            background: linear-gradient(to bottom, white, var(--gray-50));
+            border: 4px solid var(--teal);
+            border-radius: clamp(0.75rem, 1.5vmin, 1.5rem);
+            padding: clamp(2rem, 4vmin, 3rem);
+            margin: clamp(1.5rem, 3vmin, 2rem) 0;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .writing-prompt {
+            font-size: clamp(1.25rem, 2.75vmin, 2rem);
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: clamp(1.5rem, 3vmin, 2rem);
+            text-align: center;
+        }
+
+        .navigation {
+            background: rgba(255, 255, 255, 0.98);
+            border-top: 1px solid var(--gray-200);
+            padding: clamp(0.75rem, 1.25vmin, 1.25rem) clamp(1rem, 2.5vmin, 2.5rem);
+            box-shadow: 0 -4px 12px rgb(0 0 0 / 0.08);
+        }
+
+        .navigation-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: clamp(1rem, 2vmin, 2rem);
+            flex-wrap: wrap;
+        }
+
+        .progress-container {
+            flex: 1;
+            max-width: 600px;
+            min-width: 200px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: clamp(0.5rem, 0.75vmin, 0.75rem);
+            font-size: clamp(0.9375rem, 1.6vmin, 1.125rem);
+            color: var(--gray-700);
+            font-weight: 700;
+        }
+
+        .progress-bar {
+            height: clamp(6px, 1vmin, 10px);
+            background: var(--gray-200);
+            border-radius: 9999px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 9999px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.5);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: clamp(0.75rem, 1.25vmin, 1.25rem);
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.375rem, 0.75vmin, 0.75rem);
+            padding: clamp(0.75rem, 1vmin, 1rem) clamp(1rem, 2vmin, 2rem);
+            background: white;
+            border: 2px solid var(--gray-300);
+            border-radius: clamp(0.5rem, 1vmin, 1rem);
+            font-weight: 700;
+            font-size: clamp(0.9375rem, 1.6vmin, 1.1875rem);
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: var(--gray-100);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                justify-content: center;
+            }
+            
+            .lesson-title {
+                order: -1;
+                flex-basis: 100%;
+            }
+            
+            .title-boxes {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <div class="header-content">
+            <span class="lesson-badge">Year 8 Science</span>
+            <div class="lesson-title">Unit 5: Materials and Cycles on Earth - Climate Zones</div>
+            <div class="lesson-date">📅 Wednesday, 3 December 2025</div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="slide-container">
+            <div class="slide" id="slide-content"></div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <div class="navigation-content">
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span id="current-slide">Slide 1</span>
+                    <span id="total-slides">of 15</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)" disabled>← Previous</button>
+                <button class="nav-btn" id="next-btn" onclick="changeSlide(1)">Next →</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const slides = [
+        {
+            title: "Welcome",
+            content: `
+                <div class="title-slide">
+                    <div class="title-header">
+                        <div class="school-name">Palm River Academy</div>
+                        <div class="class-info">Year 8 Science</div>
+                        <div class="title-date">Wednesday, 3 December 2025</div>
+                        <div class="unit-topic">Unit 5: Climate Zones</div>
+                    </div>
+                    
+                    <div class="title-boxes">
+                        <div class="objective-box">
+                            <div class="box-title">🎯 Learning Objective</div>
+                            <div class="box-content">Describe the main climate zones on Earth and explain their characteristic weather patterns.</div>
+                        </div>
+                        
+                        <div class="warmup-box">
+                            <div class="box-title">🔥 Warm Up Activity</div>
+                            <div class="box-content">What do you remember from yesterday?<br><br><em>If you don't know, write it down!</em></div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Warm Up - Question 1",
+            content: `
+                <div class="warmup-banner">🔥 WARM UP: What Do You Remember From Yesterday?</div>
+                
+                <div class="question-card">
+                    <div class="question-text">Question 1: What is the difference between weather and climate?</div>
+                    <button class="reveal-btn" onclick="revealAnswer('answer1')">🔍 Click to Reveal Answer</button>
+                    <div class="answer-box" id="answer1">
+                        <div class="answer-text">
+                            <span class="highlight-term">WEATHER</span> = <strong>Day-to-day (short term)</strong> conditions of the atmosphere
+                            <br><br>
+                            Examples: Today is sunny and hot, tomorrow might rain
+                            <br><br><br>
+                            <span class="highlight-term">CLIMATE</span> = <strong>Long-term (30+ years)</strong> average weather patterns in a region
+                            <br><br>
+                            Examples: Vietnam has a tropical climate with hot, wet weather throughout the year
+                        </div>
+                        <div class="write-down-note">
+                            <p>✍️ WRITE THIS DOWN: Weather is short-term, climate is long-term (30+ years)</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Warm Up - Question 2",
+            content: `
+                <div class="warmup-banner">🔥 WARM UP: What Do You Remember From Yesterday?</div>
+                
+                <div class="question-card">
+                    <div class="question-text">Question 2: What do we call someone who studies weather?</div>
+                    <button class="reveal-btn" onclick="revealAnswer('answer2')">🔍 Click to Reveal Answer</button>
+                    <div class="answer-box" id="answer2">
+                        <div class="answer-text">
+                            A <span class="highlight-term">METEOROLOGIST</span>
+                            <br><br>
+                            A meteorologist is a scientist who studies and forecasts the weather. They use instruments, satellites, and computer models to predict weather patterns.
+                            <br><br>
+                            <strong>Note:</strong> The study of weather is called <span class="highlight-term">METEOROLOGY</span>
+                        </div>
+                        <div class="write-down-note">
+                            <p>✍️ WRITE THIS DOWN: A meteorologist studies weather</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Warm Up - Question 3",
+            content: `
+                <div class="warmup-banner">🔥 WARM UP: What Do You Remember From Yesterday?</div>
+                
+                <div class="question-card">
+                    <div class="question-text">Question 3: What is precipitation?</div>
+                    <button class="reveal-btn" onclick="revealAnswer('answer3')">🔍 Click to Reveal Answer</button>
+                    <div class="answer-box" id="answer3">
+                        <div class="answer-text">
+                            <span class="highlight-term">PRECIPITATION</span> is any form of water that falls from clouds to the Earth's surface.
+                            <br><br>
+                            <strong>Types of precipitation include:</strong>
+                            <br>
+                            • <strong>Rain</strong> - liquid water droplets<br>
+                            • <strong>Snow</strong> - frozen ice crystals<br>
+                            • <strong>Sleet</strong> - frozen rain<br>
+                            • <strong>Hail</strong> - balls of ice<br>
+                        </div>
+                        <div class="write-down-note">
+                            <p>✍️ WRITE THIS DOWN: Precipitation is water falling from clouds (rain, snow, sleet, hail)</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Warm Up - Question 4",
+            content: `
+                <div class="warmup-banner">🔥 WARM UP: What Do You Remember From Yesterday?</div>
+                
+                <div class="question-card">
+                    <div class="question-text">Question 4: What is humidity? What is the difference between precipitation and humidity?</div>
+                    <button class="reveal-btn" onclick="revealAnswer('answer4')">🔍 Click to Reveal Answer</button>
+                    <div class="answer-box" id="answer4">
+                        <div class="answer-text">
+                            <span class="highlight-term">HUMIDITY</span> is the amount of water vapor (invisible water gas) in the air.
+                            <br><br>
+                            <strong>Key Differences:</strong>
+                            <br><br>
+                            <strong>HUMIDITY:</strong>
+                            <br>
+                            • Water vapor IN THE AIR (invisible)<br>
+                            • Measured as a percentage (0-100%)<br>
+                            • Makes the air feel sticky or muggy<br>
+                            <br>
+                            <strong>PRECIPITATION:</strong>
+                            <br>
+                            • Water FALLING FROM clouds (visible)<br>
+                            • Measured in millimeters (mm)<br>
+                            • Includes rain, snow, sleet, hail<br>
+                        </div>
+                        <div class="write-down-note">
+                            <p>✍️ WRITE THIS DOWN: Humidity = water vapor in air; Precipitation = water falling from clouds</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Introduction to Climate Zones",
+            content: `
+                <h2>Climate Zones on Earth</h2>
+                
+                <p style="text-align: center; font-size: clamp(1.125rem, 2.5vmin, 1.75rem); font-weight: 700; margin-bottom: clamp(2rem, 4vmin, 3rem);">
+                    The map below shows the main climate zones on Earth.<br>The key shows the names of these zones.
+                </p>
+                
+                <div class="climate-map-container">
+                    <img src="ClimateZones.jpg" alt="World Climate Zones Map" />
+                </div>
+                
+                <div class="key-point" style="margin-top: clamp(2rem, 4vmin, 3rem);">
+                    <p>🌍 Each climate zone has different temperatures, rainfall, and weather patterns that affect the plants, animals, and people living there.</p>
+                </div>
+            `
+        },
+        {
+            title: "Video: Climate Zones Explained",
+            content: `
+                <h2>📺 Watch: Understanding Climate Zones</h2>
+                
+                <p style="text-align: center; font-size: clamp(1.125rem, 2.5vmin, 1.75rem); font-weight: 700; margin-bottom: clamp(2rem, 4vmin, 3rem);">
+                    Watch this video to learn about the different climate zones
+                </p>
+                
+                <div class="video-container">
+                    <iframe 
+                        src="https://www.youtube.com/embed/DciQF8eD71E" 
+                        title="Climate Zones Video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                
+                <div class="key-point" style="margin-top: clamp(2rem, 4vmin, 3rem);">
+                    <p>📝 Pay attention to how latitude (distance from the equator) affects climate!</p>
+                </div>
+            `
+        },
+        {
+            title: "Climate Zone Characteristics - Table",
+            content: `
+                <h2>Characteristics of Each Climate Zone</h2>
+                
+                <p style="text-align: center; font-size: clamp(1.125rem, 2.5vmin, 1.75rem); font-weight: 700; margin-bottom: clamp(2rem, 4vmin, 3rem);">
+                    Each zone has a characteristic climate.
+                </p>
+                
+                <div class="notes-banner">📝 WRITE THIS TABLE IN YOUR NOTES:</div>
+                
+                <table class="climate-table">
+                    <thead>
+                        <tr>
+                            <th>Climate Zone</th>
+                            <th>Description of Climate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Polar</td>
+                            <td>very cold and dry all year</td>
+                        </tr>
+                        <tr>
+                            <td>Temperate</td>
+                            <td>cold winters and mild summers</td>
+                        </tr>
+                        <tr>
+                            <td>Arid</td>
+                            <td>hot and dry all year</td>
+                        </tr>
+                        <tr>
+                            <td>Tropical</td>
+                            <td>hot and wet all year</td>
+                        </tr>
+                        <tr>
+                            <td>Mediterranean</td>
+                            <td>mild winters and hot, dry summers</td>
+                        </tr>
+                        <tr>
+                            <td>Mountains/tundra/taiga</td>
+                            <td>very cold all year</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `
+        },
+        {
+            title: "Polar Climate Zone",
+            content: `
+                <h2>Polar Climate Zone</h2>
+                
+                <div class="definition-box">
+                    <div class="definition-term">Polar Climate</div>
+                    <div class="definition-text">
+                        <strong>Very cold and dry all year</strong>
+                    </div>
+                </div>
+                
+                <div class="key-point">
+                    <p>❄️ <strong>Key Features:</strong></p>
+                    <p>• Located at the North and South Poles</p>
+                    <p>• Temperatures often below freezing (-40°C or colder)</p>
+                    <p>• Very little precipitation (snow)</p>
+                    <p>• Long periods of darkness in winter, long daylight in summer</p>
+                    <p>• Ice and snow cover most of the land</p>
+                    <p>• Few plants and animals can survive</p>
+                </div>
+                
+                <div class="write-down-note">
+                    <p>✍️ WRITE THIS DOWN: Polar = very cold and dry all year</p>
+                </div>
+            `
+        },
+        {
+            title: "Tropical Climate Zone - Vietnam!",
+            content: `
+                <h2>Tropical Climate Zone</h2>
+                
+                <div class="definition-box">
+                    <div class="definition-term">Tropical Climate</div>
+                    <div class="definition-text">
+                        <strong>Hot and wet all year</strong>
+                    </div>
+                </div>
+                
+                <div class="key-point">
+                    <p>🌴 <strong>Key Features:</strong></p>
+                    <p>• Located near the equator</p>
+                    <p>• High temperatures all year (25-35°C)</p>
+                    <p>• High humidity and heavy rainfall</p>
+                    <p>• Rainforests and jungles grow here</p>
+                    <p>• Very diverse plant and animal life</p>
+                    <p>• <strong>VIETNAM is in the TROPICAL zone!</strong></p>
+                </div>
+                
+                <div class="write-down-note">
+                    <p>✍️ WRITE THIS DOWN: Tropical = hot and wet all year (like Vietnam!)</p>
+                </div>
+            `
+        },
+        {
+            title: "Climate Zones Map Reference",
+            content: `
+                <h2>Reference Map: Climate Zones</h2>
+                
+                <p style="text-align: center; font-size: clamp(1.125rem, 2.5vmin, 1.75rem); font-weight: 700; margin-bottom: clamp(2rem, 4vmin, 3rem);">
+                    Use this map to help you answer the questions
+                </p>
+                
+                <div class="climate-map-container">
+                    <img src="ClimateZones.jpg" alt="World Climate Zones Map for Reference" />
+                </div>
+                
+                <div class="key-point">
+                    <p>🗺️ <strong>Map Key:</strong></p>
+                    <p>🤍 Polar (white) | 🟤 Tundra (brown) | 🟣 Mountains (purple)</p>
+                    <p>🟢 Temperate (green) | 🟠 Mediterranean (orange)</p>
+                    <p>🟡 Arid (yellow) | 🔴 Tropical (pink/red)</p>
+                </div>
+            `
+        },
+        {
+            title: "Question 3 - Vietnam's Climate",
+            content: `
+                <div class="warmup-banner">📍 QUESTION FROM TEXTBOOK</div>
+                
+                <div class="question-card">
+                    <div class="question-text">Question 3: Which climate zone do you live in?</div>
+                    <button class="reveal-btn" onclick="revealAnswer('answer-q3')">🔍 Click to Reveal Answer</button>
+                    <div class="answer-box" id="answer-q3">
+                        <div class="answer-text">
+                            <strong>Answer: TROPICAL climate zone</strong>
+                            <br><br>
+                            <strong>Explanation:</strong>
+                            <br>
+                            We live in Vietnam, which is located near the equator in Southeast Asia. Looking at the climate zones map, Vietnam is shown in the PINK/RED color, which represents the tropical climate zone.
+                            <br><br>
+                            <strong>Evidence from Vietnam's weather:</strong>
+                            <br>
+                            • Hot temperatures all year (average 25-35°C)<br>
+                            • High rainfall, especially during monsoon season<br>
+                            • High humidity that makes it feel very sticky<br>
+                            • Rainforests and tropical plants grow well<br>
+                            <br>
+                            This matches the definition: <span class="highlight-term">"hot and wet all year"</span>
+                        </div>
+                        <div class="write-down-note">
+                            <p>✍️ WRITE THIS DOWN: Vietnam is in the TROPICAL climate zone (hot and wet all year)</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Question 4 - Arid Zone Countries",
+            content: `
+                <div class="warmup-banner">📍 QUESTION FROM TEXTBOOK</div>
+                
+                <div class="question-card">
+                    <div class="question-text">Question 4: Name TWO countries that are in the arid zone.<br><br><em>(You may need to use an atlas to help you.)</em></div>
+                    <button class="reveal-btn" onclick="revealAnswer('answer-q4')">🔍 Click to Reveal Answer</button>
+                    <div class="answer-box" id="answer-q4">
+                        <div class="answer-text">
+                            <strong>Possible Answers (any TWO):</strong>
+                            <br><br>
+                            1. <strong>Saudi Arabia</strong> (Middle East - most of the country is desert)<br>
+                            2. <strong>Australia</strong> (large central desert region)<br>
+                            3. <strong>Egypt</strong> (North Africa - Sahara Desert)<br>
+                            4. <strong>Libya</strong> (North Africa - Sahara Desert)<br>
+                            5. <strong>Namibia</strong> (Southern Africa - desert coast)<br>
+                            6. <strong>Chile</strong> (South America - Atacama Desert)<br>
+                            <br>
+                            <strong>Remember:</strong> Arid zones (shown in YELLOW on the map) are <span class="highlight-term">"hot and dry all year"</span> - these are desert regions with very little rainfall.
+                        </div>
+                        <div class="write-down-note">
+                            <p>✍️ WRITE THIS DOWN: Arid zone countries (choose 2): Saudi Arabia, Australia, Egypt, Libya</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Question 5 - Mediterranean Climate",
+            content: `
+                <div class="warmup-banner">📍 QUESTION FROM TEXTBOOK</div>
+                
+                <div class="question-card">
+                    <div class="question-text">Question 5: Name TWO countries that have areas with a Mediterranean climate but are not near the Mediterranean Sea.</div>
+                    <button class="reveal-btn" onclick="revealAnswer('answer-q5')">🔍 Click to Reveal Answer</button>
+                    <div class="answer-box" id="answer-q5">
+                        <div class="answer-text">
+                            <strong>Possible Answers (any TWO):</strong>
+                            <br><br>
+                            1. <strong>Australia</strong> (southwestern coast - cities like Perth)<br>
+                            2. <strong>United States</strong> (California - cities like Los Angeles, San Francisco)<br>
+                            3. <strong>Chile</strong> (central region around Santiago)<br>
+                            4. <strong>South Africa</strong> (southwestern coast - Cape Town area)<br>
+                            <br>
+                            <strong>Remember:</strong> Mediterranean climate (shown in ORANGE on the map) has <span class="highlight-term">"mild winters and hot, dry summers"</span>
+                            <br><br>
+                            These regions have the same climate as the Mediterranean Sea area but are located far away on different continents!
+                        </div>
+                        <div class="write-down-note">
+                            <p>✍️ WRITE THIS DOWN: Mediterranean climate (not near Med. Sea): Australia, USA (California), Chile, South Africa</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Question 6 - Tropical Zone Countries",
+            content: `
+                <div class="warmup-banner">📍 QUESTION FROM TEXTBOOK</div>
+                
+                <div class="question-card">
+                    <div class="question-text">Question 6: Name THREE countries that are in the tropical zone.</div>
+                    <button class="reveal-btn" onclick="revealAnswer('answer-q6')">🔍 Click to Reveal Answer</button>
+                    <div class="answer-box" id="answer-q6">
+                        <div class="answer-text">
+                            <strong>Possible Answers (any THREE):</strong>
+                            <br><br>
+                            <strong>Asia:</strong>
+                            <br>
+                            • <strong>Vietnam</strong> (where we live!)<br>
+                            • <strong>Thailand</strong><br>
+                            • <strong>Indonesia</strong><br>
+                            • <strong>Malaysia</strong><br>
+                            • <strong>Philippines</strong><br>
+                            <br>
+                            <strong>Central/South America:</strong>
+                            <br>
+                            • <strong>Brazil</strong> (Amazon rainforest)<br>
+                            • <strong>Colombia</strong><br>
+                            • <strong>Peru</strong><br>
+                            <br>
+                            <strong>Africa:</strong>
+                            <br>
+                            • <strong>Democratic Republic of Congo</strong><br>
+                            • <strong>Kenya</strong><br>
+                            • <strong>Nigeria</strong><br>
+                            <br>
+                            <strong>Remember:</strong> Tropical zones (PINK/RED on map) are near the equator and are <span class="highlight-term">"hot and wet all year"</span>
+                        </div>
+                        <div class="write-down-note">
+                            <p>✍️ WRITE THIS DOWN: Tropical zone countries (choose 3): Vietnam, Thailand, Indonesia, Brazil</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Question 7 - Comparing Arid and Tropical",
+            content: `
+                <div class="warmup-banner">📍 QUESTION FROM TEXTBOOK</div>
+                
+                <div class="question-card">
+                    <div class="question-text">Question 7: What is the difference between the climate in the arid zone and the tropical zone?</div>
+                    <button class="reveal-btn" onclick="revealAnswer('answer-q7')">🔍 Click to Reveal Answer</button>
+                    <div class="answer-box" id="answer-q7">
+                        <div class="answer-text">
+                            <strong>Answer:</strong>
+                            <br><br>
+                            The main difference is the amount of RAINFALL (precipitation):
+                            <br><br>
+                            <strong>ARID ZONE:</strong>
+                            <br>
+                            • <span class="highlight-term">Hot and DRY all year</span><br>
+                            • Very little rainfall (less than 250mm per year)<br>
+                            • Desert regions with very few plants<br>
+                            • Low humidity<br>
+                            <br>
+                            <strong>TROPICAL ZONE:</strong>
+                            <br>
+                            • <span class="highlight-term">Hot and WET all year</span><br>
+                            • Heavy rainfall (over 2000mm per year)<br>
+                            • Rainforests with many plants and animals<br>
+                            • High humidity<br>
+                            <br>
+                            <strong>Similarity:</strong> Both zones are HOT all year<br>
+                            <strong>Key Difference:</strong> Arid = DRY, Tropical = WET
+                        </div>
+                        <div class="write-down-note">
+                            <p>✍️ WRITE THIS DOWN: Arid vs Tropical - Both hot, but Arid is DRY and Tropical is WET</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Question 8 - Comparing Temperate and Mediterranean",
+            content: `
+                <div class="warmup-banner">📍 QUESTION FROM TEXTBOOK</div>
+                
+                <div class="question-card">
+                    <div class="question-text">Question 8: What are the differences between the climate in the temperate zone and the Mediterranean zone?</div>
+                    <button class="reveal-btn" onclick="revealAnswer('answer-q8')">🔍 Click to Reveal Answer</button>
+                    <div class="answer-box" id="answer-q8">
+                        <div class="answer-text">
+                            <strong>Answer:</strong>
+                            <br><br>
+                            The main difference is when rainfall occurs and how hot the summers are:
+                            <br><br>
+                            <strong>TEMPERATE ZONE:</strong>
+                            <br>
+                            • <span class="highlight-term">Cold winters and MILD summers</span><br>
+                            • Rainfall throughout the year (all seasons)<br>
+                            • Moderate temperatures in summer (15-25°C)<br>
+                            • Four distinct seasons with gradual changes<br>
+                            <br>
+                            <strong>MEDITERRANEAN ZONE:</strong>
+                            <br>
+                            • <span class="highlight-term">Mild winters and HOT, DRY summers</span><br>
+                            • Most rainfall in WINTER months only<br>
+                            • Very little rain in summer<br>
+                            • Hotter summers (25-35°C)<br>
+                            <br>
+                            <strong>Key Differences:</strong>
+                            <br>
+                            1. Temperate has MILD summers; Mediterranean has HOT summers<br>
+                            2. Temperate has rain all year; Mediterranean has dry summers<br>
+                            3. Both have mild winters, but Mediterranean winters are warmer
+                        </div>
+                        <div class="write-down-note">
+                            <p>✍️ WRITE THIS DOWN: Temperate = rain all year, mild summers; Mediterranean = dry summers, hot summers</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Summative Activity - Climate Change",
+            content: `
+                <div class="summative-banner">✍️ SUMMATIVE ACTIVITY: Understanding Climate Change</div>
+                
+                <div class="writing-box">
+                    <div class="writing-prompt">Part 1: What is Global Warming?</div>
+                    
+                    <div class="definition-box">
+                        <div class="definition-term">Global Warming</div>
+                        <div class="definition-text">
+                            Global warming is the gradual increase in Earth's average surface temperature caused by increased levels of greenhouse gases (like CO₂) in the atmosphere trapping heat from the Sun.
+                        </div>
+                    </div>
+                    
+                    <div class="key-point" style="margin-top: clamp(2rem, 3vmin, 2.5rem);">
+                        <p>🌡️ Over the past 100 years, Earth's temperature has increased by about 1°C. This may seem small, but it causes major changes to weather patterns, ice melting, and sea levels rising.</p>
+                    </div>
+                </div>
+                
+                <div class="writing-box" style="margin-top: clamp(2rem, 4vmin, 3rem);">
+                    <div class="writing-prompt">Part 2: Why Do Scientists Prefer "Climate Change"?</div>
+                    
+                    <div class="definition-box">
+                        <div class="definition-term">Climate Change (Preferred Term)</div>
+                        <div class="definition-text">
+                            Scientists and Cambridge Checkpoint prefer the term <span class="highlight-term">"CLIMATE CHANGE"</span> instead of "global warming" because:
+                            <br><br>
+                            <strong>1. It's more accurate:</strong> While average temperatures are rising globally, some places may experience colder weather, more extreme storms, droughts, or floods. "Climate change" describes ALL these changes, not just warming.
+                            <br><br>
+                            <strong>2. It describes long-term patterns:</strong> Remember, climate is measured over 30+ years. "Climate change" emphasizes that we're seeing long-term shifts in weather patterns, not just day-to-day temperature increases.
+                        </div>
+                    </div>
+                    
+                    <div class="notes-banner" style="margin-top: clamp(2rem, 3vmin, 2rem);">📝 YOUR WRITING TASK:</div>
+                    
+                    <div class="key-point">
+                        <p><strong>Use TWO facts from your notes today and yesterday to explain why "climate change" is a better term than "global warming".</strong></p>
+                        <p style="margin-top: 1rem;"><em>Hint: Think about the difference between weather and climate, and what happens in different climate zones!</em></p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Extension Activity - Bonus Challenge",
+            content: `
+                <div class="summative-banner">🌟 EXTENSION ACTIVITY - BONUS CHALLENGE</div>
+                
+                <div class="writing-box">
+                    <div class="writing-prompt">How Do People Know the Climate Is/Has Changed?</div>
+                    
+                    <div class="key-point">
+                        <p>💭 <strong>Think About:</strong></p>
+                        <p>• What evidence would scientists need?</p>
+                        <p>• What measurements would they take?</p>
+                        <p>• How far back in time would they need to look?</p>
+                        <p>• What tools or technology might they use?</p>
+                    </div>
+                    
+                    <div class="definition-box" style="margin-top: clamp(2rem, 4vmin, 3rem);">
+                        <div class="definition-term">Discussion Prompts</div>
+                        <div class="definition-text">
+                            <strong>Consider these questions:</strong>
+                            <br><br>
+                            1. How do we measure temperature over hundreds or thousands of years?<br>
+                            2. What natural records might tell us about past climates?<br>
+                            3. What changes can we observe today that show climate is changing?<br>
+                            4. Why do we need data from at least 30 years to talk about climate?<br>
+                        </div>
+                    </div>
+                    
+                    <div class="write-down-note" style="margin-top: clamp(2rem, 4vmin, 3rem);">
+                        <p>✍️ CHALLENGE: Write 3-5 sentences explaining different ways scientists know the climate has changed. Use complete sentences and scientific vocabulary!</p>
+                    </div>
+                </div>
+                
+                <div class="key-point" style="margin-top: clamp(2rem, 4vmin, 3rem); background: var(--gradient-primary); border: none;">
+                    <p style="color: white; font-size: clamp(1.125rem, 2.5vmin, 1.75rem);">🎓 Excellent work today! You now understand Earth's climate zones and can explain climate change using scientific evidence!</p>
+                </div>
+            `
+        }
+    ];
+
+    let currentSlide = 0;
+
+    function updateSlide() {
+        const slideContent = document.getElementById('slide-content');
+        slideContent.innerHTML = slides[currentSlide].content;
+        slideContent.className = 'slide fade-in';
+        
+        const progress = ((currentSlide + 1) / slides.length) * 100;
+        document.getElementById('progress-fill').style.width = `${progress}%`;
+        document.getElementById('current-slide').textContent = `Slide ${currentSlide + 1}`;
+        document.getElementById('total-slides').textContent = `of ${slides.length}`;
+        
+        document.getElementById('prev-btn').disabled = currentSlide === 0;
+        document.getElementById('next-btn').disabled = currentSlide === slides.length - 1;
+    }
+
+    function changeSlide(direction) {
+        const newSlide = currentSlide + direction;
+        if (newSlide >= 0 && newSlide < slides.length) {
+            currentSlide = newSlide;
+            updateSlide();
+        }
+    }
+
+    function revealAnswer(answerId) {
+        const answerBox = document.getElementById(answerId);
+        if (answerBox) {
+            answerBox.classList.add('show');
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+        if (e.key === 'ArrowRight') changeSlide(1);
+    });
+
+    updateSlide();
+</script>
+
+</body>
+</html>
