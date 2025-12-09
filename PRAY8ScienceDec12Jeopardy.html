@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 8 Science Jeopardy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .setup-screen, .game-screen {
+            min-height: 100vh;
+            padding: clamp(15px, 3vw, 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .setup-screen {
+            align-items: center;
+            justify-content: center;
+        }
+
+        .setup-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: clamp(25px, 5vw, 50px);
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: clamp(2em, 6vw, 4em);
+            margin-bottom: clamp(20px, 4vw, 40px);
+            font-weight: 900;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s ease infinite;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            letter-spacing: 2px;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .setup-group {
+            margin-bottom: clamp(20px, 3vw, 30px);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: clamp(1em, 2vw, 1.3em);
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: clamp(12px, 2vw, 16px);
+            font-size: clamp(1em, 1.8vw, 1.2em);
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        input:focus {
+            outline: none;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .team-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .team-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .team-input input {
+            flex: 1;
+        }
+
+        .remove-team {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            border: none;
+            padding: clamp(10px, 1.5vw, 14px) clamp(12px, 2vw, 18px);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: clamp(0.9em, 1.5vw, 1.1em);
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .remove-team:hover {
+            transform: scale(1.05) rotate(-5deg);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+        }
+
+        .add-team, .start-game {
+            width: 100%;
+            padding: clamp(14px, 2vw, 18px);
+            font-size: clamp(1.1em, 2vw, 1.4em);
+            font-weight: 700;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-team {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .start-game {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            font-size: clamp(1.3em, 2.5vw, 1.8em);
+            margin-top: clamp(20px, 3vw, 30px);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .add-team:hover, .start-game:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .start-game:hover {
+            background: linear-gradient(135deg, #ffed4e, #ffd700);
+        }
+
+        .game-screen {
+            display: none;
+        }
+
+        .scoreboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: clamp(10px, 2vw, 20px);
+            margin-bottom: clamp(20px, 3vw, 40px);
+            padding: clamp(15px, 2vw, 25px);
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .team-score {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            padding: clamp(15px, 2vw, 25px);
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-score::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+
+        .team-score:hover::before {
+            left: 100%;
+        }
+
+        .team-name {
+            font-size: clamp(1em, 2vw, 1.4em);
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .team-points {
+            font-size: clamp(1.5em, 3vw, 2.5em);
+            color: #ffd700;
+            font-weight: 900;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr));
+            gap: clamp(8px, 1.5vw, 15px);
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .board {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        .category {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            padding: clamp(15px, 2vw, 25px) clamp(8px, 1vw, 15px);
+            text-align: center;
+            font-size: clamp(0.75em, 1.4vw, 1.1em);
+            font-weight: 900;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .category:hover::before {
+            left: 100%;
+        }
+
+        .question-cell {
+            background: linear-gradient(135deg, rgba(30, 60, 114, 0.95), rgba(42, 82, 152, 0.95));
+            padding: clamp(20px, 3vw, 40px) clamp(10px, 1.5vw, 15px);
+            text-align: center;
+            font-size: clamp(1.5em, 3vw, 2.5em);
+            font-weight: 900;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            border: 3px solid #ffd700;
+            position: relative;
+            overflow: hidden;
+            color: #ffd700;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .question-cell::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .question-cell:hover:not(.answered)::before {
+            width: 300%;
+            height: 300%;
+        }
+
+        .question-cell:hover:not(.answered) {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.6);
+            border-color: #ffed4e;
+        }
+
+        .question-cell.answered {
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.6), rgba(44, 62, 80, 0.6));
+            color: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+            border-color: rgba(127, 140, 141, 0.5);
+            transform: scale(0.95);
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .question-cell.answered::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(2em, 4vw, 3em);
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: clamp(25px, 4vw, 50px);
+            border-radius: 30px;
+            max-width: 1000px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 80px rgba(255, 215, 0, 0.4);
+            border: 3px solid #ffd700;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: clamp(20px, 3vw, 35px);
+        }
+
+        .modal-category {
+            color: #ffd700;
+            font-size: clamp(1.3em, 2.5vw, 2em);
+            margin-bottom: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-value {
+            font-size: clamp(2em, 4vw, 3.5em);
+            color: white;
+            font-weight: 900;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-question {
+            font-size: clamp(1.3em, 2.5vw, 2em);
+            text-align: center;
+            margin: clamp(20px, 3vw, 35px) 0;
+            padding: clamp(30px, 4vw, 50px);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            line-height: 1.5;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-answer {
+            display: none;
+            font-size: clamp(1.2em, 2.2vw, 1.8em);
+            text-align: center;
+            margin: clamp(20px, 3vw, 35px) 0;
+            padding: clamp(25px, 4vw, 40px);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 237, 78, 0.3));
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            color: #ffd700;
+            border: 3px solid #ffd700;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            animation: revealAnswer 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            line-height: 1.6;
+        }
+
+        @keyframes revealAnswer {
+            from {
+                opacity: 0;
+                transform: scale(0.8) rotateX(-90deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotateX(0);
+            }
+        }
+
+        .modal-answer.visible {
+            display: block;
+        }
+
+        .award-section {
+            display: none;
+            margin-top: clamp(25px, 4vw, 40px);
+            padding: clamp(25px, 4vw, 40px);
+            background: rgba(67, 233, 123, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 3px solid #43e97b;
+        }
+
+        .award-section.visible {
+            display: block;
+            animation: slideUp 0.4s ease;
+        }
+
+        .award-title {
+            text-align: center;
+            font-size: clamp(1.2em, 2.2vw, 1.8em);
+            margin-bottom: clamp(20px, 3vw, 30px);
+            color: #43e97b;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .award-teams {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: clamp(12px, 2vw, 20px);
+            margin-bottom: clamp(20px, 3vw, 30px);
+        }
+
+        .award-team-btn {
+            padding: clamp(15px, 2.5vw, 25px);
+            font-size: clamp(1.1em, 2vw, 1.5em);
+            font-weight: 700;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            color: white;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid transparent;
+        }
+
+        .award-team-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .award-team-btn.selected {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            box-shadow: 0 0 30px rgba(67, 233, 123, 0.8);
+            transform: scale(1.08);
+            border: 3px solid #ffd700;
+        }
+
+        .award-team-btn.selected::after {
+            content: '✓';
+            position: absolute;
+            right: clamp(8px, 1.5vw, 15px);
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.4em;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: clamp(10px, 2vw, 15px);
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: clamp(20px, 3vw, 35px);
+        }
+
+        .modal-button {
+            padding: clamp(14px, 2.5vw, 20px) clamp(25px, 4vw, 45px);
+            font-size: clamp(1.1em, 2vw, 1.5em);
+            font-weight: 700;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: clamp(140px, 22vw, 180px);
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .reveal-btn {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .award-btn {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white;
+        }
+
+        .confirm-btn {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            font-weight: 900;
+        }
+
+        .close-btn {
+            background: linear-gradient(135deg, #a8a8a8, #8c8c8c);
+            color: white;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-button:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .modal-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+
+        @media (max-width: 768px) {
+            .modal-buttons {
+                flex-direction: column;
+            }
+
+            .modal-button {
+                width: 100%;
+                min-width: unset;
+            }
+
+            .award-teams {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .category:nth-child(n+3) {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-screen" id="setupScreen">
+        <div class="setup-container">
+            <h1>🧪 SCIENCE JEOPARDY! 🧬</h1>
+            
+            <div class="setup-group">
+                <label>Number of Teams:</label>
+                <input type="number" id="numTeams" min="2" max="6" value="3">
+            </div>
+
+            <div class="setup-group">
+                <label>Team Names:</label>
+                <div class="team-inputs" id="teamInputs"></div>
+                <button class="add-team" onclick="addTeamInput()">+ Add Team</button>
+            </div>
+
+            <button class="start-game" onclick="startGame()">START GAME!</button>
+        </div>
+    </div>
+
+    <div class="game-screen" id="gameScreen">
+        <h1>SCIENCE JEOPARDY!</h1>
+        
+        <div class="scoreboard" id="scoreboard"></div>
+
+        <div class="board" id="board"></div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-category" id="modalCategory"></div>
+                <div class="modal-value" id="modalValue"></div>
+            </div>
+
+            <div class="modal-question" id="modalQuestion"></div>
+            <div class="modal-answer" id="modalAnswer"></div>
+
+            <div class="award-section" id="awardSection">
+                <div class="award-title">🏆 Select Team(s) That Answered Correctly 🏆</div>
+                <div class="award-teams" id="awardTeams"></div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="modal-button reveal-btn" id="revealBtn" onclick="revealAnswer()">Reveal Answer</button>
+                <button class="modal-button confirm-btn" id="confirmBtn" onclick="confirmAndClose()" style="display:none;">Confirm & Continue</button>
+                <button class="modal-button close-btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const categories = [
+            {
+                name: "ATOMIC STRUCTURE",
+                questions: [
+                    { value: 100, question: "This is the name of the central part of an atom that contains protons and neutrons.", answer: "Nucleus" },
+                    { value: 200, question: "This scientist developed the nuclear or planetary model of the atom.", answer: "Ernest Rutherford" },
+                    { value: 300, question: "The charge on this subatomic particle is -1.", answer: "Electron" },
+                    { value: 400, question: "Explain why electrons don't escape from atoms even though they are negatively charged and the nucleus is positively charged.", answer: "The negatively charged electrons are attracted to the positively charged nucleus by electrostatic force. This attractive force keeps the electrons in orbit around the nucleus, similar to how gravity keeps planets orbiting the sun." },
+                    { value: 500, question: "Calculate the total charge of an atom that has 11 protons and 11 electrons. Explain your reasoning.", answer: "Total charge = 0 (neutral). Reasoning: 11 protons have a charge of +11, and 11 electrons have a charge of -11. The charges cancel out: +11 + (-11) = 0." }
+                ]
+            },
+            {
+                name: "CLIMATE & WEATHER",
+                questions: [
+                    { value: 100, question: "This term describes day-to-day changes in the atmosphere.", answer: "Weather" },
+                    { value: 200, question: "This term describes changes in the atmosphere over a long period of time.", answer: "Climate" },
+                    { value: 300, question: "Name one greenhouse gas that causes climate change.", answer: "Any of: Carbon dioxide (CO₂), Methane (CH₄), Water vapor (H₂O), or Nitrous oxide (N₂O)" },
+                    { value: 400, question: "Looking at the temperature graph over 800,000 years, describe the pattern shown in Earth's average temperature.", answer: "The temperature shows a cyclical/repeating pattern with periods of warming (higher temperatures) alternating with periods of cooling (lower temperatures/ice ages). The pattern shows regular fluctuations over time." },
+                    { value: 500, question: "Based on the temperature graph, approximately how many ice ages occurred over the past 800,000 years? Circle the evidence you used.", answer: "Approximately 8-9 ice ages occurred. Evidence: Each major dip/trough in the temperature graph represents a glacial period (ice age). Counting the distinct cold periods shows about 8-9 major ice ages over 800,000 years." }
+                ]
+            },
+            {
+                name: "FORCES & MOTION",
+                questions: [
+                    { value: 100, question: "This is the equation for calculating speed.", answer: "Speed = Distance ÷ Time (or v = d/t)" },
+                    { value: 200, question: "Calculate the speed when a distance of 60 m is traveled in 20 seconds.", answer: "Speed = 60 m ÷ 20 s = 3 m/s" },
+                    { value: 300, question: "This is the term for a turning force.", answer: "Moment (or torque)" },
+                    { value: 400, question: "Describe how to calculate a moment (turning force).", answer: "Moment = Force × perpendicular distance from pivot. Or: Multiply the force by the perpendicular distance from the pivot point to where the force is applied." },
+                    { value: 500, question: "In Chen's first trial, distance A = 6 cm, distance B = 12 cm, force C = 4 N, and force D = 2 N. Calculate the moment for force C and the moment for force D. Show that the ruler is balanced.", answer: "Moment C = 4 N × 6 cm = 24 N·cm (clockwise). Moment D = 2 N × 12 cm = 24 N·cm (anticlockwise). The ruler is balanced because both moments are equal (24 N·cm = 24 N·cm), so the clockwise and anticlockwise moments cancel out." }
+                ]
+            },
+            {
+                name: "CELLS & RESPIRATION",
+                questions: [
+                    { value: 100, question: "This is the name of the process where oxygen enters the blood from the alveolus.", answer: "Diffusion (or gas exchange)" },
+                    { value: 200, question: "Write the word equation for aerobic respiration.", answer: "Glucose + Oxygen → Carbon dioxide + Water (+ Energy)" },
+                    { value: 300, question: "In which labeled part of the plant cell (A, B, C, or D) does aerobic respiration occur?", answer: "Mitochondria (accept: the part labeled as mitochondria, or if shown in a diagram, the specific letter that represents mitochondria)" },
+                    { value: 400, question: "Predict the percentage of carbon dioxide in breathed out air if breathed in air contains 0.04% carbon dioxide.", answer: "Approximately 4% carbon dioxide. (Breathed out air typically contains around 4% CO₂, which is about 100 times more than the 0.04% in breathed in air)" },
+                    { value: 500, question: "A person breathes in air with 21% oxygen. Explain what happens to this oxygen in the blood capillary and why the breathed out air has less oxygen.", answer: "The oxygen diffuses from the alveoli into the blood capillaries, where it binds to red blood cells (hemoglobin) and is transported to body cells for respiration. The breathed out air has less oxygen (approximately 16%) because some of the oxygen has been absorbed into the blood to be used by cells for aerobic respiration." }
+                ]
+            },
+            {
+                name: "CHEMISTRY FORMULAS",
+                questions: [
+                    { value: 100, question: "Write the chemical formula for carbon dioxide.", answer: "CO₂" },
+                    { value: 200, question: "In the formula Na₂CO₃, state how many atoms of oxygen are present.", answer: "3 atoms of oxygen" },
+                    { value: 300, question: "In the formula HNO₃, state how many total atoms are present in one molecule.", answer: "5 atoms total (1 hydrogen + 1 nitrogen + 3 oxygen)" },
+                    { value: 400, question: "The formula for water is H₂O. Calculate the total number of atoms in 3 molecules of water.", answer: "9 atoms total. Calculation: Each water molecule has 3 atoms (2 hydrogen + 1 oxygen). 3 molecules × 3 atoms = 9 atoms." },
+                    { value: 500, question: "Which word describes using particle diagrams to represent substances: analogy, conclusion, precision, or symbol?", answer: "Symbol (Particle diagrams are symbolic representations of substances)" }
+                ]
+            }
+        ];
+
+        let teams = [];
+        let currentQuestion = null;
+        let selectedAwardTeams = new Set();
+
+        function initTeamInputs() {
+            const numTeams = document.getElementById('numTeams').value;
+            const container = document.getElementById('teamInputs');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < numTeams; i++) {
+                addTeamInput();
+            }
+        }
+
+        function addTeamInput() {
+            const container = document.getElementById('teamInputs');
+            const teamNum = container.children.length + 1;
+            
+            const div = document.createElement('div');
+            div.className = 'team-input';
+            div.innerHTML = `
+                <input type="text" placeholder="Team ${teamNum} Name" value="Team ${teamNum}">
+                ${teamNum > 2 ? '<button class="remove-team" onclick="removeTeamInput(this)">✕</button>' : ''}
+            `;
+            container.appendChild(div);
+        }
+
+        function removeTeamInput(btn) {
+            btn.parentElement.remove();
+            updateTeamNumbers();
+        }
+
+        function updateTeamNumbers() {
+            const inputs = document.querySelectorAll('.team-input input');
+            inputs.forEach((input, index) => {
+                if (!input.value || input.value.startsWith('Team ')) {
+                    input.placeholder = `Team ${index + 1} Name`;
+                }
+            });
+        }
+
+        function startGame() {
+            const teamInputs = document.querySelectorAll('.team-input input');
+            teams = Array.from(teamInputs).map((input, index) => ({
+                name: input.value || `Team ${index + 1}`,
+                score: 0
+            }));
+
+            if (teams.length < 2) {
+                alert('Please add at least 2 teams!');
+                return;
+            }
+
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'flex';
+
+            renderScoreboard();
+            renderBoard();
+        }
+
+        function renderScoreboard() {
+            const scoreboard = document.getElementById('scoreboard');
+            scoreboard.innerHTML = teams.map((team, index) => `
+                <div class="team-score" id="team-${index}">
+                    <div class="team-name">${team.name}</div>
+                    <div class="team-points">${team.score}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('board');
+            let html = '';
+
+            categories.forEach(cat => {
+                html += `<div class="category">${cat.name}</div>`;
+            });
+
+            for (let i = 0; i < 5; i++) {
+                categories.forEach((cat, catIndex) => {
+                    const question = cat.questions[i];
+                    html += `
+                        <div class="question-cell" onclick="openQuestion(${catIndex}, ${i})" id="cell-${catIndex}-${i}">
+                            ${question.value}
+                        </div>
+                    `;
+                });
+            }
+
+            board.innerHTML = html;
+        }
+
+        function openQuestion(catIndex, qIndex) {
+            const cell = document.getElementById(`cell-${catIndex}-${qIndex}`);
+            if (cell.classList.contains('answered')) return;
+
+            const category = categories[catIndex];
+            const question = category.questions[qIndex];
+            currentQuestion = { catIndex, qIndex, question };
+
+            document.getElementById('modalCategory').textContent = category.name;
+            document.getElementById('modalValue').textContent = `${question.value} POINTS`;
+            document.getElementById('modalQuestion').textContent = question.question;
+            document.getElementById('modalAnswer').textContent = question.answer;
+            document.getElementById('modalAnswer').classList.remove('visible');
+            
+            document.getElementById('revealBtn').style.display = 'block';
+            document.getElementById('confirmBtn').style.display = 'none';
+            document.getElementById('awardSection').classList.remove('visible');
+            selectedAwardTeams.clear();
+
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function revealAnswer() {
+            document.getElementById('modalAnswer').classList.add('visible');
+            document.getElementById('revealBtn').style.display = 'none';
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('awardSection').classList.add('visible');
+            
+            const awardTeams = document.getElementById('awardTeams');
+            awardTeams.innerHTML = teams.map((team, index) => 
+                `<button class="award-team-btn" id="award-btn-${index}" onclick="toggleAwardTeam(${index})">${team.name}</button>`
+            ).join('');
+        }
+
+        function toggleAwardTeam(teamIndex) {
+            const btn = document.getElementById(`award-btn-${teamIndex}`);
+            
+            if (selectedAwardTeams.has(teamIndex)) {
+                selectedAwardTeams.delete(teamIndex);
+                btn.classList.remove('selected');
+            } else {
+                selectedAwardTeams.add(teamIndex);
+                btn.classList.add('selected');
+            }
+        }
+
+        function confirmAndClose() {
+            const points = currentQuestion.question.value;
+            selectedAwardTeams.forEach(teamIndex => {
+                teams[teamIndex].score += points;
+                
+                const teamScore = document.getElementById(`team-${teamIndex}`);
+                teamScore.style.transform = 'scale(1.15)';
+                teamScore.style.boxShadow = '0 0 40px rgba(255, 215, 0, 0.8)';
+                setTimeout(() => {
+                    teamScore.style.transform = '';
+                    teamScore.style.boxShadow = '';
+                }, 500);
+            });
+
+            const cell = document.getElementById(`cell-${currentQuestion.catIndex}-${currentQuestion.qIndex}`);
+            cell.classList.add('answered');
+            
+            renderScoreboard();
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            currentQuestion = null;
+            selectedAwardTeams.clear();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') {
+                closeModal();
+            }
+        });
+
+        document.getElementById('numTeams').addEventListener('change', initTeamInputs);
+        initTeamInputs();
+    </script>
+</body>
+</html>
