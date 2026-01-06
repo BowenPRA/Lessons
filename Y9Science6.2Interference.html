@@ -173,6 +173,13 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); height: 100%;
             display: flex; flex-direction: column; justify-content: center;
         }
+        
+        /* Static Vocab Card for Writing */
+        .vocab-write-card {
+            background: white; border: 1px solid #E2E8F0; border-left: 5px solid var(--primary);
+            padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem;
+            box-shadow: var(--card-shadow); display: flex; align-items: center; gap: 1.5rem;
+        }
 
         .oscilloscope-screen {
             background-color: #0F172A; /* Dark Screen */
@@ -243,7 +250,7 @@
     </div>
 
     <div class="navigation">
-        <div style="font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; color: #94A3B8;" id="slide-counter">1 / 11</div>
+        <div style="font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; color: #94A3B8;" id="slide-counter">1 / 13</div>
         <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
         <div class="nav-controls" style="display: flex; gap: 1rem;">
             <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
@@ -254,12 +261,9 @@
 
 <script>
     // --- WAVE PATH GENERATOR ---
-    // Simple helper to create SVG path data for waves
     function createWavePath(width, height, freq, amp, phase = 0) {
         let path = `M 0 ${height/2}`;
         for (let x = 0; x <= width; x++) {
-            // formula: y = A * sin(kx + phase)
-            // k = (2 * PI * freq) / width
             const angle = (x / width) * (Math.PI * 2 * freq) + phase;
             const y = (height/2) - (Math.sin(angle) * amp);
             path += ` L ${x} ${y}`;
@@ -297,10 +301,62 @@
             `
         },
         {
-            // SLIDE 2: Review
+            // SLIDE 2: Review Flashback (NEW)
+            content: `
+                 <div class="slide-vertical-center">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">⏪ Flashback Review</h2>
+                    <p style="text-align: center; margin-bottom: 2rem;">Click to reveal the definitions from last week.</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; width: 100%;">
+                        
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <i class="fa-solid fa-wave-square" style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent);"></i>
+                                    <h3>Medium</h3>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p style="color: var(--accent); font-weight: 700;">Substance</p>
+                                    <p style="font-size: 0.9rem;">The stuff sound travels through (solid, liquid, gas).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <i class="fa-solid fa-wind" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary);"></i>
+                                    <h3>Vacuum</h3>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p style="color: var(--primary); font-weight: 700;">Empty Space</p>
+                                    <p style="font-size: 0.9rem;">A place with NO particles. Sound cannot travel here.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <i class="fa-solid fa-music" style="font-size: 3rem; margin-bottom: 1rem; color: var(--secondary);"></i>
+                                    <h3>Oscilloscope</h3>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p style="color: var(--secondary); font-weight: 700;">The Machine</p>
+                                    <p style="font-size: 0.9rem;">A machine that draws sound waves on a screen.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 3: Visual Review
             content: `
                 <div class="slide-vertical-center">
-                    <h2 style="text-align: center; margin-bottom: 2rem;">🧠 Quick Review</h2>
+                    <h2 style="text-align: center; margin-bottom: 2rem;">👀 Visual Check</h2>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1000px; margin: 0 auto;">
                         <div class="def-card" style="align-items: center; text-align: center;">
@@ -351,7 +407,7 @@
             `
         },
         {
-            // SLIDE 3: Hook - Headphones
+            // SLIDE 4: Hook - Headphones
             content: `
                 <div class="grid-layout">
                     <div class="content-col">
@@ -377,49 +433,35 @@
             `
         },
         {
-            // SLIDE 4: Vocabulary
+            // SLIDE 5: Vocabulary (UPDATED TO STATIC)
             content: `
                 <div class="slide-vertical-center">
-                    <h2 style="text-align: center; margin-bottom: 2rem;">Key Vocabulary</h2>
+                    <h2 style="text-align: center; margin-bottom: 2rem;">✍️ Vocabulary to Copy</h2>
+                    <p style="text-align: center; margin-bottom: 2rem; color: #64748B;">Please write these 3 definitions in your notebook.</p>
                     
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1100px; margin: 0 auto; width: 100%;">
+                    <div style="max-width: 900px; margin: 0 auto; width: 100%;">
                         
-                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">
-                                    <i class="fa-solid fa-shuffle" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary);"></i>
-                                    <h3>Interference</h3>
-                                    <span style="font-size: 0.9rem; margin-top: 0.5rem; color: #94A3B8;">(Click to flip)</span>
-                                </div>
-                                <div class="flip-card-back">
-                                    <p style="color: var(--primary-dark); font-weight: 700;">When two waves meet and mix together.</p>
-                                </div>
+                        <div class="vocab-write-card">
+                            <i class="fa-solid fa-shuffle" style="font-size: 2.5rem; color: var(--primary);"></i>
+                            <div>
+                                <h3 style="color: var(--primary-dark); font-size: 1.6rem; margin-bottom: 0.5rem;">1. Interference</h3>
+                                <p>When two waves meet and mix together to change the sound.</p>
                             </div>
                         </div>
 
-                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">
-                                    <i class="fa-solid fa-plus-circle" style="font-size: 3rem; margin-bottom: 1rem; color: var(--success);"></i>
-                                    <h3>Reinforce</h3>
-                                </div>
-                                <div class="flip-card-back" style="border-color: var(--success);">
-                                    <p style="color: #064E3B; font-weight: 700;">To make stronger.</p>
-                                    <p style="font-size: 0.9rem;">Adding two waves together.</p>
-                                </div>
+                        <div class="vocab-write-card" style="border-left-color: var(--success);">
+                            <i class="fa-solid fa-plus-circle" style="font-size: 2.5rem; color: var(--success);"></i>
+                            <div>
+                                <h3 style="color: #064E3B; font-size: 1.6rem; margin-bottom: 0.5rem;">2. Reinforce</h3>
+                                <p>To make the sound <strong>LOUDER</strong>. This happens when waves add together.</p>
                             </div>
                         </div>
 
-                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">
-                                    <i class="fa-solid fa-ban" style="font-size: 3rem; margin-bottom: 1rem; color: var(--danger);"></i>
-                                    <h3>Cancel</h3>
-                                </div>
-                                <div class="flip-card-back" style="border-color: var(--danger);">
-                                    <p style="color: #7F1D1D; font-weight: 700;">To remove or make zero.</p>
-                                    <p style="font-size: 0.9rem;">Subtracting waves.</p>
-                                </div>
+                        <div class="vocab-write-card" style="border-left-color: var(--danger);">
+                            <i class="fa-solid fa-ban" style="font-size: 2.5rem; color: var(--danger);"></i>
+                            <div>
+                                <h3 style="color: #7F1D1D; font-size: 1.6rem; margin-bottom: 0.5rem;">3. Cancel</h3>
+                                <p>To make the sound <strong>SILENT</strong>. This happens when waves subtract to zero.</p>
                             </div>
                         </div>
 
@@ -428,7 +470,7 @@
             `
         },
         {
-            // SLIDE 5: Reinforcement
+            // SLIDE 6: Reinforcement
             content: `
                 <div class="grid-layout">
                     <div class="content-col">
@@ -474,7 +516,7 @@
             `
         },
         {
-            // SLIDE 6: Cancellation
+            // SLIDE 7: Cancellation
             content: `
                 <div class="grid-layout">
                     <div class="content-col">
@@ -523,7 +565,7 @@
             `
         },
         {
-            // SLIDE 7: How Headphones Work
+            // SLIDE 8: How Headphones Work
             content: `
                 <div class="slide-vertical-center">
                     <h2 style="text-align: center;">How Noise-Cancellation Works</h2>
@@ -569,7 +611,7 @@
             `
         },
         {
-            // SLIDE 8: The Concert
+            // SLIDE 9: The Concert (IMAGE UPDATED)
             content: `
                 <div class="grid-layout">
                     <div class="content-col">
@@ -583,12 +625,7 @@
                     </div>
                     <div class="visual-col" style="background: white; border: 1px solid #E2E8F0;">
                         <div style="position: relative; width: 100%; height: 300px; background: #E2E8F0; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            <img src="Y9Science6.2SoundInterference.jpg" alt="Concert Stage Diagram" style="width: 100%; height: 100%; object-fit: contain; opacity: 0.8;">
-                            
-                            <div style="position: absolute; text-align: center;">
-                                <i class="fa-solid fa-image" style="font-size: 3rem; color: #94A3B8;"></i>
-                                <p style="color: #64748B;">Textbook Diagram Page 219</p>
-                            </div>
+                            <img src="DeadSpot.jpg" alt="Concert Stage Diagram" style="width: 100%; height: 100%; object-fit: contain;">
                             
                             <div style="position: absolute; top: 60%; left: 30%; width: 40px; height: 40px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; cursor: pointer; box-shadow: 0 0 15px var(--secondary);" title="Loud Spot">A</div>
                             <div style="position: absolute; top: 60%; right: 30%; width: 40px; height: 40px; background: #64748B; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; cursor: pointer;" title="Quiet Spot">B</div>
@@ -598,26 +635,30 @@
             `
         },
         {
-            // SLIDE 9: Wave Math Quiz
+            // SLIDE 10: Wave Math Quiz (UPDATED EXPLANATION)
             content: `
                 <div class="slide-vertical-center">
-                    <h2 style="text-align: center; margin-bottom: 2rem;">🧮 Wave Math</h2>
+                    <h2 style="text-align: center; margin-bottom: 0.5rem;">🧮 Wave Math</h2>
+                    <p style="text-align: center; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; color: #64748B;">
+                        To find the result, we simply <strong>ADD</strong> the height of the waves.<br>
+                        Think: "How high is the water?"
+                    </p>
                     
                     <div style="display: grid; gap: 1.5rem; max-width: 800px; margin: 0 auto; width: 100%;">
                         
                         <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <h3 style="margin-bottom: 0.5rem;">1. Reinforce</h3>
-                                <p>Wave A (+3) meets Wave B (+3).</p>
+                                <h3 style="margin-bottom: 0.5rem; color: var(--secondary);">1. Both waves push UP</h3>
+                                <p style="font-size: 1.1rem;">Wave A (+3) meets Wave B (+3)</p>
                             </div>
                             <button class="reveal-btn" onclick="revealAnswer('math-1')" style="margin: 0;">Result?</button>
-                            <div id="math-1" style="display: none; font-size: 1.5rem; font-weight: 800; color: var(--secondary);">+6 (Loud)</div>
+                            <div id="math-1" style="display: none; font-size: 1.5rem; font-weight: 800; color: var(--secondary);">+6 (Super Loud!)</div>
                         </div>
 
                         <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <h3 style="margin-bottom: 0.5rem;">2. Cancel</h3>
-                                <p>Wave A (+5) meets Wave B (-5).</p>
+                                <h3 style="margin-bottom: 0.5rem; color: var(--danger);">2. One UP, One DOWN</h3>
+                                <p style="font-size: 1.1rem;">Wave A (+5) meets Wave B (-5)</p>
                             </div>
                             <button class="reveal-btn" onclick="revealAnswer('math-2')" style="margin: 0;">Result?</button>
                             <div id="math-2" style="display: none; font-size: 1.5rem; font-weight: 800; color: var(--text-muted);">0 (Silence)</div>
@@ -625,8 +666,8 @@
 
                          <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <h3 style="margin-bottom: 0.5rem;">3. Partial Cancel</h3>
-                                <p>Wave A (+10) meets Wave B (-4).</p>
+                                <h3 style="margin-bottom: 0.5rem; color: var(--text-dark);">3. Big UP, Small DOWN</h3>
+                                <p style="font-size: 1.1rem;">Wave A (+10) meets Wave B (-4)</p>
                             </div>
                             <button class="reveal-btn" onclick="revealAnswer('math-3')" style="margin: 0;">Result?</button>
                             <div id="math-3" style="display: none; font-size: 1.5rem; font-weight: 800; color: var(--text-dark);">+6 (Quieter)</div>
@@ -637,7 +678,67 @@
             `
         },
         {
-            // SLIDE 10: Plenary
+            // SLIDE 11: Review Quiz (NEW)
+            content: `
+                <div class="slide-vertical-center">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">🧠 Test Your Knowledge</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; width: 100%; max-width: 900px; margin: 0 auto;">
+                        
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')" style="height: 180px;">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front" style="background: #FFFBEB; border-color: var(--accent);">
+                                    <h3 style="color: #B45309;">What happens if Peak meets Peak?</h3>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p style="font-weight: 700; color: var(--success); font-size: 1.4rem;">REINFORCE</p>
+                                    <p>The sound gets LOUDER.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')" style="height: 180px;">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front" style="background: #FEF2F2; border-color: var(--danger);">
+                                    <h3 style="color: #991B1B;">What happens if Peak meets Trough?</h3>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p style="font-weight: 700; color: var(--danger); font-size: 1.4rem;">CANCEL</p>
+                                    <p>The sound disappears (Silence).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')" style="height: 180px;">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front" style="background: #F0FDFA; border-color: var(--primary);">
+                                    <h3 style="color: #0F766E;">Does Amplitude + Amplitude = Frequency?</h3>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p style="font-weight: 700; color: var(--danger); font-size: 1.4rem;">NO</p>
+                                    <p>Amplitude adds to Amplitude. Frequency stays the same.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="flip-card" onclick="this.classList.toggle('flipped')" style="height: 180px;">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front" style="background: white; border-color: var(--text-muted);">
+                                    <h3 style="color: var(--text-dark);">Can sound cancel in a vacuum?</h3>
+                                </div>
+                                <div class="flip-card-back">
+                                    <p style="font-weight: 700; color: var(--text-dark); font-size: 1.4rem;">Trick Question!</p>
+                                    <p>There is NO SOUND in a vacuum to begin with!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 12: Plenary
             content: `
                 <div class="slide-vertical-center" style="text-align: center; max-width: 800px; margin: 0 auto;">
                     <h2>📝 Summary</h2>
@@ -661,7 +762,7 @@
             `
         },
         {
-            // SLIDE 11: Homework
+            // SLIDE 13: Homework (UPDATED)
             content: `
                 <div class="slide-vertical-center" style="text-align: center; max-width: 900px; margin: 0 auto;">
                     <h2>📚 Homework</h2>
@@ -679,10 +780,12 @@
                             </div>
                             
                             <div style="display: flex; gap: 1.5rem; align-items: center;">
-                                <div style="width: 60px; height: 60px; background: var(--secondary); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; flex-shrink: 0;"><i class="fa-solid fa-pencil"></i></div>
+                                <div style="width: 60px; height: 60px; background: var(--secondary); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; flex-shrink: 0;"><i class="fa-brands fa-google-drive"></i></div>
                                 <div>
-                                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-dark);">Answer Questions 1, 2, and 4</div>
-                                    <div style="color: #475569;">Page 221.</div>
+                                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-dark);">Google Slides</div>
+                                    <div style="color: #475569;">1. Make a copy of the Homework Slides.</div>
+                                    <div style="color: #475569;">2. Answer <strong>Questions 1 - 4</strong>.</div>
+                                    <div style="color: #475569;">3. Email the link to Mr. Bowen.</div>
                                 </div>
                             </div>
                         </div>
