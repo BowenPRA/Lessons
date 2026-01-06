@@ -1,1 +1,604 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>6.1 Reflection - Year 8 Science</title>
+    
+    <meta name="subject" content="Science">
+    <meta name="year" content="Year 8">
+    <meta name="curriculum" content="Cambridge Lower Secondary">
+    <meta name="unit" content="6.1 Reflection">
+    <meta name="date" content="Friday Due Date">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* Science Palette: Light & Optics */
+            --primary: #06B6D4;       /* Cyan */
+            --primary-light: #CFFAFE;
+            --primary-dark: #0891B2;
+            
+            --secondary: #F472B6;     /* Soft Pink (for contrast) */
+            --secondary-light: #FCE7F3;
+            
+            --accent: #F59E0B;        /* Amber (for light rays) */
+            --accent-light: #FFFBEB;
+            
+            --success: #10B981;       /* Emerald */
+            --danger: #EF4444;        /* Red */
+            
+            /* Theme */
+            --text-main: #F8FAFC;     /* Slate 50 (Light text for dark mode feel) */
+            --text-muted: #94A3B8;    /* Slate 400 */
+            --text-dark: #0F172A;     /* For inside white cards */
+            
+            /* Deep Space/Optics Background */
+            --bg-gradient: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 100%);
+
+            --card-shadow: 
+                0 20px 25px -5px rgba(0, 0, 0, 0.3), 
+                0 8px 10px -6px rgba(0, 0, 0, 0.3);
+                
+            --header-height: 70px;
+            --nav-height: 80px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body { height: 100%; width: 100%; overflow: hidden; position: fixed; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-gradient);
+            background-size: cover;
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-height); padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+        }
+
+        .header-left {
+            font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800;
+            color: white; display: flex; align-items: center; gap: 1rem;
+        }
+        
+        .header-pill { background: var(--primary); color: var(--text-dark); padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 1rem; }
+        .header-date { font-weight: 700; color: var(--text-muted); font-size: 1rem; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 8px; }
+
+        .navigation {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: var(--nav-height); padding: 0 3rem;
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+        }
+
+        .nav-btn {
+            width: 50px; height: 50px; border-radius: 12px; border: none;
+            background: white; color: var(--text-dark); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover:not(:disabled) { background: var(--primary); transform: translateY(-2px); box-shadow: 0 0 15px var(--primary); }
+        .nav-btn:disabled { background: #334155; color: #64748B; cursor: not-allowed; box-shadow: none; }
+
+        .progress-track { flex: 1; max-width: 500px; height: 6px; background: #334155; border-radius: 20px; margin: 0 2rem; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; transition: width 0.4s ease; }
+
+        .content-wrapper {
+            position: fixed; top: var(--header-height); bottom: var(--nav-height);
+            left: 0; right: 0; padding: 1.5rem;
+            display: flex; justify-content: center; align-items: center; z-index: 10;
+        }
+
+        .slide-container {
+            width: 100%; max-width: 1200px; height: 100%; 
+            background: white; border-radius: 24px; box-shadow: var(--card-shadow);
+            position: relative; overflow: hidden; display: flex; flex-direction: column;
+            color: var(--text-dark); /* Reset text color for inside the card */
+        }
+
+        .slide {
+            width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden;
+            padding: 0 3rem; opacity: 1;
+        }
+
+        .slide-vertical-center {
+            min-height: 100%; display: flex; flex-direction: column;
+            justify-content: center; padding-top: 1rem; padding-bottom: 1rem;
+        }
+
+        /* --- CONTENT STYLES --- */
+        .grid-layout {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+            align-items: center; min-height: 100%; padding: 2rem 0;
+        }
+        
+        .content-col { display: flex; flex-direction: column; justify-content: center; gap: 1.5rem; }
+        
+        .visual-col {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: #F8FAFC; border-radius: 20px; padding: 2rem;
+            border: 2px dashed #CBD5E1; position: relative; height: 100%;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif; font-size: clamp(3rem, 5vw, 4.5rem);
+            font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif; font-size: clamp(2rem, 3.5vw, 3rem);
+            font-weight: 800; color: var(--text-dark); margin-bottom: 0.5rem;
+        }
+
+        p, li {
+            font-size: clamp(1.1rem, 1.3vw, 1.4rem); color: var(--text-muted);
+            line-height: 1.6; font-weight: 500;
+        }
+        
+        .text-dark { color: var(--text-dark) !important; }
+
+        .meta-tag-container { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .meta-tag {
+            font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            padding: 0.4rem 1rem; border-radius: 8px; background: var(--primary-light); color: var(--primary-dark);
+            border: 1px solid var(--primary);
+        }
+
+        /* --- UI ELEMENTS --- */
+        .reveal-btn {
+            background: var(--text-dark); color: white; padding: 0.8rem 2rem;
+            border-radius: 10px; border: none; font-family: 'Outfit', sans-serif;
+            font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 10px; margin-top: 1rem;
+        }
+        .reveal-btn:hover { transform: translateY(-2px); background: var(--primary); }
+
+        .answer-panel {
+            margin-top: 1rem; padding: 1.5rem; background: #F1F5F9;
+            border-left: 5px solid var(--primary); border-radius: 0 12px 12px 0;
+            color: var(--text-dark); font-size: 1.2rem; font-weight: 500;
+            display: none; animation: fadeIn 0.3s ease;
+        }
+        .answer-panel.show { display: block; }
+
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- DIAGRAMS (SVG) --- */
+        .diagram-container { width: 100%; max-width: 500px; margin: 0 auto; }
+        svg { width: 100%; height: auto; overflow: visible; }
+        
+        .mirror-surface { stroke: #94A3B8; stroke-width: 4; }
+        .mirror-hatch { stroke: #CBD5E1; stroke-width: 2; }
+        .normal-line { stroke: #EF4444; stroke-width: 2; stroke-dasharray: 6,4; } /* Red Dashed */
+        .light-ray { stroke: #F59E0B; stroke-width: 3; marker-end: url(#arrow); } /* Amber */
+        .angle-arc { fill: none; stroke: var(--primary); stroke-width: 2; }
+        
+        .label-text { font-family: 'Outfit'; font-weight: 700; font-size: 14px; fill: var(--text-dark); }
+        .angle-text { font-family: 'Outfit'; font-weight: 700; font-size: 12px; fill: var(--primary-dark); }
+
+        /* Hidden elements for reveal */
+        .hidden-ray { opacity: 0; transition: opacity 0.5s ease; }
+        .hidden-ray.show { opacity: 1; }
+
+        @media (max-width: 900px) {
+            .grid-layout { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 0; }
+            .visual-col { order: -1; width: 100%; height: auto; min-height: 300px; }
+            .slide { padding: 0 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <div class="header-left">
+            <span class="header-pill">6.1</span>
+            <span>Reflection</span>
+        </div>
+        <div class="header-date">Homework Due Friday</div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="slide-container">
+            <div id="slide-content" style="height: 100%;">
+                </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <div style="font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; color: #94A3B8;" id="slide-counter">1 / 10</div>
+        <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+        <div class="nav-controls" style="display: flex; gap: 1rem;">
+            <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="nav-btn" id="next-btn" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+</div>
+
+<svg style="display: none;">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+        markerWidth="6" markerHeight="6"
+        orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#F59E0B" />
+    </marker>
+  </defs>
+</svg>
+
+<script>
+    const slides = [
+        {
+            // SLIDE 1: Title
+            content: `
+                <div class="slide-vertical-center" style="text-align: center; max-width: 900px; margin: 0 auto; justify-content: center;">
+                    <div class="meta-tag-container" style="justify-content: center;">
+                        <div class="meta-tag">Year 8 Science</div>
+                        <div class="meta-tag">Unit 6.1</div>
+                    </div>
+
+                    <h1>Reflection</h1>
+                    <p style="font-size: 1.6rem; margin-top: 0.5rem; color: var(--text-muted);">How light bounces off surfaces</p>
+                    
+                    <div style="margin-top: 3rem; text-align: left; background: #F8FAFC; padding: 2.5rem; border-radius: 20px; border: 1px solid #E2E8F0; box-shadow: var(--card-shadow);">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 1.5rem; font-family: 'Outfit'; font-size: 1.4rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem;">💡 Today's Goals</h3>
+                        <ul style="list-style: none; padding: 0; display: grid; gap: 1rem;">
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-regular fa-lightbulb" style="color: var(--primary); font-size: 1.2rem;"></i>
+                                <span class="text-dark">Understand the <strong>Law of Reflection</strong>.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-pencil" style="color: var(--primary); font-size: 1.2rem;"></i>
+                                <span class="text-dark">Draw accurate <strong>ray diagrams</strong>.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-ruler-combined" style="color: var(--primary); font-size: 1.2rem;"></i>
+                                <span class="text-dark">Measure angles of <strong>incidence</strong> and <strong>reflection</strong>.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 2: What is Reflection?
+            content: `
+                <div class="grid-layout">
+                    <div class="content-col">
+                        <h2>What is Reflection?</h2>
+                        <p>Light travels in <strong>straight lines</strong>. </p>
+                        <p>When light hits a smooth surface (like a mirror), it bounces off. This is called <strong>Reflection</strong>.</p>
+                        <p>We use diagrams with straight lines and arrows to show where the light goes.</p>
+                    </div>
+                    <div class="visual-col">
+                        <img src="https://images.unsplash.com/photo-1518059889759-4d6cb257b42f?q=80&w=600&auto=format&fit=crop" style="width: 100%; border-radius: 12px; border: 4px solid white; box-shadow: var(--card-shadow);" alt="Reflection in water">
+                        <p style="margin-top: 1rem; font-size: 0.9rem;">Mirrors and still water reflect light perfectly.</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 3: The Vocabulary (The Cast)
+            content: `
+                <div class="slide-vertical-center" style="text-align: center;">
+                    <h2>The Parts of a Ray Diagram</h2>
+                    <p style="margin-bottom: 2rem;">We need to know the names of the lines and angles.</p>
+                    
+                    <div class="diagram-container">
+                        <svg viewBox="0 0 300 200">
+                            <line x1="20" y1="180" x2="280" y2="180" class="mirror-surface" />
+                            <line x1="20" y1="180" x2="30" y2="190" class="mirror-hatch" />
+                            <line x1="40" y1="180" x2="50" y2="190" class="mirror-hatch" />
+                            <line x1="60" y1="180" x2="70" y2="190" class="mirror-hatch" />
+                            <line x1="80" y1="180" x2="90" y2="190" class="mirror-hatch" />
+                            <line x1="150" y1="180" x2="150" y2="50" class="normal-line" />
+                            <line x1="50" y1="50" x2="150" y2="180" class="light-ray" />
+                            <line x1="150" y1="180" x2="250" y2="50" class="light-ray" />
+                            
+                            <text x="20" y="45" class="label-text">Incident Ray</text>
+                            <text x="210" y="45" class="label-text">Reflected Ray</text>
+                            <text x="160" y="70" class="label-text" fill="#EF4444" style="fill:#EF4444;">Normal</text>
+                            <text x="250" y="195" class="label-text" fill="#94A3B8" style="fill:#94A3B8;">Plane Mirror</text>
+                        </svg>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left; margin-top: 2rem;">
+                         <div style="background: #F1F5F9; padding: 1rem; border-radius: 8px;">
+                            <strong>Incident Ray:</strong> The light coming IN.
+                         </div>
+                         <div style="background: #F1F5F9; padding: 1rem; border-radius: 8px;">
+                            <strong>Reflected Ray:</strong> The light bouncing OUT.
+                         </div>
+                         <div style="background: #FEE2E2; padding: 1rem; border-radius: 8px; grid-column: span 2; border-left: 5px solid #EF4444;">
+                            <strong>The Normal:</strong> A dashed line at <strong style="color: #EF4444;">90°</strong> (perpendicular) to the mirror. <br>We measure angles from here!
+                         </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 4: The Golden Rule
+            content: `
+                <div class="slide-vertical-center" style="text-align: center;">
+                    <h2>The Law of Reflection</h2>
+                    <p style="margin-bottom: 2rem; font-size: 1.5rem;">This is the most important rule in this unit.</p>
+                    
+                    <div style="background: var(--primary-light); padding: 3rem; border-radius: 24px; border: 2px dashed var(--primary); display: inline-block;">
+                        <h1 style="font-size: 4rem; margin: 0; background: none; -webkit-text-fill-color: var(--primary-dark);">i = r</h1>
+                        <p style="font-size: 1.5rem; margin-top: 1rem; color: var(--primary-dark); font-weight: 700;">Angle of Incidence = Angle of Reflection</p>
+                    </div>
+                    
+                    <div class="diagram-container" style="margin-top: 2rem; max-width: 300px;">
+                        <svg viewBox="0 0 300 150">
+                            <line x1="50" y1="140" x2="250" y2="140" class="mirror-surface" />
+                            <line x1="150" y1="140" x2="150" y2="40" class="normal-line" />
+                            <line x1="80" y1="60" x2="150" y2="140" class="light-ray" />
+                            <line x1="150" y1="140" x2="220" y2="60" class="light-ray" />
+                            <path d="M 130 117 A 30 30 0 0 1 150 110" class="angle-arc" />
+                            <path d="M 150 110 A 30 30 0 0 1 170 117" class="angle-arc" />
+                            <text x="125" y="100" class="angle-text" style="font-size: 16px;">i</text>
+                            <text x="165" y="100" class="angle-text" style="font-size: 16px;">r</text>
+                        </svg>
+                    </div>
+                    <p style="margin-top: 1rem; color: var(--danger); font-weight: 700;">⚠️ Always measure the angle between the RAY and the NORMAL.</p>
+                </div>
+            `
+        },
+        {
+            // SLIDE 5: How to Draw
+            content: `
+                <div class="grid-layout">
+                    <div class="content-col">
+                        <h2>How to Draw a Ray Diagram</h2>
+                        <ol style="margin-left: 1.5rem; font-size: 1.2rem; line-height: 1.8;">
+                            <li>Draw the <strong>Incident Ray</strong> with a ruler. Add an arrow.</li>
+                            <li style="color: #EF4444; font-weight: 700;">Draw the <strong>Normal</strong> (dashed line) where the ray hits the mirror. It must be 90°.</li>
+                            <li>Measure angle <strong>i</strong>.</li>
+                            <li>Measure angle <strong>r</strong> so that <strong>i = r</strong>.</li>
+                            <li>Draw the <strong>Reflected Ray</strong>. Add an arrow pointing away.</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="visual-col">
+                         <h3 style="margin-bottom: 1rem; color: var(--primary-dark);">Step-by-Step</h3>
+                         <div class="diagram-container">
+                            <svg viewBox="0 0 300 200">
+                                <line x1="20" y1="180" x2="280" y2="180" class="mirror-surface" />
+                                <text x="250" y="195" class="label-text" fill="#94A3B8" style="fill:#94A3B8;">Mirror</text>
+                                
+                                <line x1="50" y1="50" x2="150" y2="180" class="light-ray" />
+                                <text x="20" y="60" class="label-text">1. Incident</text>
+                                
+                                <line x1="150" y1="180" x2="150" y2="50" class="normal-line" />
+                                <text x="160" y="60" class="label-text" style="fill:#EF4444;">2. Normal</text>
+                                
+                                <path d="M 130 154 A 30 30 0 0 1 150 147" class="angle-arc" />
+                                <text x="135" y="140" class="angle-text">3. i</text>
+                                
+                                <path d="M 150 147 A 30 30 0 0 1 170 154" class="angle-arc" />
+                                <text x="155" y="140" class="angle-text">4. r</text>
+                                
+                                <line x1="150" y1="180" x2="250" y2="50" class="light-ray" />
+                                <text x="230" y="60" class="label-text">5. Reflected</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 6: Practice 1
+            content: `
+                <div class="slide-vertical-center" style="text-align: center;">
+                    <h2>Practice #1: Flat Mirror</h2>
+                    <p>The incident ray is coming in at 45°. Where does it go?</p>
+                    
+                    <div class="visual-col" style="background: white; max-width: 600px; margin: 2rem auto;">
+                        <div class="diagram-container">
+                            <svg viewBox="0 0 300 200">
+                                <line x1="20" y1="180" x2="280" y2="180" class="mirror-surface" />
+                                
+                                <line x1="50" y1="80" x2="150" y2="180" class="light-ray" />
+                                <text x="40" y="70" class="label-text">Incident</text>
+                                
+                                <g id="p1-ans" class="hidden-ray">
+                                    <line x1="150" y1="180" x2="150" y2="50" class="normal-line" />
+                                    <line x1="150" y1="180" x2="250" y2="80" class="light-ray" />
+                                    <text x="230" y="70" class="label-text">Reflected</text>
+                                    
+                                    <text x="120" y="130" class="angle-text">45°</text>
+                                    <text x="160" y="130" class="angle-text">45°</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <button class="reveal-btn" onclick="revealDiagram('p1-ans')">Reveal Reflection</button>
+                </div>
+            `
+        },
+        {
+            // SLIDE 7: Practice 2
+            content: `
+                <div class="slide-vertical-center" style="text-align: center;">
+                    <h2>Practice #2: Vertical Mirror</h2>
+                    <p>The mirror is on the wall. The light comes from below.</p>
+                    
+                    <div class="visual-col" style="background: white; max-width: 400px; margin: 2rem auto;">
+                        <div class="diagram-container" style="max-width: 300px;">
+                            <svg viewBox="0 0 200 300">
+                                <line x1="180" y1="20" x2="180" y2="280" class="mirror-surface" />
+                                <line x1="180" y1="20" x2="190" y2="30" class="mirror-hatch" />
+                                <line x1="180" y1="60" x2="190" y2="70" class="mirror-hatch" />
+                                <line x1="180" y1="100" x2="190" y2="110" class="mirror-hatch" />
+                                
+                                <line x1="50" y1="250" x2="180" y2="150" class="light-ray" />
+                                <text x="20" y="260" class="label-text">Incident</text>
+                                
+                                <g id="p2-ans" class="hidden-ray">
+                                    <line x1="180" y1="150" x2="50" y2="150" class="normal-line" />
+                                    <line x1="180" y1="150" x2="50" y2="50" class="light-ray" />
+                                    <text x="20" y="50" class="label-text">Reflected</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <button class="reveal-btn" onclick="revealDiagram('p2-ans')">Reveal Reflection</button>
+                </div>
+            `
+        },
+        {
+            // SLIDE 8: Practice 3 (Hard)
+            content: `
+                <div class="grid-layout">
+                    <div class="content-col">
+                        <h2>Practice #3: Angled Mirror</h2>
+                        <p>This is tricky! Don't let the angle fool you.</p>
+                        <ol>
+                            <li>Where does the ray hit?</li>
+                            <li>Draw the <strong>Normal</strong> (it must be 90° to the mirror surface!).</li>
+                            <li>Match the angle.</li>
+                        </ol>
+                        <button class="reveal-btn" style="align-self: flex-start;" onclick="revealDiagram('p3-ans')">Show Diagram</button>
+                    </div>
+                    
+                    <div class="visual-col" style="background: white;">
+                        <div class="diagram-container">
+                            <svg viewBox="0 0 300 200">
+                                <line x1="50" y1="180" x2="250" y2="120" class="mirror-surface" />
+                                
+                                <line x1="150" y1="20" x2="150" y2="150" class="light-ray" />
+                                
+                                <g id="p3-ans" class="hidden-ray">
+                                    <line x1="150" y1="150" x2="220" y2="220" class="normal-line" />
+                                    <text x="200" y="210" class="label-text" style="fill:#EF4444;">Normal</text>
+                                    
+                                    <line x1="150" y1="150" x2="50" y2="120" class="light-ray" />
+                                    <text x="20" y="120" class="label-text">Reflected</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 9: Real World (Context)
+            content: `
+                <div class="slide-vertical-center" style="text-align: center; max-width: 900px; margin: 0 auto;">
+                    <h2>Real World Science</h2>
+                    <p>Why do we care about lines?</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; text-align: left;">
+                         <div style="background: white; padding: 1.5rem; border-radius: 16px; box-shadow: var(--card-shadow);">
+                            <h3 style="color: var(--primary-dark);"><i class="fa-solid fa-car-side"></i> Car Mirrors</h3>
+                            <p>Drivers rely on reflection to see cars behind them. The Law of Reflection ensures the light from the car behind hits the mirror and bounces into the driver's eyes.</p>
+                         </div>
+                         
+                         <div style="background: white; padding: 1.5rem; border-radius: 16px; box-shadow: var(--card-shadow);">
+                            <h3 style="color: var(--primary-dark);"><i class="fa-solid fa-eye"></i> Periscopes</h3>
+                            <p>Submarines use two mirrors. The light reflects twice (zig-zag) to let the captain see above the water.</p>
+                         </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; background: #FFFBEB; border: 2px solid #F59E0B; padding: 1rem; border-radius: 12px; color: #92400E; display: inline-block;">
+                        <strong>Think about it:</strong> If you can see someone in a mirror, can they see you? (Yes! The path works both ways).
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 10: Homework
+            content: `
+                <div class="slide-vertical-center" style="text-align: center; max-width: 900px; margin: 0 auto;">
+                    <h2>📚 Homework Assignment</h2>
+                    
+                    <div style="background: white; border: 1px solid #E2E8F0; border-radius: 24px; padding: 3rem; box-shadow: var(--card-shadow); text-align: left; margin-top: 2rem;">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 2rem; border-bottom: 2px solid var(--primary); padding-bottom: 1rem; font-family: 'Outfit'; font-size: 1.8rem;">Science Workbook</h3>
+                        
+                        <div style="display: grid; gap: 2rem;">
+                            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                                <div style="width: 60px; height: 60px; background: var(--primary); color: var(--text-dark); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; flex-shrink: 0; box-shadow: 4px 4px 0 rgba(0,0,0,0.1);"><i class="fa-solid fa-book-open"></i></div>
+                                <div>
+                                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-dark);">Read Pages 190 - 191</div>
+                                    <div style="color: var(--text-muted);">Review the key words and diagrams.</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                                <div style="width: 60px; height: 60px; background: var(--secondary); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; flex-shrink: 0; box-shadow: 4px 4px 0 rgba(0,0,0,0.1);"><i class="fa-solid fa-pencil"></i></div>
+                                <div>
+                                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-dark);">Complete Pages 192 - 193</div>
+                                    <div style="color: var(--text-muted);">Practice drawing the ray diagrams carefully with a ruler!</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 3rem; text-align: center; color: #B45309; font-weight: 700; font-size: 1.5rem; background: #FFFBEB; padding: 1.5rem; border-radius: 16px; border: 2px solid #FCD34D;">
+                            <i class="fa-regular fa-clock" style="margin-right: 12px;"></i> DUE: Friday
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    let currentSlide = 0;
+    const slideContainer = document.getElementById('slide-content');
+    const progressBar = document.getElementById('progress-bar');
+    const counter = document.getElementById('slide-counter');
+
+    function renderSlide() {
+        slideContainer.innerHTML = ''; 
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'slide fade-in';
+        contentDiv.innerHTML = slides[currentSlide].content;
+        slideContainer.appendChild(contentDiv);
+        
+        counter.innerText = `${currentSlide + 1} / ${slides.length}`;
+        const percent = ((currentSlide + 1) / slides.length) * 100;
+        progressBar.style.width = `${percent}%`;
+
+        document.getElementById('prev-btn').disabled = currentSlide === 0;
+        document.getElementById('next-btn').disabled = currentSlide === slides.length - 1;
+    }
+
+    function changeSlide(dir) {
+        const next = currentSlide + dir;
+        if (next >= 0 && next < slides.length) {
+            currentSlide = next;
+            renderSlide();
+        }
+    }
+
+    // Updated Reveal Function for SVGs
+    function revealDiagram(id) {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('show');
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') changeSlide(1);
+        if(e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    renderSlide();
+
+</script>
+</body>
+</html>
