@@ -1,0 +1,626 @@
+Here is the lesson rewritten to match the **exact visual style** of the previous "Reflection" lesson (Dark Space/Electric Pop theme), while incorporating your specific content for **Unit 6.1 Sound and Vibration**.
+
+I have updated the header to your specifications ("Year 9 Science" in the bubble) and created custom SVGs for the sound waves to match the aesthetic of the previous diagrams.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>6.1 Sound & Vibration - Year 9 Science</title>
+    
+    <meta name="subject" content="Science">
+    <meta name="year" content="Year 9">
+    <meta name="unit" content="6.1 Sound and Vibration">
+    <meta name="date" content="6 January 2026">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* Science Palette: Electric & Pop (From Previous Lesson) */
+            --primary: #06B6D4;       /* Electric Cyan */
+            --primary-light: #E0F2FE; /* Very light blue */
+            --primary-dark: #0891B2;  /* Deep Teal */
+            
+            --secondary: #F472B6;     /* Hot Pink */
+            
+            --accent: #F59E0B;        /* Amber/Orange (Amplitude) */
+            
+            --success: #10B981;       /* Emerald */
+            --danger: #EF4444;        /* Bright Red */
+            
+            /* Theme Colors */
+            --text-light: #F8FAFC;    
+            --text-dark: #0F172A;     
+            --text-muted: #64748B;    
+            
+            /* Deep Space/Optics Background */
+            --bg-gradient: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 100%);
+
+            --card-shadow: 
+                0 20px 25px -5px rgba(0, 0, 0, 0.4), 
+                0 8px 10px -6px rgba(0, 0, 0, 0.4);
+                
+            --header-height: 70px;
+            --nav-height: 80px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body { height: 100%; width: 100%; overflow: hidden; position: fixed; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-gradient);
+            background-size: cover;
+            color: var(--text-light);
+        }
+
+        /* --- LAYOUT --- */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-height); padding: 0 2rem;
+            background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+        }
+
+        .header-left {
+            font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800;
+            color: white; display: flex; align-items: center; gap: 1rem;
+        }
+        
+        .header-pill { background: var(--primary); color: var(--text-dark); padding: 0.25rem 1rem; border-radius: 6px; font-size: 1rem; white-space: nowrap;}
+        .header-date { font-weight: 700; color: #94A3B8; font-size: 1rem; background: rgba(255,255,255,0.05); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+
+        .navigation {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: var(--nav-height); padding: 0 3rem;
+            background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+        }
+
+        .nav-btn {
+            width: 50px; height: 50px; border-radius: 12px; border: none;
+            background: white; color: var(--text-dark); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover:not(:disabled) { background: var(--primary); transform: translateY(-2px); box-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
+        .nav-btn:disabled { background: #334155; color: #64748B; cursor: not-allowed; box-shadow: none; }
+
+        .progress-track { flex: 1; max-width: 500px; height: 6px; background: #334155; border-radius: 20px; margin: 0 2rem; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; transition: width 0.4s ease; }
+
+        .content-wrapper {
+            position: fixed; top: var(--header-height); bottom: var(--nav-height);
+            left: 0; right: 0; padding: 1.5rem;
+            display: flex; justify-content: center; align-items: center; z-index: 10;
+        }
+
+        .slide-container {
+            width: 100%; max-width: 1200px; height: 100%; 
+            background: white; border-radius: 24px; box-shadow: var(--card-shadow);
+            position: relative; overflow: hidden; display: flex; flex-direction: column;
+            color: var(--text-dark); 
+        }
+
+        .slide {
+            width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden;
+            padding: 0 3rem; opacity: 1;
+        }
+
+        .slide-vertical-center {
+            min-height: 100%; display: flex; flex-direction: column;
+            justify-content: center; padding-top: 1rem; padding-bottom: 1rem;
+        }
+
+        /* --- CONTENT STYLES --- */
+        .grid-layout {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+            align-items: center; min-height: 100%; padding: 2rem 0;
+        }
+        
+        .content-col { display: flex; flex-direction: column; justify-content: center; gap: 1.5rem; }
+        
+        .visual-col {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: #F1F5F9; border-radius: 20px; padding: 2rem;
+            border: 2px dashed #94A3B8; position: relative; height: 100%;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif; font-size: clamp(3rem, 5vw, 4.5rem);
+            font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif; font-size: clamp(2rem, 3.5vw, 3rem);
+            font-weight: 800; color: var(--text-dark); margin-bottom: 0.5rem;
+        }
+
+        h3 { font-family: 'Outfit', sans-serif; font-weight: 700; }
+
+        p, li {
+            font-size: clamp(1.1rem, 1.3vw, 1.4rem); color: #475569;
+            line-height: 1.6; font-weight: 500;
+        }
+        
+        .text-dark { color: var(--text-dark) !important; }
+
+        .meta-tag-container { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .meta-tag {
+            font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            padding: 0.4rem 1rem; border-radius: 8px; background: var(--primary-light); color: var(--primary-dark);
+            border: 1px solid var(--primary);
+        }
+
+        /* --- UI ELEMENTS --- */
+        .reveal-btn {
+            background: var(--text-dark); color: white; padding: 0.8rem 2rem;
+            border-radius: 10px; border: none; font-family: 'Outfit', sans-serif;
+            font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 10px; margin-top: 1rem;
+        }
+        .reveal-btn:hover { transform: translateY(-2px); background: var(--primary); }
+
+        .ext-link-btn {
+            background: white; color: var(--text-dark); padding: 0.8rem 2rem;
+            border-radius: 10px; border: 2px solid #E2E8F0; font-family: 'Outfit', sans-serif;
+            font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
+            display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+        }
+        .ext-link-btn:hover { background: #F1F5F9; border-color: var(--text-dark); }
+
+        .answer-panel {
+            margin-top: 1rem; padding: 1.5rem; background: #ECFDF5;
+            border-left: 6px solid var(--success); border-radius: 0 12px 12px 0;
+            color: #064E3B; font-size: 1.2rem; font-weight: 600;
+            display: none; animation: fadeIn 0.3s ease;
+        }
+        .answer-panel.show { display: block; }
+
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- SPECIALIZED CARDS --- */
+        .def-card {
+            background: #F8FAFC;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            height: 100%;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .wave-card {
+            background: white; border: 2px solid #E2E8F0; border-radius: 16px;
+            padding: 1.5rem; text-align: center; transition: all 0.3s ease;
+        }
+        .wave-card:hover { transform: translateY(-4px); box-shadow: var(--card-shadow); }
+        
+        .icon-large { font-size: 2.5rem; margin-bottom: 1rem; }
+
+        /* --- DIAGRAMS (SVG) --- */
+        .diagram-container { width: 100%; max-width: 100%; margin: 0 auto; }
+        svg { width: 100%; height: auto; overflow: visible; }
+        
+        .wave-line { stroke-width: 4; fill: none; stroke-linecap: round; }
+        
+        /* Video Container */
+        .video-container {
+            position: relative; width: 100%; padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            border-radius: 16px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); background: black; margin-bottom: 1.5rem;
+        }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+        @media (max-width: 900px) {
+            .grid-layout { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 0; }
+            .visual-col { order: -1; width: 100%; height: auto; min-height: 250px; }
+            .slide { padding: 0 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <div class="header-left">
+            <span class="header-pill">Year 9 Science</span>
+            <span>6.1 Sound and Vibration</span>
+        </div>
+        <div class="header-date">6 January 2026</div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="slide-container">
+            <div id="slide-content" style="height: 100%;">
+                </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <div style="font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; color: #94A3B8;" id="slide-counter">1 / 11</div>
+        <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+        <div class="nav-controls" style="display: flex; gap: 1rem;">
+            <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="nav-btn" id="next-btn" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const slides = [
+        {
+            // SLIDE 1: Title
+            content: `
+                <div class="slide-vertical-center" style="text-align: center; max-width: 900px; margin: 0 auto; justify-content: center;">
+                    <div style="font-size: 5rem; margin-bottom: 1rem; filter: drop-shadow(0 10px 10px rgba(6,182,212,0.3));">🔊</div>
+                    <h1>Sound & Vibration</h1>
+                    <p style="font-size: 1.6rem; margin-top: 0.5rem; color: #475569;">Loudness, Pitch, and Waves</p>
+                    
+                    <div style="margin-top: 3rem; text-align: left; background: #F8FAFC; padding: 2.5rem; border-radius: 20px; border: 1px solid #E2E8F0; box-shadow: var(--card-shadow);">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 1.5rem; font-family: 'Outfit'; font-size: 1.4rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem;">🎯 Today's Goals</h3>
+                        <ul style="list-style: none; padding: 0; display: grid; gap: 1rem;">
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-wave-square" style="color: var(--primary); font-size: 1.3rem;"></i>
+                                <span class="text-dark">Understand how sound is made by <strong>vibrations</strong>.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-wind" style="color: var(--primary); font-size: 1.3rem;"></i>
+                                <span class="text-dark">Explain how sound travels through a <strong>medium</strong>.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-chart-line" style="color: var(--primary); font-size: 1.3rem;"></i>
+                                <span class="text-dark">Describe waves using <strong>amplitude</strong> and <strong>frequency</strong>.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 2: Warm Up
+            content: `
+                <div class="grid-layout">
+                    <div class="content-col">
+                        <h2>🔥 Warm Up</h2>
+                        <p style="font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700;">Recall Previous Knowledge</p>
+                        <p>How are particles arranged in a <strong>SOLID</strong> compared to a <strong>GAS</strong>?</p>
+                        <p><em>(This is important for understanding how sound travels!)</em></p>
+                        
+                        <button class="reveal-btn" onclick="revealAnswer('ans1')">Reveal Answer</button>
+                        <div id="ans1" class="answer-panel">
+                            <p style="margin-bottom: 0.5rem;"><strong style="color: var(--primary-dark);">SOLID:</strong> Tightly packed, touching.</p>
+                            <p><strong style="color: var(--secondary);">GAS:</strong> Far apart, moving fast.</p>
+                        </div>
+                    </div>
+                    <div class="visual-col">
+                         <div style="display: flex; flex-direction: column; gap: 2rem; width: 100%;">
+                            <div style="background: white; padding: 1rem; border-radius: 12px; display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 50px; height: 50px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;"><i class="fa-solid fa-cube"></i></div>
+                                <div><strong>Solid</strong><br><span style="font-size: 0.8rem; color: #64748B;">Packed tight</span></div>
+                            </div>
+                            <div style="background: white; padding: 1rem; border-radius: 12px; display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 50px; height: 50px; background: var(--secondary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;"><i class="fa-solid fa-wind"></i></div>
+                                <div><strong>Gas</strong><br><span style="font-size: 0.8rem; color: #64748B;">Spread out</span></div>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 3: What is Sound? (Definitions)
+            content: `
+                <div class="slide-vertical-center">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">What is Sound?</h2>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                         <div class="def-card" style="border-left: 5px solid var(--accent);">
+                            <h3 style="color: var(--accent); margin-bottom: 0.5rem; font-size: 1.4rem;">Vibrations</h3>
+                            <p>Sound is caused by <strong style="color: var(--accent);">vibrating</strong> objects. When an object vibrates, it moves particles back and forth.</p>
+                        </div>
+                        <div class="def-card" style="border-left: 5px solid var(--primary);">
+                            <h3 style="color: var(--primary-dark); margin-bottom: 0.5rem; font-size: 1.4rem;">Energy</h3>
+                            <p>Sound is a form of <strong>energy</strong> that travels as a <strong style="color: var(--primary);">wave</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; background: #FFFBEB; border: 2px dashed var(--accent); padding: 1.5rem; border-radius: 16px;">
+                        <i class="fa-regular fa-lightbulb" style="color: var(--accent); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #92400E; font-weight: 700; font-size: 1.3rem;">Try it now!</p>
+                        <p style="color: #92400E;">Place your hand on your throat and hum. Can you feel the vibrations?</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 4: The Medium
+            content: `
+                <div class="slide-vertical-center" style="text-align: center;">
+                    <h2>Sound Needs a Medium</h2>
+                    <p style="max-width: 800px; margin: 0 auto 3rem auto;">Sound waves need particles to travel. This means sound needs a <strong>medium</strong> (solid, liquid, or gas).</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                        <div class="wave-card">
+                            <i class="fa-solid fa-table icon-large" style="color: var(--primary-dark);"></i>
+                            <h3 style="color: var(--primary-dark);">Solid</h3>
+                            <div style="background: #DCFCE7; color: #166534; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 700; display: inline-block; margin: 0.5rem 0; font-size: 0.9rem;">FASTEST</div>
+                            <p style="font-size: 0.95rem;">Particles are touching, passing vibrations quickly.</p>
+                        </div>
+                        
+                        <div class="wave-card">
+                            <i class="fa-solid fa-glass-water icon-large" style="color: var(--primary);"></i>
+                            <h3 style="color: var(--primary);">Liquid</h3>
+                            <div style="background: #DBEAFE; color: #1E40AF; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 700; display: inline-block; margin: 0.5rem 0; font-size: 0.9rem;">MEDIUM</div>
+                            <p style="font-size: 0.95rem;">Particles are close but not rigid.</p>
+                        </div>
+                        
+                        <div class="wave-card">
+                            <i class="fa-solid fa-cloud icon-large" style="color: #64748B;"></i>
+                            <h3 style="color: #475569;">Gas</h3>
+                            <div style="background: #FEE2E2; color: #991B1B; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 700; display: inline-block; margin: 0.5rem 0; font-size: 0.9rem;">SLOWEST</div>
+                            <p style="font-size: 0.95rem;">Particles are far apart, harder to hit each other.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 5: Vacuum Question
+            content: `
+                <div class="slide-vertical-center" style="text-align: center; max-width: 800px; margin: 0 auto;">
+                    <h2>Critical Thinking</h2>
+                    
+                    <div style="background: white; padding: 3rem; border-radius: 20px; box-shadow: var(--card-shadow); border: 1px solid #E2E8F0;">
+                        <p style="font-size: 1.8rem; font-weight: 700; color: var(--text-dark);">Can sound travel in Space?</p>
+                        <p>Space is a vacuum.</p>
+                        
+                        <button class="reveal-btn" onclick="revealAnswer('ans-space')">Reveal Answer</button>
+                        
+                        <div id="ans-space" class="answer-panel" style="margin-top: 2rem; background: #FEF2F2; border-color: var(--danger); color: #991B1B;">
+                            <p style="font-size: 2rem; margin-bottom: 0.5rem;">NO! 🚫</p>
+                            <p>Space has <strong>no particles</strong>.</p>
+                            <p>Without particles to bump into each other, vibrations cannot travel. Space is silent!</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 6: Oscilloscope Terms
+            content: `
+                <div class="slide-vertical-center">
+                    <h2 style="text-align: center;">Describing Sound Waves</h2>
+                    <p style="text-align: center; margin-bottom: 2rem;">We use an <strong>Oscilloscope</strong> to see sound waves. Remember these two words:</p>
+                    
+                    <div class="grid-layout" style="gap: 2rem;">
+                         <div class="def-card" style="background: #FFFBEB; border: 2px solid var(--accent); text-align: center;">
+                            <h3 style="color: #B45309; font-size: 2rem;">1. Amplitude</h3>
+                            <p style="font-size: 1.2rem;">The <strong>height</strong> of the wave.</p>
+                            <div style="margin-top: 1rem; padding: 1rem; background: white; border-radius: 8px; font-weight: 800; color: var(--accent);">
+                                Amplitude = LOUDNESS
+                            </div>
+                         </div>
+                         
+                         <div class="def-card" style="background: #FDF2F8; border: 2px solid var(--secondary); text-align: center;">
+                            <h3 style="color: #BE185D; font-size: 2rem;">2. Frequency</h3>
+                            <p style="font-size: 1.2rem;">The <strong>number of waves</strong> per second.</p>
+                            <div style="margin-top: 1rem; padding: 1rem; background: white; border-radius: 8px; font-weight: 800; color: var(--secondary);">
+                                Frequency = PITCH
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 7: Loudness (Diagrams)
+            content: `
+                <div class="grid-layout">
+                    <div class="content-col">
+                        <h2>Loudness & Amplitude</h2>
+                        <ul style="font-size: 1.2rem;">
+                            <li><strong>Quiet sounds</strong> have small amplitude (short waves).</li>
+                            <li><strong>Loud sounds</strong> have large amplitude (tall waves).</li>
+                        </ul>
+                        <div style="background: #FFF7ED; border-left: 5px solid var(--accent); padding: 1rem; border-radius: 0 8px 8px 0;">
+                            <strong>Rule:</strong> The taller the wave, the LOUDER the sound.
+                        </div>
+                    </div>
+                    
+                    <div class="visual-col" style="background: white;">
+                        <h3 style="color: var(--text-muted); margin-bottom: 1rem;">Quiet Sound</h3>
+                        <div class="diagram-container" style="height: 60px; margin-bottom: 2rem;">
+                            <svg viewBox="0 0 200 60">
+                                <path d="M0,30 Q25,25 50,30 T100,30 T150,30 T200,30" class="wave-line" style="stroke: #94A3B8;" />
+                            </svg>
+                        </div>
+
+                        <h3 style="color: var(--accent); margin-bottom: 1rem;">LOUD Sound</h3>
+                        <div class="diagram-container" style="height: 100px;">
+                            <svg viewBox="0 0 200 100">
+                                <line x1="0" y1="50" x2="200" y2="50" style="stroke:#E2E8F0; stroke-width:2;" />
+                                <path d="M0,50 Q25,0 50,50 T100,50 T150,50 T200,50" class="wave-line" style="stroke: var(--accent);" />
+                                <line x1="25" y1="50" x2="25" y2="5" style="stroke: var(--text-dark); stroke-width: 2; marker-end: url(#arrow-sm);" />
+                                <text x="35" y="30" style="font-family:'Outfit'; font-weight:700; font-size: 12px;">Large Amplitude</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 8: Pitch (Diagrams)
+            content: `
+                <div class="grid-layout">
+                    <div class="content-col">
+                        <h2>Pitch & Frequency</h2>
+                        <ul style="font-size: 1.2rem;">
+                            <li><strong>Low Pitch</strong> (Deep voice) = Few waves.</li>
+                            <li><strong>High Pitch</strong> (Squeak) = Many waves squashed together.</li>
+                        </ul>
+                        <div style="background: #FDF2F8; border-left: 5px solid var(--secondary); padding: 1rem; border-radius: 0 8px 8px 0;">
+                            <strong>Rule:</strong> More waves = HIGHER pitch.
+                        </div>
+                    </div>
+                    
+                    <div class="visual-col" style="background: white;">
+                        <h3 style="color: var(--primary); margin-bottom: 1rem;">Low Pitch</h3>
+                        <div class="diagram-container" style="height: 60px; margin-bottom: 2rem;">
+                            <svg viewBox="0 0 200 60">
+                                <path d="M0,30 Q50,5 100,30 T200,30" class="wave-line" style="stroke: var(--primary);" />
+                            </svg>
+                        </div>
+
+                        <h3 style="color: var(--secondary); margin-bottom: 1rem;">High Pitch</h3>
+                        <div class="diagram-container" style="height: 60px;">
+                            <svg viewBox="0 0 200 60">
+                                <path d="M0,30 Q12.5,5 25,30 T50,30 T75,30 T100,30 T125,30 T150,30 T175,30 T200,30" class="wave-line" style="stroke: var(--secondary);" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 9: Video
+            content: `
+                <div class="slide-vertical-center" style="text-align: center; max-width: 800px; margin: 0 auto;">
+                    <h2>📺 Video Demonstration</h2>
+                    <p style="margin-bottom: 2rem;">Watch how vibrations create sound waves.</p>
+                    
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/s9wZkP64rAc" title="Sound Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    
+                    <a href="https://www.youtube.com/watch?v=s9wZkP64rAc" target="_blank" class="ext-link-btn">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in New Tab
+                    </a>
+                </div>
+            `
+        },
+        {
+            // SLIDE 10: Check Understanding
+            content: `
+                <div class="slide-vertical-center">
+                    <h2 style="text-align: center;">🧠 Check Your Understanding</h2>
+                    
+                    <div style="display: grid; gap: 2rem; max-width: 900px; margin: 0 auto;">
+                        <div style="background: white; border: 1px solid #E2E8F0; padding: 2rem; border-radius: 16px; box-shadow: var(--card-shadow);">
+                            <p style="color: var(--accent); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Challenge 1</p>
+                            <p style="font-size: 1.4rem; font-weight: 700; color: var(--text-dark);">Why can't we hear explosions in space movies?</p>
+                            <button class="reveal-btn" onclick="revealAnswer('q1-ans')">Check Answer</button>
+                            <div id="q1-ans" class="answer-panel">Because space is a vacuum (no particles), so sound vibrations cannot travel.</div>
+                        </div>
+
+                        <div style="background: white; border: 1px solid #E2E8F0; padding: 2rem; border-radius: 16px; box-shadow: var(--card-shadow);">
+                            <p style="color: var(--accent); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Challenge 2</p>
+                            <p style="font-size: 1.4rem; font-weight: 700; color: var(--text-dark);">Which wave is LOUDER: A or B?</p>
+                            <div style="display: flex; gap: 2rem; margin: 1rem 0;">
+                                <div><strong style="color:#64748B;">A</strong> <svg viewBox="0 0 50 30" style="width: 60px; stroke: #64748B; stroke-width: 2; fill: none; display:inline-block; vertical-align:middle;"><path d="M0,15 Q12,14 25,15 T50,15"/></svg></div>
+                                <div><strong style="color:var(--accent);">B</strong> <svg viewBox="0 0 50 30" style="width: 60px; stroke: var(--accent); stroke-width: 2; fill: none; display:inline-block; vertical-align:middle;"><path d="M0,15 Q12,0 25,15 T50,15"/></svg></div>
+                            </div>
+                            <button class="reveal-btn" onclick="revealAnswer('q2-ans')">Check Answer</button>
+                            <div id="q2-ans" class="answer-panel"><strong>Wave B</strong> is louder because it has a larger <strong>Amplitude</strong> (it is taller).</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 11: Homework
+            content: `
+                <div class="slide-vertical-center" style="text-align: center; max-width: 900px; margin: 0 auto;">
+                    <h2>📚 Homework Assignment</h2>
+                    
+                    <div style="background: white; border: 1px solid #E2E8F0; border-radius: 24px; padding: 3rem; box-shadow: var(--card-shadow); text-align: left; margin-top: 2rem;">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 2rem; border-bottom: 2px solid var(--primary); padding-bottom: 1rem; font-family: 'Outfit'; font-size: 1.8rem;">Textbook & Practice</h3>
+                        
+                        <div style="display: grid; gap: 2rem;">
+                            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                                <div style="width: 60px; height: 60px; background: var(--primary); color: var(--text-dark); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; flex-shrink: 0;"><i class="fa-solid fa-book-open"></i></div>
+                                <div>
+                                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-dark);">Read Pages 206 - 212</div>
+                                    <div style="color: #475569;">"Sound" Chapter</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                                <div style="width: 60px; height: 60px; background: var(--secondary); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; flex-shrink: 0;"><i class="fa-solid fa-pencil"></i></div>
+                                <div>
+                                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-dark);">Answer Questions 1 - 5</div>
+                                    <div style="color: #475569;">At the end of the chapter.</div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                                <div style="width: 60px; height: 60px; background: var(--accent); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; flex-shrink: 0;"><i class="fa-solid fa-brain"></i></div>
+                                <div>
+                                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-dark);">Memorize Definitions</div>
+                                    <div style="color: #475569;">Learn Amplitude vs. Frequency.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 3rem; text-align: center; color: #B45309; font-weight: 700; font-size: 1.5rem; background: #FFFBEB; padding: 1.5rem; border-radius: 16px; border: 2px solid #FCD34D;">
+                            <i class="fa-regular fa-clock" style="margin-right: 12px;"></i> DUE: Before class Friday 9 Jan
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    let currentSlide = 0;
+    const slideContainer = document.getElementById('slide-content');
+    const progressBar = document.getElementById('progress-bar');
+    const counter = document.getElementById('slide-counter');
+
+    function renderSlide() {
+        slideContainer.innerHTML = ''; 
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'slide fade-in';
+        contentDiv.innerHTML = slides[currentSlide].content;
+        slideContainer.appendChild(contentDiv);
+        
+        counter.innerText = `${currentSlide + 1} / ${slides.length}`;
+        const percent = ((currentSlide + 1) / slides.length) * 100;
+        progressBar.style.width = `${percent}%`;
+
+        document.getElementById('prev-btn').disabled = currentSlide === 0;
+        document.getElementById('next-btn').disabled = currentSlide === slides.length - 1;
+    }
+
+    function changeSlide(dir) {
+        const next = currentSlide + dir;
+        if (next >= 0 && next < slides.length) {
+            currentSlide = next;
+            renderSlide();
+        }
+    }
+
+    function revealAnswer(id) {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('show');
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') changeSlide(1);
+        if(e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    renderSlide();
+</script>
+</body>
+</html>
+
+```
