@@ -18,7 +18,7 @@
             /* Palette: Electric & Pop */
             --primary: #06B6D4;       /* Cyan */
             --primary-dark: #0891B2;
-            --primary-light: #CFFAFE;
+            --primary-light: #E0F2FE;
             
             --secondary: #F472B6;     /* Hot Pink */
             --secondary-dark: #DB2777;
@@ -123,7 +123,7 @@
         .visual-col {
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             background: #F1F5F9; border-radius: 20px; padding: 2rem;
-            border: 2px dashed #94A3B8; position: relative; height: 100%;
+            border: 2px dashed #94A3B8; position: relative; height: 100%; min-height: 400px;
         }
 
         h1 {
@@ -159,35 +159,63 @@
             display: none; animation: fadeIn 0.3s ease;
         }
         .answer-panel.show { display: block; }
-        
-        .hint-box {
-            background: #FFFBEB; border: 2px solid #FCD34D; padding: 1rem;
-            border-radius: 12px; color: #92400E; font-size: 1.1rem;
-            display: flex; gap: 1rem; align-items: center;
-        }
 
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- MATH COMPONENTS --- */
-        .math-table {
-            width: 100%; border-collapse: collapse; margin: 1rem 0;
-            font-family: 'Outfit', sans-serif; font-size: 1.3rem;
-            border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        /* --- FLIP CARDS --- */
+        .flip-card {
+            background-color: transparent; width: 100%; height: 180px;
+            perspective: 1000px; cursor: pointer;
         }
-        .math-table th { background: var(--text-dark); color: white; padding: 1rem; text-align: left; }
-        .math-table td { background: white; padding: 1rem; border-bottom: 1px solid #E2E8F0; color: var(--text-dark); }
-        .math-table tr:last-child td { border-bottom: none; }
-        
+        .flip-card-inner {
+            position: relative; width: 100%; height: 100%; text-align: center;
+            transition: transform 0.6s; transform-style: preserve-3d;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1); border-radius: 12px;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+            position: absolute; width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            border-radius: 12px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 1.5rem;
+        }
+        .flip-card-front { background-color: white; border: 2px solid #E2E8F0; color: var(--text-dark); }
+        .flip-card-back { background-color: var(--primary-light); border: 2px solid var(--primary); transform: rotateY(180deg); }
+
+
+        /* --- DIAGRAMS --- */
         .term-card {
             background: white; border: 2px solid var(--text-dark); border-radius: 12px;
-            padding: 1rem 2rem; font-size: 2rem; font-weight: 800; font-family: 'Outfit';
-            min-width: 80px; text-align: center;
+            padding: 1rem; font-size: 1.8rem; font-weight: 800; font-family: 'Outfit';
+            min-width: 70px; text-align: center;
             box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
         }
 
-        .arrow-container { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
-        .arrow-label { color: var(--secondary); font-weight: 700; font-size: 1.1rem; background: #FCE7F3; padding: 0.2rem 0.8rem; border-radius: 20px; }
+        .bar-chart-row {
+            display: flex; align-items: flex-end; gap: 4px; height: 60px;
+            width: 100%; border-bottom: 2px solid #CBD5E1; padding-bottom: 5px;
+            position: relative;
+        }
+        .bar-label { position: absolute; left: -60px; font-weight: 700; font-size: 0.9rem; bottom: 10px; text-align: right; width: 50px;}
+        .bar {
+            width: 40px; background: var(--primary); border-radius: 4px 4px 0 0;
+            display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;
+            transition: height 0.5s ease;
+        }
+        .bar.ghost { background: transparent; border: 2px dashed var(--text-muted); color: var(--text-muted); }
+        .bar.diff { background: var(--secondary); margin-bottom: 2px; }
+
+        /* Shapes */
+        .tri-container { display: flex; flex-direction: column; align-items: center; line-height: 0.8; color: #64748B; font-size: 1.2rem; }
+        
+        .sq-block { width: 25px; height: 25px; border: 2px solid #475569; background: #E2E8F0; }
+        .sq-stack-col { display: flex; flex-direction: column-reverse; gap: 2px; }
+
+        .rhombus {
+            width: 30px; height: 30px; background: var(--secondary);
+            transform: rotate(45deg); margin: 5px; opacity: 0.8;
+        }
 
         @media (max-width: 900px) {
             .grid-layout { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 0; }
@@ -238,15 +266,11 @@
                         <ul style="list-style: none; padding: 0; display: grid; gap: 1rem;">
                             <li style="display: flex; align-items: center; gap: 1rem;">
                                 <i class="fa-solid fa-bolt" style="color: var(--primary); font-size: 1.3rem;"></i>
-                                <span class="text-dark">Find the <strong>Position-to-Term</strong> rule (algebra).</span>
+                                <span class="text-dark">Discover the <strong>Position-to-Term</strong> rule.</span>
                             </li>
                             <li style="display: flex; align-items: center; gap: 1rem;">
                                 <i class="fa-solid fa-shapes" style="color: var(--primary); font-size: 1.3rem;"></i>
-                                <span class="text-dark">Convert <strong>shapes</strong> into number sequences.</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 1rem;">
-                                <i class="fa-solid fa-rocket" style="color: var(--primary); font-size: 1.3rem;"></i>
-                                <span class="text-dark">Calculate any term (even the 100th!) instantly.</span>
+                                <span class="text-dark">Turn <strong>visual patterns</strong> into algebra.</span>
                             </li>
                         </ul>
                     </div>
@@ -254,104 +278,108 @@
             `
         },
         {
-            // SLIDE 2: The Hook - The 100th Term
+            // SLIDE 2: The Hook - The 100th Term (Inquiry)
             content: `
                 <div class="slide-vertical-center" style="text-align: center; max-width: 800px; margin: 0 auto;">
-                    <h2>The "100th Term" Problem</h2>
-                    <p style="margin-bottom: 2rem;">Look at this sequence:</p>
+                    <h2>The "100th Term" Challenge</h2>
+                    <p style="margin-bottom: 2rem;">Look at this sequence carefully. <strong>What is the 100th term?</strong></p>
                     
-                    <div class="arrow-container" style="justify-content: center; margin-bottom: 2rem;">
+                    <div style="display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 3rem;">
                         <div class="term-card">4</div>
-                        <div class="arrow-label">+3</div>
                         <div class="term-card">7</div>
-                        <div class="arrow-label">+3</div>
                         <div class="term-card">10</div>
-                        <div class="arrow-label">+3</div>
                         <div class="term-card">13</div>
-                        <div class="arrow-label">...</div>
+                        <div class="term-card" style="border-style: dashed; color: #94A3B8;">...</div>
                     </div>
 
-                    <div style="background: #FFFBEB; padding: 2rem; border-radius: 16px; border: 2px solid #F59E0B; margin-bottom: 2rem;">
-                        <h3 style="color: #B45309; margin-bottom: 1rem;">Find the 100th Term</h3>
-                        <p style="color: #92400E;">Would you keep pressing <strong>+3</strong> on your calculator 99 times?</p>
-                        <p style="font-weight: 800; color: #B45309; margin-top: 1rem;">NO! There is a faster way.</p>
+                    <div style="background: #FFFBEB; padding: 1.5rem; border-radius: 12px; border: 2px solid #FCD34D;">
+                        <i class="fa-regular fa-lightbulb" style="color: #B45309; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                        <p style="font-weight: 700; color: #92400E;">Don't shout the answer!</p>
+                        <p style="color: #92400E;">How could we solve this without hitting "+3" on a calculator 99 times? <br>List some ideas with your partner.</p>
                     </div>
-
-                    <p>We need a rule that links the <strong>Position Number ($n$)</strong> to the <strong>Term</strong>.</p>
                 </div>
             `
         },
         {
-            // SLIDE 3: Key Concept - Position vs Term
+            // SLIDE 3: Brainstorm Strategies
             content: `
                 <div class="grid-layout">
                     <div class="content-col">
-                        <h2>The Magic Table</h2>
-                        <p>To find the rule, we must organise our numbers into a table.</p>
-                        <ul>
-                            <li><strong>Position Number ($n$):</strong> The order (1st, 2nd, 3rd...). This is the input.</li>
-                            <li><strong>Term:</strong> The actual number in the list. This is the output.</li>
-                        </ul>
-                        <div class="hint-box">
-                            <i class="fa-solid fa-lightbulb"></i>
-                            <div>The rule tells us how to turn <strong>$n$</strong> into the <strong>Term</strong>.</div>
-                        </div>
+                        <h2>Brainstorming Strategies</h2>
+                        <p>Which of these ideas matches what you discussed?</p>
+                        <p>Click the cards to evaluate the strategy.</p>
                     </div>
-                    <div class="visual-col">
-                        <table class="math-table">
-                            <tr>
-                                <th>Position Number ($n$)</th>
-                                <th>Term</th>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>4</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>7</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>10</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>13</td>
-                            </tr>
-                             <tr>
-                                <td>$n$</td>
-                                <td style="color: var(--secondary); font-weight: 800;">?</td>
-                            </tr>
-                        </table>
+                    <div class="visual-col" style="justify-content: flex-start; gap: 1.5rem; overflow-y: auto;">
+                        
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <i class="fa-solid fa-calculator" style="font-size: 2rem; color: #94A3B8; margin-bottom: 10px;"></i>
+                                    <h3>"Keep Adding"</h3>
+                                </div>
+                                <div class="flip-card-back">
+                                    <h3>Too Slow! 🐌</h3>
+                                    <p>Adding +3 ninety-nine times takes too long and you might make a mistake.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <i class="fa-solid fa-table" style="font-size: 2rem; color: #94A3B8; margin-bottom: 10px;"></i>
+                                    <h3>"Use a Table"</h3>
+                                </div>
+                                <div class="flip-card-back" style="border-color: var(--success); background: #ECFDF5;">
+                                    <h3>Great Start! ✅</h3>
+                                    <p>A table helps us see the connection between the <strong>Position Number</strong> and the <strong>Term</strong>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 2rem; color: #94A3B8; margin-bottom: 10px;"></i>
+                                    <h3>"Find a Rule"</h3>
+                                </div>
+                                <div class="flip-card-back" style="border-color: var(--primary); background: var(--primary-light);">
+                                    <h3>The Best Way! 🚀</h3>
+                                    <p>If we find an algebraic rule ($n$), we can jump straight to 100.</p>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             `
         },
         {
-            // SLIDE 4: Phase 1 - Times Tables (Super Easy)
+            // SLIDE 4: Concept - The Multiplier (Times Table)
             content: `
-                <div class="slide-vertical-center" style="text-align: center;">
-                    <h2>Phase 1: Just the Times Tables</h2>
-                    <p>Some sequences are just times tables in disguise. These are the easiest!</p>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
-                        <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: var(--card-shadow);">
-                            <h3 style="color: var(--primary-dark);">Sequence A</h3>
-                            <div style="font-size: 2rem; font-weight: 800; margin: 1rem 0;">3, 6, 9, 12...</div>
-                            <p>It goes up by 3.</p>
-                            <p>It IS the 3 times table.</p>
-                            <div style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 8px; display: inline-block; font-weight: 800; margin-top: 1rem;">Rule: 3n</div>
+                <div class="grid-layout">
+                    <div class="content-col">
+                        <h2>Step 1: The Multiplier</h2>
+                        <p>Look at the gap between the numbers. This gap tells us which "Times Table" the sequence belongs to.</p>
+                        
+                        <div style="margin-top: 1rem; padding: 1rem; background: white; border-radius: 12px; border-left: 5px solid var(--primary);">
+                            <p><strong>Gap = 3</strong> $\rightarrow$ It's related to the <strong>3 Times Table (3n)</strong></p>
+                            <p><strong>Gap = 5</strong> $\rightarrow$ It's related to the <strong>5 Times Table (5n)</strong></p>
                         </div>
-
-                        <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: var(--card-shadow);">
-                            <h3 style="color: var(--secondary-dark);">Sequence B</h3>
-                            <div style="font-size: 2rem; font-weight: 800; margin: 1rem 0;">5, 10, 15, 20...</div>
-                            <p>It goes up by 5.</p>
-                            <p>It IS the 5 times table.</p>
-                            <button class="reveal-btn" onclick="revealAnswer('ans-simple')">Reveal Rule</button>
-                            <div id="ans-simple" class="answer-panel" style="margin-top: 1rem; border-color: var(--secondary);">
-                                Rule: <strong style="color: var(--secondary);">5n</strong>
+                    </div>
+                    
+                    <div class="visual-col" style="background: white;">
+                        <h3 style="margin-bottom: 2rem; color: var(--text-muted);">Visualizing the Gap</h3>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="font-weight: 700; width: 80px;">3n Table:</div>
+                                <div style="display: flex; gap: 2px;"><div class="bar" style="height: 30px; width: 30px;">3</div></div>
+                                <div style="display: flex; gap: 2px;"><div class="bar" style="height: 30px; width: 30px;">3</div><div class="bar" style="height: 30px; width: 30px;">3</div></div>
+                                <div style="display: flex; gap: 2px;"><div class="bar" style="height: 30px; width: 30px;">3</div><div class="bar" style="height: 30px; width: 30px;">3</div><div class="bar" style="height: 30px; width: 30px;">3</div></div>
+                            </div>
+                            <div style="border-top: 1px solid #E2E8F0; padding-top: 1rem; text-align: center; color: var(--primary-dark); font-weight: 600;">
+                                Every step adds exactly 3 blocks.
                             </div>
                         </div>
                     </div>
@@ -361,175 +389,127 @@
         {
             // SLIDE 5: Practice - Find the Gap
             content: `
+                <div class="slide-vertical-center" style="text-align: center;">
+                    <h2>Practice: Find the Multiplier ($n$)</h2>
+                    <p>Identify the gap to find the first part of the rule.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 900px; margin: 2rem auto;">
+                        
+                        <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: var(--card-shadow); text-align: left;">
+                            <h3 style="color: var(--text-dark);">Sequence A</h3>
+                            <div style="font-size: 1.8rem; font-weight: 800; color: var(--text-muted); margin: 1rem 0; letter-spacing: 2px;">
+                                4, 8, 12, 16...
+                            </div>
+                            <button class="reveal-btn" onclick="document.getElementById('res-a').innerText = 'Gap is 4 → 4n'">Check</button>
+                            <div id="res-a" style="margin-top: 1rem; font-weight: 700; color: var(--primary); min-height: 1.5rem;"></div>
+                        </div>
+
+                        <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: var(--card-shadow); text-align: left;">
+                            <h3 style="color: var(--text-dark);">Sequence B</h3>
+                            <div style="font-size: 1.8rem; font-weight: 800; color: var(--text-muted); margin: 1rem 0; letter-spacing: 2px;">
+                                9, 19, 29, 39...
+                            </div>
+                            <button class="reveal-btn" onclick="document.getElementById('res-b').innerText = 'Gap is 10 → 10n'">Check</button>
+                            <div id="res-b" style="margin-top: 1rem; font-weight: 700; color: var(--accent); min-height: 1.5rem;"></div>
+                        </div>
+
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 6: Concept - The Adjustment (Visual Comparison)
+            content: `
                 <div class="grid-layout">
                     <div class="content-col">
-                        <h2>Practice 1: Find the Gap</h2>
-                        <p>The first part of the rule is always the <strong>Gap</strong> times $n$.</p>
+                        <h2>Step 2: The Adjustment</h2>
+                        <p>Most sequences are just a times table that has been <strong>shifted</strong> up or down.</p>
+                        <p>To find the rule, compare the <strong>Times Table</strong> to the <strong>Real Sequence</strong>.</p>
                         
-                        <div style="background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; border-left: 5px solid var(--primary);">
-                            <strong>1. Sequence:</strong> 8, 16, 24, 32...<br>
-                            Gap = <span style="font-weight: 800;">+8</span><br>
-                            Start of Rule = <strong style="color: var(--primary);">8n</strong>
-                        </div>
-
-                        <div style="background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; border-left: 5px solid var(--accent);">
-                            <strong>2. Sequence:</strong> 10, 20, 30, 40...<br>
-                            Gap = <strong>?</strong>
-                        </div>
-                        
-                         <button class="reveal-btn" onclick="revealAnswer('ans-gap')">Check Answer</button>
-                        <div id="ans-gap" class="answer-panel">
-                            Gap is <strong>+10</strong>.<br>
-                            Rule is <strong style="color: var(--accent);">10n</strong>.
-                        </div>
-                    </div>
-                    <div class="visual-col">
-                        <i class="fa-solid fa-ruler-combined" style="font-size: 8rem; color: #CBD5E1;"></i>
-                        <h3 style="margin-top: 2rem; color: #475569;">Gap = Multiplier</h3>
-                    </div>
-                </div>
-            `
-        },
-        {
-            // SLIDE 6: Phase 2 - The Adjustment (Concept)
-            content: `
-                <div class="slide-vertical-center">
-                    <h2 style="text-align: center;">Phase 2: The Adjustment</h2>
-                    <p style="text-align: center; max-width: 700px; margin: 0 auto 2rem auto;">Most sequences are a times table that has been <strong>shifted</strong> up or down.</p>
-
-                    <div class="grid-layout" style="gap: 1rem;">
-                        <div class="content-col">
-                            <h3 style="color: var(--primary-dark);">The Process</h3>
-                            <ol style="font-size: 1.2rem; line-height: 2;">
-                                <li>Find the <strong>Gap</strong>. (This is your $n$ part).</li>
-                                <li>Write out that <strong>Times Table</strong> underneath.</li>
-                                <li><strong>Compare:</strong> What do you add or subtract to get your sequence?</li>
-                            </ol>
-                        </div>
-                        <div class="visual-col" style="background: var(--text-dark); border: none;">
-                            <div style="color: white; font-family: monospace; font-size: 1.5rem;">
-                                <div style="margin-bottom: 1rem;">
-                                    <span style="color: #94A3B8;">Sequence:</span> 
-                                    <span style="font-weight: 800; color: white;">4, 7, 10...</span>
-                                </div>
-                                <div style="margin-bottom: 1rem;">
-                                    <span style="color: #94A3B8;">Gap is 3:</span> 
-                                    <span style="color: var(--primary);">3, 6, 9...</span>
-                                    <span style="font-size: 1rem; color: var(--primary);">(3n)</span>
-                                </div>
-                                <div style="border-top: 2px solid #334155; padding-top: 1rem;">
-                                    <span style="color: #94A3B8;">Diff:</span> 
-                                    <span style="color: var(--secondary); font-weight: 800;">+1, +1, +1</span>
-                                </div>
-                                <div style="margin-top: 1.5rem; background: var(--secondary); padding: 1rem; border-radius: 8px; text-align: center; color: white;">
-                                    Rule: 3n + 1
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `
-        },
-        {
-            // SLIDE 7: Guided Practice - Finding the Adjustment
-            content: `
-                 <div class="grid-layout">
-                    <div class="content-col">
-                        <h2>Let's Try One Together</h2>
-                        <p><strong>Sequence:</strong> 7, 12, 17, 22...</p>
-                        
-                        <div style="margin-bottom: 1rem;">
-                            <strong>Step 1: Find Gap</strong><br>
-                            12 - 7 = 5. So start with <strong style="color: var(--primary);">5n</strong>.
-                        </div>
-
-                        <div style="margin-bottom: 1rem;">
-                            <strong>Step 2: Compare</strong><br>
-                            The 5x table starts with <strong>5</strong>.<br>
-                            Our sequence starts with <strong>7</strong>.
-                        </div>
-                        
-                        <div style="margin-bottom: 1rem;">
-                            <strong>Step 3: Adjust</strong><br>
-                            How do we get from 5 to 7?
-                        </div>
-
-                        <button class="reveal-btn" onclick="revealAnswer('ans-adj')">Check Rule</button>
-                        <div id="ans-adj" class="answer-panel">
-                            We add 2.<br>
-                            Rule: <strong style="color: var(--primary); font-size: 1.5rem;">5n + 2</strong>
+                        <div class="hint-box" style="margin-top: 2rem; background: #F0FDFA; border-color: var(--primary);">
+                            <i class="fa-solid fa-eye"></i>
+                            <div>Look at the diagram. How much taller is the Orange bar than the Blue bar?</div>
                         </div>
                     </div>
                     
-                     <div class="visual-col">
-                        <table class="math-table" style="text-align: center;">
-                            <tr>
-                                <th>$n$</th>
-                                <th>1</th>
-                                <th>2</th>
-                                <th>3</th>
-                            </tr>
-                            <tr style="color: var(--primary);">
-                                <td><strong>5n</strong></td>
-                                <td>5</td>
-                                <td>10</td>
-                                <td>15</td>
-                            </tr>
-                            <tr>
-                                <td>Target</td>
-                                <td><strong>7</strong></td>
-                                <td><strong>12</strong></td>
-                                <td><strong>17</strong></td>
-                            </tr>
-                            <tr style="color: var(--secondary); font-weight: 800;">
-                                <td>Adj</td>
-                                <td>+2</td>
-                                <td>+2</td>
-                                <td>+2</td>
-                            </tr>
-                        </table>
+                    <div class="visual-col" style="background: white; align-items: center; justify-content: center;">
+                        <h4 style="width: 100%; text-align: left; margin-bottom: 2rem;">Sequence: 4, 7, 10... (Gap is 3)</h4>
+                        
+                        <div style="width: 100%; display: flex; flex-direction: column; gap: 2rem; padding-left: 60px;">
+                            
+                            <div style="display: flex; gap: 1rem; align-items: flex-end;">
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div class="bar" style="height: 60px; background: var(--primary-light); color: var(--primary-dark); border: 1px solid var(--primary);">3</div>
+                                    <span style="font-size: 0.8rem; margin-top: 5px;">3n</span>
+                                </div>
+                                <div style="font-size: 1.5rem; padding-bottom: 20px;">vs</div>
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div class="bar" style="height: 80px; background: var(--accent);">4</div>
+                                    <span style="font-size: 0.8rem; margin-top: 5px;">Real</span>
+                                </div>
+                                <div style="color: var(--success); font-weight: 800; padding-bottom: 30px;">Difference: +1</div>
+                            </div>
+
+                        </div>
+
+                        <div style="margin-top: 2rem; background: var(--text-dark); color: white; padding: 1rem 2rem; border-radius: 50px; font-weight: 800; font-size: 1.2rem;">
+                            Rule: 3n + 1
+                        </div>
                     </div>
                 </div>
             `
         },
         {
-            // SLIDE 8: Visual Patterns - Triangles (Textbook Q1)
+            // SLIDE 7: Guided Practice - Triangles
             content: `
                  <div class="grid-layout">
                     <div class="content-col">
-                        <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700;">Textbook Exercise 9.2 Q1</span>
-                        <h2>Visual Patterns: Triangles</h2>
-                        <p>Count the grey triangles.</p>
-                        <ul>
-                            <li>Pattern 1: <strong>3</strong> triangles</li>
-                            <li>Pattern 2: <strong>5</strong> triangles</li>
-                            <li>Pattern 3: <strong>7</strong> triangles</li>
-                        </ul>
-                        <p><strong>Question:</strong> What is the position-to-term rule?</p>
+                        <h2>Visual Pattern: Triangles</h2>
+                        <p>Let's find the rule for these triangles.</p>
                         
-                        <button class="reveal-btn" onclick="revealAnswer('ans-tri')">Solve It</button>
+                        <ol style="line-height: 2;">
+                            <li><strong>Count:</strong> 3, 5, 7...</li>
+                            <li><strong>Gap:</strong> +2. So start with <strong>2n</strong>.</li>
+                            <li><strong>Compare:</strong> 
+                                <ul>
+                                    <li>2n starts at <strong>2</strong>.</li>
+                                    <li>Our pattern starts at <strong>3</strong>.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Adjust:</strong> How do we get from 2 to 3?</li>
+                        </ol>
+
+                        <button class="reveal-btn" onclick="revealAnswer('ans-tri')">Reveal Rule</button>
                         <div id="ans-tri" class="answer-panel">
-                            1. Gap is <strong>+2</strong> (3, 5, 7). So <strong>2n</strong>.<br>
-                            2. 2x table starts at <strong>2</strong>.<br>
-                            3. We need <strong>3</strong>.<br>
-                            4. Adjustment is <strong>+1</strong>.<br>
-                            Rule: <strong style="color: var(--accent); font-size: 1.3rem;">2n + 1</strong>
+                            We add 1.<br>
+                            Rule: <strong style="color: var(--accent); font-size: 1.5rem;">2n + 1</strong>
                         </div>
                     </div>
                     
                      <div class="visual-col" style="background: white;">
-                        <div style="display: flex; gap: 2rem; align-items: flex-end; margin-bottom: 2rem;">
+                        <div style="display: flex; gap: 2rem; align-items: flex-end; margin-bottom: 1rem;">
                             <div style="text-align: center;">
-                                <div style="font-size: 3rem; color: #94A3B8; line-height: 0.8;">▲<br>▲▲</div>
-                                <span>3</span>
+                                <div class="tri-container">
+                                    <i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i>
+                                    <div style="display:flex;"><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i></div>
+                                </div>
+                                <span style="font-weight:700;">3</span>
                             </div>
-                            <div style="text-align: center;">
-                                <div style="font-size: 3rem; color: #94A3B8; line-height: 0.8;">▲▲<br>▲▲▲</div>
-                                <span>5</span>
+                            
+                             <div style="text-align: center;">
+                                <div class="tri-container">
+                                    <div style="display:flex;"><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i></div>
+                                    <div style="display:flex;"><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i></div>
+                                </div>
+                                <span style="font-weight:700;">5</span>
                             </div>
-                            <div style="text-align: center;">
-                                <div style="font-size: 3rem; color: #94A3B8; line-height: 0.8;">▲▲▲<br>▲▲▲▲</div>
-                                <span>7</span>
+
+                             <div style="text-align: center;">
+                                <div class="tri-container">
+                                    <div style="display:flex;"><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i></div>
+                                    <div style="display:flex;"><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i><i class="fa-solid fa-play" style="transform: rotate(-90deg); color: #94A3B8;"></i></div>
+                                </div>
+                                <span style="font-weight:700;">7</span>
                             </div>
                         </div>
                     </div>
@@ -537,129 +517,142 @@
             `
         },
         {
-            // SLIDE 9: Visual Patterns - Squares (Textbook Q2)
+            // SLIDE 8: Guided Practice - Squares
             content: `
                  <div class="grid-layout">
                     <div class="content-col">
-                        <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--secondary); font-weight: 700;">Textbook Exercise 9.2 Q2</span>
-                        <h2>Visual Patterns: Squares</h2>
-                        <p>Count the squares in the pattern.</p>
-                        <table class="math-table">
-                            <tr><th>Pos</th><td>1</td><td>2</td><td>3</td></tr>
-                            <tr><th>Squares</th><td>5</td><td>8</td><td>11</td></tr>
-                        </table>
+                        <h2>Visual Pattern: Squares</h2>
+                        <p>Let's look at the "Castle Steps" pattern.</p>
+                        <p><strong>Pattern:</strong> 5, 8, 11...</p>
                         
-                        <p>Find the rule.</p>
+                         <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #E2E8F0;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Gap ($n$):</span>
+                                <strong style="color: var(--secondary);">+3 (3n)</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>3x Table starts at:</span>
+                                <strong>3</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Real pattern starts at:</span>
+                                <strong>5</strong>
+                            </div>
+                             <div style="display: flex; justify-content: space-between; border-top: 1px solid #CBD5E1; padding-top: 0.5rem;">
+                                <span>Adjustment:</span>
+                                <strong style="color: var(--success);">+2</strong>
+                            </div>
+                        </div>
 
-                        <button class="reveal-btn" onclick="revealAnswer('ans-sq')">Solve It</button>
-                        <div id="ans-sq" class="answer-panel" style="border-color: var(--secondary);">
-                            1. Gap is <strong>+3</strong>. Start with <strong>3n</strong>.<br>
-                            2. 3x table starts with <strong>3</strong>.<br>
-                            3. We have <strong>5</strong>. We need to add 2.<br>
-                            Rule: <strong style="color: var(--secondary); font-size: 1.3rem;">3n + 2</strong>
+                        <button class="reveal-btn" onclick="revealAnswer('ans-sq')">Show Rule</button>
+                        <div id="ans-sq" class="answer-panel">
+                            Rule: <strong style="color: var(--secondary); font-size: 1.5rem;">3n + 2</strong>
                         </div>
                     </div>
                     
                      <div class="visual-col" style="background: white;">
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-                            <div style="display: grid; grid-template-columns: repeat(3, 20px); gap: 2px;">
-                                <div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div>
-                                <div style="width:20px; height:20px; background:white;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:white;"></div>
-                                <div style="width:20px; height:20px; background:white;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:white;"></div>
-                            </div>
-                             <div style="font-size: 2rem; align-self: center;">➜</div>
-                             <div style="display: grid; grid-template-columns: repeat(5, 20px); gap: 2px;">
-                                <div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div>
-                                <div style="width:20px; height:20px; background:white;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:white;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:white;"></div>
-                                <div style="width:20px; height:20px; background:white;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:white;"></div><div style="width:20px; height:20px; background:#CBD5E1;"></div><div style="width:20px; height:20px; background:white;"></div>
-                            </div>
+                        <div style="display: flex; gap: 2rem; align-items: flex-end;">
+                            <div style="display: flex; gap: 2px; align-items: flex-end;">
+                                <div class="sq-stack-col"><div class="sq-block"></div></div>
+                                <div class="sq-stack-col"><div class="sq-block"></div><div class="sq-block"></div></div>
+                                <div class="sq-stack-col"><div class="sq-block"></div></div>
+                                <div class="sq-stack-col"><div class="sq-block"></div></div> </div>
+                            
+                            <div style="display: flex; gap: 2px; align-items: flex-end;">
+                                <div class="sq-stack-col"><div class="sq-block"></div></div>
+                                <div class="sq-stack-col"><div class="sq-block"></div><div class="sq-block"></div></div>
+                                <div class="sq-stack-col"><div class="sq-block"></div></div>
+                                <div class="sq-stack-col"><div class="sq-block"></div><div class="sq-block"></div></div>
+                                <div class="sq-stack-col"><div class="sq-block"></div></div> </div>
                         </div>
-                        <p style="margin-top: 1rem; color: #64748B; font-size: 0.9rem;">(Simplified visual representation)</p>
+                        <p style="margin-top: 2rem; font-weight: 700;">5 Squares $\rightarrow$ 8 Squares</p>
                     </div>
                 </div>
             `
         },
         {
-            // SLIDE 10: Visual Patterns - Dots (Textbook Q3)
+             // SLIDE 9: Challenge - Rhombuses
             content: `
                  <div class="grid-layout">
                     <div class="content-col">
-                        <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--primary); font-weight: 700;">Textbook Exercise 9.2 Q3</span>
-                        <h2>Visual Patterns: Dots</h2>
-                        <p>Count the dots.</p>
-                        <table class="math-table">
-                            <tr><th>Pos</th><td>1</td><td>2</td><td>3</td></tr>
-                            <tr><th>Dots</th><td>8</td><td>12</td><td>16</td></tr>
-                        </table>
+                        <h2>Challenge: Rhombuses</h2>
+                        <p>This pattern grows quickly!</p>
                         
-                        <p>Find the rule.</p>
-
-                        <button class="reveal-btn" onclick="revealAnswer('ans-dot')">Solve It</button>
-                        <div id="ans-dot" class="answer-panel" style="border-color: var(--primary);">
-                            1. Gap is <strong>+4</strong>. Start with <strong>4n</strong>.<br>
-                            2. 4x table starts with <strong>4</strong>.<br>
-                            3. We have <strong>8</strong>. We need to add 4.<br>
-                            Rule: <strong style="color: var(--primary); font-size: 1.3rem;">4n + 4</strong>
+                        <div style="display: flex; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #CBD5E1;">
+                            <span>Pattern 1:</span> <strong>1</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #CBD5E1;">
+                            <span>Pattern 2:</span> <strong>5</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 1rem;">
+                            <span>Pattern 3:</span> <strong>9</strong>
+                        </div>
+                        
+                        <p>Find the rule. Be careful with the adjustment!</p>
+                        
+                        <button class="reveal-btn" onclick="revealAnswer('ans-rhom')">Solve</button>
+                        <div id="ans-rhom" class="answer-panel">
+                            1. Gap is <strong>+4</strong> $\rightarrow$ <strong>4n</strong>.<br>
+                            2. 4n starts at <strong>4</strong>.<br>
+                            3. We need <strong>1</strong>.<br>
+                            4. To get from 4 down to 1, subtract 3.<br>
+                            Rule: <strong style="color: var(--danger); font-size: 1.5rem;">4n - 3</strong>
                         </div>
                     </div>
                     
                      <div class="visual-col" style="background: white;">
-                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%;">
-                             <div style="display:flex; flex-wrap:wrap; width: 40px; justify-content:center; gap:2px;">
-                                 <div style="width:10px; height:10px; background:#94A3B8; border-radius:50%;"></div>
-                                 <div style="width:10px; height:10px; background:#94A3B8; border-radius:50%;"></div>
-                                 <div style="width:10px; height:10px; background:#94A3B8; border-radius:50%;"></div>
-                                 <div style="width:10px; height:10px; background:#94A3B8; border-radius:50%;"></div>
-                                 <div style="width:10px; height:10px; background:#94A3B8; border-radius:50%;"></div>
-                                 <div style="width:10px; height:10px; background:#94A3B8; border-radius:50%;"></div>
-                                 <div style="width:10px; height:10px; background:#94A3B8; border-radius:50%;"></div>
-                                 <div style="width:10px; height:10px; background:#94A3B8; border-radius:50%;"></div>
+                        <div style="display: flex; gap: 2rem; align-items: center;">
+                             <div>
+                                 <div class="rhombus"></div>
+                             </div>
+
+                             <div style="display: grid; grid-template-columns: 1fr 1fr; width: 80px;">
+                                 <div class="rhombus" style="grid-column: span 2; margin: 0 auto;"></div>
+                                 <div class="rhombus"></div><div class="rhombus"></div>
+                                 <div class="rhombus" style="grid-column: span 2; margin: 0 auto;"></div>
                              </div>
                         </div>
-                        <p style="text-align: center; font-weight: 700;">Pattern 1 = 8 Dots</p>
                     </div>
                 </div>
             `
         },
         {
-             // SLIDE 11: Challenge - Kai's Mistake (Textbook Q9)
+            // SLIDE 10: Critical Thinking - Error Analysis
             content: `
                  <div class="grid-layout">
                     <div class="content-col">
-                        <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--danger); font-weight: 700;">Critical Thinking Q9</span>
-                        <h2 style="color: var(--danger);">Kai's Mistake</h2>
+                        <span style="text-transform: uppercase; letter-spacing: 1px; color: var(--danger); font-weight: 700;">Spot the Mistake</span>
+                        <h2 style="color: var(--danger);">Kai's Homework</h2>
                         <div style="background: #FEE2E2; padding: 1.5rem; border-radius: 12px; border-left: 5px solid var(--danger);">
-                            <p><strong>Kai's Logic:</strong> "The sequence starts with 3. It goes up by 5 every time. So the rule is <strong style="color:var(--danger)">5n + 3</strong>."</p>
+                            <p><strong>Question:</strong> Find rule for 3, 8, 13...</p>
+                            <p><strong>Kai's Answer:</strong> "It starts with 3 and goes up by 5. So the rule is <strong style="color:var(--danger)">5n + 3</strong>."</p>
                         </div>
-                        <p><strong>The Real Sequence:</strong> 3, 8, 13...</p>
-                        <p>Why is Kai wrong? What is the real rule?</p>
+                        <p>Why is Kai wrong?</p>
                         
                         <button class="reveal-btn" onclick="revealAnswer('ans-kai')">Reveal Correction</button>
                         <div id="ans-kai" class="answer-panel" style="border-color: var(--danger);">
-                            Kai put the "Start Number" as the adjustment. That is wrong!<br>
-                            <strong>Gap:</strong> +5 (So <strong>5n</strong>).<br>
-                            <strong>Check:</strong> 5x table starts at 5.<br>
-                            <strong>Adjust:</strong> To get to 3, we must <strong>Subtract 2</strong>.<br>
+                            Kai thought the "+3" comes from the <strong>First Term</strong>.<br>
+                            The adjustment comes from the difference between the Gap Table (5, 10, 15) and the Real Table (3, 8, 13).<br>
                             Correct Rule: <strong style="color: var(--success); font-size: 1.3rem;">5n - 2</strong>
                         </div>
                     </div>
                     
                      <div class="visual-col" style="border-color: var(--danger); background: white;">
-                        <i class="fa-solid fa-circle-exclamation" style="font-size: 6rem; color: var(--danger); margin-bottom: 1rem;"></i>
-                        <h3 style="text-align: center;">Don't Guess!</h3>
-                        <p style="text-align: center;">Always compare the Gap Table to the Real Table.</p>
+                        <i class="fa-solid fa-circle-xmark" style="font-size: 6rem; color: var(--danger); margin-bottom: 1rem;"></i>
+                        <h3 style="text-align: center;">Common Mistake!</h3>
+                        <p style="text-align: center;">The "Start Number" is NOT the adjustment number.</p>
                     </div>
                 </div>
             `
         },
         {
-            // SLIDE 12: Homework
+            // SLIDE 11: Homework
             content: `
                 <div class="slide-vertical-center" style="text-align: center; max-width: 900px; margin: 0 auto;">
                     <h2>📚 Homework Assignment</h2>
                     
                     <div style="background: white; border: 1px solid #E2E8F0; border-radius: 24px; padding: 3rem; box-shadow: var(--card-shadow); text-align: left; margin-top: 2rem;">
-                        <h3 style="color: var(--primary-dark); margin-bottom: 2rem; border-bottom: 2px solid var(--primary); padding-bottom: 1rem; font-family: 'Outfit'; font-size: 1.8rem;">Textbook & Workbook</h3>
+                        <h3 style="color: var(--primary-dark); margin-bottom: 2rem; border-bottom: 2px solid var(--primary); padding-bottom: 1rem; font-family: 'Outfit'; font-size: 1.8rem;">Practice Makes Perfect</h3>
                         
                         <div style="display: grid; gap: 2rem;">
                             <div style="display: flex; gap: 1.5rem; align-items: center;">
