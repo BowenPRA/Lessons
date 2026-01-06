@@ -3,30 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>9.2 Finding Rules for Sequences - Year 8</title>
+    <title>9.2 Finding Rules - Year 8</title>
     
     <meta name="subject" content="Mathematics">
     <meta name="year" content="Year 8">
-    <meta name="unit" content="9.2 Finding Rules for Sequences">
-    <meta name="date" content="6 January 2026">
+    <meta name="curriculum" content="Cambridge Lower Secondary">
+    <meta name="unit" content="9.2 Finding Rules">
+    <meta name="date" content="7 January 2026">
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         :root {
-            /* Palette: Electric & Pop */
-            --primary: #06B6D4;       /* Cyan */
-            --primary-dark: #0891B2;
-            --secondary: #F472B6;     /* Hot Pink */
-            --accent: #F59E0B;        /* Amber */
-            --success: #10B981;       /* Emerald */
-            --danger: #EF4444;        /* Red */
-            --dark-bg: #0F172A;       /* Slate 900 */
-            --card-bg: #FFFFFF;
+            /* Math Palette: Indigo & Teal */
+            --primary: #6366F1;       /* Indigo */
+            --primary-light: #EEF2FF;
+            --primary-dark: #4338CA;
             
-            /* Gradient Background */
-            --bg-gradient: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 100%);
+            --secondary: #EC4899;     /* Pink */
+            --accent: #06B6D4;        /* Cyan */
+            --accent-light: #CFFAFE;
+            --success: #10B981;       /* Emerald */
+            --warning: #F59E0B;       /* Amber */
+            --danger: #EF4444;        /* Red */
+            
+            /* Theme Colors */
+            --text-light: #F8FAFC;    
+            --text-dark: #0F172A;     
+            --text-muted: #64748B;    
+            
+            /* Deep Space Math Background */
+            --bg-gradient: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #020617 100%);
 
             --card-shadow: 
                 0 20px 25px -5px rgba(0, 0, 0, 0.2), 
@@ -43,14 +51,15 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--bg-gradient);
-            color: #F8FAFC;
+            background-size: cover;
+            color: var(--text-light);
         }
 
         /* --- LAYOUT --- */
         .header {
             position: fixed; top: 0; left: 0; right: 0;
             height: var(--header-height); padding: 0 2rem;
-            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px);
+            background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255,255,255,0.1);
             display: flex; justify-content: space-between; align-items: center; z-index: 1000;
         }
@@ -60,25 +69,25 @@
             color: white; display: flex; align-items: center; gap: 1rem;
         }
         
-        .header-pill { background: var(--primary); color: var(--dark-bg); padding: 0.25rem 1rem; border-radius: 6px; font-size: 1rem; }
-        .header-date { font-weight: 700; color: #94A3B8; font-size: 1rem; background: rgba(255,255,255,0.05); padding: 0.5rem 1rem; border-radius: 8px; }
+        .header-pill { background: var(--primary); color: white; padding: 0.25rem 1rem; border-radius: 6px; font-size: 1rem; white-space: nowrap;}
+        .header-date { font-weight: 700; color: #94A3B8; font-size: 1rem; background: rgba(255,255,255,0.05); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
 
         .navigation {
             position: fixed; bottom: 0; left: 0; right: 0;
             height: var(--nav-height); padding: 0 3rem;
-            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px);
+            background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(10px);
             border-top: 1px solid rgba(255,255,255,0.1);
             display: flex; justify-content: space-between; align-items: center; z-index: 1000;
         }
 
         .nav-btn {
             width: 50px; height: 50px; border-radius: 12px; border: none;
-            background: white; color: var(--dark-bg); cursor: pointer;
+            background: white; color: var(--text-dark); cursor: pointer;
             display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
             transition: all 0.2s ease;
         }
-        .nav-btn:hover:not(:disabled) { background: var(--primary); transform: translateY(-2px); box-shadow: 0 0 15px var(--primary); }
-        .nav-btn:disabled { background: #334155; color: #64748B; cursor: not-allowed; }
+        .nav-btn:hover:not(:disabled) { background: var(--primary); color: white; transform: translateY(-2px); box-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
+        .nav-btn:disabled { background: #334155; color: #64748B; cursor: not-allowed; box-shadow: none; }
 
         .progress-track { flex: 1; max-width: 500px; height: 6px; background: #334155; border-radius: 20px; margin: 0 2rem; overflow: hidden; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; transition: width 0.4s ease; }
@@ -93,7 +102,7 @@
             width: 100%; max-width: 1200px; height: 100%; 
             background: white; border-radius: 24px; box-shadow: var(--card-shadow);
             position: relative; overflow: hidden; display: flex; flex-direction: column;
-            color: var(--dark-bg);
+            color: var(--text-dark);
         }
 
         .slide {
@@ -103,7 +112,7 @@
 
         .slide-vertical-center {
             min-height: 100%; display: flex; flex-direction: column;
-            justify-content: center; padding-top: 2rem; padding-bottom: 2rem;
+            justify-content: center; padding-top: 1rem; padding-bottom: 1rem;
         }
 
         /* --- CONTENT STYLES --- */
@@ -116,32 +125,39 @@
         
         .visual-col {
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: #F1F5F9; border-radius: 20px; padding: 2rem;
-            border: 2px dashed #CBD5E1; position: relative; height: 100%;
+            background: #F8FAFC; border-radius: 20px; padding: 2rem;
+            border: 2px dashed #CBD5E1; position: relative; height: 100%; min-height: 400px;
         }
 
         h1 {
             font-family: 'Outfit', sans-serif; font-size: clamp(3rem, 5vw, 4.5rem);
             font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
         h2 {
             font-family: 'Outfit', sans-serif; font-size: clamp(2rem, 3.5vw, 3rem);
-            font-weight: 800; color: var(--dark-bg); margin-bottom: 0.5rem;
+            font-weight: 800; color: var(--text-dark); margin-bottom: 0.5rem;
         }
 
-        h3 { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.5rem; margin-bottom: 0.5rem;}
+        h3 { font-family: 'Outfit', sans-serif; font-weight: 700; margin-bottom: 0.5rem; }
 
         p, li {
             font-size: clamp(1.1rem, 1.3vw, 1.4rem); color: #475569;
             line-height: 1.6; font-weight: 500;
         }
 
-        /* --- UI COMPONENTS --- */
+        .meta-tag-container { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .meta-tag {
+            font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            padding: 0.4rem 1rem; border-radius: 8px; background: #F1F5F9; color: var(--text-muted);
+            border: 1px solid #E2E8F0;
+        }
+
+        /* --- UI ELEMENTS --- */
         .reveal-btn {
-            background: var(--dark-bg); color: white; padding: 0.8rem 2rem;
+            background: var(--text-dark); color: white; padding: 0.8rem 2rem;
             border-radius: 10px; border: none; font-family: 'Outfit', sans-serif;
             font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 10px; margin-top: 1rem;
@@ -149,80 +165,68 @@
         .reveal-btn:hover { transform: translateY(-2px); background: var(--primary); }
 
         .answer-panel {
-            margin-top: 1rem; padding: 1.5rem; background: #ECFDF5;
-            border-left: 6px solid var(--success); border-radius: 0 12px 12px 0;
-            color: #064E3B; font-size: 1.2rem; font-weight: 600;
+            margin-top: 1rem; padding: 1.5rem; background: #EEF2FF;
+            border-left: 6px solid var(--primary); border-radius: 0 12px 12px 0;
+            color: var(--text-dark); font-size: 1.2rem; font-weight: 600;
             display: none; animation: fadeIn 0.3s ease;
         }
         .answer-panel.show { display: block; }
-        
-        .hint-panel {
-            margin-top: 1rem; padding: 1.5rem; background: #FFFBEB;
-            border-left: 6px solid var(--accent); border-radius: 0 12px 12px 0;
-            color: #92400E; font-size: 1.1rem; font-weight: 600;
-            display: none; animation: fadeIn 0.3s ease;
-        }
 
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- INTERACTIVE CARDS --- */
         .flip-card {
-            background-color: transparent; width: 100%; height: 180px;
+            background-color: transparent; width: 100%; height: 220px;
             perspective: 1000px; cursor: pointer;
         }
         .flip-card-inner {
             position: relative; width: 100%; height: 100%; text-align: center;
             transition: transform 0.6s; transform-style: preserve-3d;
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1); border-radius: 16px;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1); border-radius: 12px;
         }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
         .flip-card-front, .flip-card-back {
             position: absolute; width: 100%; height: 100%;
             -webkit-backface-visibility: hidden; backface-visibility: hidden;
-            border-radius: 16px; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; padding: 1.5rem;
+            border-radius: 12px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 1rem;
         }
-        .flip-card-front { background-color: #F8FAFC; border: 2px solid #E2E8F0; color: #64748B; }
-        .flip-card-back { background-color: white; border: 2px solid var(--primary); transform: rotateY(180deg); color: var(--dark-bg); }
+        .flip-card-front { background-color: #F8FAFC; border: 2px dashed #94A3B8; color: #475569; }
+        .flip-card-back { background-color: white; border: 2px solid var(--primary); transform: rotateY(180deg); color: var(--text-dark); }
 
-        /* --- MATH SPECIFIC --- */
-        .seq-box {
-            display: inline-flex; width: 60px; height: 60px; 
-            align-items: center; justify-content: center;
-            background: white; border: 2px solid var(--dark-bg); border-radius: 10px;
-            font-family: 'Outfit'; font-weight: 700; font-size: 1.5rem;
-            margin: 0 5px; box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+        .def-card {
+            background: #F8FAFC; padding: 1.5rem; border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); height: 100%;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        /* --- MATH TABLES --- */
+        .math-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin: 1rem 0; border: 1px solid #E2E8F0; }
+        .math-table th { background: #F8FAFC; color: var(--text-dark); padding: 1.2rem; font-family: 'Outfit'; font-size: 1.1rem; text-align: center; border-bottom: 2px solid #E2E8F0; }
+        .math-table td { padding: 1rem; border-bottom: 1px solid #E2E8F0; text-align: center; font-size: 1.2rem; font-weight: 600; color: #64748B; }
+        .math-table tr:last-child td { border-bottom: none; }
+        .highlight-row { background: #F0FDF4; }
+        .highlight-cell { color: var(--primary); font-weight: 800; font-size: 1.4rem; background: #EEF2FF; border-radius: 8px; }
+
+        /* --- VISUAL PATTERNS (SVG) --- */
+        .pattern-container { display: flex; gap: 2rem; align-items: flex-end; justify-content: center; height: 100%; width: 100%; padding: 2rem; }
+        .pattern-group { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+        .shape-wrapper { 
+            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; 
+            background: white; padding: 1.5rem; border-radius: 16px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid #E2E8F0; 
+            min-width: 120px;
         }
         
-        .table-custom {
-            width: 100%; border-collapse: collapse; font-family: 'Outfit'; margin: 1rem 0;
+        .term-label {
+            font-weight: 700; color: #64748B; font-family: 'Outfit'; 
+            background: #F1F5F9; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem;
         }
-        .table-custom th { background: var(--primary); color: white; padding: 1rem; border: 1px solid var(--primary-dark); }
-        .table-custom td { padding: 1rem; border: 1px solid #CBD5E1; text-align: center; font-size: 1.2rem; font-weight: 600; }
-        .table-custom tr:nth-child(even) { background: #F1F5F9; }
-
-        .comparison-row {
-            display: grid; grid-template-columns: 100px 1fr; 
-            align-items: center; margin-bottom: 1rem; 
-            background: white; padding: 1rem; border-radius: 12px;
-            border: 1px solid #E2E8F0;
-        }
-
-        .circle-dot {
-            width: 20px; height: 20px; background: var(--secondary); border-radius: 50%; display: inline-block; margin: 2px;
-        }
-        
-        .triangle-shape {
-            width: 0; height: 0; 
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-bottom: 26px solid #64748B;
-            display: inline-block; margin: 2px;
-        }
-
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 900px) {
-            .grid-layout { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 0; }
-            .visual-col { order: -1; min-height: 300px; }
+            .grid-layout { grid-template-columns: 1fr; gap: 2rem; }
+            .visual-col { order: -1; width: 100%; min-height: 250px; }
             .slide { padding: 0 1.5rem; }
         }
     </style>
@@ -232,10 +236,10 @@
 <div class="app-container">
     <div class="header">
         <div class="header-left">
-            <span class="header-pill">Math 9.2</span>
-            <span>Finding Rules for Sequences</span>
+            <span class="header-pill">Year 8 Math</span>
+            <span>Finding Sequence Rules</span>
         </div>
-        <div class="header-date">6 January 2026</div>
+        <div class="header-date">7 January 2026</div>
     </div>
 
     <div class="content-wrapper">
@@ -245,7 +249,7 @@
     </div>
 
     <div class="navigation">
-        <div style="font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; color: #94A3B8;" id="slide-counter">1 / 9</div>
+        <div style="font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; color: #94A3B8;" id="slide-counter">1 / 14</div>
         <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
         <div class="nav-controls" style="display: flex; gap: 1rem;">
             <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
@@ -257,27 +261,27 @@
 <script>
     const slides = [
         {
-            // SLIDE 1: Title
+            // SLIDE 1: Title (Polished)
             content: `
                 <div class="slide-vertical-center" style="text-align: center; max-width: 900px; margin: 0 auto; justify-content: center;">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">🔢</div>
+                    <div style="font-size: 5rem; margin-bottom: 1rem; filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.4));">📐</div>
                     <h1>Finding Rules for Sequences</h1>
-                    <p style="font-size: 1.6rem; margin-top: 0.5rem; color: #475569;">From "Add 3" to "3n + 1"</p>
+                    <p style="font-size: 1.6rem; margin-top: 0.5rem; color: #64748B;">From Patterns to Algebra</p>
                     
                     <div style="margin-top: 3rem; text-align: left; background: #F8FAFC; padding: 2.5rem; border-radius: 20px; border: 1px solid #E2E8F0; box-shadow: var(--card-shadow);">
-                        <h3 style="color: var(--primary-dark); margin-bottom: 1.5rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem;">🎯 Learning Goals</h3>
+                        <h3 style="color: var(--primary-dark); margin-bottom: 1.5rem; font-family: 'Outfit'; font-size: 1.4rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem;">🎯 Today's Mission</h3>
                         <ul style="list-style: none; padding: 0; display: grid; gap: 1rem;">
                             <li style="display: flex; align-items: center; gap: 1rem;">
-                                <i class="fa-solid fa-bolt" style="color: var(--primary);"></i>
-                                <span>Find the <strong>100th term</strong> without counting.</span>
+                                <i class="fa-solid fa-stairs" style="color: var(--primary); font-size: 1.3rem;"></i>
+                                <span class="text-dark">Move from <strong>Term-to-Term</strong> to <strong>Position-to-Term</strong>.</span>
                             </li>
                             <li style="display: flex; align-items: center; gap: 1rem;">
-                                <i class="fa-solid fa-shapes" style="color: var(--primary);"></i>
-                                <span>Connect <strong>patterns</strong> to <strong>algebra</strong>.</span>
+                                <i class="fa-solid fa-calculator" style="color: var(--secondary); font-size: 1.3rem;"></i>
+                                <span class="text-dark">Find the <strong>100th term</strong> without adding 100 times!</span>
                             </li>
                             <li style="display: flex; align-items: center; gap: 1rem;">
-                                <i class="fa-solid fa-pencil" style="color: var(--primary);"></i>
-                                <span>Write the <strong>position-to-term rule</strong> ($nth$ term).</span>
+                                <i class="fa-solid fa-pencil" style="color: var(--accent); font-size: 1.3rem;"></i>
+                                <span class="text-dark">Use algebra rules like <strong>3n + 1</strong>.</span>
                             </li>
                         </ul>
                     </div>
@@ -285,22 +289,27 @@
             `
         },
         {
-            // SLIDE 2: Review (Recall)
+            // SLIDE 2: NEW - Review Key Definitions
             content: `
-                <div class="slide-vertical-center">
-                    <h2 style="text-align: center; margin-bottom: 2rem;">⚡ Quick Review: Sequences</h2>
-                    <p style="text-align: center; margin-bottom: 3rem;">Flip the cards to refresh your memory.</p>
+                <div class="slide-vertical-center" style="text-align: center;">
+                    <div style="margin-bottom: 2rem;">
+                        <span style="background: var(--accent-light); color: var(--accent); font-weight: 700; padding: 0.5rem 1rem; border-radius: 50px; text-transform: uppercase; font-size: 0.9rem;">Previous Lesson</span>
+                        <h2 style="margin-top: 0.5rem;">Key Definitions</h2>
+                        <p>Click the cards to refresh your memory before the quiz.</p>
+                    </div>
                     
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; width: 100%; max-width: 1000px; margin: 0 auto;">
+                        
                         <div class="flip-card" onclick="this.classList.toggle('flipped')">
                             <div class="flip-card-inner">
                                 <div class="flip-card-front">
-                                    <i class="fa-solid fa-list-ol" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                                    <i class="fa-solid fa-layer-group" style="font-size: 3rem; margin-bottom: 10px; color: var(--primary);"></i>
                                     <h3>Sequence</h3>
                                 </div>
                                 <div class="flip-card-back">
-                                    <p>An ordered list of numbers.</p>
-                                    <p style="color: var(--primary); font-weight: 700;">3, 5, 7, 9...</p>
+                                    <h3 style="color: var(--primary);">Sequence</h3>
+                                    <p>An ordered list of numbers following a pattern.</p>
+                                    <p style="font-size: 0.9rem; color: #94A3B8;">Ex: 2, 4, 6, 8...</p>
                                 </div>
                             </div>
                         </div>
@@ -308,12 +317,12 @@
                         <div class="flip-card" onclick="this.classList.toggle('flipped')">
                             <div class="flip-card-inner">
                                 <div class="flip-card-front">
-                                    <i class="fa-solid fa-cube" style="font-size: 2.5rem; color: var(--secondary); margin-bottom: 1rem;"></i>
+                                    <i class="fa-solid fa-cube" style="font-size: 3rem; margin-bottom: 10px; color: var(--secondary);"></i>
                                     <h3>Term</h3>
                                 </div>
-                                <div class="flip-card-back">
-                                    <p>A single number in the sequence.</p>
-                                    <p style="font-size: 0.9rem;">"9 is the <strong>4th term</strong>"</p>
+                                <div class="flip-card-back" style="border-color: var(--secondary);">
+                                    <h3 style="color: var(--secondary);">Term</h3>
+                                    <p>One single number in the sequence.</p>
                                 </div>
                             </div>
                         </div>
@@ -321,270 +330,319 @@
                         <div class="flip-card" onclick="this.classList.toggle('flipped')">
                             <div class="flip-card-inner">
                                 <div class="flip-card-front">
-                                    <i class="fa-solid fa-arrow-right-long" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                                    <i class="fa-solid fa-arrow-right-arrow-left" style="font-size: 3rem; margin-bottom: 10px; color: var(--accent);"></i>
                                     <h3>Term-to-Term Rule</h3>
                                 </div>
-                                <div class="flip-card-back">
-                                    <p>How to get to the <strong>next</strong> number.</p>
-                                    <p style="color: var(--accent); font-weight: 700;">Example: "Add 2"</p>
+                                <div class="flip-card-back" style="border-color: var(--accent);">
+                                    <h3 style="color: var(--accent);">Term-to-Term</h3>
+                                    <p>The rule to get from one number to the <strong>next</strong>.</p>
+                                    <p style="font-size: 0.9rem; color: #94A3B8;">Ex: "Add 2"</p>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             `
         },
         {
-            // SLIDE 3: The Hook Problem
+            // SLIDE 3: Quick Quiz
             content: `
                 <div class="slide-vertical-center" style="text-align: center;">
-                    <div style="background: var(--dark-bg); color: white; padding: 0.5rem 1.5rem; border-radius: 50px; display: inline-block; margin-bottom: 1rem; font-weight: 700; text-transform: uppercase; font-size: 0.9rem;">The Challenge</div>
-                    <h2>The "Impossible" Task</h2>
-                    
-                    <div style="margin: 3rem 0; font-size: 1.5rem; display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                        <div class="seq-box">1</div>
-                        <i class="fa-solid fa-arrow-right" style="color: #CBD5E1;"></i>
-                        <div class="seq-box">4</div>
-                        <i class="fa-solid fa-arrow-right" style="color: #CBD5E1;"></i>
-                        <div class="seq-box">7</div>
-                        <i class="fa-solid fa-arrow-right" style="color: #CBD5E1;"></i>
-                        <div class="seq-box">10</div>
-                        <span style="font-size: 2rem; margin-left: 1rem;">...</span>
-                    </div>
+                    <h2>Quick Quiz</h2>
+                    <p>What is the <strong>Term-to-Term Rule</strong> for these?</p>
 
-                    <div style="background: #FFF7ED; border: 2px solid var(--accent); padding: 2rem; border-radius: 16px; max-width: 600px; margin: 0 auto;">
-                        <h3 style="color: #92400E;">Find the 100th Term</h3>
-                        <p style="color: #92400E;">Discuss in pairs. Do NOT keep adding +3 one hundred times. That will take forever!</p>
-                        <p style="font-size: 0.9rem; margin-top: 1rem;"><em>Hint: Is there a shortcut?</em></p>
-                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; width: 100%; margin-top: 2rem;">
+                        <div class="def-card" style="border-left: 5px solid var(--primary);">
+                            <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; color: var(--primary-dark);">2, 5, 8, 11...</div>
+                            <button class="reveal-btn" style="width: 100%; justify-content: center;" onclick="document.getElementById('rev1').style.display='block'">Check</button>
+                            <div id="rev1" class="answer-panel" style="margin-top: 1rem;">
+                                Rule: <strong style="color: var(--primary);">Add 3</strong><br>Next: 14, 17
+                            </div>
+                        </div>
 
-                    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
-                         <button class="reveal-btn" onclick="document.getElementById('hint-1').style.display = 'block';">I need a hint</button>
-                    </div>
-                    
-                    <div id="hint-1" class="hint-panel" style="max-width: 600px; margin: 1rem auto; text-align: left;">
-                        <p>Look at the <strong>3 Times Table</strong>:</p>
-                        <p>3, 6, 9, 12...</p>
-                        <p>How does our sequence (1, 4, 7, 10) compare to that?</p>
+                        <div class="def-card" style="border-left: 5px solid var(--secondary);">
+                            <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; color: #BE185D;">20, 15, 10...</div>
+                            <button class="reveal-btn" style="width: 100%; justify-content: center;" onclick="document.getElementById('rev2').style.display='block'">Check</button>
+                            <div id="rev2" class="answer-panel" style="margin-top: 1rem; border-color: var(--secondary);">
+                                Rule: <strong style="color: var(--secondary);">Subtract 5</strong><br>Next: 5, 0
+                            </div>
+                        </div>
                     </div>
                 </div>
             `
         },
         {
-            // SLIDE 4: The Discovery (3x Table)
+            // SLIDE 4: The Hook (Big Problem)
+            content: `
+                <div class="slide-vertical-center" style="text-align: center; max-width: 800px; margin: 0 auto;">
+                    <div style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;"><i class="fa-solid fa-rocket"></i></div>
+                    <h2>The Big Problem</h2>
+                    
+                    <div style="background: white; padding: 3rem; border-radius: 20px; box-shadow: var(--card-shadow); margin: 2rem 0; border: 1px solid #E2E8F0;">
+                        <p style="font-size: 3rem; font-weight: 800; color: var(--text-dark); font-family: 'Outfit';">4, 7, 10, 13...</p>
+                        <hr style="margin: 2rem 0; border: none; border-top: 2px dashed #E2E8F0;">
+                        <p style="font-size: 1.5rem;">Find the <strong>100th term</strong>.</p>
+                    </div>
+
+                    <div class="grid-layout" style="gap: 1rem; min-height: auto; padding: 0;">
+                        <p>Do you want to press "+3" on your calculator 99 times?</p>
+                        <p style="color: var(--danger); font-weight: 700; font-size: 1.5rem;">No! Too slow.</p>
+                    </div>
+                    <p style="margin-top: 1rem;">We need a rule that uses the <strong>Position Number (n)</strong>.</p>
+                </div>
+            `
+        },
+        {
+            // SLIDE 5: The Method (3n + 1)
             content: `
                 <div class="grid-layout">
                     <div class="content-col">
-                        <h2>The Secret: Compare to Times Tables</h2>
-                        <p>We know the Term-to-Term rule is <strong>+3</strong>.</p>
-                        <p>This means it is related to the <strong>3 Times Table</strong>.</p>
+                        <h2>The "Times Table" Method</h2>
+                        <p>We are finding the <strong>Position-to-Term Rule</strong>.</p>
+                        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+                            <li style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <strong style="color: var(--primary); display: block; margin-bottom: 0.2rem;">1. Find the Gap</strong>
+                                The gap is 3. So we use the <strong>3 Times Table (3n)</strong>.
+                            </li>
+                            <li style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <strong style="color: var(--primary); display: block; margin-bottom: 0.2rem;">2. Compare</strong>
+                                Compare 3n to our Sequence.
+                            </li>
+                            <li style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <strong style="color: var(--primary); display: block; margin-bottom: 0.2rem;">3. Adjust</strong>
+                                How do we get from 3 to 4? We <strong>Add 1</strong>.
+                            </li>
+                        </ul>
                         
-                        <div style="background: white; border-radius: 12px; border: 1px solid #E2E8F0; padding: 1.5rem; box-shadow: var(--card-shadow);">
-                            <div class="comparison-row">
-                                <strong style="color: var(--primary);">Times 3:</strong>
-                                <div style="font-family: monospace; font-size: 1.4rem;">3, 6, 9, 12...</div>
-                            </div>
-                            <div class="comparison-row">
-                                <strong style="color: var(--dark-bg);">Sequence:</strong>
-                                <div style="font-family: monospace; font-size: 1.4rem;">1, 4, 7, 10...</div>
-                            </div>
-                            <div style="text-align: center; color: var(--secondary); font-weight: 700; font-size: 1.2rem; margin-top: 1rem;">
-                                What do you notice?
-                            </div>
-                        </div>
-
-                        <button class="reveal-btn" onclick="revealAnswer('ans-discovery')">Reveal The Rule</button>
-                        
-                        <div id="ans-discovery" class="answer-panel">
-                            <p>Every number in our sequence is <strong>2 less</strong> than the 3x table.</p>
-                            <p style="font-size: 1.4rem; margin-top: 1rem;">Rule: <strong>Multiply Position by 3, then subtract 2</strong>.</p>
-                            <p style="background: white; padding: 5px 10px; border-radius: 4px; display: inline-block; margin-top: 5px;">Algebra: $3n - 2$</p>
-                            <hr style="margin: 1rem 0; opacity: 0.2;">
-                            <p><strong>100th Term:</strong><br> $(3 \\times 100) - 2 = 300 - 2 = $ <strong>298</strong></p>
+                        <button class="reveal-btn" onclick="revealAnswer('ans_method')">Reveal Rule</button>
+                        <div id="ans_method" class="answer-panel" style="border-left: 5px solid var(--success); background: #F0FDF4; color: #166534;">
+                            Position-to-Term Rule: <strong style="font-size:1.4rem;">3n + 1</strong>
                         </div>
                     </div>
-
-                    <div class="visual-col" style="background: var(--dark-bg);">
-                        <div style="color: white; text-align: center;">
-                            <h3>Visual Proof</h3>
-                            <div style="margin-top: 2rem;">
-                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                                    <div style="width: 30px; height: 30px; background: var(--primary); border-radius: 50%; opacity: 0.3;"></div>
-                                    <div style="width: 30px; height: 30px; background: var(--primary); border-radius: 50%; opacity: 0.3;"></div>
-                                    <div style="width: 30px; height: 30px; background: var(--primary); border-radius: 50%; opacity: 0.3;"></div>
-                                    <span style="font-size: 1.5rem;">(3)</span>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 1rem; position: relative; top: -45px;">
-                                    <div style="width: 30px; height: 30px; border: 3px solid white; border-radius: 50%;"></div>
-                                    <span style="font-size: 2rem; color: var(--danger);">×</span>
-                                    <span style="font-size: 2rem; color: var(--danger);">×</span>
-                                    <span style="font-size: 1.5rem; margin-left: auto;">(1)</span>
-                                </div>
-                                <p style="font-size: 0.9rem; color: #94A3B8; margin-top: -20px;">3 minus 2 equals 1</p>
-                            </div>
-                        </div>
+                    
+                    <div class="visual-col">
+                        <table class="math-table">
+                            <thead>
+                                <tr>
+                                    <th>Position (n)</th>
+                                    <th>3x Table (3n)</th>
+                                    <th>Our Sequence</th>
+                                    <th>Adjust</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>3</td>
+                                    <td class="highlight-cell">4</td>
+                                    <td>+1</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>6</td>
+                                    <td class="highlight-cell">7</td>
+                                    <td>+1</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>9</td>
+                                    <td class="highlight-cell">10</td>
+                                    <td>+1</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>100</td>
+                                    <td>300</td>
+                                    <td class="highlight-cell">301</td>
+                                    <td>+1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                            Each term is 1 more than a multiple of 3.
+                        </p>
                     </div>
                 </div>
             `
         },
         {
-            // SLIDE 5: Visual Pattern (Dots)
+            // SLIDE 6: Practice 1 (Gap 4)
             content: `
                 <div class="slide-vertical-center" style="text-align: center;">
-                    <h2>Visualizing the $n$th Term</h2>
-                    <p>Let's look at simple patterns with dots.</p>
-
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 900px; margin: 2rem auto;">
-                        <div style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #E2E8F0;">
-                            <h4>Pattern 1</h4>
-                            <div style="margin: 1rem 0;">
-                                <div class="circle-dot"></div>
-                            </div>
-                            <p><strong>1 dot</strong></p>
-                        </div>
-                        <div style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #E2E8F0;">
-                            <h4>Pattern 2</h4>
-                            <div style="margin: 1rem 0;">
-                                <div class="circle-dot"></div><div class="circle-dot"></div><div class="circle-dot"></div>
-                            </div>
-                            <p><strong>3 dots</strong></p>
-                        </div>
-                        <div style="background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid #E2E8F0;">
-                            <h4>Pattern 3</h4>
-                            <div style="margin: 1rem 0;">
-                                <div class="circle-dot"></div><div class="circle-dot"></div><div class="circle-dot"></div><div class="circle-dot"></div><div class="circle-dot"></div>
-                            </div>
-                            <p><strong>5 dots</strong></p>
-                        </div>
+                    <div style="margin-bottom: 2rem;">
+                        <span style="background: var(--primary-light); color: var(--primary); font-weight: 700; padding: 0.5rem 1rem; border-radius: 50px; text-transform: uppercase; font-size: 0.9rem;">Practice 1</span>
+                        <h2 style="font-size: 3rem; margin-top: 1rem;">5, 9, 13, 17...</h2>
+                        <p>Find the <strong>Position-to-Term Rule</strong>.</p>
                     </div>
 
-                    <div style="max-width: 800px; margin: 0 auto; text-align: left; background: #F1F5F9; padding: 2rem; border-radius: 16px;">
-                        <p><strong>Sequence:</strong> 1, 3, 5...</p>
-                        <p><strong>Term-to-term:</strong> Adds 2 each time.</p>
-                        <p><strong>Times Table connection:</strong> Compare to 2x table (2, 4, 6...)</p>
-                        <div style="margin-top: 1rem; font-weight: 700; color: var(--primary-dark); font-size: 1.4rem;">
-                            Rule: $2 \\times \\text{Position} - 1$
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; max-width: 1000px; margin: 0 auto;">
+                        <div class="def-card">
+                            <p style="font-size: 1rem; text-transform: uppercase; font-weight: 700; color: #94A3B8;">Step 1: Gap</p>
+                            <p style="margin: 1rem 0;">What is the gap?</p>
+                            <button class="reveal-btn" style="width: 100%; justify-content: center;" onclick="this.nextElementSibling.style.display='block'; this.style.display='none';">Show</button>
+                            <div style="display:none; font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-top: 10px;">+4 (Use 4n)</div>
+                        </div>
+
+                        <div class="def-card">
+                            <p style="font-size: 1rem; text-transform: uppercase; font-weight: 700; color: #94A3B8;">Step 2: Check Pos 1</p>
+                            <p style="margin: 1rem 0;">4 &times; 1 = 4. <br>We want 5.</p>
+                            <button class="reveal-btn" style="width: 100%; justify-content: center;" onclick="this.nextElementSibling.style.display='block'; this.style.display='none';">Show</button>
+                            <div style="display:none; font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-top: 10px;">Add 1</div>
+                        </div>
+
+                        <div class="def-card" style="border: 2px solid var(--secondary);">
+                            <p style="font-size: 1rem; text-transform: uppercase; font-weight: 700; color: var(--secondary);">Step 3: Rule</p>
+                            <p style="margin: 1rem 0;">Put it together.</p>
+                            <button class="reveal-btn" style="width: 100%; justify-content: center;" onclick="this.nextElementSibling.style.display='block'; this.style.display='none';">Show</button>
+                            <div style="display:none; font-size: 1.5rem; font-weight: 800; color: var(--secondary); margin-top: 10px;">4n + 1</div>
                         </div>
                     </div>
                 </div>
             `
         },
         {
-            // SLIDE 6: Workbook Exercise 1 (Grey Triangles)
+            // SLIDE 7: Practice 2 (Gap 7) - FIXED
+            content: `
+                 <div class="grid-layout">
+                    <div class="content-col">
+                        <h2>Practice 2</h2>
+                        <div style="font-size: 3rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-dark); font-family: 'Outfit';">5, 12, 19, 26...</div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <button class="reveal-btn" id="p2_start_btn" onclick="revealSequenceSteps()">1. Find the Gap</button>
+                        </div>
+
+                        <div class="answer-panel" id="p2_step1" style="border-color: #CBD5E1; background: #F8FAFC; color: #64748B;">
+                            1. Gap is <strong>7</strong>. Use <strong>7n</strong>.
+                        </div>
+
+                        <div class="answer-panel" id="p2_step2" style="border-color: var(--warning); background: #FFFBEB; color: #B45309;">
+                            2. Check Position 1:<br>
+                            7 &times; 1 = <strong>7</strong>.<br>
+                            But the sequence starts at <strong>5</strong>.<br>
+                            How do we go from 7 to 5?
+                        </div>
+
+                        <div class="answer-panel" id="p2_step3" style="border-color: var(--success); background: #F0FDF4; color: #166534;">
+                            3. We <strong>Subtract 2</strong>.<br>
+                            Position-to-Term Rule: <strong>7n - 2</strong>
+                        </div>
+
+                        <button class="reveal-btn" id="p2_next_btn" style="display:none;" onclick="revealSequenceSteps()">Next Step</button>
+                    </div>
+                    
+                    <div class="visual-col">
+                        <div style="text-align: center;">
+                            <h3 style="margin-bottom: 1rem;">Find the 100th Term</h3>
+                            <div style="background: white; padding: 2rem; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                                <p style="font-size: 1.5rem; margin-bottom: 1rem;">Rule: <strong>7n - 2</strong></p>
+                                <p>Substitute n = 100</p>
+                                <hr style="width: 50%; margin: 1.5rem auto; border-top: 1px solid #E2E8F0;">
+                                
+                                <div id="calc_result" style="font-size: 3rem; font-weight: 800; color: #CBD5E1; filter: blur(8px); transition: all 0.5s;">
+                                    698
+                                </div>
+                                <button class="reveal-btn" style="margin-top: 1.5rem;" onclick="document.getElementById('calc_result').style.filter='blur(0)'; document.getElementById('calc_result').style.color='var(--primary)'">Reveal Answer</button>
+                                <p style="margin-top: 1rem; font-size: 0.9rem; color: #94A3B8;">(7 &times; 100) - 2</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+         {
+            // SLIDE 8: Quick Drill
+            content: `
+                <div class="slide-vertical-center" style="text-align: center;">
+                    <h2>⚡ Rapid Fire</h2>
+                    <p style="margin-bottom: 2rem;">Find the <strong>Position-to-Term Rule</strong> for these three.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+                        <!-- Q1 -->
+                        <div class="def-card" style="justify-content: space-between; border-top: 6px solid var(--primary);">
+                            <div>
+                                <h3 style="color: var(--primary);">Sequence A</h3>
+                                <div style="font-size: 1.8rem; font-weight: 800; margin: 1.5rem 0; color: var(--text-dark);">3, 5, 7, 9...</div>
+                            </div>
+                            <button class="reveal-btn" style="width: 100%; justify-content: center;" onclick="this.innerText='2n + 1'">Show Rule</button>
+                        </div>
+
+                        <!-- Q2 -->
+                        <div class="def-card" style="justify-content: space-between; border-top: 6px solid var(--secondary);">
+                            <div>
+                                <h3 style="color: var(--secondary);">Sequence B</h3>
+                                <div style="font-size: 1.8rem; font-weight: 800; margin: 1.5rem 0; color: var(--text-dark);">10, 20, 30...</div>
+                            </div>
+                            <button class="reveal-btn" style="width: 100%; justify-content: center;" onclick="this.innerText='10n'">Show Rule</button>
+                        </div>
+
+                        <!-- Q3 -->
+                        <div class="def-card" style="justify-content: space-between; border-top: 6px solid var(--accent);">
+                            <div>
+                                <h3 style="color: var(--accent);">Sequence C</h3>
+                                <div style="font-size: 1.8rem; font-weight: 800; margin: 1.5rem 0; color: var(--text-dark);">6, 10, 14...</div>
+                            </div>
+                            <button class="reveal-btn" style="width: 100%; justify-content: center;" onclick="this.innerText='4n + 2'">Show Rule</button>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 9: Workbook Q1 (Triangles) - SVG
             content: `
                 <div class="grid-layout">
                     <div class="content-col">
-                        <span class="header-pill">Workbook Exercise 1</span>
-                        <h2>The Grey Triangles</h2>
-                        <p>Let's solve Problem 1 together step-by-step.</p>
+                        <div class="meta-tag">Workbook Q1</div>
+                        <h2>Grey Triangles</h2>
+                        <p>Count the triangles: <strong>3, 5, 7...</strong></p>
                         
-                        <div style="background: white; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; margin-bottom: 1rem;">
-                            <table class="table-custom" style="margin: 0;">
-                                <tr>
-                                    <th>Position ($n$)</th>
-                                    <td>1</td>
-                                    <td>2</td>
-                                    <td>3</td>
-                                    <td>4</td>
-                                </tr>
-                                <tr>
-                                    <th>Term</th>
-                                    <td>3</td>
-                                    <td>5</td>
-                                    <td>?</td>
-                                    <td>?</td>
-                                </tr>
-                            </table>
+                        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0;">
+                            <p style="margin-bottom: 0.5rem;"><strong>1. Gap:</strong> +2 (So <strong>2n</strong>)</p>
+                            <p style="margin-bottom: 0.5rem;"><strong>2. Check Pos 1:</strong> 2 &times; 1 = 2.</p>
+                            <p><strong>3. Adjust:</strong> We need 3. So <strong>Add 1</strong>.</p>
                         </div>
 
-                        <button class="reveal-btn" onclick="revealAnswer('ans-ex1')">Work it out</button>
-
-                        <div id="ans-ex1" class="answer-panel">
-                            <p><strong>1. Sequence:</strong> 3, 5, 7, 9...</p>
-                            <p><strong>2. Term-to-Term:</strong> Adding 2 (+2).</p>
-                            <p><strong>3. Compare to 2x Table:</strong></p>
-                            <ul style="margin-left: 2rem; font-size: 0.9rem;">
-                                <li>2x Table: 2, 4, 6...</li>
-                                <li>Our Seq: 3, 5, 7...</li>
-                                <li><strong>Difference:</strong> We are always +1 more.</li>
-                            </ul>
-                            <p style="margin-top: 1rem; font-weight: 800; color: var(--primary-dark);">Position-to-term rule: $2 \\times \\text{position} + 1$</p>
+                        <button class="reveal-btn" style="align-self: flex-start;" onclick="revealAnswer('ans_tri')">Show Rule</button>
+                        <div id="ans_tri" class="answer-panel">
+                            Position-to-Term Rule: <strong style="color: var(--primary);">2n + 1</strong>
                         </div>
                     </div>
                     
-                    <div class="visual-col" style="background: white; align-items: flex-start; padding: 3rem;">
-                        <div>
-                            <strong>Pattern 1 (3 Triangles)</strong><br>
-                            <div class="triangle-shape"></div><div class="triangle-shape"></div><div class="triangle-shape"></div>
-                        </div>
-                        <div style="margin-top: 2rem;">
-                            <strong>Pattern 2 (5 Triangles)</strong><br>
-                            <div class="triangle-shape"></div><div class="triangle-shape"></div><div class="triangle-shape"></div><div class="triangle-shape"></div><div class="triangle-shape"></div>
-                        </div>
-                        <div style="margin-top: 2rem;">
-                            <strong>Pattern 3</strong><br>
-                            <div class="triangle-shape"></div><div class="triangle-shape"></div><div class="triangle-shape"></div><div class="triangle-shape"></div><div class="triangle-shape"></div><div class="triangle-shape"></div><div class="triangle-shape"></div>
-                        </div>
-                    </div>
-                </div>
-            `
-        },
-        {
-            // SLIDE 7: Harder Practice (Squares - Ex 2)
-            content: `
-                 <div class="slide-vertical-center">
-                    <span class="header-pill" style="align-self: center; background: var(--secondary);">Workbook Exercise 2</span>
-                    <h2 style="text-align: center;">The Square Pattern</h2>
-                    
-                    <div class="grid-layout">
-                        <div class="visual-col" style="background: white;">
-                            <div style="display: flex; gap: 5px; align-items: flex-end;">
-                                <div style="width: 30px; height: 30px; background: #94A3B8;"></div>
-                                <div style="width: 30px; height: 30px; background: #94A3B8;"></div>
-                                <div style="width: 30px; height: 30px; background: #94A3B8;"></div>
-                                <div style="width: 30px; height: 30px; background: #94A3B8;"></div>
-                                <div style="width: 30px; height: 30px; background: #94A3B8;"></div>
+                    <div class="visual-col">
+                        <div class="pattern-container">
+                            <!-- Term 1 -->
+                            <div class="pattern-group">
+                                <div class="shape-wrapper">
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                </div>
+                                <span class="term-label">Term 1 (3)</span>
                             </div>
-                            <p><strong>Pattern 1:</strong> 5 Squares</p>
-                            
-                             <div style="display: flex; gap: 5px; align-items: flex-end; margin-top: 2rem;">
-                                <div style="width: 30px; height: 30px; background: #94A3B8;"></div>
-                                <div style="width: 30px; height: 30px; background: #94A3B8;"></div>
-                                <div style="width: 30px; height: 30px; background: #94A3B8;"></div>
-                                <div style="width: 30px; height: 30px; background: #94A3B8;"></div>
-                                <div style="width: 30px; height: 30px; background: #94A3B8;"></div>
-                                <div style="width: 30px; height: 30px; background: var(--secondary);"></div>
-                                <div style="width: 30px; height: 30px; background: var(--secondary);"></div>
-                                <div style="width: 30px; height: 30px; background: var(--secondary);"></div>
+                            <!-- Term 2 -->
+                            <div class="pattern-group">
+                                <div class="shape-wrapper" style="max-width: 150px;">
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                </div>
+                                <span class="term-label">Term 2 (5)</span>
                             </div>
-                            <p><strong>Pattern 2:</strong> 8 Squares (+3)</p>
-                        </div>
-
-                        <div class="content-col">
-                            <h3>Fill in the Table</h3>
-                            <table class="table-custom">
-                                <tr>
-                                    <th>Position</th>
-                                    <td>1</td>
-                                    <td>2</td>
-                                    <td>3</td>
-                                </tr>
-                                <tr>
-                                    <th>Squares</th>
-                                    <td>5</td>
-                                    <td>8</td>
-                                    <td><input type="text" style="width: 40px; font-size: 1rem; text-align: center;" placeholder="?"></td>
-                                </tr>
-                            </table>
-                            
-                            <p><strong>1. Gap?</strong> The sequence goes up by <strong>3</strong>.</p>
-                            <p><strong>2. Times Table?</strong> Compare to 3x Table (3, 6, 9...)</p>
-                            <p><strong>3. Adjustment?</strong> 5 is (3 + ?)</p>
-                            
-                            <button class="reveal-btn" onclick="revealAnswer('ans-ex2')">Check Answer</button>
-                            <div id="ans-ex2" class="answer-panel" style="border-color: var(--secondary);">
-                                Rule: <strong>Multiply position by 3, then add 2</strong>.<br>
-                                Algebra: $3n + 2$
+                             <!-- Term 3 -->
+                             <div class="pattern-group">
+                                <div class="shape-wrapper" style="max-width: 150px;">
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                    <svg width="30" height="30"><polygon points="15,5 5,25 25,25" fill="#64748B"/></svg>
+                                </div>
+                                <span class="term-label">Term 3 (7)</span>
                             </div>
                         </div>
                     </div>
@@ -592,55 +650,52 @@
             `
         },
         {
-            // SLIDE 8: Spot the Mistake (Kai's Homework)
+            // SLIDE 10: Workbook Q2 (Squares) - SVG
             content: `
                 <div class="grid-layout">
                     <div class="content-col">
-                        <h2 style="color: var(--danger);"> <i class="fa-solid fa-triangle-exclamation"></i> Spot the Mistake</h2>
-                        <p><strong>Kai's Question:</strong> Find the rule for a sequence of Octagons.</p>
-                        <p><strong>Sequence:</strong> 3, 8, 13...</p>
+                        <div class="meta-tag">Workbook Q2</div>
+                        <h2>Square Pattern</h2>
+                        <p>Count the squares: <strong>5, 8, 11...</strong></p>
                         
-                        <div style="background: #FEF2F2; border: 2px dashed var(--danger); padding: 1.5rem; border-radius: 12px; color: var(--danger);">
-                            <strong>Kai's Answer:</strong><br>
-                            "The sequence starts with 3 and increases by 5 every time, so the rule is: <br>
-                            $5 \\times \\text{position number} + 3$"
+                        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0;">
+                            <p style="margin-bottom: 0.5rem;"><strong>1. Gap:</strong> +3 (So <strong>3n</strong>)</p>
+                            <p style="margin-bottom: 0.5rem;"><strong>2. Check Pos 1:</strong> 3 &times; 1 = 3.</p>
+                            <p><strong>3. Adjust:</strong> We need 5. So <strong>Add 2</strong>.</p>
                         </div>
-                        
-                        <p>Why is Kai wrong?</p>
-                        <button class="reveal-btn" onclick="revealAnswer('ans-kai')">Explain the Error</button>
-                        
-                        <div id="ans-kai" class="answer-panel" style="border-color: var(--danger); color: #991B1B;">
-                            <p><strong>The Mistake:</strong> Kai just put the starting number (+3) at the end!</p>
-                            <p><strong>Correction:</strong></p>
-                            <ul>
-                                <li>The gap is 5, so it is the <strong>5x table</strong> (5, 10, 15...)</li>
-                                <li>Our sequence is 3, 8, 13...</li>
-                                <li>Compare 5 to 3. We need to <strong>subtract 2</strong>.</li>
-                            </ul>
-                            <p style="margin-top: 1rem; font-weight: 800;">Correct Rule: $5n - 2$</p>
+
+                        <button class="reveal-btn" style="align-self: flex-start;" onclick="revealAnswer('ans_sq')">Show Rule</button>
+                        <div id="ans_sq" class="answer-panel" style="border-color: var(--secondary);">
+                            Position-to-Term Rule: <strong style="color: var(--secondary);">3n + 2</strong>
                         </div>
                     </div>
                     
-                    <div class="visual-col" style="background: var(--dark-bg); color: white;">
-                        <h3 style="margin-bottom: 2rem;">Kai's Logic vs. Reality</h3>
-                        
-                        <div style="width: 100%; margin-bottom: 1rem;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>Pos 1</span>
-                                <span style="color: #94A3B8;">Should be 3</span>
+                    <div class="visual-col">
+                         <div class="pattern-container">
+                            <!-- Term 1 -->
+                            <div class="pattern-group">
+                                <div class="shape-wrapper" style="max-width: 150px;">
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                </div>
+                                <span class="term-label">Term 1 (5)</span>
                             </div>
-                            <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px;">
-                                Kai's Formula ($5(1) + 3$) = <strong>8</strong> ❌
-                            </div>
-                        </div>
-
-                         <div style="width: 100%;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>Pos 1</span>
-                                <span style="color: #10B981;">Correct</span>
-                            </div>
-                            <div style="background: rgba(16, 185, 129, 0.2); padding: 1rem; border-radius: 8px; border: 1px solid #10B981;">
-                                Real Formula ($5(1) - 2$) = <strong>3</strong> ✅
+                            <!-- Term 2 -->
+                            <div class="pattern-group">
+                                <div class="shape-wrapper" style="max-width: 150px;">
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                    <svg width="30" height="30"><rect width="25" height="25" fill="#EC4899" rx="4" /></svg>
+                                </div>
+                                <span class="term-label">Term 2 (8)</span>
                             </div>
                         </div>
                     </div>
@@ -648,34 +703,109 @@
             `
         },
         {
-            // SLIDE 9: Homework
+            // SLIDE 11: Extension (Dots) - SVG
+            content: `
+                <div class="slide-vertical-center" style="text-align: center;">
+                    <div class="meta-tag">Workbook Q3</div>
+                    <h2>Dots Challenge</h2>
+                    
+                    <div style="display: flex; gap: 2rem; justify-content: center; margin: 3rem 0;">
+                        <div class="pattern-group">
+                             <div class="shape-wrapper" style="width: 150px;">
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                            </div>
+                            <span class="term-label">Term 1 (8)</span>
+                        </div>
+                         <div class="pattern-group">
+                             <div class="shape-wrapper" style="width: 150px;">
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                                <svg width="25" height="25"><circle cx="12.5" cy="12.5" r="10" fill="#06B6D4" /></svg>
+                            </div>
+                            <span class="term-label">Term 2 (12)</span>
+                        </div>
+                    </div>
+
+                    <div style="background: white; max-width: 600px; margin: 0 auto; padding: 2rem; border-radius: 16px; text-align: left; border: 1px solid #E2E8F0; box-shadow: var(--card-shadow);">
+                        <p style="margin-bottom: 0.5rem;">Sequence: <strong>8, 12, 16...</strong></p>
+                        <p style="margin-bottom: 0.5rem;">Gap: <strong>+4</strong> (4n)</p>
+                        <p style="margin-bottom: 0.5rem;">Check Pos 1: 4 &times; 1 = 4. We need 8.</p>
+                        <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block'">Reveal Adjustment</button>
+                        <div style="display:none; margin-top: 1rem; font-size: 1.5rem; color: var(--accent); font-weight: 800;">Add 4 (Rule: 4n + 4)</div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 12: Error Analysis
+            content: `
+                 <div class="grid-layout">
+                    <div class="content-col">
+                        <h2 style="color: var(--danger);">Stop and Think</h2>
+                        <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #E2E8F0;">
+                            <p><strong>Sequence:</strong> 6, 11, 16...</p>
+                            <p><strong>Gap:</strong> 5</p>
+                        </div>
+                        
+                        <div style="background: #FEF2F2; padding: 1.5rem; border-radius: 12px; border-left: 5px solid var(--danger);">
+                            <p style="font-weight: 700; color: var(--danger);">Student Mistake:</p>
+                            <p style="font-style: italic;">"The gap is 5, so the rule is n + 5."</p>
+                        </div>
+                        <p>Why is this wrong?</p>
+                        
+                        <button class="reveal-btn" style="align-self: flex-start;" onclick="revealAnswer('ans_error')">Explain</button>
+                        <div id="ans_error" class="answer-panel" style="border-color: var(--danger); background: #FEF2F2; color: #991B1B;">
+                            <strong>n + 5</strong> means "Position plus 5".<br>
+                            1 + 5 = 6 (Correct)<br>
+                            2 + 5 = 7 (WRONG! Should be 11)<br><br>
+                            The gap is the <strong>multiplier</strong>. It should be <strong>5n + 1</strong>.
+                        </div>
+                    </div>
+                    
+                    <div class="visual-col" style="background: #FEF2F2; border-color: var(--danger);">
+                         <div style="font-size: 8rem; color: var(--danger); margin-bottom: 1rem;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                         <p style="text-align: center; font-weight: 700; font-size: 1.4rem; color: #991B1B;">Gap = Multiplier<br>Gap ≠ Addition</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // SLIDE 13: Homework
             content: `
                 <div class="slide-vertical-center" style="text-align: center; max-width: 900px; margin: 0 auto;">
                     <h2>📚 Homework Assignment</h2>
                     
                     <div style="background: white; border: 1px solid #E2E8F0; border-radius: 24px; padding: 3rem; box-shadow: var(--card-shadow); text-align: left; margin-top: 2rem;">
-                        <h3 style="color: var(--primary-dark); margin-bottom: 2rem; border-bottom: 2px solid var(--primary); padding-bottom: 1rem; font-family: 'Outfit'; font-size: 1.8rem;">Complete the Workbook</h3>
+                        <h3 style="color: var(--primary); margin-bottom: 2rem; border-bottom: 2px solid var(--primary-light); padding-bottom: 1rem; font-size: 1.8rem; font-family: 'Outfit';">Workbook</h3>
                         
                         <div style="display: grid; gap: 2rem;">
                             <div style="display: flex; gap: 1.5rem; align-items: center;">
                                 <div style="width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; flex-shrink: 0;"><i class="fa-solid fa-book-open"></i></div>
                                 <div>
-                                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--dark-bg);">Pages 116, 117, 118, 119</div>
-                                    <div style="color: #475569;">"Finding rules for sequences"</div>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; gap: 1.5rem; align-items: center;">
-                                <div style="width: 60px; height: 60px; background: var(--secondary); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; flex-shrink: 0;"><i class="fa-solid fa-lightbulb"></i></div>
-                                <div>
-                                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--dark-bg);">Focus on the "n-th term"</div>
-                                    <div style="color: #475569;">Remember to check your rule with the first 3 terms!</div>
+                                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-dark);">Pages 116, 117, 118, 119</div>
+                                    <div style="color: #64748B;">Complete all questions.</div>
                                 </div>
                             </div>
                         </div>
 
                         <div style="margin-top: 3rem; text-align: center; color: #B45309; font-weight: 700; font-size: 1.5rem; background: #FFFBEB; padding: 1.5rem; border-radius: 16px; border: 2px solid #FCD34D;">
-                            <i class="fa-regular fa-clock" style="margin-right: 12px;"></i> DUE: Before class Friday
+                            <i class="fa-regular fa-clock" style="margin-right: 12px;"></i> DUE: Friday
                         </div>
                     </div>
                 </div>
@@ -687,6 +817,7 @@
     const slideContainer = document.getElementById('slide-content');
     const progressBar = document.getElementById('progress-bar');
     const counter = document.getElementById('slide-counter');
+    let seqStep = 0;
 
     function renderSlide() {
         slideContainer.innerHTML = ''; 
@@ -698,12 +829,11 @@
         counter.innerText = `${currentSlide + 1} / ${slides.length}`;
         const percent = ((currentSlide + 1) / slides.length) * 100;
         progressBar.style.width = `${percent}%`;
-        
-        // Re-render MathJax if needed (though we used simple HTML/CSS for math here)
-        // if(window.MathJax) MathJax.typesetPromise();
 
         document.getElementById('prev-btn').disabled = currentSlide === 0;
         document.getElementById('next-btn').disabled = currentSlide === slides.length - 1;
+        
+        seqStep = 0;
     }
 
     function changeSlide(dir) {
@@ -719,12 +849,27 @@
         if(el) el.classList.add('show');
     }
 
+    function revealSequenceSteps() {
+        seqStep++;
+        if(seqStep === 1) {
+            document.getElementById('p2_start_btn').style.display = 'none';
+            document.getElementById('p2_step1').classList.add('show');
+            document.getElementById('p2_next_btn').style.display = 'inline-flex';
+        }
+        if(seqStep === 2) document.getElementById('p2_step2').classList.add('show');
+        if(seqStep === 3) {
+            document.getElementById('p2_step3').classList.add('show');
+            document.getElementById('p2_next_btn').style.display = 'none';
+        }
+    }
+
     document.addEventListener('keydown', (e) => {
         if(e.key === 'ArrowRight') changeSlide(1);
         if(e.key === 'ArrowLeft') changeSlide(-1);
     });
 
     renderSlide();
+
 </script>
 </body>
 </html>
