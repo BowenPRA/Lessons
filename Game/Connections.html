@@ -6,132 +6,134 @@
     <meta name="description" content="Cambridge Connections: An educational word association game.">
     <title>Cambridge Connections</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         :root {
-            /* --- THEME COLORS --- */
-            --bg-deep: #0f172a;
-            --bg-panel: rgba(30, 41, 59, 0.7);
+            /* --- COLOR PALETTE: Deep Space High Contrast --- */
+            --bg-deep: #020617;
+            --bg-surface: #0f172a;
+            
+            /* UI Elements */
+            --glass-panel: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
             --text-primary: #f8fafc;
-            --text-muted: #94a3b8;
-            
-            /* Game Colors */
-            --tile-bg: #ffffff;
-            --tile-text: #0f172a;
-            --tile-selected-bg: #38bdf8; /* Sky Blue */
-            --tile-selected-text: #0c4a6e;
-            
-            /* Category Colors (High Contrast for Projectors) */
-            --cat-yellow: #f59e0b; /* Amber 500 */
-            --cat-green: #10b981; /* Emerald 500 */
-            --cat-blue: #0ea5e9;  /* Sky 500 */
-            --cat-purple: #8b5cf6; /* Violet 500 */
+            --text-secondary: #94a3b8;
 
-            /* Lives */
-            --heart-active: #ef4444;
-            --heart-empty: #334155;
+            /* Interactive Colors */
+            --tile-bg: rgba(30, 41, 59, 0.7);
+            --tile-border: rgba(255, 255, 255, 0.1);
+            --tile-hover: rgba(51, 65, 85, 0.9);
+            
+            /* Selected State (High Visibility) */
+            --selected-bg: #22d3ee;
+            --selected-text: #083344;
+            --selected-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+
+            /* Category Gradients (Vibrant & Distinct) */
+            --cat-yellow: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            --cat-green: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            --cat-blue: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+            --cat-purple: linear-gradient(135deg, #c084fc 0%, #7c3aed 100%);
 
             /* Dimensions */
             --sidebar-width: 280px;
-            --header-height: 60px; /* For mobile */
+            --max-board-width: 900px;
         }
 
-        /* --- BASE RESET --- */
+        /* --- RESET & BASE --- */
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-deep);
+            background: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 80%);
             color: var(--text-primary);
-            height: 100vh; /* Fallback */
-            height: 100dvh; /* Dynamic viewport height */
+            height: 100vh;
             width: 100vw;
             overflow: hidden;
             display: flex;
         }
 
         /* --- BACKGROUND ANIMATION --- */
-        .ambient-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: 
-                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.15), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
-            animation: pulseBg 10s ease-in-out infinite alternate;
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
+            background-size: 200px 200px;
+            animation: twinkle 100s linear infinite;
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none;
         }
-        @keyframes pulseBg { 0% { opacity: 0.8; } 100% { opacity: 1; } }
+        @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-500px); } }
 
         /* --- LAYOUT --- */
         .app-container {
             display: flex;
             width: 100%;
             height: 100%;
-            max-width: 1920px;
+            max-width: 2000px;
             margin: 0 auto;
         }
 
-        /* --- SIDEBAR (LEVEL SELECT) --- */
+        /* --- SIDEBAR --- */
         .sidebar {
             width: var(--sidebar-width);
-            background: rgba(15, 23, 42, 0.6);
+            background: var(--glass-panel);
             backdrop-filter: blur(12px);
-            border-right: 1px solid rgba(255,255,255,0.1);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid var(--glass-border);
             display: flex;
             flex-direction: column;
             padding: 1.5rem;
-            gap: 1rem;
+            gap: 1.5rem;
             z-index: 20;
-            transition: transform 0.3s ease;
+            overflow-y: auto;
+            flex-shrink: 0;
         }
 
         .brand {
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
             font-size: 1.5rem;
-            line-height: 1;
-            color: white;
-            margin-bottom: 1rem;
+            line-height: 1.1;
+            color: #fff;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
-        .brand span { color: var(--tile-selected-bg); }
+        .brand span { color: #22d3ee; }
 
-        .level-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            overflow-y: auto;
-            flex: 1;
-            padding-right: 5px; /* Space for scrollbar */
-        }
-
-        /* Custom Scrollbar for sidebar */
-        .level-list::-webkit-scrollbar { width: 4px; }
-        .level-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        .level-list { display: flex; flex-direction: column; gap: 8px; }
 
         .level-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 8px;
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
             background: transparent;
             border: 1px solid transparent;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             font-family: 'Outfit', sans-serif;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: left;
             font-size: 0.95rem;
+            width: 100%;
         }
 
-        .level-btn:hover { background: rgba(255,255,255,0.05); color: white; }
-        
+        .level-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+
         .level-btn.active {
-            background: rgba(56, 189, 248, 0.1);
-            border-color: rgba(56, 189, 248, 0.3);
-            color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
         }
 
         /* --- MAIN GAME ARENA --- */
@@ -140,101 +142,47 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Center vertically */
+            justify-content: center;
             padding: 1rem 2rem;
             position: relative;
-            height: 100%;
+            overflow-y: auto;
         }
 
         .game-board-wrapper {
             width: 100%;
-            max-width: 850px;
-            /* Flex column to ensure it fits without scrolling */
+            max-width: var(--max-board-width);
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            /* Limit height to ensure buttons stay visible */
-            max-height: 100%; 
+            gap: 20px;
+            animation: fadeIn 0.6s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Game Header */
+        .game-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+        .game-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem); /* Responsive typography */
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* Header Area */
-        .game-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            flex-shrink: 0;
-        }
-
-        .lives-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(0,0,0,0.3);
-            padding: 6px 16px;
-            border-radius: 20px;
+        /* Lives */
+        .lives-wrapper {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(0,0,0,0.4); padding: 6px 16px; border-radius: 20px;
             border: 1px solid rgba(255,255,255,0.1);
         }
+        .life-heart {
+            color: #f472b6; font-size: 1.1rem; filter: drop-shadow(0 0 5px #f472b6);
+            transition: all 0.3s;
+        }
+        .life-heart.lost { color: #334155; filter: none; transform: scale(0.8); }
 
-        .lives-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin-right: 4px;
-        }
-
-        .heart-icon {
-            font-size: 1.1rem;
-            color: var(--heart-active);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5));
-        }
-        
-        /* Heartbeat Animation */
-        .heart-icon.active { animation: heartbeat 2s infinite; }
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            5% { transform: scale(1.1); }
-            10% { transform: scale(1); }
-            15% { transform: scale(1.1); }
-            20% { transform: scale(1); }
-            100% { transform: scale(1); }
-        }
-
-        .heart-icon.lost {
-            color: var(--heart-empty);
-            filter: none;
-            transform: scale(0.8);
-            animation: none;
-        }
-
-        h2.game-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: clamp(1.5rem, 4vh, 2.5rem);
-            font-weight: 800;
-            color: white;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-
-        /* --- GRID SYSTEM --- */
-        .play-area {
-            flex: 1; /* Take remaining space */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-height: 0; /* Allow shrinking */
-            gap: 12px;
-        }
-
-        .solved-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-        }
+        /* --- THE GRID --- */
+        .grid-container { width: 100%; display: flex; flex-direction: column; gap: 12px; }
 
         .grid {
             display: grid;
@@ -243,322 +191,294 @@
             width: 100%;
         }
 
+        /* TILE (High Contrast Updates) */
         .tile {
             background: var(--tile-bg);
-            color: var(--tile-text);
-            border: none;
+            color: var(--text-primary);
+            border: 1px solid var(--tile-border);
             border-radius: 12px;
-            /* Intelligent Aspect Ratio */
-            aspect-ratio: 16/9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            aspect-ratio: 1.6/1; /* Slightly rectangular for better text fit */
+            display: flex; align-items: center; justify-content: center;
             font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+            font-weight: 800;
+            font-size: clamp(0.9rem, 1.5vw, 1.35rem); /* Scalable Text */
             text-transform: uppercase;
             text-align: center;
-            padding: 4px;
+            padding: 0.5rem;
             cursor: pointer;
-            box-shadow: 0 4px 0 #cbd5e1;
-            transition: transform 0.1s, background 0.2s, color 0.2s;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            width: 100%;
+            line-height: 1.1;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
         }
 
-        .tile:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #cbd5e1; }
-        .tile:active { transform: translateY(2px); box-shadow: 0 0 0 #cbd5e1; }
-
-        .tile.selected {
-            background: var(--tile-selected-bg);
-            color: var(--tile-selected-text);
-            box-shadow: 0 4px 0 #0ea5e9;
+        .tile:hover {
             transform: translateY(-2px);
-            z-index: 2;
+            background: var(--tile-hover);
+            border-color: rgba(255,255,255,0.3);
         }
+
+        /* SELECTED STATE - High Contrast */
+        .tile.selected {
+            background: var(--selected-bg) !important;
+            color: var(--selected-text) !important;
+            box-shadow: var(--selected-shadow), 0 0 0 2px #fff !important;
+            transform: translateY(-4px) scale(1.02);
+            z-index: 10;
+            border: none;
+        }
+
+        .tile:focus-visible { outline: 4px solid #fff; z-index: 20; }
         
-        /* Accessibility Focus */
-        .tile:focus-visible { outline: 3px solid white; outline-offset: 2px; }
-
-        /* Animations */
         .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake { 10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(2px); } }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
 
-        /* --- SOLVED ROW STYLING --- */
+        /* --- SOLVED ROWS --- */
         .solved-row {
             width: 100%;
-            padding: 0.8rem 1.2rem;
-            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
             text-align: center;
             color: white;
-            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            cursor: pointer;
             position: relative;
-            transition: filter 0.2s;
+            border: 1px solid rgba(255,255,255,0.2);
         }
-        .solved-row:hover { filter: brightness(1.1); }
-        
         @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        .solved-category { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; margin-bottom: 2px; }
-        .solved-words { font-size: 0.9rem; font-weight: 500; opacity: 0.95; }
+        .solved-category { font-family: 'Outfit'; font-weight: 800; text-transform: uppercase; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .solved-words { font-size: 1rem; font-weight: 600; opacity: 0.95; margin-top: 4px; }
 
-        /* Educational Note Drawer */
-        .teacher-note {
+        /* Teacher Notes */
+        .teacher-drawer {
             background: rgba(255,255,255,0.95);
-            color: #1e293b;
-            margin: 0 -1.2rem;
-            padding: 0 1.2rem;
-            max-height: 0;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            text-align: left;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
+            color: #0f172a;
+            margin: 0 -1.5rem; padding: 0 1.5rem;
+            max-height: 0; overflow: hidden;
+            transition: all 0.4s ease; text-align: left;
         }
-        .solved-row.open .teacher-note {
-            margin-top: 0.8rem;
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-            max-height: 200px;
-        }
-        .note-title { font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: #64748b; margin-bottom: 4px; display: block; }
-        .note-text { font-size: 0.95rem; line-height: 1.4; }
+        .solved-row.open .teacher-drawer { margin-top: 1rem; padding-top: 1.2rem; padding-bottom: 1.2rem; max-height: 200px; }
+        .note-content { font-size: 1rem; line-height: 1.5; font-weight: 500; }
+        .drawer-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); transition: transform 0.3s; }
+        .solved-row.open .drawer-icon { transform: translateY(-50%) rotate(180deg); }
 
         /* --- CONTROLS --- */
-        .controls-bar {
-            display: flex;
-            gap: 12px;
-            width: 100%;
-            margin-top: auto; /* Push to bottom of wrapper */
-            padding-bottom: 1rem;
-        }
-
+        .controls-bar { display: flex; gap: 12px; width: 100%; margin-top: 10px; }
+        
         .action-btn {
-            flex: 1;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
-            color: white;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
+            flex: 1; padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); color: #fff;
+            font-family: 'Outfit', sans-serif; font-weight: 700; text-transform: uppercase;
+            cursor: pointer; transition: all 0.2s; font-size: 0.9rem; letter-spacing: 0.5px;
         }
         .action-btn:hover:not(:disabled) { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
         
         .submit-btn {
-            flex: 1.5;
-            background: #334155;
-            color: #94a3b8;
-            border: none;
-            cursor: not-allowed;
+            flex: 2; background: #334155; color: #94a3b8; border: none;
         }
         .submit-btn.ready {
-            background: white;
-            color: #0f172a;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(255,255,255,0.3);
-            animation: pulseBtn 2s infinite;
+            background: #fff; color: #020617;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+            animation: pulse 2s infinite;
         }
-        @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); } 70% { box-shadow: 0 0 0 10px rgba(255,255,255,0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); } 70% { box-shadow: 0 0 0 10px rgba(255,255,255,0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
 
-        /* --- TOAST --- */
+        /* --- ALERTS & MODALS --- */
         .toast {
             position: fixed; top: 10%; left: 50%; transform: translate(-50%, -20px);
-            background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px;
-            font-family: 'Outfit'; font-weight: 700; border: 2px solid #334155;
-            opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 100;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;
+            background: #0f172a; color: white; padding: 16px 32px; border-radius: 50px;
+            font-weight: 700; font-family: 'Outfit'; z-index: 2000;
+            border: 2px solid #334155; opacity: 0; pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;
         }
         .toast.visible { transform: translate(-50%, 0); opacity: 1; }
-        .toast.warn { border-color: #f59e0b; color: #f59e0b; }
+        .toast.warn { border-color: #fbbf24; color: #fbbf24; }
 
-        /* --- MODAL --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-            display: none; align-items: center; justify-content: center; z-index: 1000;
+            background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; z-index: 2100;
         }
         .modal-card {
-            background: white; padding: 2rem; border-radius: 20px; text-align: center;
-            max-width: 400px; width: 90%; color: #0f172a;
-            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: #fff; color: #0f172a; padding: 3rem; border-radius: 24px;
+            text-align: center; max-width: 500px; width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            animation: popIn 0.4s;
         }
-        .modal-card h2 { font-family: 'Outfit'; font-size: 2rem; margin-bottom: 0.5rem; }
-        .modal-actions { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 10px; }
-        .modal-btn { padding: 12px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; }
-        .btn-primary { background: #0f172a; color: white; }
-        .btn-secondary { background: #e2e8f0; color: #0f172a; }
+        .modal-card h2 { font-family: 'Outfit'; font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .modal-options { display: flex; flex-direction: column; gap: 12px; margin-top: 2rem; }
+        .modal-btn {
+            padding: 16px; border-radius: 12px; border: none;
+            font-family: 'Outfit'; font-weight: 700; font-size: 1.1rem; cursor: pointer;
+            width: 100%; transition: transform 0.2s;
+        }
+        .modal-btn:hover { transform: translateY(-2px); }
+        .modal-btn.primary { background: #0f172a; color: white; }
+        .modal-btn.secondary { background: #e2e8f0; color: #334155; }
 
-        /* --- RESPONSIVE MOBILE --- */
+        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1500; }
+
+        /* --- RESPONSIVE --- */
         @media (max-width: 900px) {
             .app-container { flex-direction: column; }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-                flex-direction: row;
-                align-items: center;
-                padding: 0.8rem;
-                overflow-x: auto;
-                border-right: none;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
+            .sidebar { 
+                width: 100%; height: auto; padding: 1rem; border-right: none; border-bottom: 1px solid var(--glass-border);
+                flex-direction: row; align-items: center; overflow-x: auto;
             }
-            
-            .brand { font-size: 1.2rem; margin: 0; margin-right: 1rem; white-space: nowrap; }
-            .level-list { flex-direction: row; align-items: center; overflow-y: hidden; }
-            .level-btn { padding: 8px 12px; font-size: 0.85rem; white-space: nowrap; }
-            
-            .arena { padding: 0.5rem 1rem; }
-            .game-board-wrapper { gap: 0.5rem; }
+            .level-list { flex-direction: row; width: max-content; }
+            .level-btn { width: auto; white-space: nowrap; padding: 8px 16px; font-size: 0.9rem; }
+            .arena { padding: 1rem; height: auto; min-height: calc(100vh - 80px); }
+            .game-board-wrapper { gap: 12px; }
             .grid { gap: 8px; }
-            .tile { font-size: 0.85rem; padding: 2px; }
-            
-            h2.game-title { font-size: 1.5rem; }
-            .controls-bar { padding-bottom: 0; margin-top: 0; }
-            .action-btn { padding: 10px; font-size: 0.8rem; }
+            .tile { aspect-ratio: 1.3/1; font-size: 0.8rem; padding: 4px; }
+            .solved-category { font-size: 1rem; }
+            .solved-words { font-size: 0.85rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="ambient-bg"></div>
-    <canvas id="confetti" style="position:fixed; top:0; left:0; pointer-events:none; z-index:999;"></canvas>
+    <div class="stars"></div>
+    <canvas id="confetti"></canvas>
 
-    <div id="toast" class="toast">
-        <i class="fa-solid fa-circle-exclamation"></i>
-        <span id="toast-text">Alert</span>
+    <div id="toast" class="toast" role="alert" aria-live="assertive">
+        <i class="fa-solid fa-circle-exclamation"></i> <span id="toast-text">Alert</span>
     </div>
 
     <div class="app-container">
-        <nav class="sidebar" aria-label="Level Select">
-            <div class="brand">
-                Cambridge<br><span>Connections</span>
+        
+        <nav class="sidebar" aria-label="Game Levels">
+            <div class="brand">Cambridge<br><span>Connections</span></div>
+            <div class="level-list">
+                <button class="level-btn active" data-game="0"><i class="fa-solid fa-palette"></i> The Primary Mix</button>
+                <button class="level-btn" data-game="1"><i class="fa-solid fa-music"></i> Rhyme Time</button>
+                <button class="level-btn" data-game="2"><i class="fa-solid fa-shield-heart"></i> Safety & Nature</button>
+                <button class="level-btn" data-game="3"><i class="fa-solid fa-rocket"></i> Sweet Space</button>
+                <button class="level-btn" data-game="4"><i class="fa-solid fa-ear-listen"></i> Sound It Out</button>
+                <button class="level-btn" data-game="5"><i class="fa-solid fa-shapes"></i> Shape Shifter</button>
+                <button class="level-btn" data-game="6"><i class="fa-solid fa-brain"></i> The Mastermind</button>
             </div>
-            <div class="level-list" id="level-list">
-                </div>
         </nav>
 
         <main class="arena">
-            <div class="game-board-wrapper">
+            <div class="game-board-wrapper" id="board-wrapper">
                 
-                <div class="game-header">
-                    <div class="lives-container" aria-label="Lives Remaining">
-                        <span class="lives-label">Lives</span>
-                        <i class="fa-solid fa-heart heart-icon active" id="life-1"></i>
-                        <i class="fa-solid fa-heart heart-icon active" id="life-2"></i>
-                        <i class="fa-solid fa-heart heart-icon active" id="life-3"></i>
-                        <i class="fa-solid fa-heart heart-icon active" id="life-4"></i>
+                <header class="game-header">
+                    <div class="lives-wrapper" aria-label="Mistakes remaining">
+                        <span style="font-weight: 700; font-size: 0.8rem; text-transform: uppercase; color: #cbd5e1;">Mistakes:</span>
+                        <i class="fa-solid fa-heart life-heart" id="life-1"></i>
+                        <i class="fa-solid fa-heart life-heart" id="life-2"></i>
+                        <i class="fa-solid fa-heart life-heart" id="life-3"></i>
+                        <i class="fa-solid fa-heart life-heart" id="life-4"></i>
                     </div>
-                    <h2 class="game-title" id="game-title">The Primary Mix</h2>
-                </div>
+                    <h1 class="game-title" id="game-title-display">The Primary Mix</h1>
+                    <p style="color: var(--text-secondary); font-weight: 600;">Create four groups of four!</p>
+                </header>
 
-                <div class="play-area">
-                    <div id="solved-stack" class="solved-stack"></div>
-                    <div id="grid" class="grid" role="grid" aria-label="Word Grid"></div>
+                <div class="grid-container">
+                    <div id="solved-stack" style="display: flex; flex-direction: column; gap: 8px; width: 100%;"></div>
+                    
+                    <div id="grid" class="grid" role="grid" aria-label="Word association grid"></div>
                 </div>
 
                 <div class="controls-bar">
-                    <button class="action-btn" id="btn-shuffle" aria-label="Shuffle Words"><i class="fa-solid fa-shuffle"></i></button>
-                    <button class="action-btn" id="btn-deselect">Deselect</button>
-                    <button class="action-btn submit-btn" id="btn-submit" disabled>Submit</button>
+                    <button class="action-btn" id="btn-shuffle">
+                        <i class="fa-solid fa-shuffle"></i> Shuffle
+                    </button>
+                    <button class="action-btn" id="btn-deselect">
+                        Deselect
+                    </button>
+                    <button class="action-btn submit-btn" id="btn-submit" disabled>
+                        Submit
+                    </button>
                 </div>
+
             </div>
         </main>
     </div>
 
-    <div class="modal-overlay" id="modal" role="dialog" aria-modal="true">
+    <div class="modal-overlay" id="end-modal" role="dialog" aria-modal="true">
         <div class="modal-card">
             <h2 id="modal-title">Splendid!</h2>
-            <p id="modal-msg" style="color:#64748b; margin-bottom: 20px;">You cleared the board.</p>
-            <div class="modal-actions" id="modal-actions">
-                </div>
+            <p id="modal-msg" style="font-size: 1.1rem; color: #64748b; margin-bottom: 20px;">You cleared the board.</p>
+            
+            <div id="win-actions" class="modal-options" style="display:none">
+                <button class="modal-btn primary" id="btn-review">Review Board</button>
+            </div>
+
+            <div id="lose-actions" class="modal-options" style="display:none">
+                <button class="modal-btn secondary" id="btn-keep-playing">Keep Playing (Infinite Lives)</button>
+                <button class="modal-btn primary" id="btn-start-over">Try Again</button>
+                <button class="modal-btn secondary" id="btn-see-groups">Reveal Answers</button>
+            </div>
         </div>
     </div>
 
     <script>
         /**
-         * CAMBRIDGE CONNECTIONS
-         * A refined, accessible, and responsive word association game.
+         * Cambridge Connections - Professional Overhaul
+         * Features: Responsive Grid, High Contrast UI, Spoiler-Free Educational Notes.
          */
 
-        // --- DATABASE: EDUCATIONAL & SPOILER-FREE NOTES ---
-        const GAMES = [
-            {
-                title: "The Primary Mix",
-                icon: "fa-palette",
-                groups: [
-                    { category: "Primary Colors", color: "var(--cat-yellow)", items: ["RED", "BLUE", "YELLOW", "GREEN"], note: "In traditional art, Red, Blue, and Yellow are Primary colors. Green is included here as a Secondary color often found in basic sets." },
-                    { category: "Number Homophones", color: "var(--cat-green)", items: ["WON", "TOO", "FOR", "ATE"], note: "Homophones are words that sound the same but have different meanings. These sound exactly like the numbers 1, 2, 4, and 8." },
-                    { category: "Stationery", color: "var(--cat-blue)", items: ["PEN", "PENCIL", "BOOK", "RULER"], note: "These are standard physical tools used for writing and measuring in a classroom environment." },
-                    { category: "Spherical Objects", color: "var(--cat-purple)", items: ["BALL", "MOON", "ORANGE", "GLOBE"], note: "A sphere is a perfectly round 3D geometric object, like a ball or a planet." }
-                ]
-            },
-            {
-                title: "Rhyme Time",
-                icon: "fa-music",
-                groups: [
-                    { category: "Rhymes with BEAR", color: "var(--cat-yellow)", items: ["PEAR", "CHAIR", "HAIR", "SQUARE"], note: "Phonics: All these words end with the /ɛə/ sound, despite being spelled differently (ear, air, are)." },
-                    { category: "Fruits", color: "var(--cat-green)", items: ["APPLE", "BANANA", "LEMON", "GRAPE"], note: "Botany: These are the fleshy products of trees or other plants that contain seeds and can be eaten." },
-                    { category: "2D Shapes", color: "var(--cat-blue)", items: ["CIRCLE", "TRIANGLE", "OVAL", "SQUARE"], note: "Geometry: These are two-dimensional flat shapes defined by lines or curves." },
-                    { category: "Wild Mammals", color: "var(--cat-purple)", items: ["LION", "TIGER", "MONKEY", "ZEBRA"], note: "Zoology: These are mammals that typically live in natural environments (the wild) rather than domestication." }
-                ]
-            },
-            {
-                title: "Safety & Nature",
-                icon: "fa-shield-heart",
-                groups: [
-                    { category: "Five Senses", color: "var(--cat-yellow)", items: ["SIGHT", "HEARING", "TASTE", "TOUCH"], note: "Biology: These are the faculties by which the body perceives an external stimulus." },
-                    { category: "Habitats", color: "var(--cat-green)", items: ["DESERT", "FOREST", "OCEAN", "TUNDRA"], note: "Ecology: A habitat is the natural home or environment of an animal, plant, or other organism." },
-                    { category: "Computer Hardware", color: "var(--cat-blue)", items: ["MOUSE", "SCREEN", "KEYBOARD", "TABLET"], note: "ICT: These are the physical parts of a computer system that you can touch." },
-                    { category: "Types of Bullying", color: "var(--cat-purple)", items: ["CYBER", "VERBAL", "PHYSICAL", "SOCIAL"], note: "PSHE: Bullying is categorized by how the harm is delivered. Cyber refers to online; Social refers to damaging reputation." }
-                ]
-            },
-            {
-                title: "Sweet Space",
-                icon: "fa-rocket",
-                groups: [
-                    { category: "Noble Gases", color: "var(--cat-yellow)", items: ["HELIUM", "NEON", "ARGON", "XENON"], note: "Chemistry: These elements are odorless, colorless gases with very low chemical reactivity." },
-                    { category: "Solar System Planets", color: "var(--cat-green)", items: ["VENUS", "JUPITER", "SATURN", "NEPTUNE"], note: "Astronomy: These are celestial bodies orbiting our Sun. (Note: Pluto is a dwarf planet!)." },
-                    { category: "Heavy Metals", color: "var(--cat-blue)", items: ["IRON", "GOLD", "LEAD", "MERCURY"], note: "Chemistry: These are dense metallic elements. Uniquely, Mercury is liquid at room temperature." },
-                    { category: "Space-Themed Candy", color: "var(--cat-purple)", items: ["MARS", "MILKY WAY", "GALAXY", "ORBIT"], note: "Pop Culture: These famous confectionery brands share names with astronomical concepts." }
-                ]
-            },
-            {
-                title: "Sound It Out",
-                icon: "fa-ear-listen",
-                groups: [
-                    { category: "Insects", color: "var(--cat-yellow)", items: ["ANT", "MOTH", "WASP", "FLY"], note: "Biology: Small invertebrates with six legs and usually one or two pairs of wings." },
-                    { category: "Facial Features", color: "var(--cat-green)", items: ["NOSE", "CHIN", "CHEEK", "LIP"], note: "Anatomy: Distinct parts of the human face." },
-                    { category: "Bodies of Water", color: "var(--cat-blue)", items: ["POND", "LAKE", "STREAM", "RIVER"], note: "Geography: Accumulations of water on the surface of Earth." },
-                    { category: "Letter Homophones", color: "var(--cat-purple)", items: ["BEE", "EYE", "SEA", "PEA"], note: "Wordplay: When spoken aloud, these words sound exactly like the letters B, I, C, and P." }
-                ]
-            },
-            {
-                title: "Shape Shifter",
-                icon: "fa-shapes",
-                groups: [
-                    { category: "Magnetic Materials", color: "var(--cat-yellow)", items: ["IRON", "NICKEL", "COBALT", "STEEL"], note: "Physics: Only a few metals are magnetic. Steel is an alloy made mostly of Iron." },
-                    { category: "Lab Glassware", color: "var(--cat-green)", items: ["BEAKER", "FLASK", "FUNNEL", "CYLINDER"], note: "Science: Equipment made of glass used for scientific experiments." },
-                    { category: "3D Shapes", color: "var(--cat-blue)", items: ["SPHERE", "CUBE", "CONE", "PRISM"], note: "Maths: A solid figure or an object or shape that has three dimensions—length, width, and height." },
-                    { category: "Prefix: MICRO-", color: "var(--cat-purple)", items: ["SCOPE", "WAVE", "PHONE", "CHIP"], note: "Literacy: The prefix 'Micro-' means small. Microscope, Microwave, Microphone, Microchip." }
-                ]
-            },
-            {
-                title: "The Mastermind",
-                icon: "fa-brain",
-                groups: [
-                    { category: "Pairs in the Body", color: "var(--cat-yellow)", items: ["LUNGS", "KIDNEYS", "EYES", "EARS"], note: "Anatomy: Organs or body parts that naturally come in sets of two." },
-                    { category: "Growth Verbs", color: "var(--cat-green)", items: ["DEVELOP", "MATURE", "EVOLVE", "BLOOM"], note: "Vocabulary: Verbs that describe the process of growing or changing into a more advanced state." },
-                    { category: "Homophone Body Parts", color: "var(--cat-blue)", items: ["MUSSEL", "NAVAL", "HART", "HEAL"], note: "Wordplay: Words that sound like Muscle, Navel, Heart, and Heel." },
-                    { category: "Palindromes", color: "var(--cat-purple)", items: ["RADAR", "LEVEL", "ROTOR", "MADAM"], note: "Literacy: A word that reads the same backward as forward." }
-                ]
-            }
+        // --- DATA CONFIGURATION ---
+        const GAMES_DB = [
+            // GAME 1: Primary Mix (Updated Round Things -> Spherical Objects)
+            [
+                { category: "Colors", color: "var(--cat-yellow)", items: ["RED", "BLUE", "YELLOW", "GREEN"], note: "<strong>Art:</strong> These are the fundamental hues used in color theory." },
+                { category: "Number Homophones", color: "var(--cat-green)", items: ["WON", "TOO", "FOR", "ATE"], note: "<strong>Literacy:</strong> These words sound exactly like specific digits (1, 2, 4, 8)." },
+                { category: "School Objects", color: "var(--cat-blue)", items: ["PEN", "PENCIL", "BOOK", "RULER"], note: "<strong>Classroom:</strong> Common items found in a student's backpack." },
+                { category: "Spherical Objects", color: "var(--cat-purple)", items: ["GLOBE", "BALL", "MOON", "ORANGE"], note: "<strong>Geometry:</strong> All of these items are shaped like a perfect sphere." }
+            ],
+            // GAME 2: Rhyme Time
+            [
+                { category: "Wild Animals", color: "var(--cat-yellow)", items: ["LION", "TIGER", "MONKEY", "ZEBRA"], note: "<strong>Biology:</strong> Mammals that typically live in savannas or jungles." },
+                { category: "Fruit", color: "var(--cat-green)", items: ["APPLE", "BANANA", "LEMON", "GRAPE"], note: "<strong>Botany:</strong> Common edible plants that contain seeds." },
+                { category: "Shapes", color: "var(--cat-blue)", items: ["CIRCLE", "TRIANGLE", "OVAL", "RECTANGLE"], note: "<strong>Maths:</strong> Simple 2D geometric figures." },
+                { category: "Rhymes with BEAR", color: "var(--cat-purple)", items: ["PEAR", "CHAIR", "HAIR", "SQUARE"], note: "<strong>Phonics:</strong> These words all end with the /ɛə/ sound." }
+            ],
+            // GAME 3: Safety & Nature
+            [
+                { category: "Animals", color: "var(--cat-yellow)", items: ["WOLF", "CAMEL", "WHALE", "PENGUIN"], note: "<strong>Biology:</strong> Creatures adapted to specific environments." },
+                { category: "Sense Organs", color: "var(--cat-green)", items: ["EYES", "EARS", "TONGUE", "SKIN"], note: "<strong>Anatomy:</strong> Body parts that help us perceive the world." },
+                { category: "Tech Class", color: "var(--cat-blue)", items: ["TABLET", "SCREEN", "MOUSE", "LAPTOP"], note: "<strong>ICT:</strong> Hardware devices used for computing." },
+                { category: "Types of Bullying", color: "var(--cat-purple)", items: ["CYBER", "VERBAL", "PHYSICAL", "SOCIAL"], note: "<strong>PSHE:</strong> Different forms of harmful behavior towards others." }
+            ],
+            // GAME 4: Sweet Space
+            [
+                { category: "Gases", color: "var(--cat-yellow)", items: ["OXYGEN", "NEON", "HELIUM", "ARGON"], note: "<strong>Chemistry:</strong> Elements found on the Periodic Table that are not solids." },
+                { category: "Metals", color: "var(--cat-green)", items: ["IRON", "GOLD", "LEAD", "MERCURY"], note: "<strong>Chemistry:</strong> Conductive elements from the Periodic Table." },
+                { category: "Planets", color: "var(--cat-blue)", items: ["VENUS", "JUPITER", "SATURN", "NEPTUNE"], note: "<strong>Astronomy:</strong> Major bodies orbiting our Sun." },
+                { category: "Chocolate Bars", color: "var(--cat-purple)", items: ["MARS", "MILKY WAY", "SNICKERS", "HERSHEYS"], note: "<strong>Pop Culture:</strong> Famous brands of confectionery." }
+            ],
+            // GAME 5: Sound It Out
+            [
+                { category: "Insects", color: "var(--cat-yellow)", items: ["ANT", "MOTH", "WASP", "FLY"], note: "<strong>Biology:</strong> Small invertebrates with six legs." },
+                { category: "Face Parts", color: "var(--cat-green)", items: ["NOSE", "CHIN", "CHEEK", "LIP"], note: "<strong>Anatomy:</strong> Features found on the front of a human head." },
+                { category: "Bodies of Water", color: "var(--cat-blue)", items: ["POND", "LAKE", "STREAM", "RIVER"], note: "<strong>Geography:</strong> Natural formations containing liquid." },
+                { category: "Sounds like Letters", color: "var(--cat-purple)", items: ["BEE", "EYE", "SEA", "PEA"], note: "<strong>Wordplay:</strong> Words that are homophones for single letters of the alphabet." }
+            ],
+            // GAME 6: Shape Shifter
+            [
+                { category: "Magnetic Materials", color: "var(--cat-yellow)", items: ["IRON", "NICKEL", "COBALT", "STEEL"], note: "<strong>Physics:</strong> Materials that are attracted to magnets." },
+                { category: "Lab Glassware", color: "var(--cat-green)", items: ["BEAKER", "FLASK", "FUNNEL", "CYLINDER"], note: "<strong>Science:</strong> Containers used in experiments." },
+                { category: "3D Shapes", color: "var(--cat-blue)", items: ["SPHERE", "CUBE", "CONE", "PRISM"], note: "<strong>Maths:</strong> Solid objects with three dimensions." },
+                { category: "Prefix MICRO-", color: "var(--cat-purple)", items: ["SCOPE", "WAVE", "PHONE", "CHIP"], note: "<strong>Etymology:</strong> Words that commonly follow 'Micro-'." }
+            ],
+            // GAME 7: Mastermind
+            [
+                { category: "Comes in Pairs", color: "var(--cat-yellow)", items: ["LUNGS", "KIDNEYS", "POLES", "SCISSORS"], note: "<strong>General Knowledge:</strong> Things that naturally exist as a set of two." },
+                { category: "Growth Words", color: "var(--cat-green)", items: ["DEVELOP", "MATURE", "SCALE", "BLOOM"], note: "<strong>Vocabulary:</strong> Verbs or nouns that imply getting bigger or advancing." },
+                { category: "Homophone Body Parts", color: "var(--cat-blue)", items: ["MUSSEL", "NAVAL", "HART", "HEAL"], note: "<strong>Wordplay:</strong> Words that sound like parts of the body but are spelled differently." },
+                { category: "Palindromes", color: "var(--cat-purple)", items: ["RADAR", "LEVEL", "ROTOR", "EYE"], note: "<strong>Literacy:</strong> Words that are spelled the same forwards and backwards." }
+            ]
+        ];
+
+        const TITLES = [
+            "The Primary Mix", "Rhyme Time", "Safety & Nature", 
+            "Sweet Space", "Sound It Out", "Shape Shifter", "The Mastermind"
         ];
 
         // --- STATE MANAGEMENT ---
@@ -566,202 +486,263 @@
             gameIndex: 0,
             gridItems: [],
             selectedIndices: [],
-            lives: 4,
+            mistakes: 0,
+            maxMistakes: 4,
             isGameOver: false,
-            solvedGroups: []
+            infiniteMode: false,
+            isProcessing: false // Debounce flag
         };
 
         // --- DOM REFERENCES ---
         const DOM = {
             grid: document.getElementById('grid'),
             solvedStack: document.getElementById('solved-stack'),
-            levelList: document.getElementById('level-list'),
-            submitBtn: document.getElementById('btn-submit'),
-            gameTitle: document.getElementById('game-title'),
-            hearts: [
-                document.getElementById('life-1'),
-                document.getElementById('life-2'),
-                document.getElementById('life-3'),
-                document.getElementById('life-4')
-            ],
-            toast: document.getElementById('toast'),
-            toastText: document.getElementById('toast-text'),
-            modal: document.getElementById('modal'),
+            modal: document.getElementById('end-modal'),
             modalTitle: document.getElementById('modal-title'),
             modalMsg: document.getElementById('modal-msg'),
-            modalActions: document.getElementById('modal-actions'),
+            winActions: document.getElementById('win-actions'),
+            loseActions: document.getElementById('lose-actions'),
+            submitBtn: document.getElementById('btn-submit'),
+            titleDisplay: document.getElementById('game-title-display'),
+            lifePips: document.querySelectorAll('.life-heart'),
+            boardWrapper: document.getElementById('board-wrapper'),
+            toast: document.getElementById('toast'),
+            toastText: document.getElementById('toast-text'),
             confetti: document.getElementById('confetti')
         };
 
-        // --- INITIALIZATION ---
-        function init() {
-            renderSidebar();
-            loadGame(0);
-            setupListeners();
-        }
+        // --- INIT & EVENTS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame(0);
+            setupEventListeners();
+            setupConfettiResize();
+        });
 
-        function setupListeners() {
+        function setupEventListeners() {
+            // Navigation
+            document.querySelectorAll('.level-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = parseInt(e.currentTarget.dataset.game);
+                    if (!isNaN(idx)) initGame(idx);
+                });
+            });
+
+            // Game Controls
             document.getElementById('btn-shuffle').addEventListener('click', shuffleGrid);
             document.getElementById('btn-deselect').addEventListener('click', deselectAll);
-            DOM.submitBtn.addEventListener('click', handleSubmit);
-            
-            // Mobile: Hide toast on click
-            DOM.toast.addEventListener('click', () => DOM.toast.classList.remove('visible'));
+            DOM.submitBtn.addEventListener('click', submitGuess);
+
+            // Modal Actions
+            document.getElementById('btn-review').addEventListener('click', hideModal);
+            document.getElementById('btn-keep-playing').addEventListener('click', enableInfiniteMode);
+            document.getElementById('btn-start-over').addEventListener('click', () => initGame(state.gameIndex));
+            document.getElementById('btn-see-groups').addEventListener('click', revealAllAndClose);
         }
 
-        function renderSidebar() {
-            DOM.levelList.innerHTML = '';
-            GAMES.forEach((game, idx) => {
-                const btn = document.createElement('button');
-                btn.className = `level-btn ${idx === 0 ? 'active' : ''}`;
-                btn.innerHTML = `<i class="fa-solid ${game.icon}"></i> ${game.title}`;
-                btn.onclick = () => loadGame(idx);
-                DOM.levelList.appendChild(btn);
-            });
-        }
+        // --- GAME LOGIC ---
 
-        function loadGame(idx) {
-            // Reset State
-            state.gameIndex = idx;
-            state.lives = 4;
+        function initGame(gameIndex) {
+            // Reset Logical State
+            state.gameIndex = gameIndex;
+            state.mistakes = 0;
             state.isGameOver = false;
+            state.infiniteMode = false;
             state.selectedIndices = [];
-            state.solvedGroups = [];
             state.gridItems = [];
+            state.isProcessing = false;
 
-            // UI Updates
-            document.querySelectorAll('.level-btn').forEach((b, i) => {
-                b.classList.toggle('active', i === idx);
-            });
-            DOM.gameTitle.innerText = GAMES[idx].title;
-            DOM.solvedStack.innerHTML = '';
+            // Clear UI
             DOM.grid.innerHTML = '';
-            DOM.modal.style.display = 'none';
-            updateLivesUI();
-            updateSubmitBtn();
+            DOM.solvedStack.innerHTML = '';
+            hideModal();
+            updateSubmitButton();
 
-            // Prepare Data
-            const gameData = GAMES[idx];
-            gameData.groups.forEach(group => {
+            // Update Navigation UI
+            document.querySelectorAll('.level-btn').forEach((btn, idx) => {
+                if (idx === gameIndex) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            // Set Title
+            DOM.titleDisplay.innerText = TITLES[gameIndex];
+
+            // Reset Lives UI
+            DOM.lifePips.forEach(p => {
+                p.classList.remove('lost');
+                p.style.color = ''; 
+                p.style.filter = '';
+                p.style.animation = '';
+            });
+
+            // Populate Data
+            const currentData = GAMES_DB[gameIndex];
+            currentData.forEach(group => {
                 group.items.forEach(word => {
                     state.gridItems.push({
                         word: word,
-                        group: group,
+                        category: group.category,
+                        color: group.color,
+                        note: group.note,
+                        groupRef: group,
                         id: Math.random().toString(36).substr(2, 9)
                     });
                 });
             });
 
-            shuffleGrid();
+            // Initial Shuffle & Render
+            shuffleArray(state.gridItems);
+            renderGrid(true);
+
+            // Re-trigger Page Fade In
+            DOM.boardWrapper.style.animation = 'none';
+            DOM.boardWrapper.offsetHeight; // force reflow
+            DOM.boardWrapper.style.animation = 'fadeIn 0.6s ease';
         }
 
-        function renderGrid() {
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+
+        function renderGrid(animate = false) {
             DOM.grid.innerHTML = '';
-            state.gridItems.forEach((item, displayIdx) => {
+            
+            state.gridItems.forEach((item, idx) => {
                 const btn = document.createElement('button');
-                btn.className = 'tile';
-                if (state.selectedIndices.includes(displayIdx)) {
-                    btn.classList.add('selected');
-                }
+                const isSelected = state.selectedIndices.includes(idx);
+                
+                btn.className = `tile ${isSelected ? 'selected' : ''}`;
                 btn.innerText = item.word;
-                btn.onclick = () => handleTileClick(displayIdx);
+                btn.type = "button";
+                btn.setAttribute('aria-pressed', isSelected);
+                btn.setAttribute('aria-label', `${item.word}${isSelected ? ', selected' : ''}`);
+
+                btn.onclick = () => toggleSelect(idx);
+                
+                // Staggered Animation
+                if (animate) {
+                    btn.style.animation = `popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) ${idx * 0.03}s backwards`;
+                }
+                
                 DOM.grid.appendChild(btn);
             });
+            updateSubmitButton();
         }
 
-        function shuffleGrid() {
-            // Fisher-Yates shuffle
-            for (let i = state.gridItems.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [state.gridItems[i], state.gridItems[j]] = [state.gridItems[j], state.gridItems[i]];
-            }
-            // Recalculate selected indices based on IDs (to keep selection during shuffle)
-            // Ideally we just clear selection on shuffle to avoid complexity/bugs
-            state.selectedIndices = []; 
-            updateSubmitBtn();
-            renderGrid();
-        }
+        function toggleSelect(idx) {
+            if (state.isGameOver || state.isProcessing) return;
 
-        // --- INTERACTION ---
-
-        function handleTileClick(idx) {
-            if (state.isGameOver) return;
-
-            const selectedIdxPosition = state.selectedIndices.indexOf(idx);
-
-            if (selectedIdxPosition > -1) {
-                // Deselect
-                state.selectedIndices.splice(selectedIdxPosition, 1);
+            if (state.selectedIndices.includes(idx)) {
+                state.selectedIndices = state.selectedIndices.filter(i => i !== idx);
             } else {
-                // Select (Max 4)
                 if (state.selectedIndices.length < 4) {
                     state.selectedIndices.push(idx);
                 }
             }
-            
-            // Optimistic UI Update (faster than full re-render)
+
+            // Efficient Class Toggling
             const tiles = DOM.grid.children;
-            Array.from(tiles).forEach((t, i) => {
-                t.classList.toggle('selected', state.selectedIndices.includes(i));
+            Array.from(tiles).forEach((tile, i) => {
+                const isSel = state.selectedIndices.includes(i);
+                if (isSel) tile.classList.add('selected');
+                else tile.classList.remove('selected');
+                tile.setAttribute('aria-pressed', isSel);
             });
             
-            updateSubmitBtn();
-        }
-
-        function updateSubmitBtn() {
-            const isReady = state.selectedIndices.length === 4;
-            DOM.submitBtn.disabled = !isReady;
-            DOM.submitBtn.classList.toggle('ready', isReady);
+            updateSubmitButton();
         }
 
         function deselectAll() {
             state.selectedIndices = [];
-            Array.from(DOM.grid.children).forEach(t => t.classList.remove('selected'));
-            updateSubmitBtn();
-        }
-
-        function updateLivesUI() {
-            DOM.hearts.forEach((h, i) => {
-                if (i < state.lives) {
-                    h.classList.remove('lost');
-                    h.classList.add('active');
-                } else {
-                    h.classList.add('lost');
-                    h.classList.remove('active');
-                }
+            const tiles = DOM.grid.children;
+            Array.from(tiles).forEach(t => {
+                t.classList.remove('selected');
+                t.setAttribute('aria-pressed', 'false');
             });
+            updateSubmitButton();
         }
 
-        // --- GAME LOGIC ---
-
-        function handleSubmit() {
-            if (state.selectedIndices.length !== 4) return;
-
-            const selectedItems = state.selectedIndices.map(i => state.gridItems[i]);
-            const firstGroup = selectedItems[0].group;
+        function shuffleGrid() {
+            const selectedIds = state.selectedIndices.map(i => state.gridItems[i].id);
+            shuffleArray(state.gridItems);
             
-            // Check if all belong to same group
-            const isMatch = selectedItems.every(item => item.group === firstGroup);
+            // Remap selections after shuffle
+            state.selectedIndices = [];
+            state.gridItems.forEach((item, idx) => {
+                if (selectedIds.includes(item.id)) state.selectedIndices.push(idx);
+            });
+            
+            renderGrid(true);
+        }
 
-            if (isMatch) {
-                handleSuccess(firstGroup);
+        function updateSubmitButton() {
+            if (state.selectedIndices.length === 4) {
+                DOM.submitBtn.disabled = false;
+                DOM.submitBtn.classList.add('ready');
             } else {
-                handleMistake(selectedItems);
+                DOM.submitBtn.disabled = true;
+                DOM.submitBtn.classList.remove('ready');
             }
         }
 
-        function handleSuccess(group) {
-            // Remove items from grid
-            state.gridItems = state.gridItems.filter(item => item.group !== group);
-            state.selectedIndices = [];
-            state.solvedGroups.push(group);
+        // --- SUBMISSION HANDLING ---
 
-            renderGrid();
+        function submitGuess() {
+            if (state.selectedIndices.length !== 4) return;
+            state.isProcessing = true; // Prevent rapid clicks
+
+            const selection = state.selectedIndices.map(i => state.gridItems[i]);
+            const firstCategory = selection[0].category;
+            const isMatch = selection.every(item => item.category === firstCategory);
+
+            if (isMatch) {
+                handleSuccess(selection[0].groupRef);
+            } else {
+                handleFailure(selection);
+            }
+
+            setTimeout(() => { state.isProcessing = false; }, 600);
+        }
+
+        function handleSuccess(group) {
+            // Remove from gridItems
+            state.gridItems = state.gridItems.filter((item, idx) => !state.selectedIndices.includes(idx));
+            state.selectedIndices = [];
+
             createSolvedRow(group);
-            updateSubmitBtn();
+            renderGrid(true); // Re-render remaining items
 
             if (state.gridItems.length === 0) {
-                setTimeout(showWinModal, 1000);
+                setTimeout(triggerWin, 800);
+            }
+        }
+
+        function handleFailure(selection) {
+            // Logic for "One Away"
+            const counts = {};
+            selection.forEach(s => counts[s.category] = (counts[s.category] || 0) + 1);
+            const isOneAway = Object.values(counts).some(count => count === 3);
+
+            // Animation
+            const tiles = DOM.grid.children;
+            state.selectedIndices.forEach(i => tiles[i].classList.add('shake'));
+            setTimeout(() => {
+                Array.from(tiles).forEach(t => t.classList.remove('shake'));
+            }, 500);
+
+            // Game Logic
+            if (!state.infiniteMode) {
+                state.mistakes++;
+                updateLivesUI();
+            }
+
+            showToast(isOneAway ? "One away..." : "Not quite!", isOneAway ? "warn" : "");
+
+            if (!state.infiniteMode && state.mistakes >= state.maxMistakes) {
+                state.isGameOver = true;
+                setTimeout(showLoseOptions, 1000);
             }
         }
 
@@ -772,50 +753,71 @@
             row.innerHTML = `
                 <div class="solved-category">${group.category}</div>
                 <div class="solved-words">${group.items.join(', ')}</div>
-                <div class="teacher-note">
-                    <span class="note-title">Teacher Note</span>
-                    <span class="note-text">${group.note}</span>
+                <i class="fa-solid fa-chevron-down drawer-icon"></i>
+                <div class="teacher-drawer">
+                    <div class="note-content">${group.note}</div>
                 </div>
             `;
             
-            // Toggle note logic
-            row.onclick = () => {
-                row.classList.toggle('open');
-            };
-
+            // Toggle Drawer
+            row.addEventListener('click', function() {
+                this.classList.toggle('open');
+            });
+            
             DOM.solvedStack.appendChild(row);
         }
 
-        function handleMistake(selectedItems) {
-            state.lives--;
-            updateLivesUI();
-
-            // Check "One Away"
-            const counts = {};
-            selectedItems.forEach(item => {
-                const cat = item.group.category;
-                counts[cat] = (counts[cat] || 0) + 1;
-            });
-            const isOneAway = Object.values(counts).includes(3);
-
-            // Shake Animation
-            const tiles = DOM.grid.children;
-            state.selectedIndices.forEach(i => tiles[i].classList.add('shake'));
-            setTimeout(() => {
-                Array.from(tiles).forEach(t => t.classList.remove('shake'));
-            }, 500);
-
-            if (isOneAway) {
-                showToast("One away!", "warn");
-            } else {
-                showToast("Not quite...", "normal");
-            }
-
-            if (state.lives === 0) {
-                state.isGameOver = true;
-                setTimeout(showLoseModal, 1000);
+        function updateLivesUI() {
+            for(let i=0; i < state.maxMistakes; i++) {
+                if (i < state.mistakes) DOM.lifePips[i].classList.add('lost');
             }
         }
+
+        // --- ALERTS & MODALS ---
+
+        function triggerWin() {
+            startConfetti();
+            DOM.modalTitle.innerText = "Splendid!";
+            DOM.modalMsg.innerText = "You found all the connections.";
+            DOM.winActions.style.display = 'flex';
+            DOM.loseActions.style.display = 'none';
+            DOM.modal.style.display = 'flex';
+        }
+
+        function showLoseOptions() {
+            DOM.modalTitle.innerText = "Game Over";
+            DOM.modalMsg.innerText = "You're out of mistakes.";
+            DOM.winActions.style.display = 'none';
+            DOM.loseActions.style.display = 'flex';
+            DOM.modal.style.display = 'flex';
+        }
+
+        function enableInfiniteMode() {
+            hideModal();
+            state.isGameOver = false;
+            state.infiniteMode = true;
+            DOM.lifePips.forEach(p => {
+                p.classList.remove('lost');
+                p.style.color = "#fbbf24";
+                p.style.filter = "drop-shadow(0 0 5px #fbbf24)";
+            });
+        }
+
+        function revealAllAndClose() {
+            hideModal();
+            DOM.grid.innerHTML = '';
+            
+            const currentData = GAMES_DB[state.gameIndex];
+            const solvedCats = Array.from(document.querySelectorAll('.solved-category')).map(c => c.innerText);
+            
+            currentData.forEach(g => {
+                if(!solvedCats.includes(g.category)) {
+                    createSolvedRow(g);
+                }
+            });
+        }
+
+        function hideModal() { DOM.modal.style.display = 'none'; }
 
         function showToast(msg, type) {
             DOM.toastText.innerText = msg;
@@ -823,76 +825,44 @@
             setTimeout(() => DOM.toast.classList.remove('visible'), 2000);
         }
 
-        // --- MODALS & END GAME ---
-
-        function showWinModal() {
-            triggerConfetti();
-            DOM.modalTitle.innerText = "Splendid!";
-            DOM.modalMsg.innerText = "You have cleared the board!";
-            DOM.modalActions.innerHTML = `
-                <button class="modal-btn btn-primary" onclick="init()">Play Again</button>
-            `;
-            DOM.modal.style.display = 'flex';
-        }
-
-        function showLoseModal() {
-            DOM.modalTitle.innerText = "Out of Lives";
-            DOM.modalMsg.innerText = "Would you like to try again or see the answers?";
-            DOM.modalActions.innerHTML = `
-                <button class="modal-btn btn-primary" onclick="loadGame(${state.gameIndex})">Try Again</button>
-                <button class="modal-btn btn-secondary" onclick="revealAnswers()">Reveal Answers</button>
-            `;
-            DOM.modal.style.display = 'flex';
-        }
-
-        function revealAnswers() {
-            DOM.modal.style.display = 'none';
-            DOM.grid.innerHTML = ''; // Clear leftover tiles
-            
-            // Find unsolved groups
-            const allGroups = GAMES[state.gameIndex].groups;
-            const unsolved = allGroups.filter(g => !state.solvedGroups.includes(g));
-
-            unsolved.forEach(g => createSolvedRow(g));
-        }
-
         // --- CONFETTI EFFECT ---
-        function triggerConfetti() {
+        function startConfetti() {
             const canvas = DOM.confetti;
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-
+            
             const particles = [];
-            const colors = ['#f59e0b', '#10b981', '#0ea5e9', '#8b5cf6'];
-
+            const colors = ['#fbbf24', '#34d399', '#22d3ee', '#c084fc', '#ffffff'];
+            
             for(let i=0; i<150; i++) {
                 particles.push({
                     x: canvas.width/2, y: canvas.height/2,
                     vx: (Math.random()-0.5)*20, vy: (Math.random()-0.5)*20,
-                    size: Math.random()*8+4, color: colors[Math.floor(Math.random()*colors.length)],
-                    life: 100
+                    size: Math.random()*6+4, color: colors[Math.floor(Math.random()*colors.length)]
                 });
             }
-
-            function animate() {
+            
+            function loop() {
                 ctx.clearRect(0,0,canvas.width,canvas.height);
                 let active = false;
                 particles.forEach(p => {
-                    if(p.life > 0) {
-                        p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.life--;
-                        ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size);
-                        active = true;
-                    }
+                    p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.vx *= 0.94; p.vy *= 0.94;
+                    if (p.y < canvas.height) active = true;
+                    ctx.fillStyle = p.color; 
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
                 });
-                if(active) requestAnimationFrame(animate);
-                else ctx.clearRect(0,0,canvas.width,canvas.height);
+                if(active) requestAnimationFrame(loop);
             }
-            animate();
+            loop();
         }
 
-        // Start
-        init();
+        function setupConfettiResize() {
+            window.addEventListener('resize', () => {
+                DOM.confetti.width = window.innerWidth;
+                DOM.confetti.height = window.innerHeight;
+            });
+        }
 
     </script>
 </body>
