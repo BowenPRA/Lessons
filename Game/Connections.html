@@ -38,9 +38,9 @@
             --cat-blue: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
             --cat-purple: linear-gradient(135deg, #c084fc 0%, #7c3aed 100%);
 
-            /* Dimensions */
-            --sidebar-width: 260px; /* Slightly tighter sidebar */
-            --max-board-width: 850px; /* Reduced overall width */
+            /* Dimensions - Adjusted for compactness */
+            --sidebar-width: 260px;
+            --max-board-width: 780px; /* Reduced from 850px for smaller cards */
         }
 
         /* --- RESET & BASE --- */
@@ -143,9 +143,9 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            /* Changed from center to ensure scrolling works properly without clipping top */
-            align-items: center; 
-            padding: 1rem;
+            align-items: center;
+            /* Added generous vertical padding to prevent top/bottom cutoff */
+            padding: 3rem 1.5rem; 
             position: relative;
             overflow-y: auto;
         }
@@ -155,9 +155,8 @@
             max-width: var(--max-board-width);
             display: flex;
             flex-direction: column;
-            gap: 16px; /* Slightly reduced gap */
+            gap: 16px;
             animation: fadeIn 0.6s ease;
-            /* Safe centering technique */
             margin-top: auto; 
             margin-bottom: auto;
         }
@@ -168,7 +167,7 @@
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            align-items: flex-end; /* Align bottom to keep title and lives neat */
+            align-items: flex-end;
             width: 100%;
             margin-bottom: 5px;
             padding: 0 5px;
@@ -202,31 +201,31 @@
         .life-heart.lost { color: #334155; filter: none; transform: scale(0.8); opacity: 0.6; }
 
         /* --- THE GRID --- */
-        .grid-container { width: 100%; display: flex; flex-direction: column; gap: 10px; } /* Reduced gap */
+        .grid-container { width: 100%; display: flex; flex-direction: column; gap: 10px; }
 
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px; /* Tighter gap */
+            gap: 10px; 
             width: 100%;
         }
 
-        /* TILE (Adjusted for "less square" look) */
+        /* TILE (Adjusted for Rectangular/Smaller look) */
         .tile {
             background: var(--tile-bg);
             color: var(--text-primary);
             border: 1px solid var(--tile-border);
             border-radius: 12px;
-            /* Aspect Ratio: 1.55 (More rectangular/wider than 1.35) */
-            aspect-ratio: 1.55/1; 
+            /* Aspect Ratio: 1.8/1 (Wider/Less Square) */
+            aspect-ratio: 1.8/1; 
             display: flex; align-items: center; justify-content: center;
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            /* Slightly smaller font to match smaller box */
-            font-size: clamp(0.8rem, 1.4vw, 1.25rem);
+            /* Font scaled down slightly for smaller box */
+            font-size: clamp(0.75rem, 1.3vw, 1.15rem);
             text-transform: uppercase;
             text-align: center;
-            padding: 0.4rem;
+            padding: 0.25rem;
             cursor: pointer;
             transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -255,7 +254,7 @@
         /* --- SOLVED ROWS --- */
         .solved-row {
             width: 100%;
-            padding: 0.8rem 1.2rem; /* Tighter padding */
+            padding: 0.8rem 1.2rem;
             border-radius: 12px;
             text-align: center;
             color: white;
@@ -353,10 +352,11 @@
             .game-header { flex-direction: column; align-items: center; text-align: center; gap: 12px; }
             .header-left { align-items: center; }
 
-            .arena { padding: 1rem; height: auto; min-height: calc(100vh - 80px); display: block; } /* Block display helps mobile scroll */
+            .arena { padding: 1rem; height: auto; min-height: calc(100vh - 80px); display: block; }
             .game-board-wrapper { gap: 12px; margin-top: 0; margin-bottom: 0; }
             .grid { gap: 8px; }
-            .tile { aspect-ratio: 1.4/1; font-size: 0.85rem; padding: 4px; }
+            /* On mobile, we keep them slightly chunky for touch targets */
+            .tile { aspect-ratio: 1.6/1; font-size: 0.8rem; padding: 4px; }
         }
     </style>
 </head>
