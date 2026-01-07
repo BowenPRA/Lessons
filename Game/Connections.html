@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Cambridge Connections: A word association game for the classroom.">
+    <title>Cambridge Connections</title>
+    
+    <!-- Fonts: Outfit (Headings) & Jakarta Sans (Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE: Cosmic Laboratory --- */
+            --bg-deep: #0f172a;
+            --bg-accent: #312e81; /* Indigo */
+            
+            /* Game Colors */
+            --tile-default: #ffffff;
+            --tile-text: #0f172a;
+            --tile-selected: #22d3ee; /* Cyan */
+            --tile-selected-text: #083344;
+            
+            /* Category Colors (Vibrant Gradients) */
+            --grad-yellow: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            --grad-green: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            --grad-blue: linear-gradient(135deg, #22d3ee 0%, #0891b2 100%);
+            --grad-purple: linear-gradient(135deg, #c084fc 0%, #7c3aed 100%);
+            
+            /* UI Elements */
+            --glass-panel: rgba(15, 23, 42, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --sidebar-width: 300px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: #f8fafc;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* App-like feel */
+            display: flex;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+        /* --- BACKGROUND ANIMATION (Mesh Gradient) --- */
+        .ambient-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: 
+                radial-gradient(at 0% 0%, #312e81 0px, transparent 50%),
+                radial-gradient(at 100% 0%, #4c1d95 0px, transparent 50%),
+                radial-gradient(at 100% 100%, #be185d 0px, transparent 50%),
+                radial-gradient(at 0% 100%, #0f172a 0px, transparent 50%);
+            background-size: 150% 150%;
+            animation: backgroundShift 20s ease infinite alternate;
+        }
+        @keyframes backgroundShift { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+
+        /* --- LAYOUT STRUCTURE --- */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* --- SIDEBAR (Level Select) --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--glass-panel);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+            gap: 1.5rem;
+            z-index: 20;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            line-height: 1.1;
+            color: white;
+            letter-spacing: -0.5px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin-bottom: 0.5rem;
+        }
+        .brand span { color: #22d3ee; }
+
+        .level-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .level-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #94a3b8;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .level-btn:hover {
+            background: rgba(255,255,255,0.08);
+            color: #e2e8f0;
+        }
+
+        .level-btn.active {
+            background: linear-gradient(90deg, rgba(34, 211, 238, 0.15) 0%, transparent 100%);
+            border-left: 3px solid #22d3ee;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .level-btn i { width: 24px; text-align: center; font-size: 1.1em; }
+
+        /* --- MAIN GAME ARENA --- */
+        .arena {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Center vertically */
+            padding: 1rem 2rem;
+            position: relative;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Container that holds the game board to limit max size */
+        .game-board-wrapper {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5vh; /* Responsive vertical gap */
+            animation: fadeInPage 0.5s ease;
+        }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .game-header {
+            text-align: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .lives-wrapper {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 6px 16px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            gap: 8px;
+        }
+
+        .life-pip {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #22d3ee;
+            box-shadow: 0 0 8px #22d3ee;
+            transition: all 0.3s ease;
+        }
+        .life-pip.lost { background: #334155; box-shadow: none; transform: scale(0.8); opacity: 0.5; }
+
+        h2.game-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            color: #ffffff;
+            line-height: 1.1;
+        }
+
+        .instruction {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            color: #94a3b8;
+            font-weight: 500;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- THE GRID --- */
+        .grid-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            width: 100%;
+        }
+
+        /* Converted to button for semantic correctness */
+        .tile {
+            background: var(--tile-default);
+            color: var(--tile-text);
+            border: 1px solid transparent;
+            border-radius: 12px;
+            /* Compact Aspect Ratio: 3:2 (1.5) */
+            aspect-ratio: 1.5/1; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: clamp(0.85rem, 1.4vw, 1.3rem);
+            text-transform: uppercase;
+            text-align: center;
+            padding: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #cbd5e1;
+            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, box-shadow 0.2s;
+            position: relative;
+            line-height: 1.1;
+            outline: none;
+            width: 100%; /* Ensure button fills grid cell */
+        }
+
+        .tile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #cbd5e1;
+        }
+
+        .tile:active {
+            transform: translateY(4px) !important;
+            box-shadow: 0 0 0 #cbd5e1 !important;
+        }
+
+        .tile.selected {
+            background: var(--bg-deep);
+            color: white;
+            box-shadow: 0 0 0 3px #22d3ee, 0 8px 20px rgba(34, 211, 238, 0.3);
+            transform: translateY(-2px);
+            z-index: 5;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Focus state for keyboard accessibility */
+        .tile:focus-visible {
+            box-shadow: 0 0 0 4px var(--bg-accent), 0 0 0 6px white;
+        }
+
+        /* Error Shake */
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 
+            10%, 90% { transform: translate3d(-1px, 0, 0); } 
+            20%, 80% { transform: translate3d(2px, 0, 0); } 
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 
+            40%, 60% { transform: translate3d(4px, 0, 0); } 
+        }
+
+        /* --- SOLVED ROWS --- */
+        .solved-row {
+            width: 100%;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 0;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.2s;
+        }
+        
+        .solved-row:hover { transform: scale(1.01); }
+
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .solved-category {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .solved-words {
+            font-size: 0.95rem;
+            font-weight: 500;
+            opacity: 0.95;
+        }
+
+        /* Teacher Note Drawer */
+        .teacher-drawer {
+            background: rgba(255,255,255,0.95);
+            color: #0f172a;
+            margin: 0 -1.5rem;
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            text-align: left;
+        }
+        
+        .solved-row.open .teacher-drawer {
+            margin-top: 0.8rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            max-height: 300px;
+        }
+        
+        .note-content { font-size: 0.95rem; line-height: 1.5; }
+        .drawer-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); transition: transform 0.3s; font-size: 1rem; }
+        .solved-row.open .drawer-icon { transform: translateY(-50%) rotate(180deg); }
+
+
+        /* --- BOTTOM CONTROLS --- */
+        .controls-bar {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .action-btn:hover:not(:disabled) { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+        .action-btn:active:not(:disabled) { transform: translateY(0); }
+        .action-btn:focus-visible { outline: 2px solid white; outline-offset: 2px; }
+
+        .submit-btn {
+            flex: 2;
+            background: #334155;
+            color: #94a3b8;
+            box-shadow: none;
+        }
+
+        .submit-btn.ready {
+            background: white;
+            color: #0f172a;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse { 
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); } 
+            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } 
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } 
+        }
+
+        /* --- TOAST & MODAL --- */
+        /* Z-Index Hierarchy: Background (-1) < Grid (1) < Controls (10) < Sidebar (20) < Confetti (1500) < Toast (2000) < Modal (2100) */
+        
+        .toast {
+            position: fixed; 
+            top: 50%; left: 50%; /* Center of screen */
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(15, 23, 42, 0.95); 
+            color: white; 
+            padding: 20px 40px; 
+            border-radius: 16px;
+            font-weight: 800; font-family: 'Outfit'; 
+            z-index: 2000;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid #334155; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            font-size: 1.8rem;
+            opacity: 0;
+            pointer-events: none;
+            display: flex; align-items: center; gap: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .toast.visible { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        .toast.warn { border-color: #fbbf24; color: #fbbf24; }
+        .toast.bad { border-color: #ef4444; color: #ef4444; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; 
+            z-index: 2100;
+        }
+        .modal-card {
+            background: white; color: #0f172a; padding: 2.5rem; border-radius: 24px;
+            text-align: center; max-width: 450px; width: 90%;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .modal-card h2 { font-family: 'Outfit'; font-size: 2.2rem; margin-bottom: 0.5rem; color: #0f172a; }
+
+        .modal-options {
+            display: flex; flex-direction: column; gap: 12px; margin-top: 2rem;
+        }
+        .modal-btn {
+            padding: 16px; border-radius: 12px; border: none;
+            font-family: 'Outfit'; font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; transition: transform 0.2s;
+            width: 100%;
+        }
+        .modal-btn:hover { transform: translateY(-2px); }
+        .modal-btn.primary { background: #0f172a; color: white; }
+        .modal-btn.secondary { background: #e2e8f0; color: #334155; }
+        .modal-btn.accent { background: #22d3ee; color: #083344; }
+
+        /* Confetti */
+        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1500; }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; }
+            .sidebar { 
+                width: 100%; height: auto; 
+                flex-direction: row; align-items: center; 
+                padding: 1rem; overflow-x: auto; 
+                border-bottom: 1px solid var(--glass-border); border-right: none;
+                gap: 1rem;
+            }
+            .level-list { flex-direction: row; }
+            .level-btn { padding: 8px 12px; font-size: 0.85rem; white-space: nowrap; }
+            .brand { font-size: 1.2rem; margin-bottom: 0; margin-right: 0.5rem; }
+            .arena { padding: 1rem; height: auto; min-height: calc(100vh - 70px); }
+            .game-board-wrapper { gap: 1rem; }
+            .grid { gap: 8px; }
+            .tile { aspect-ratio: 4/3; font-size: 0.8rem; border-radius: 8px; padding: 4px; }
+            .lives-wrapper { padding: 4px 12px; }
+            .life-pip { width: 8px; height: 8px; }
+            .controls-bar { gap: 8px; }
+            .action-btn { padding: 12px; font-size: 0.8rem; }
+            .toast { width: 80%; text-align: center; font-size: 1.4rem; padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Elements -->
+    <div class="ambient-bg"></div>
+    <canvas id="confetti"></canvas>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fa-solid fa-triangle-exclamation"></i> <span id="toast-text">One away...</span>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="app-container">
+        
+        <!-- SIDEBAR: Navigation -->
+        <aside class="sidebar" role="navigation" aria-label="Game Levels">
+            <div class="brand">
+                Cambridge<br><span>Connections</span>
+            </div>
+            
+            <div class="level-list">
+                <button class="level-btn active" data-game="0">
+                    <i class="fa-solid fa-palette" style="color:#fbbf24"></i> The Primary Mix
+                </button>
+                <button class="level-btn" data-game="1">
+                    <i class="fa-solid fa-music" style="color:#34d399"></i> Rhyme Time
+                </button>
+                <button class="level-btn" data-game="2">
+                    <i class="fa-solid fa-shield-heart" style="color:#f472b6"></i> Safety & Nature
+                </button>
+                <button class="level-btn" data-game="3">
+                    <i class="fa-solid fa-rocket" style="color:#22d3ee"></i> Sweet Space
+                </button>
+                <button class="level-btn" data-game="4">
+                    <i class="fa-solid fa-ear-listen" style="color:#a855f7"></i> Sound It Out
+                </button>
+                <button class="level-btn" data-game="5">
+                    <i class="fa-solid fa-shapes" style="color:#fb7185"></i> Shape Shifter
+                </button>
+                <button class="level-btn" data-game="6">
+                    <i class="fa-solid fa-brain" style="color:#60a5fa"></i> The Mastermind
+                </button>
+            </div>
+        </aside>
+
+        <!-- ARENA: Game Board -->
+        <main class="arena" role="main">
+            
+            <div class="game-board-wrapper" id="board-wrapper">
+                <div class="game-header">
+                    <div class="lives-wrapper" aria-label="Mistakes remaining">
+                        <span style="font-weight: 700; font-size: 0.8rem; text-transform: uppercase; opacity: 0.8;">Mistakes</span>
+                        <div class="life-pip" id="life-1"></div>
+                        <div class="life-pip" id="life-2"></div>
+                        <div class="life-pip" id="life-3"></div>
+                        <div class="life-pip" id="life-4"></div>
+                    </div>
+                    
+                    <h2 class="game-title" id="game-title-display">The Primary Mix</h2>
+                    <p class="instruction">Create four groups of four!</p>
+                </div>
+
+                <div class="grid-container">
+                    <!-- Solved rows stack here -->
+                    <div id="solved-stack" style="display: flex; flex-direction: column; gap: 8px; width: 100%;"></div>
+                    
+                    <!-- Active Grid -->
+                    <div id="grid" class="grid" aria-label="Word grid"></div>
+                </div>
+
+                <div class="controls-bar">
+                    <button class="action-btn" id="btn-shuffle" aria-label="Shuffle grid">
+                        <i class="fa-solid fa-shuffle"></i> Shuffle
+                    </button>
+                    <button class="action-btn" id="btn-deselect" aria-label="Deselect all">
+                        Deselect
+                    </button>
+                    <button class="action-btn submit-btn" id="btn-submit" disabled aria-label="Submit guess">
+                        Submit
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- WIN/LOSE MODAL -->
+    <div class="modal-overlay" id="end-modal" aria-modal="true" role="dialog">
+        <div class="modal-card">
+            <h2 id="modal-title">Splendid!</h2>
+            <p id="modal-msg" style="font-size: 1.1rem; color: #64748b;">You cleared the board.</p>
+            
+            <!-- Win Actions -->
+            <div id="win-actions" class="modal-options" style="display:none">
+                <button class="modal-btn primary" id="btn-review">Review Board</button>
+            </div>
+
+            <!-- Lose Actions -->
+            <div id="lose-actions" class="modal-options" style="display:none">
+                <button class="modal-btn accent" id="btn-keep-playing">Keep Playing (Infinite Lives)</button>
+                <button class="modal-btn primary" id="btn-start-over">Start Over</button>
+                <button class="modal-btn secondary" id="btn-see-groups">See Groups</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Cambridge Connections
+         * A polished, responsive word association game for classroom use.
+         * Developed with clean state management and event handling.
+         */
+
+        // --- CONFIGURATION & DATA ---
+        const GAMES_DB = [
+            // GAME 1: Primary Colors
+            [
+                { category: "Colors", color: "var(--grad-yellow)", items: ["RED", "BLUE", "YELLOW", "GREEN"], note: "<strong>Primary/Secondary:</strong> The four standard paint colors." },
+                { category: "Number Homophones", color: "var(--grad-green)", items: ["WON", "TOO", "FOR", "ATE"], note: "<strong>Literacy:</strong> Words that sound exactly like 1, 2, 4, 8." },
+                { category: "School Objects", color: "var(--grad-blue)", items: ["PEN", "PENCIL", "BOOK", "RULER"], note: "<strong>Classroom:</strong> Standard stationery items." },
+                { category: "Round Things", color: "var(--grad-purple)", items: ["BALL", "RING", "COIN", "WHEEL"], note: "<strong>Shapes:</strong> Objects defined by being circular." }
+            ],
+            // GAME 2: Rhyme Time
+            [
+                { category: "Wild Animals", color: "var(--grad-yellow)", items: ["LION", "TIGER", "MONKEY", "ZEBRA"], note: "<strong>Biology:</strong> Large mammals found in the wild." },
+                { category: "Fruit", color: "var(--grad-green)", items: ["APPLE", "BANANA", "LEMON", "GRAPE"], note: "<strong>Biology:</strong> Common edible fruits." },
+                { category: "Shapes", color: "var(--grad-blue)", items: ["CIRCLE", "TRIANGLE", "OVAL", "RECTANGLE"], note: "<strong>Maths:</strong> 2D Geometric forms." },
+                { category: "Rhymes with BEAR", color: "var(--grad-purple)", items: ["PEAR", "CHAIR", "HAIR", "SQUARE"], note: "<strong>Literacy:</strong> Words ending in the /ɛə/ sound." }
+            ],
+            // GAME 3: Safety & Nature
+            [
+                { category: "Animals", color: "var(--grad-yellow)", items: ["WOLF", "CAMEL", "WHALE", "PENGUIN"], note: "<strong>Biology:</strong> Living creatures from distinct habitats." },
+                { category: "Sense Organs", color: "var(--grad-green)", items: ["EYES", "EARS", "TONGUE", "SKIN"], note: "<strong>Anatomy:</strong> Parts of the body used to sense the world." },
+                { category: "Tech Class", color: "var(--grad-blue)", items: ["TABLET", "SCREEN", "MOUSE", "LAPTOP"], note: "<strong>Technology:</strong> Hardware used for computing." },
+                { category: "Types of Bullying", color: "var(--grad-purple)", items: ["CYBER", "VERBAL", "PHYSICAL", "SOCIAL"], note: "<strong>PSHE:</strong> Categories of negative social behavior." }
+            ],
+            // GAME 4: Sweet Space
+            [
+                { category: "Gases", color: "var(--grad-yellow)", items: ["OXYGEN", "NEON", "HELIUM", "ARGON"], note: "<strong>Chemistry:</strong> Elements that are gas at room temperature." },
+                { category: "Metals", color: "var(--grad-green)", items: ["IRON", "GOLD", "LEAD", "MERCURY"], note: "<strong>Chemistry:</strong> Metallic elements. Mercury is also a planet!" },
+                { category: "Planets", color: "var(--grad-blue)", items: ["VENUS", "JUPITER", "SATURN", "NEPTUNE"], note: "<strong>Space:</strong> Celestial bodies orbiting the Sun." },
+                { category: "Chocolate Bars", color: "var(--grad-purple)", items: ["MARS", "MILKY WAY", "SNICKERS", "HERSHEYS"], note: "<strong>Pop Culture:</strong> Candy brands named after space concepts." }
+            ],
+            // GAME 5: Sound It Out
+            [
+                { category: "Insects", color: "var(--grad-yellow)", items: ["ANT", "MOTH", "WASP", "FLY"], note: "<strong>Biology:</strong> Small invertebrates." },
+                { category: "Face Parts", color: "var(--grad-green)", items: ["NOSE", "CHIN", "CHEEK", "LIP"], note: "<strong>Anatomy:</strong> Features of the human face." },
+                { category: "Bodies of Water", color: "var(--grad-blue)", items: ["POND", "LAKE", "STREAM", "RIVER"], note: "<strong>Geography:</strong> Natural water features." },
+                { category: "Sounds like Letters", color: "var(--grad-purple)", items: ["BEE", "EYE", "SEA", "PEA"], note: "<strong>Wordplay:</strong> Homophones for B, I, C, P." }
+            ],
+            // GAME 6: Shape Shifter
+            [
+                { category: "Magnetic Materials", color: "var(--grad-yellow)", items: ["IRON", "NICKEL", "COBALT", "STEEL"], note: "<strong>Physics:</strong> The only magnetic metals." },
+                { category: "Lab Glassware", color: "var(--grad-green)", items: ["BEAKER", "FLASK", "FUNNEL", "CYLINDER"], note: "<strong>Chemistry:</strong> Tools for holding liquids." },
+                { category: "3D Shapes", color: "var(--grad-blue)", items: ["SPHERE", "CUBE", "CONE", "PRISM"], note: "<strong>Maths:</strong> Geometric forms." },
+                { category: "Prefix MICRO-", color: "var(--grad-purple)", items: ["SCOPE", "WAVE", "PHONE", "CHIP"], note: "<strong>Literacy:</strong> Microscope, Microwave, Microphone, Microchip." }
+            ],
+            // GAME 7: Mastermind
+            [
+                { category: "Comes in Pairs", color: "var(--grad-yellow)", items: ["LUNGS", "KIDNEYS", "POLES", "SCISSORS"], note: "<strong>General:</strong> Items that naturally feature two parts." },
+                { category: "Growth Words", color: "var(--grad-green)", items: ["DEVELOP", "MATURE", "SCALE", "BLOOM"], note: "<strong>Literacy:</strong> Verbs/Nouns describing advancement." },
+                { category: "Homophone Body Parts", color: "var(--grad-blue)", items: ["MUSSEL", "NAVAL", "HART", "HEAL"], note: "<strong>Wordplay:</strong> Muscle, Navel, Heart, Heel." },
+                { category: "Palindromes", color: "var(--grad-purple)", items: ["RADAR", "LEVEL", "ROTOR", "EYE"], note: "<strong>Literacy:</strong> Words spelled same backwards." }
+            ]
+        ];
+
+        const TITLES = [
+            "The Primary Mix", "Rhyme Time", "Safety & Nature", 
+            "Sweet Space", "Sound It Out", "Shape Shifter", "The Mastermind"
+        ];
+
+        // --- STATE MANAGEMENT ---
+        const state = {
+            gameIndex: 0,
+            gridItems: [],
+            selectedIndices: [],
+            mistakes: 0,
+            maxMistakes: 4,
+            isGameOver: false,
+            infiniteMode: false
+        };
+
+        // --- DOM REFERENCE CACHE ---
+        const DOM = {
+            grid: document.getElementById('grid'),
+            solvedStack: document.getElementById('solved-stack'),
+            modal: document.getElementById('end-modal'),
+            modalTitle: document.getElementById('modal-title'),
+            modalMsg: document.getElementById('modal-msg'),
+            winActions: document.getElementById('win-actions'),
+            loseActions: document.getElementById('lose-actions'),
+            submitBtn: document.getElementById('btn-submit'),
+            titleDisplay: document.getElementById('game-title-display'),
+            lifePips: document.querySelectorAll('.life-pip'),
+            boardWrapper: document.getElementById('board-wrapper'),
+            toast: document.getElementById('toast'),
+            toastText: document.getElementById('toast-text'),
+            confetti: document.getElementById('confetti')
+        };
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame(0);
+            setupEventListeners();
+            setupConfettiResize();
+        });
+
+        function setupEventListeners() {
+            // Sidebar Navigation
+            document.querySelectorAll('.level-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = parseInt(e.currentTarget.dataset.game);
+                    if (!isNaN(idx)) initGame(idx);
+                });
+            });
+
+            // Control Buttons
+            document.getElementById('btn-shuffle').addEventListener('click', shuffleGrid);
+            document.getElementById('btn-deselect').addEventListener('click', deselectAll);
+            DOM.submitBtn.addEventListener('click', submitGuess);
+
+            // Modal Buttons
+            document.getElementById('btn-review').addEventListener('click', hideModal);
+            document.getElementById('btn-keep-playing').addEventListener('click', enableInfiniteMode);
+            document.getElementById('btn-start-over').addEventListener('click', reloadCurrentGame);
+            document.getElementById('btn-see-groups').addEventListener('click', revealAllAndClose);
+        }
+
+        // --- CORE GAME LOGIC ---
+
+        function initGame(gameIndex) {
+            // Reset State
+            state.gameIndex = gameIndex;
+            state.mistakes = 0;
+            state.isGameOver = false;
+            state.infiniteMode = false;
+            state.selectedIndices = [];
+            state.gridItems = [];
+
+            // UI Reset
+            DOM.grid.innerHTML = '';
+            DOM.solvedStack.innerHTML = '';
+            hideModal();
+            updateSubmitButton();
+
+            // Active State on Sidebar
+            document.querySelectorAll('.level-btn').forEach((btn, idx) => {
+                if (idx === gameIndex) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            // Set Title
+            DOM.titleDisplay.innerText = TITLES[gameIndex];
+
+            // Reset Lives
+            DOM.lifePips.forEach(p => {
+                p.classList.remove('lost');
+                p.style.boxShadow = ''; // Reset infinite mode styles
+                p.style.background = '';
+            });
+
+            // Build Data
+            const currentData = GAMES_DB[gameIndex];
+            currentData.forEach(group => {
+                group.items.forEach(word => {
+                    state.gridItems.push({
+                        word: word,
+                        category: group.category,
+                        color: group.color,
+                        note: group.note,
+                        groupRef: group,
+                        id: Math.random().toString(36).substr(2, 9)
+                    });
+                });
+            });
+
+            // Start
+            shuffleArray(state.gridItems);
+            renderGrid(true);
+
+            // Trigger Transition Animation
+            DOM.boardWrapper.style.animation = 'none';
+            DOM.boardWrapper.offsetHeight; // Force reflow
+            DOM.boardWrapper.style.animation = 'fadeInPage 0.5s ease';
+        }
+
+        function reloadCurrentGame() {
+            initGame(state.gameIndex);
+        }
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+
+        function renderGrid(animate = false) {
+            DOM.grid.innerHTML = '';
+            
+            state.gridItems.forEach((item, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `tile ${state.selectedIndices.includes(idx) ? 'selected' : ''}`;
+                btn.innerText = item.word;
+                btn.type = "button";
+                
+                // Click handler
+                btn.addEventListener('click', () => toggleSelect(idx));
+                
+                if (animate) {
+                    btn.style.animation = `popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${idx * 0.05}s backwards`;
+                }
+                
+                DOM.grid.appendChild(btn);
+            });
+            updateSubmitButton();
+        }
+
+        function toggleSelect(idx) {
+            if (state.isGameOver) return;
+
+            if (state.selectedIndices.includes(idx)) {
+                state.selectedIndices = state.selectedIndices.filter(i => i !== idx);
+            } else {
+                if (state.selectedIndices.length < 4) {
+                    state.selectedIndices.push(idx);
+                }
+            }
+
+            // Efficient DOM update without full re-render
+            const tiles = DOM.grid.children;
+            Array.from(tiles).forEach((tile, i) => {
+                if (state.selectedIndices.includes(i)) tile.classList.add('selected');
+                else tile.classList.remove('selected');
+            });
+            
+            updateSubmitButton();
+        }
+
+        function deselectAll() {
+            state.selectedIndices = [];
+            const tiles = DOM.grid.children;
+            Array.from(tiles).forEach(t => t.classList.remove('selected'));
+            updateSubmitButton();
+        }
+
+        function shuffleGrid() {
+            // Track selected items by ID to preserve selection after shuffle
+            const selectedIds = state.selectedIndices.map(i => state.gridItems[i].id);
+            
+            shuffleArray(state.gridItems);
+            
+            // Remap indices
+            state.selectedIndices = [];
+            state.gridItems.forEach((item, idx) => {
+                if (selectedIds.includes(item.id)) state.selectedIndices.push(idx);
+            });
+            
+            renderGrid(true);
+        }
+
+        function updateSubmitButton() {
+            if (state.selectedIndices.length === 4) {
+                DOM.submitBtn.disabled = false;
+                DOM.submitBtn.classList.add('ready');
+            } else {
+                DOM.submitBtn.disabled = true;
+                DOM.submitBtn.classList.remove('ready');
+            }
+        }
+
+        // --- SUBMISSION LOGIC ---
+
+        function submitGuess() {
+            if (state.selectedIndices.length !== 4) return;
+            
+            const selection = state.selectedIndices.map(i => state.gridItems[i]);
+            const category = selection[0].category;
+            const isMatch = selection.every(item => item.category === category);
+            
+            if (isMatch) {
+                handleSuccess(selection[0].groupRef);
+            } else {
+                handleFailure(selection);
+            }
+        }
+
+        function handleSuccess(group) {
+            // Filter out solved items
+            state.gridItems = state.gridItems.filter((item, idx) => !state.selectedIndices.includes(idx));
+            state.selectedIndices = [];
+            
+            createSolvedRow(group);
+            renderGrid(true);
+            
+            if (state.gridItems.length === 0) {
+                setTimeout(triggerWin, 1000);
+            }
+        }
+
+        function handleFailure(selection) {
+            // Check "One Away"
+            const counts = {};
+            selection.forEach(s => counts[s.category] = (counts[s.category] || 0) + 1);
+            const oneAway = Object.values(counts).includes(3);
+            
+            // Visual Shake Feedback
+            const tiles = DOM.grid.children;
+            state.selectedIndices.forEach(i => tiles[i].classList.add('shake'));
+            setTimeout(() => {
+                Array.from(tiles).forEach(t => t.classList.remove('shake'));
+            }, 500);
+            
+            // Logic
+            if (!state.infiniteMode) {
+                state.mistakes++;
+                updateLivesUI();
+            }
+            
+            showToast(oneAway ? "One away..." : "Not quite!", oneAway ? "warn" : "bad");
+            
+            if (!state.infiniteMode && state.mistakes >= state.maxMistakes) {
+                state.isGameOver = true;
+                setTimeout(showLoseOptions, 1000);
+            }
+        }
+
+        function createSolvedRow(group) {
+            const row = document.createElement('div');
+            row.className = 'solved-row';
+            row.style.background = group.color;
+            row.innerHTML = `
+                <div class="solved-category">${group.category}</div>
+                <div class="solved-words">${group.items.join(', ')}</div>
+                <i class="fa-solid fa-chevron-down drawer-icon"></i>
+                <div class="teacher-drawer">
+                    <div class="note-content">${group.note}</div>
+                </div>
+            `;
+            // Toggle Drawer
+            row.addEventListener('click', function() {
+                this.classList.toggle('open');
+            });
+            
+            DOM.solvedStack.appendChild(row);
+        }
+
+        function updateLivesUI() {
+            for(let i=0; i < state.maxMistakes; i++) {
+                if (i < state.mistakes) DOM.lifePips[i].classList.add('lost');
+            }
+        }
+
+        // --- GAME OVER & MODALS ---
+
+        function triggerWin() {
+            startConfetti();
+            DOM.modalTitle.innerText = "Splendid!";
+            DOM.modalMsg.innerText = "You cleared the board.";
+            DOM.winActions.style.display = 'flex';
+            DOM.loseActions.style.display = 'none';
+            DOM.modal.style.display = 'flex';
+        }
+
+        function showLoseOptions() {
+            DOM.modalTitle.innerText = "Game Over";
+            DOM.modalMsg.innerText = "You're out of mistakes. What would you like to do?";
+            DOM.winActions.style.display = 'none';
+            DOM.loseActions.style.display = 'flex';
+            DOM.modal.style.display = 'flex';
+        }
+
+        function enableInfiniteMode() {
+            hideModal();
+            state.isGameOver = false;
+            state.infiniteMode = true;
+            // Visual cue for infinite mode (Gold Hearts)
+            DOM.lifePips.forEach(p => {
+                p.classList.remove('lost');
+                p.style.boxShadow = "0 0 10px #fbbf24"; 
+                p.style.background = "#fbbf24";
+            });
+        }
+
+        function revealAllAndClose() {
+            hideModal();
+            DOM.grid.innerHTML = ''; // Clear board
+            
+            const currentData = GAMES_DB[state.gameIndex];
+            
+            // Find which categories are already solved
+            const solvedCats = Array.from(document.querySelectorAll('.solved-category')).map(c => c.innerText);
+            
+            currentData.forEach(g => {
+                if(!solvedCats.includes(g.category)) {
+                    createSolvedRow(g);
+                }
+            });
+        }
+
+        function hideModal() {
+            DOM.modal.style.display = 'none';
+        }
+
+        function showToast(msg, type) {
+            DOM.toastText.innerText = msg;
+            DOM.toast.className = `toast visible ${type}`;
+            setTimeout(() => DOM.toast.classList.remove('visible'), 2000);
+        }
+
+        // --- EFFECTS ---
+
+        function startConfetti() {
+            const canvas = DOM.confetti;
+            const ctx = canvas.getContext('2d');
+            
+            // Set dimensions
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight;
+            
+            const particles = [];
+            const colors = ['#fbbf24', '#34d399', '#22d3ee', '#c084fc', '#ffffff'];
+            
+            for(let i=0; i<200; i++) {
+                particles.push({
+                    x: canvas.width/2, y: canvas.height/2,
+                    vx: (Math.random()-0.5)*25, vy: (Math.random()-0.5)*25,
+                    size: Math.random()*8+4, color: colors[Math.floor(Math.random()*colors.length)]
+                });
+            }
+            
+            function loop() {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                let active = false;
+                particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.vx *= 0.95; p.vy *= 0.95;
+                    
+                    if (p.y < canvas.height) active = true;
+                    
+                    ctx.fillStyle = p.color; 
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                });
+                if(active) requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        function setupConfettiResize() {
+            window.addEventListener('resize', () => {
+                DOM.confetti.width = window.innerWidth;
+                DOM.confetti.height = window.innerHeight;
+            });
+        }
+
+    </script>
+</body>
+</html>
