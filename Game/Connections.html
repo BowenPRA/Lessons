@@ -17,13 +17,13 @@
             --bg-deep: #020617;
             
             /* UI Elements */
-            --glass-panel: rgba(20, 15, 40, 0.85); /* Slightly purple tinted glass */
+            --glass-panel: rgba(20, 15, 40, 0.85);
             --glass-border: rgba(255, 255, 255, 0.15);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
 
             /* Interactive Colors */
-            --tile-bg: rgba(40, 30, 60, 0.7); /* Purple tint */
+            --tile-bg: rgba(40, 30, 60, 0.7);
             --tile-border: rgba(255, 255, 255, 0.1);
             --tile-hover: rgba(60, 45, 90, 0.9);
             
@@ -32,15 +32,15 @@
             --selected-text: #083344;
             --selected-shadow: 0 0 25px rgba(34, 211, 238, 0.6);
 
-            /* Category Gradients (Vibrant & Distinct) */
+            /* Category Gradients */
             --cat-yellow: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
             --cat-green: linear-gradient(135deg, #34d399 0%, #059669 100%);
             --cat-blue: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
             --cat-purple: linear-gradient(135deg, #c084fc 0%, #7c3aed 100%);
 
             /* Dimensions */
-            --sidebar-width: 280px;
-            --max-board-width: 960px; /* Increased slightly */
+            --sidebar-width: 260px; /* Slightly tighter sidebar */
+            --max-board-width: 850px; /* Reduced overall width */
         }
 
         /* --- RESET & BASE --- */
@@ -49,7 +49,6 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-deep);
-            /* New Vibrant Purple Gradient Background */
             background: radial-gradient(ellipse at top, #4c1d95 0%, #1e1b4b 50%, #020617 100%);
             color: var(--text-primary);
             height: 100vh;
@@ -93,7 +92,7 @@
             display: flex;
             flex-direction: column;
             padding: 1.5rem;
-            gap: 1.5rem;
+            gap: 1.2rem;
             z-index: 20;
             overflow-y: auto;
             flex-shrink: 0;
@@ -106,6 +105,7 @@
             line-height: 1.1;
             color: #fff;
             text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            margin-bottom: 0.5rem;
         }
         .brand span { color: #22d3ee; }
 
@@ -113,7 +113,7 @@
 
         .level-btn {
             display: flex; align-items: center; gap: 12px;
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 10px;
             background: transparent;
             border: 1px solid transparent;
@@ -123,21 +123,13 @@
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: left;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             width: 100%;
         }
 
-        /* Colorful Icons Logic */
-        .level-btn i {
-            /* Use the inline color but dimmed by default */
-            opacity: 0.75;
-            filter: saturate(0.8);
-            transition: all 0.2s ease;
-        }
-
+        .level-btn i { opacity: 0.75; filter: saturate(0.8); transition: all 0.2s ease; }
         .level-btn:hover { background: rgba(255,255,255,0.05); color: #f1f5f9; }
         .level-btn:hover i { opacity: 1; filter: saturate(1.2) drop-shadow(0 0 6px currentColor); }
-
         .level-btn.active {
             background: rgba(34, 211, 238, 0.1);
             border: 1px solid rgba(34, 211, 238, 0.3);
@@ -146,15 +138,14 @@
         }
         .level-btn.active i { opacity: 1; filter: saturate(1.2) drop-shadow(0 0 6px currentColor); }
 
-
         /* --- MAIN GAME ARENA --- */
         .arena {
             flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem 2.5rem; /* Increased padding slightly */
+            /* Changed from center to ensure scrolling works properly without clipping top */
+            align-items: center; 
+            padding: 1rem;
             position: relative;
             overflow-y: auto;
         }
@@ -164,78 +155,78 @@
             max-width: var(--max-board-width);
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px; /* Slightly reduced gap */
             animation: fadeIn 0.6s ease;
+            /* Safe centering technique */
+            margin-top: auto; 
+            margin-bottom: auto;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* REDESIGNED Game Header (Horizontal Layout) */
+        /* Game Header */
         .game-header {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-end; /* Align bottom to keep title and lives neat */
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            padding: 0 5px;
         }
 
-        .header-left { display: flex; flex-direction: column; gap: 4px; }
+        .header-left { display: flex; flex-direction: column; gap: 2px; }
 
         .game-title {
             font-family: 'Outfit', sans-serif;
-            font-size: clamp(2rem, 3.5vw, 3rem);
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
             font-weight: 800;
             color: #fff;
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            line-height: 1.1;
         }
 
-        .instruction { color: var(--text-secondary); font-weight: 600; margin: 0; font-size: 1.05rem; }
+        .instruction { color: var(--text-secondary); font-weight: 600; margin: 0; font-size: 1rem; }
 
-        /* Lives on the side */
+        /* Lives */
         .lives-wrapper {
             display: inline-flex; align-items: center; gap: 8px;
             background: rgba(15, 23, 42, 0.6); 
-            padding: 10px 24px;
+            padding: 8px 20px;
             border-radius: 30px;
             border: 1px solid rgba(255,255,255,0.15);
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        .lives-label {
-             font-weight: 700; font-size: 0.9rem; text-transform: uppercase; color: #cbd5e1; margin-right: 6px; letter-spacing: 1px;
-        }
-
-        .life-heart {
-            color: #f472b6; font-size: 1.2rem; filter: drop-shadow(0 0 5px #f472b6);
-            transition: all 0.3s;
-        }
+        .lives-label { font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: #cbd5e1; margin-right: 4px; letter-spacing: 1px; }
+        .life-heart { color: #f472b6; font-size: 1.1rem; filter: drop-shadow(0 0 5px #f472b6); transition: all 0.3s; }
         .life-heart.lost { color: #334155; filter: none; transform: scale(0.8); opacity: 0.6; }
 
         /* --- THE GRID --- */
-        .grid-container { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+        .grid-container { width: 100%; display: flex; flex-direction: column; gap: 10px; } /* Reduced gap */
 
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            gap: 10px; /* Tighter gap */
             width: 100%;
         }
 
-        /* TILE (Resized for vertical space) */
+        /* TILE (Adjusted for "less square" look) */
         .tile {
             background: var(--tile-bg);
             color: var(--text-primary);
             border: 1px solid var(--tile-border);
             border-radius: 12px;
-            /* Made squarer to fill vertical space better (was 1.6/1) */
-            aspect-ratio: 1.35/1; 
+            /* Aspect Ratio: 1.55 (More rectangular/wider than 1.35) */
+            aspect-ratio: 1.55/1; 
             display: flex; align-items: center; justify-content: center;
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            font-size: clamp(0.9rem, 1.6vw, 1.4rem);
+            /* Slightly smaller font to match smaller box */
+            font-size: clamp(0.8rem, 1.4vw, 1.25rem);
             text-transform: uppercase;
             text-align: center;
-            padding: 0.5rem;
+            padding: 0.4rem;
             cursor: pointer;
             transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -249,7 +240,6 @@
             border-color: rgba(255,255,255,0.3);
         }
 
-        /* SELECTED STATE - High Contrast */
         .tile.selected {
             background: var(--selected-bg) !important;
             color: var(--selected-text) !important;
@@ -258,8 +248,6 @@
             z-index: 10;
             border: none;
         }
-
-        .tile:focus-visible { outline: 4px solid #fff; z-index: 20; }
         
         .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
@@ -267,7 +255,7 @@
         /* --- SOLVED ROWS --- */
         .solved-row {
             width: 100%;
-            padding: 1rem 1.5rem;
+            padding: 0.8rem 1.2rem; /* Tighter padding */
             border-radius: 12px;
             text-align: center;
             color: white;
@@ -279,30 +267,30 @@
         }
         @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        .solved-category { font-family: 'Outfit'; font-weight: 800; text-transform: uppercase; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .solved-words { font-size: 1rem; font-weight: 600; opacity: 0.95; margin-top: 4px; }
+        .solved-category { font-family: 'Outfit'; font-weight: 800; text-transform: uppercase; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .solved-words { font-size: 0.9rem; font-weight: 600; opacity: 0.95; margin-top: 2px; }
 
         /* Teacher Notes */
         .teacher-drawer {
             background: rgba(255,255,255,0.95);
             color: #0f172a;
-            margin: 0 -1.5rem; padding: 0 1.5rem;
+            margin: 0 -1.2rem; padding: 0 1.2rem;
             max-height: 0; overflow: hidden;
             transition: all 0.4s ease; text-align: left;
         }
-        .solved-row.open .teacher-drawer { margin-top: 1rem; padding-top: 1.2rem; padding-bottom: 1.2rem; max-height: 200px; }
-        .note-content { font-size: 1rem; line-height: 1.5; font-weight: 500; }
+        .solved-row.open .teacher-drawer { margin-top: 0.8rem; padding-top: 1rem; padding-bottom: 1rem; max-height: 200px; }
+        .note-content { font-size: 0.95rem; line-height: 1.4; font-weight: 500; }
         .drawer-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); transition: transform 0.3s; }
         .solved-row.open .drawer-icon { transform: translateY(-50%) rotate(180deg); }
 
         /* --- CONTROLS --- */
-        .controls-bar { display: flex; gap: 12px; width: 100%; margin-top: 10px; }
+        .controls-bar { display: flex; gap: 10px; width: 100%; margin-top: 8px; }
         
         .action-btn {
-            flex: 1; padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            flex: 1; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.05); color: #fff;
             font-family: 'Outfit', sans-serif; font-weight: 700; text-transform: uppercase;
-            cursor: pointer; transition: all 0.2s; font-size: 0.9rem; letter-spacing: 0.5px;
+            cursor: pointer; transition: all 0.2s; font-size: 0.85rem; letter-spacing: 0.5px;
         }
         .action-btn:hover:not(:disabled) { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
         
@@ -362,17 +350,13 @@
             .level-list { flex-direction: row; width: max-content; }
             .level-btn { width: auto; white-space: nowrap; padding: 8px 16px; font-size: 0.9rem; }
             
-            /* On mobile, stack the header elements again as horizontal gets cramped */
-            .game-header { flex-direction: column; align-items: center; text-align: center; gap: 16px; }
+            .game-header { flex-direction: column; align-items: center; text-align: center; gap: 12px; }
             .header-left { align-items: center; }
 
-            .arena { padding: 1rem; height: auto; min-height: calc(100vh - 80px); }
-            .game-board-wrapper { gap: 12px; }
+            .arena { padding: 1rem; height: auto; min-height: calc(100vh - 80px); display: block; } /* Block display helps mobile scroll */
+            .game-board-wrapper { gap: 12px; margin-top: 0; margin-bottom: 0; }
             .grid { gap: 8px; }
-            /* Revert to wider aspect ratio on small screens for readability */
             .tile { aspect-ratio: 1.4/1; font-size: 0.85rem; padding: 4px; }
-            .solved-category { font-size: 1rem; }
-            .solved-words { font-size: 0.85rem; }
         }
     </style>
 </head>
