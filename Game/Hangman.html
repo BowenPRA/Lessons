@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Cambridge Hangman: Classroom Word Builder">
+    <title>Cambridge Hangman</title>
+    
+    <!-- Fonts: Outfit (Headings) and Plus Jakarta Sans (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons (if needed, though Emojis are primary) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE: Deep Cosmic Theme --- */
+            --bg-deep: #020617; /* Slate 950 */
+            
+            /* UI Elements */
+            --glass-panel: rgba(15, 23, 42, 0.65); /* Semi-transparent dark blue */
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+
+            /* Interactive Colors */
+            --key-bg: rgba(30, 41, 59, 0.7);
+            --key-border: rgba(255, 255, 255, 0.05);
+            --key-hover: rgba(51, 65, 85, 0.9);
+            
+            /* Game States */
+            --correct-bg: #22d3ee; /* Neon Cyan */
+            --correct-text: #083344;
+            --wrong-bg: #1e293b; /* Dark Slate */
+            --wrong-text: #475569;
+
+            /* Neon Vector Palette */
+            --neon-blue: #3b82f6;
+            --neon-cyan: #22d3ee;
+            --neon-pink: #f43f5e;
+            --neon-purple: #c084fc;
+            --neon-orange: #f59e0b;
+
+            /* Layout */
+            --sidebar-width: 280px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            background: radial-gradient(ellipse at bottom, #4c1d95 0%, #1e1b4b 40%, #020617 100%);
+            color: var(--text-primary);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* --- BACKGROUND ANIMATION (STARFIELD) --- */
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(1.5px 1.5px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 50px 160px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 150px 200px, rgba(255,255,255,0.8), rgba(0,0,0,0));
+            background-size: 300px 300px;
+            animation: twinkle 120s linear infinite;
+            z-index: -1;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-300px); } }
+
+        /* --- APP CONTAINER --- */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--glass-panel);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            gap: 1.5rem;
+            z-index: 20;
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .brand {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.75rem;
+            line-height: 1.1;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(192, 132, 252, 0.4);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .brand span { color: var(--neon-cyan); }
+
+        .level-list { display: flex; flex-direction: column; gap: 10px; }
+
+        .level-btn {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            font-size: 1rem;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-btn:hover { 
+            background: rgba(255,255,255,0.03); 
+            color: #e2e8f0; 
+            border-color: rgba(255,255,255,0.05);
+        }
+
+        .level-btn.active {
+            background: rgba(34, 211, 238, 0.15);
+            border: 1px solid rgba(34, 211, 238, 0.4);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.15);
+        }
+        
+        .level-emoji {
+            font-size: 1.4rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        /* --- MAIN GAME ARENA --- */
+        .arena {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .split-layout {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: 100%;
+            max-width: 1400px;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        /* --- LEFT SIDE: NEON ROCKET DRAWING AREA --- */
+        .drawing-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 2rem;
+            height: 85vh;
+            max-height: 800px;
+            /* Allow rocket to fly out */
+            overflow: visible; 
+        }
+
+        /* Rocket SVG Styles - Neon Vector Look */
+        #rocket-svg {
+            height: 100%;
+            width: auto;
+            max-width: 100%;
+            filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.1));
+            overflow: visible;
+            /* TRANSFORM UPDATES: Bigger scale (1.4) and higher up (-100px) */
+            transform: translateY(-100px) scale(1.4);
+            transition: transform 0.5s ease; /* Smooth reset */
+        }
+        
+        /* LAUNCH ANIMATIONS */
+        #rocket-svg.launching {
+            animation: launchAnim 2.5s cubic-bezier(0.5, 0, 0.5, 1) forwards;
+        }
+
+        @keyframes launchAnim {
+            0% { transform: translateY(-100px) scale(1.4) translateX(0); }
+            10% { transform: translateY(-100px) scale(1.4) translateX(-5px); }
+            20% { transform: translateY(-100px) scale(1.4) translateX(5px); }
+            30% { transform: translateY(-100px) scale(1.4) translateX(-5px); }
+            40% { transform: translateY(-120px) scale(1.35) translateX(3px); filter: drop-shadow(0 0 30px rgba(245, 158, 11, 0.8)); }
+            100% { transform: translateY(-2000px) scale(1.4); opacity: 1; }
+        }
+
+        .rocket-part {
+            fill: rgba(2, 6, 23, 0.8); /* Dark semi-transparent fill to block blueprint */
+            stroke-width: 3px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: all 0.5s ease;
+            opacity: 0;
+            filter: drop-shadow(0 0 6px currentColor); /* Neon Glow */
+        }
+
+        .rocket-part.visible {
+            opacity: 1;
+            stroke-dasharray: 1200;
+            stroke-dashoffset: 0;
+            animation: neonDraw 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        /* Super Fire Effect for Game Over */
+        .rocket-part.super-fire {
+            stroke: #fef08a; /* Bright Yellow */
+            filter: drop-shadow(0 0 20px #f59e0b) drop-shadow(0 0 40px #ef4444);
+            animation: firePulse 0.1s infinite alternate;
+            fill: #f59e0b;
+            fill-opacity: 0.8;
+            opacity: 1;
+        }
+
+        @keyframes firePulse {
+            from { transform: scale(1); stroke-width: 4px; }
+            to { transform: scale(1.1); stroke-width: 8px; }
+        }
+
+        @keyframes neonDraw {
+            from { stroke-dashoffset: 1200; fill-opacity: 0; }
+            to { stroke-dashoffset: 0; fill-opacity: 0.8; }
+        }
+
+        /* Blueprint Style: Faint, dashed lines */
+        .rocket-blueprint path, 
+        .rocket-blueprint ellipse, 
+        .rocket-blueprint circle {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.15);
+            stroke-width: 1.5px;
+            stroke-dasharray: 4, 8;
+            vector-effect: non-scaling-stroke;
+        }
+
+        /* Specific Colors for Neon Look - UPDATED IDs FOR NEW ORDER */
+        /* Order: Body(1), WingL(2), WingR(3), Head(4), Window(5), Flame(6) */
+        
+        #part-1 { stroke: var(--neon-purple); } /* Body */
+        #part-2 { stroke: var(--neon-pink); }   /* Fin L (Wing) */
+        #part-3 { stroke: var(--neon-pink); }   /* Fin R (Wing) */
+        #part-4 { stroke: var(--neon-cyan); }   /* Nose (Head) */
+        #part-5 { stroke: var(--neon-blue); }   /* Window */
+        #part-6 { stroke: var(--neon-orange); } /* Flame */
+
+
+        /* --- RIGHT SIDE: PUZZLE AREA --- */
+        .puzzle-area {
+            flex: 1.3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1rem;
+            height: 100%;
+            width: 100%;
+        }
+
+        .topic-badge {
+            font-family: 'Outfit', sans-serif;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-align: center;
+            background: rgba(34, 211, 238, 0.1);
+            padding: 10px 24px;
+            border-radius: 50px;
+            align-self: center;
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .word-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            /* Flex-wrap nowrap ensures long words stay on one line if possible, or scale down */
+            flex-wrap: nowrap; 
+            margin-bottom: 1rem;
+        }
+
+        .word-display {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .letter-slot {
+            font-family: 'Outfit', sans-serif;
+            /* Fluid typography: Scales between 2rem and 4.5rem based on viewport width */
+            font-size: clamp(2rem, 5vw, 4.5rem);
+            font-weight: 700;
+            color: #fff;
+            border-bottom: 4px solid rgba(255,255,255,0.2);
+            
+            /* Fluid width: slots shrink for long words */
+            flex: 0 1 auto; 
+            min-width: 0;
+            width: clamp(30px, 8vw, 80px);
+            
+            text-align: center;
+            line-height: 1.3;
+            text-transform: uppercase;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        
+        .letter-slot.filled {
+            border-bottom-color: var(--correct-bg);
+            color: var(--correct-bg);
+            text-shadow: 0 0 30px rgba(34, 211, 238, 0.6);
+            transform: translateY(-5px);
+        }
+
+        /* KEYBOARD */
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
+            gap: 12px;
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+            background: rgba(0,0,0,0.2);
+            padding: 24px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .key-btn {
+            aspect-ratio: 1/1;
+            background: var(--key-bg);
+            border: 1px solid var(--key-border);
+            color: #e2e8f0;
+            border-radius: 14px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .key-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            background: var(--key-hover);
+            border-color: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+
+        .key-btn:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        .key-btn:disabled {
+            cursor: default;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.5;
+            border: none;
+        }
+
+        .key-btn.correct {
+            background: var(--correct-bg);
+            color: var(--correct-text);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+            opacity: 1;
+        }
+
+        .key-btn.wrong {
+            background: var(--wrong-bg);
+            color: var(--wrong-text);
+            opacity: 0.4;
+        }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            display: none; align-items: center; justify-content: center; z-index: 2100;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; }
+        
+        .modal-card {
+            background: rgba(30, 41, 59, 0.9); 
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff; 
+            padding: 3rem; 
+            border-radius: 30px;
+            text-align: center; 
+            max-width: 480px; 
+            width: 90%;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        /* Aesthetic gradient border top */
+        .modal-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-pink));
+        }
+
+        @keyframes modalPop { from { transform: scale(0.9) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+        .modal-card h2 { font-family: 'Outfit'; font-size: 3rem; margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -0.02em; }
+        .modal-text { font-size: 1.2rem; color: #cbd5e1; margin-bottom: 2rem; }
+        .modal-word-reveal { 
+            font-size: 2rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 2rem; 
+            letter-spacing: 2px; text-transform: uppercase;
+        }
+        
+        .modal-btn {
+            padding: 18px 32px; border-radius: 16px; border: none;
+            font-family: 'Outfit'; font-weight: 700; font-size: 1.1rem; cursor: pointer;
+            width: 100%; transition: all 0.2s;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        .modal-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); }
+        .modal-btn.secondary { background: #334155; box-shadow: none; margin-top: 10px; }
+        .modal-btn.secondary:hover { background: #475569; }
+
+        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1500; }
+
+        /* --- RESPONSIVE BREAKPOINTS --- */
+        @media (max-width: 1200px) {
+            .split-layout { gap: 2rem; }
+            .sidebar { width: 240px; padding: 1.5rem; }
+        }
+
+        /* Mobile / Tablet Portrait Transformation */
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; }
+            
+            /* Sidebar becomes top navbar */
+            .sidebar { 
+                width: 100%; height: auto; 
+                padding: 1rem; border-right: none; border-bottom: 1px solid var(--glass-border);
+                flex-direction: row; align-items: center; 
+                overflow-x: auto; overflow-y: hidden;
+                white-space: nowrap;
+                /* Hide scrollbar */
+                -ms-overflow-style: none; scrollbar-width: none;
+            }
+            .sidebar::-webkit-scrollbar { display: none; }
+            
+            .brand { font-size: 1.4rem; margin-bottom: 0; margin-right: 20px; }
+            .level-list { flex-direction: row; gap: 8px; }
+            .level-btn { width: auto; padding: 10px 16px; font-size: 0.9rem; white-space: nowrap; }
+            
+            .arena { padding: 1rem; align-items: flex-start; overflow-y: auto; }
+            .split-layout { flex-direction: column; gap: 1rem; height: auto; padding-bottom: 40px; }
+            
+            .drawing-area { 
+                width: 100%; height: 350px; min-height: 250px; flex: none;
+                padding: 1rem; background: transparent; border: none; box-shadow: none;
+            }
+            /* Extra lift on mobile if needed */
+            #rocket-svg { 
+                transform: translateY(-80px) scale(1.3);
+                filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.15)); 
+            }
+            @keyframes launchAnim {
+                0% { transform: translateY(-80px) scale(1.3) translateX(0); }
+                10% { transform: translateY(-80px) scale(1.3) translateX(-5px); }
+                20% { transform: translateY(-80px) scale(1.3) translateX(5px); }
+                40% { transform: translateY(-100px) scale(1.25) translateX(3px); }
+                100% { transform: translateY(-2000px) scale(1.3); opacity: 1; }
+            }
+            
+            .puzzle-area { flex: none; width: 100%; gap: 1rem; padding: 0; }
+            .topic-badge { font-size: 0.8rem; padding: 8px 16px; margin-bottom: 0.5rem; }
+            .word-display { gap: 6px; }
+            .letter-slot { font-size: 2.5rem; min-width: 30px; border-width: 3px; }
+            
+            .keyboard { gap: 6px; padding: 12px; border-radius: 16px; max-width: 100%; }
+            .key-btn { font-size: 1.1rem; border-radius: 8px; }
+        }
+
+        /* Very small screens */
+        @media (max-width: 400px) {
+            .letter-slot { font-size: 2rem; border-width: 2px; }
+            .key-btn { font-size: 0.9rem; }
+            .drawing-area { height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CSS Animated Starfield -->
+    <div class="stars"></div>
+    <!-- Confetti Canvas -->
+    <canvas id="confetti"></canvas>
+
+    <div class="app-container">
+        
+        <!-- SIDEBAR (Navigation) -->
+        <nav class="sidebar" aria-label="Level Navigation">
+            <div class="brand">Cambridge<br><span>Hangman</span></div>
+            <div class="level-list" id="level-list">
+                <!-- Javascript will populate level buttons here -->
+            </div>
+        </nav>
+
+        <!-- MAIN GAME ARENA -->
+        <main class="arena">
+            <div class="split-layout">
+                
+                <!-- LEFT: ROCKET DRAWING AREA -->
+                <div class="drawing-area" aria-label="Rocket Status Display">
+                    <!-- SVG Rocket -->
+                    <!-- viewBox tailored to 300x500 for good aspect ratio of a rocket -->
+                    <svg id="rocket-svg" viewBox="0 0 300 500" xmlns="http://www.w3.org/2000/svg">
+                        
+                        <!-- BLUEPRINT LAYER (Always Visible, Faint Dashed Outlines) -->
+                        <g class="rocket-blueprint">
+                            <!-- Body Outline -->
+                            <ellipse cx="150" cy="250" rx="60" ry="140" />
+                            <!-- Nose Outline -->
+                            <path d="M96 168 Q150 60 204 168" />
+                            <!-- Left Fin Outline -->
+                            <path d="M95 300 L30 380 L105 360" />
+                            <!-- Right Fin Outline -->
+                            <path d="M205 300 L270 380 L195 360" />
+                            <!-- Window Outline -->
+                            <circle cx="150" cy="220" r="30" />
+                        </g>
+
+                        <!-- ACTIVE PARTS LAYER (Revealed on Mistakes) -->
+                        <!-- NOTE: ID matches logic: part-1 to part-6 -->
+
+                        <!-- Part 6: Flame (Orange) - Draws last -->
+                        <path id="part-6" class="rocket-part" d="M110 380 Q150 500 190 380 Q170 420 150 450 Q130 420 110 380" fill="none" />
+
+                        <!-- Part 4: Nose Cone (Cyan) - NOW APPEARS 4th (Head) -->
+                        <path id="part-4" class="rocket-part" d="M96 168 Q150 60 204 168 L204 168" fill="none" />
+
+                        <!-- Part 2: Left Fin (Pink) - NOW APPEARS 2nd (Tail Wing) -->
+                        <path id="part-2" class="rocket-part" d="M95 300 L30 380 L105 360 Z" fill="none" />
+
+                        <!-- Part 3: Right Fin (Pink) - NOW APPEARS 3rd (Tail Wing) -->
+                        <path id="part-3" class="rocket-part" d="M205 300 L270 380 L195 360 Z" fill="none" />
+
+                        <!-- Part 1: Main Body (Purple) - APPEARS 1st -->
+                        <ellipse id="part-1" class="rocket-part" cx="150" cy="250" rx="60" ry="140" fill="none" />
+
+                        <!-- Part 5: Window (Blue) - APPEARS 5th -->
+                        <g id="part-5" class="rocket-part">
+                            <circle cx="150" cy="220" r="30" fill="none" />
+                            <circle cx="150" cy="220" r="22" fill="var(--neon-cyan)" style="fill-opacity: 0.15; stroke:none;" />
+                        </g>
+                        
+                    </svg>
+                </div>
+
+                <!-- RIGHT: PUZZLE AREA -->
+                <div class="puzzle-area">
+                    <div style="width: 100%; display:flex; flex-direction:column; align-items:center;">
+                        <!-- Topic Badge -->
+                        <div class="topic-badge" id="topic-display">
+                            <!-- Injected via JS -->
+                        </div>
+                        
+                        <!-- Word Slots -->
+                        <div class="word-container">
+                            <div class="word-display" id="word-display">
+                                <!-- Letters injected here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Virtual Keyboard -->
+                    <div class="keyboard" id="keyboard">
+                        <!-- Keys A-Z injected here -->
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- WIN/LOSE MODAL -->
+    <div class="modal-overlay" id="end-modal">
+        <div class="modal-card">
+            <h2 id="modal-title">Splendid!</h2>
+            <p id="modal-msg" class="modal-text">The rocket is safe.</p>
+            <div id="modal-word" class="modal-word-reveal"></div>
+            
+            <button class="modal-btn" id="modal-btn" onclick="gameSystem.nextLevel()">Next Level</button>
+            <button class="modal-btn secondary" onclick="gameSystem.resetCurrentLevel()">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * CAMBRIDGE HANGMAN - Game Controller
+         */
+
+        // --- Configuration Data ---
+        const LEVELS = [
+            { word: "NOVEL", topic: "English", emoji: "📚" },
+            { word: "PRISM", topic: "Science", emoji: "🌈" },
+            { word: "MEDIAN", topic: "Math", emoji: "📊" },
+            { word: "GRAVITY", topic: "Physics", emoji: "🍏" },
+            { word: "METAPHOR", topic: "Literature", emoji: "🎭" },
+            { word: "FRACTION", topic: "Arithmetic", emoji: "🍰" },
+            { word: "OSCILLOSCOPE", topic: "Waves", emoji: "🔊" }
+        ];
+
+        // --- Game System ---
+        const gameSystem = {
+            state: {
+                levelIndex: 0,
+                currentWord: "",
+                guessedLetters: new Set(),
+                mistakes: 0,
+                maxMistakes: 6,
+                isGameOver: false
+            },
+
+            dom: {
+                levelList: document.getElementById('level-list'),
+                topic: document.getElementById('topic-display'),
+                wordDisplay: document.getElementById('word-display'),
+                keyboard: document.getElementById('keyboard'),
+                modalOverlay: document.getElementById('end-modal'),
+                modalTitle: document.getElementById('modal-title'),
+                modalMsg: document.getElementById('modal-msg'),
+                modalWord: document.getElementById('modal-word'),
+                modalBtn: document.getElementById('modal-btn'),
+                confetti: document.getElementById('confetti')
+            },
+
+            init() {
+                this.generateSidebar();
+                this.generateKeyboard();
+                this.setupPhysicalKeyboard();
+                this.loadLevel(0);
+                
+                // Resize confetti canvas on window resize
+                window.addEventListener('resize', () => {
+                    this.dom.confetti.width = window.innerWidth;
+                    this.dom.confetti.height = window.innerHeight;
+                });
+            },
+
+            generateSidebar() {
+                this.dom.levelList.innerHTML = '';
+                LEVELS.forEach((level, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'level-btn';
+                    btn.innerHTML = `<span class="level-emoji">${level.emoji}</span> <span>${level.topic}</span>`;
+                    btn.onclick = () => this.loadLevel(index);
+                    btn.id = `level-btn-${index}`;
+                    this.dom.levelList.appendChild(btn);
+                });
+            },
+
+            generateKeyboard() {
+                const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                this.dom.keyboard.innerHTML = '';
+                alphabet.split('').forEach(letter => {
+                    const btn = document.createElement('button');
+                    btn.innerText = letter;
+                    btn.className = 'key-btn';
+                    btn.id = `key-${letter}`;
+                    // Use click for better touch support than mousedown
+                    btn.onclick = (e) => {
+                        e.currentTarget.blur(); // Remove focus so Enter key doesn't re-trigger
+                        this.handleInput(letter);
+                    };
+                    this.dom.keyboard.appendChild(btn);
+                });
+            },
+
+            setupPhysicalKeyboard() {
+                document.addEventListener('keydown', (e) => {
+                    if (this.state.isGameOver) {
+                        if (e.key === 'Enter') this.nextLevel();
+                        return;
+                    }
+                    
+                    const char = e.key.toUpperCase();
+                    if (char.length === 1 && char >= 'A' && char <= 'Z') {
+                        this.handleInput(char);
+                    }
+                });
+            },
+
+            loadLevel(index) {
+                // Bounds check
+                if (index < 0) index = 0;
+                if (index >= LEVELS.length) index = 0; 
+
+                // State Reset
+                this.state.levelIndex = index;
+                this.state.currentWord = LEVELS[index].word;
+                this.state.guessedLetters.clear();
+                this.state.mistakes = 0;
+                this.state.isGameOver = false;
+
+                // UI Reset
+                this.updateSidebarUI();
+                
+                const currentLevel = LEVELS[index];
+                this.dom.topic.innerHTML = `<span style="font-size:1.2em; vertical-align:middle; margin-right:8px;">${currentLevel.emoji}</span> ${currentLevel.topic}`;
+                
+                // Hide Modal
+                this.dom.modalOverlay.classList.remove('active');
+                setTimeout(() => this.dom.modalOverlay.style.display = 'none', 300);
+                
+                confettiEffects.stop();
+                this.resetRocketSVG();
+                this.resetKeyboardUI();
+                this.renderWordBoard();
+            },
+
+            resetCurrentLevel() {
+                this.loadLevel(this.state.levelIndex);
+            },
+
+            handleInput(letter) {
+                if (this.state.isGameOver) return;
+                if (this.state.guessedLetters.has(letter)) return;
+
+                this.state.guessedLetters.add(letter);
+                const isCorrect = this.state.currentWord.includes(letter);
+                
+                // Update Key UI
+                const btn = document.getElementById(`key-${letter}`);
+                if (btn) {
+                    btn.disabled = true;
+                    btn.classList.add(isCorrect ? 'correct' : 'wrong');
+                }
+
+                if (isCorrect) {
+                    this.renderWordBoard();
+                    this.checkWin();
+                } else {
+                    this.state.mistakes++;
+                    this.updateRocketBuilder();
+                    if (this.state.mistakes >= this.state.maxMistakes) {
+                        // Trigger Launch Sequence instead of immediate end
+                        this.triggerLaunchSequence();
+                    }
+                }
+            },
+
+            triggerLaunchSequence() {
+                this.state.isGameOver = true; // Block input during animation
+
+                // 1. Super Fire Effect
+                const flame = document.getElementById('part-6');
+                if(flame) flame.classList.add('super-fire');
+
+                // 2. Animate Rocket Launch
+                const rocket = document.getElementById('rocket-svg');
+                if(rocket) {
+                    // Small delay to let the fire register visually
+                    setTimeout(() => {
+                        rocket.classList.add('launching');
+                    }, 400);
+                }
+
+                // 3. Show Game Over after animation finishes (approx 3s total)
+                setTimeout(() => {
+                    this.endGame(false);
+                }, 3000);
+            },
+
+            renderWordBoard() {
+                this.dom.wordDisplay.innerHTML = '';
+                const letters = this.state.currentWord.split('');
+                
+                letters.forEach(char => {
+                    const slot = document.createElement('div');
+                    slot.className = 'letter-slot';
+                    
+                    if (this.state.guessedLetters.has(char)) {
+                        slot.innerText = char;
+                        slot.classList.add('filled');
+                    } else {
+                        slot.innerHTML = "&nbsp;"; 
+                    }
+                    this.dom.wordDisplay.appendChild(slot);
+                });
+            },
+
+            updateRocketBuilder() {
+                // Logic: 1 mistake = part 1 shown, 2 mistakes = part 2 shown...
+                // Parts: 1=Body, 2=WingL, 3=WingR, 4=Head, 5=Window, 6=Flame
+                const partId = `part-${this.state.mistakes}`;
+                const partEl = document.getElementById(partId);
+                if (partEl) {
+                    partEl.classList.add('visible');
+                }
+            },
+
+            resetRocketSVG() {
+                const rocket = document.getElementById('rocket-svg');
+                rocket.classList.remove('launching');
+                
+                for (let i = 1; i <= 6; i++) {
+                    const part = document.getElementById(`part-${i}`);
+                    if (part) {
+                        part.classList.remove('visible');
+                        part.classList.remove('super-fire');
+                    }
+                }
+            },
+
+            resetKeyboardUI() {
+                const keys = document.querySelectorAll('.key-btn');
+                keys.forEach(k => {
+                    k.disabled = false;
+                    k.className = 'key-btn';
+                });
+            },
+
+            updateSidebarUI() {
+                const buttons = document.querySelectorAll('.level-btn');
+                buttons.forEach((btn, idx) => {
+                    if (idx === this.state.levelIndex) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                });
+                
+                // Scroll sidebar active element into view for mobile
+                const activeBtn = document.getElementById(`level-btn-${this.state.levelIndex}`);
+                if(activeBtn) {
+                    activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            },
+
+            checkWin() {
+                const letters = this.state.currentWord.split('');
+                const isWin = letters.every(l => this.state.guessedLetters.has(l));
+                if (isWin) this.endGame(true);
+            },
+
+            endGame(isWin) {
+                this.state.isGameOver = true;
+                this.dom.modalWord.innerText = this.state.currentWord;
+                
+                if (isWin) {
+                    this.dom.modalTitle.innerText = "Splendid!";
+                    this.dom.modalMsg.innerText = "Mission Accomplished! Systems Nominal.";
+                    this.dom.modalTitle.style.color = "var(--neon-cyan)";
+                    this.dom.modalBtn.innerText = "Next Level";
+                    this.dom.modalBtn.onclick = () => this.nextLevel();
+                    confettiEffects.start();
+                } else {
+                    this.dom.modalTitle.innerText = "Game Over";
+                    this.dom.modalMsg.innerText = "Hull Integrity Critical. Mission Aborted.";
+                    this.dom.modalTitle.style.color = "var(--neon-pink)";
+                    this.dom.modalBtn.innerText = "Try Again";
+                    this.dom.modalBtn.onclick = () => this.resetCurrentLevel();
+                }
+
+                this.dom.modalOverlay.style.display = 'flex';
+                // Small delay to allow CSS display change before opacity transition
+                requestAnimationFrame(() => {
+                    this.dom.modalOverlay.classList.add('active');
+                });
+            },
+
+            nextLevel() {
+                let nextIdx = this.state.levelIndex + 1;
+                if (nextIdx >= LEVELS.length) nextIdx = 0;
+                this.loadLevel(nextIdx);
+            }
+        };
+
+        // --- Visual Effects (Confetti) ---
+        const confettiEffects = {
+            running: false,
+            frameId: null,
+            particles: [],
+            
+            start() {
+                if (this.running) return;
+                this.running = true;
+                const canvas = document.getElementById('confetti');
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                this.particles = [];
+                const colors = ['#22d3ee', '#f43f5e', '#c084fc', '#f59e0b', '#ffffff'];
+                
+                for(let i=0; i<150; i++) {
+                    this.particles.push({
+                        x: canvas.width / 2, 
+                        y: canvas.height / 2,
+                        vx: (Math.random()-0.5) * 20, 
+                        vy: (Math.random()-0.5) * 20 - 5, // initial upward burst
+                        size: Math.random() * 6 + 4, 
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        drag: 0.96,
+                        gravity: 0.8
+                    });
+                }
+                
+                this.loop(ctx, canvas);
+            },
+
+            loop(ctx, canvas) {
+                if (!this.running) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    return;
+                }
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let activeParticles = false;
+                
+                this.particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += p.gravity;
+                    p.vx *= p.drag;
+                    p.vy *= p.drag;
+                    
+                    // Simple floor collision or off-screen check
+                    if (p.y < canvas.height + 20) activeParticles = true;
+                    
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size/2, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                
+                if (activeParticles) {
+                    this.frameId = requestAnimationFrame(() => this.loop(ctx, canvas));
+                } else {
+                    this.running = false;
+                }
+            },
+
+            stop() {
+                this.running = false;
+                cancelAnimationFrame(this.frameId);
+                const canvas = document.getElementById('confetti');
+                if(canvas) {
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+        };
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            gameSystem.init();
+        });
+
+    </script>
+</body>
+</html>
