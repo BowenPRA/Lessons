@@ -26,11 +26,11 @@
             --danger: #ef4444;    /* Red */
             --warning: #f59e0b;   /* Amber */
             
-            /* Specific overrides requested */
             --nth-term-bg: #1d4ed8; /* Darker blue for contrast */
 
             --text-main: #ffffff;
-            --text-muted: #cbd5e1;
+            /* UPDATED: Much brighter muted text for better contrast on dark backgrounds */
+            --text-muted: #f8fafc; 
             --text-dark: #0f172a;
 
             --header-h: 70px;
@@ -360,7 +360,7 @@
             `
         },
         {
-            // 2. Definitions (UPDATED: Back of card shows original word + T2T Rule + Contrast)
+            // 2. Definitions
             render: () => `
                 <div class="fade-in text-center">
                     <span style="color: var(--accent); font-weight: 700; text-transform: uppercase;">Review</span>
@@ -375,7 +375,7 @@
             `
         },
         {
-            // 3. Linear Sequences (UPDATED: Curved Arrows)
+            // 3. Linear Sequences
             render: () => `
                 <div class="fade-in text-center">
                     <h2>What is a Linear Sequence?</h2>
@@ -420,7 +420,7 @@
             `
         },
         {
-            // 4. The Method (UPDATED: Text "T2T Gap")
+            // 4. The Method
             render: () => `
                 <div class="fade-in">
                     <div class="text-center" style="margin-bottom: 2rem;">
@@ -477,7 +477,7 @@
             `
         },
         {
-            // 6. Practice 2 (UPDATED: Blue Rule)
+            // 6. Practice 2 (UPDATED: Hidden spoiler)
             render: () => `
                 <div class="grid-2 fade-in">
                     <div>
@@ -505,10 +505,11 @@
                         <div id="calc-blur" style="font-size: 4rem; font-weight: 800; filter: blur(15px); transition: 0.5s; color: var(--accent);">698</div>
                         
                         <button class="btn btn-nav btn-sm" style="margin: 2rem auto; width: auto; border-radius: 50px;" 
-                            onclick="document.getElementById('calc-blur').style.filter = 'none'">
+                            onclick="document.getElementById('calc-blur').style.filter = 'none'; document.getElementById('calc-expl').style.display='block'">
                             Reveal
                         </button>
-                        <p>(7 × 100) - 2</p>
+                        
+                        <p id="calc-expl" style="display:none; margin-top: 1rem; color: white;">(7 × 100) - 2</p>
                     </div>
                 </div>
             `
@@ -536,10 +537,10 @@
             `
         },
         {
-            // 8. Rapid Fire 2 (NEW SLIDE: Negative Adjust & Negative Gap)
+            // 8. Rapid Fire 2
             render: () => `
                 <div class="fade-in text-center">
-                     <div style="background: var(--warning); color: #000; display: inline-block; padding: 0.5rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: 800;">
+                    <div style="background: var(--warning); color: #000; display: inline-block; padding: 0.5rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: 800;">
                          ⚠️ HINT: Watch for negatives!
                     </div>
                     <h2>⚡ Rapid Fire 2</h2>
@@ -556,7 +557,7 @@
                             <button class="btn btn-reveal" style="background: var(--danger);" onclick="this.innerHTML='-2n + 22'; this.style.background='var(--bg-deep)'">Rule?</button>
                         </div>
                         <div class="card">
-                             <h3 style="color: var(--warning);">10, 7, 4, 1...</h3>
+                            <h3 style="color: var(--warning);">10, 7, 4, 1...</h3>
                             <p style="margin-bottom: 1rem;">Gap: -3, Start: 10</p>
                             <button class="btn btn-reveal" style="background: var(--warning); color:black;" onclick="this.innerHTML='-3n + 13'; this.style.background='var(--bg-deep)'; this.style.color='white'">Rule?</button>
                         </div>
@@ -565,10 +566,7 @@
             `
         },
         {
-            // 9. Visual Pattern 1 (Triangles - UPDATED LOGIC)
-            // 1 Triangle on top, rows of 2 beneath.
-            // Term 1: 1 Top + 1 Row(2) = 3
-            // Term 2: 1 Top + 2 Rows(2) = 5
+            // 9. Visual Pattern 1 (Triangles - UPDATED: Visuals for 4th and 5th term)
             render: () => `
                 <div class="grid-2 fade-in">
                     <div>
@@ -582,7 +580,10 @@
                                 <span>7</span>
                                 <span id="tri-hidden-terms" style="display:none; color: var(--accent);">9, 11</span>
                             </div>
-                            <button class="btn btn-sm btn-nav" style="width: 100%; margin-top: 1rem;" onclick="document.getElementById('tri-hidden-terms').style.display='inline'">Find 4th & 5th</button>
+                            <button class="btn btn-sm btn-nav" style="width: 100%; margin-top: 1rem;" 
+                                onclick="document.getElementById('tri-hidden-terms').style.display='inline'; document.getElementById('tri-visual-4').style.display='flex'; document.getElementById('tri-visual-5').style.display='flex'">
+                                Find 4th & 5th
+                            </button>
                         </div>
 
                         <div id="tri-rule-panel" style="display:none;" class="slide-up">
@@ -603,15 +604,14 @@
                         ${drawTriangleTower(1, 'Term 1')}
                         ${drawTriangleTower(2, 'Term 2')}
                         ${drawTriangleTower(3, 'Term 3')}
+                        <div id="tri-visual-4" style="display:none">${drawTriangleTower(4, 'Term 4')}</div>
+                        <div id="tri-visual-5" style="display:none">${drawTriangleTower(5, 'Term 5')}</div>
                     </div>
                 </div>
             `
         },
         {
-             // 10. Visual Pattern 2 (Squares - UPDATED LOGIC)
-             // Fixed shape logic. Let's assume 3n + 2.
-             // Visual: A central column of 2, plus 'n' columns of 3?
-             // Or: Start with 2, add 3 shapes every time.
+             // 10. Visual Pattern 2 (Squares)
             render: () => `
                 <div class="grid-2 fade-in">
                     <div>
@@ -678,7 +678,7 @@
             `
         },
         {
-            // 12. Homework
+            // 12. Homework (UPDATED DATE)
             render: () => `
                 <div class="text-center fade-in">
                     <h2>📚 Homework Assignment</h2>
@@ -694,7 +694,7 @@
                             </div>
                         </div>
                         <div style="margin-top: 2rem; background: #fffbeb; color: #b45309; padding: 1rem; border-radius: 8px; font-weight: 700; text-align: center;">
-                            DUE: Friday
+                            DUE: Monday 12 January 2026
                         </div>
                     </div>
                 </div>
@@ -704,7 +704,6 @@
 
     // --- HELPER FUNCTIONS ---
     
-    // Updated FlipCard: Front content repeats on back for "Term-to-Term" type notetaking
     function createFlipCard(front, backTitle, backDesc, extraDesc, icon, color) {
         return `
             <div class="flip-card" onclick="this.classList.toggle('flipped')" tabindex="0" onkeypress="if(event.key === 'Enter') this.classList.toggle('flipped')">
@@ -740,7 +739,6 @@
         `;
     }
 
-    // New Helper: Render SVG Arrows for Sequence slide
     function renderArrow(text, color) {
         return `
             <div class="seq-arrow-box">
@@ -753,7 +751,6 @@
         `;
     }
 
-    // Updated: Triangle Tower (1 on top, rows of 2 below)
     function drawTriangleTower(termIndex, label) {
         const trianglePath = `<polygon points="15,5 5,25 25,25" fill="#64748B" stroke="#475569" stroke-width="2"/>`;
         let svgs = '';
@@ -762,9 +759,7 @@
         svgs += `<div style="display:flex; justify-content:center; width:100%;"><svg width="24" height="24" viewBox="0 0 30 30" style="margin: 1px;">${trianglePath}</svg></div>`;
         
         // Rows of 2 beneath
-        // Term 1 (3 total): 1 row of 2
-        // Term 2 (5 total): 2 rows of 2
-        const rows = termIndex; // Logic: Term 1 has 1 row below. Term 2 has 2 rows below.
+        const rows = termIndex; 
         
         for(let r=0; r<rows; r++){
              svgs += `<div style="display:flex; justify-content:center; width:100%;">
@@ -781,14 +776,10 @@
         `;
     }
 
-    // Updated: Square Stack (3n + 2)
-    // Visual: A base of 2, plus 'n' columns of 3? Let's keep it simple distinct blocks.
-    // Let's do: A stack of 3 (for the n) and 2 separate ones.
     function drawSquareStack(termIndex, label) {
         const squarePath = `<rect x="2" y="2" width="26" height="26" rx="4" fill="#ec4899" stroke="#db2777" stroke-width="2"/>`;
         let content = '';
 
-        // Fixed +2 part (always 2 blocks at bottom)
         let fixedBlock = `
             <div style="display:flex; gap:2px; justify-content:center; border-top: 2px solid #ddd; padding-top:2px;">
                 <svg width="20" height="20" viewBox="0 0 30 30">${squarePath}</svg>
@@ -796,10 +787,8 @@
             </div>
         `;
 
-        // Growing part (3n) -> Columns of 3
         let growingBlock = '';
         for(let i=0; i<termIndex; i++) {
-             // A column of 3
              growingBlock += `
                 <div style="display:flex; flex-direction:column; margin: 0 2px;">
                     <svg width="20" height="20" viewBox="0 0 30 30">${squarePath}</svg>
@@ -878,5 +867,3 @@
 </script>
 </body>
 </html>
-
-```
