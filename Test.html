@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9.3 Finding Rules - Year 8 Math</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - High Contrast Dark Mode */
+            --bg-deep: #020617;       
+            --bg-card: #1e293b;       
+            --bg-card-hover: #334155; 
+            
+            --primary: #6366f1;   /* Indigo */
+            --primary-bg: #4338ca; 
+            --secondary: #ec4899; /* Pink */
+            --accent: #22d3ee;    /* Cyan */
+            --success: #34d399;   /* Emerald */
+            --danger: #f87171;    /* Red */
+            --warning: #fbbf24;   /* Amber */
+            
+            --nth-term-bg: #2563eb; 
+
+            /* Typography */
+            --text-main: #ffffff;      
+            --text-muted: #e2e8f0;     
+            --text-on-light: #0f172a;  
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1), transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.1), transparent 30%);
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(2, 6, 23, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(2, 6, 23, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:hover { background: #4f46e5; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(99, 102, 241, 0.4); }
+        
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.9rem; }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 8px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.4s ease;
+        }
+
+        /* NOTE TAKING UTILITIES (NEW) */
+        .note-box {
+            border: 2px solid var(--warning);
+            background: rgba(251, 191, 36, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .note-badge {
+            background: var(--warning);
+            color: #000;
+            font-weight: 800;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Typography & Layout */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; }
+        strong { color: white; font-weight: 800; }
+
+        /* Helpers */
+        .text-white { color: white !important; }
+        .text-cyan { color: var(--accent) !important; }
+        .text-pink { color: var(--secondary) !important; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        .card-light { background: white; color: var(--text-on-light); }
+        .card-light p { color: #334155; }
+        .card-light strong { color: #0f172a; }
+        .card-light span { color: #0f172a; }
+
+        /* Flip Cards */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .flip-front { background: var(--bg-card); }
+        .flip-front:hover { background: var(--bg-card-hover); border-color: var(--primary); }
+        .flip-back { background: var(--primary); transform: rotateY(180deg); color: white; border: none; box-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
+        .flip-back p { color: white; margin-top: 0.5rem; font-weight: 500; }
+        .flip-back h3 { color: white; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 5px; margin-bottom: 10px; }
+
+        /* Sequence Arrow Styling */
+        .seq-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 2rem 0;
+        }
+        .seq-num { color: white; padding: 0 1rem; position: relative; z-index: 2; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .seq-arrow-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 60px;
+            height: 50px;
+            position: relative;
+            top: -15px;
+        }
+        .seq-arrow-svg {
+            overflow: visible;
+            width: 100%;
+            height: 100%;
+        }
+        .seq-gap-text {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: -5px;
+        }
+
+        /* Answer Panels */
+        .answer-box {
+            background: rgba(16, 185, 129, 0.15); 
+            border: 2px solid var(--success);
+            color: #6ee7b7; 
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+        .answer-box.visible { display: block; }
+        .answer-box strong { color: white; }
+        
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        .slide-up { animation: slideUp 0.6s ease-out; }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; gap: 2rem; }
+            .header, .footer { padding: 0 1rem; }
+            .brand-pill { display: none; } 
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 8 Math</div>
+            <span style="font-weight: 700; color: var(--text-muted); font-size: 0.9rem;">9.3 Finding Rules</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            Monday 12 January 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        stepCounter: 0
+    };
+
+    // --- SLIDE DATA ---
+    state.slides = [
+        {
+            // 1. Title Slide
+            render: () => `
+                <div class="text-center fade-in">
+                    <div style="font-size: 5rem; margin-bottom: 1rem; animation: slideUp 0.8s;">📐</div>
+                    <h1>Finding Rules for Sequences</h1>
+                    <p style="font-size: 1.5rem; color: var(--accent); font-weight: 600;">From Patterns to Algebra</p>
+                    
+                    <div class="note-box slide-up" style="margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; text-align: left;">
+                        <span class="note-badge"><i class="fa-solid fa-pen-to-square"></i> NOTES SETUP</span>
+                        <h3 style="color: white; margin-bottom: 1rem;">
+                            Start a new page with today's date and title:
+                        </h3>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: white; background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+                            9.3 Finding Rules (Nth Term)
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 2. Definitions
+            render: () => `
+                <div class="fade-in text-center">
+                    <div style="margin-bottom: 2rem;">
+                         <span class="note-badge"><i class="fa-solid fa-pen-to-square"></i> COPY DEFINITIONS</span>
+                         <h2>Key Terms</h2>
+                    </div>
+                    <div class="grid-2 slide-up" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                        ${createFlipCard('Sequence', 'Sequence', '2, 4, 6, 8...', 'An ordered list of numbers following a pattern.', 'fa-layer-group', 'var(--primary)')}
+                        ${createFlipCard('Term', 'Term', 'Example: 6', 'One single number in the sequence.', 'fa-cube', 'var(--secondary)')}
+                        ${createFlipCard('Term-to-Term', 'Term-to-Term', 'Rule: +2', 'How to get from one number to the next.', 'fa-arrow-right-long', 'var(--success)')}
+                        ${createFlipCard('Nth Term', 'Nth Term', '3n + 1', 'Position to Term Rule.<br>Uses "n" to find value.', 'fa-superscript', 'var(--nth-term-bg)')}
+                    </div>
+                    <p style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.8;">Click cards to see definitions.</p>
+                </div>
+            `
+        },
+        {
+            // 3. Linear Sequences
+            render: () => `
+                <div class="fade-in text-center">
+                    <div class="note-box slide-up" style="max-width: 800px; margin: 0 auto 3rem auto; text-align: left;">
+                         <span class="note-badge"><i class="fa-solid fa-pen-to-square"></i> COPY DEFINITION</span>
+                         <h3 style="color: var(--accent);">Linear Sequence</h3>
+                         <ul style="margin-left: 1.5rem; color: white;">
+                            <li>A sequence that increases or decreases by the <strong>SAME AMOUNT</strong> every time.</li>
+                            <li>The rule always looks like: <strong>dn + c</strong></li>
+                         </ul>
+                    </div>
+                    
+                    <div class="grid-2 slide-up">
+                        <div class="card" style="border-left: 5px solid var(--success);">
+                            <h3 class="text-white">Example: Going Up</h3>
+                            <div class="seq-container">
+                                <div class="seq-num">2</div>
+                                ${renderArrow('+2', '#34d399')}
+                                <div class="seq-num">4</div>
+                                ${renderArrow('+2', '#34d399')}
+                                <div class="seq-num">6</div>
+                                ${renderArrow('+2', '#34d399')}
+                                <div class="seq-num">8</div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="border-left: 5px solid var(--danger);">
+                            <h3 class="text-white">Example: Going Down</h3>
+                            <div class="seq-container">
+                                <div class="seq-num">10</div>
+                                ${renderArrow('-2', '#f87171')}
+                                <div class="seq-num">8</div>
+                                ${renderArrow('-2', '#f87171')}
+                                <div class="seq-num">6</div>
+                                ${renderArrow('-2', '#f87171')}
+                                <div class="seq-num">4</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 4. The Method
+            render: () => `
+                <div class="fade-in">
+                    <div class="text-center" style="margin-bottom: 1rem;">
+                         <h2>The Method</h2>
+                    </div>
+
+                    <div class="note-box slide-up" style="max-width: 900px; margin: 0 auto 2rem auto;">
+                        <span class="note-badge"><i class="fa-solid fa-pen-to-square"></i> COPY STRATEGY</span>
+                        <div style="display: flex; gap: 2rem; align-items: center; justify-content: center; flex-wrap: wrap;">
+                             <div>
+                                 <strong style="font-size: 1.2rem; display: block; margin-bottom: 0.5rem; color: var(--primary);">Step 1: Gap</strong>
+                                 <p style="color: white; margin: 0;">Find the gap.<br>Write <strong>dn</strong>.</p>
+                             </div>
+                             <i class="fa-solid fa-arrow-right" style="color: var(--text-muted);"></i>
+                             <div>
+                                 <strong style="font-size: 1.2rem; display: block; margin-bottom: 0.5rem; color: var(--secondary);">Step 2: Adjust</strong>
+                                 <p style="color: white; margin: 0;">Compare <strong>dn</strong> to Term 1.<br>Add/Subtract to fix.</p>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2 slide-up" style="align-items: stretch;">
+                        <div class="card" style="background: linear-gradient(160deg, var(--bg-card), rgba(99,102,241,0.1)); border-color: var(--primary);">
+                            <h3 style="color: white;">Example: 4, 7, 10, 13...</h3>
+                            <p><strong>Step 1:</strong> The Gap is +3.</p>
+                            <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(0,0,0,0.4); border-radius: 8px; text-align: center; font-size: 1.5rem; font-weight: 800; color: var(--primary);">
+                                3n
+                            </div>
+                        </div>
+
+                        <div class="card" style="background: linear-gradient(160deg, var(--bg-card), rgba(236,72,153,0.1)); border-color: var(--secondary);">
+                            <h3 style="color: white;">Adjusting</h3>
+                            <p><strong>Step 2:</strong> 3n starts at 3.</p>
+                            <p>We need 4. (3 + ? = 4)</p>
+                            <div style="margin-top: 1rem; padding: 0.5rem; background: rgba(0,0,0,0.4); border-radius: 8px; text-align: center; font-size: 1.5rem; font-weight: 800; color: var(--secondary);">
+                                + 1
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="answer-box visible text-center slide-up" style="margin-top: 1.5rem; border-color: var(--accent); background: rgba(6,182,212,0.1); color: var(--text-main);">
+                        Final Rule: <strong style="font-size: 2rem; margin-left: 1rem; color: var(--accent);">3n + 1</strong>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 5. Practice 1
+            render: () => `
+                <div class="fade-in text-center">
+                    <span style="background: var(--primary); color: white; padding: 0.3rem 1rem; border-radius: 6px; font-weight: 700; font-size: 0.9rem;">EXAMPLE 1</span>
+                    
+                    <div class="note-box" style="display: inline-block; margin: 1rem auto;">
+                        <span class="note-badge"><i class="fa-solid fa-pen-to-square"></i> COPY</span>
+                        <h2 style="font-size: 3rem; margin: 0; color: white;">5, 9, 13, 17...</h2>
+                    </div>
+                    
+                    <div class="grid-3 slide-up" style="margin-top: 2rem;">
+                        ${createStepCard('1. The Gap?', '+4', 'So use 4n')}
+                        ${createStepCard('2. Check Pos 1', '4 × 1 = 4', 'We want 5.')}
+                        ${createStepCard('3. The Rule', '4n + 1', 'Add 1 to adjust.')}
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 6. Practice 2 (Hidden Rule)
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <span style="background: var(--secondary); color: white; padding: 0.3rem 1rem; border-radius: 6px; font-weight: 700; font-size: 0.9rem;">EXAMPLE 2</span>
+                         <div class="note-box" style="margin-top: 1rem;">
+                            <span class="note-badge"><i class="fa-solid fa-pen-to-square"></i> COPY</span>
+                            <h2 style="font-size: 2.5rem; margin: 0; color: white;">5, 12, 19, 26...</h2>
+                        </div>
+                        
+                        <div id="p2-flow" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <button class="btn btn-reveal" id="p2-btn" onclick="nextStepP2()">1. Find the Gap</button>
+                            
+                            <div id="p2-s1" class="answer-box" style="border-color: #64748b; background: rgba(30, 41, 59, 0.5); color: #cbd5e1;">
+                                Gap is <strong class="text-white">7</strong>. Use <strong class="text-white">7n</strong>.
+                            </div>
+                            <div id="p2-s2" class="answer-box" style="border-color: var(--warning); color: var(--warning);">
+                                7 × 1 = 7. Sequence starts at 5. <br>Need to subtract 2.
+                            </div>
+                            <div id="p2-s3" class="answer-box" style="border-color: var(--nth-term-bg); background: rgba(37, 99, 235, 0.3); color: white;">
+                                Rule: <strong style="font-size: 1.8rem; margin-left:10px;">7n - 2</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card text-center slide-up">
+                        <h3>Harder Question</h3>
+                        <p style="margin-bottom: 2rem;">Find the 100th Term of: <br><strong class="text-white">7n - 2</strong></p>
+                        
+                        <div id="calc-blur" style="font-size: 4rem; font-weight: 800; filter: blur(20px); transition: 0.5s; color: var(--accent); user-select: none;">698</div>
+                        
+                        <button class="btn btn-nav btn-sm" style="margin: 2rem auto; width: auto; border-radius: 50px;" 
+                            onclick="document.getElementById('calc-blur').style.filter = 'none'; document.getElementById('calc-expl').style.display='block'">
+                            Reveal Answer
+                        </button>
+                        
+                        <p id="calc-expl" style="display:none; margin-top: 1rem; color: white; font-weight: 600;">(7 × 100) - 2</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 7. Rapid Fire 1
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>⚡ Rapid Fire (Oral)</h2>
+                    <p style="margin-bottom: 2rem;">No writing needed. Shout the rules!</p>
+                    <div class="grid-3 slide-up">
+                        <div class="card">
+                            <h3 style="color: var(--primary);">3, 5, 7, 9...</h3>
+                            <button class="btn btn-reveal" onclick="this.innerHTML='2n + 1'; this.style.background='var(--bg-card)'">Rule?</button>
+                        </div>
+                        <div class="card">
+                            <h3 style="color: var(--secondary);">10, 20, 30...</h3>
+                            <button class="btn btn-reveal" style="background: var(--secondary);" onclick="this.innerHTML='10n'; this.style.background='var(--bg-card)'">Rule?</button>
+                        </div>
+                        <div class="card">
+                            <h3 style="color: var(--accent);">6, 10, 14...</h3>
+                            <button class="btn btn-reveal" style="background: var(--accent); color: #0f172a;" onclick="this.innerHTML='4n + 2'; this.style.background='var(--bg-card)'; this.style.color='white'">Rule?</button>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 8. Rapid Fire 2
+            render: () => `
+                <div class="fade-in text-center">
+                    <div style="background: var(--warning); color: #000; display: inline-block; padding: 0.5rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: 800;">
+                         ⚠️ HINT: Watch for negatives!
+                    </div>
+                    <h2>⚡ Rapid Fire 2</h2>
+                    
+                    <div class="grid-3 slide-up">
+                        <div class="card">
+                            <h3 style="color: var(--primary);">3, 7, 11, 15...</h3>
+                            <p style="margin-bottom: 1rem; color: var(--text-muted);">Gap: +4, Start: 3</p>
+                            <button class="btn btn-reveal" onclick="this.innerHTML='4n - 1'; this.style.background='var(--bg-card)'">Rule?</button>
+                        </div>
+                        <div class="card">
+                            <h3 style="color: var(--danger);">20, 18, 16, 14...</h3>
+                            <p style="margin-bottom: 1rem; color: var(--text-muted);">Gap: -2, Start: 20</p>
+                            <button class="btn btn-reveal" style="background: var(--danger);" onclick="this.innerHTML='-2n + 22'; this.style.background='var(--bg-card)'">Rule?</button>
+                        </div>
+                        <div class="card">
+                            <h3 style="color: var(--warning);">10, 7, 4, 1...</h3>
+                            <p style="margin-bottom: 1rem; color: var(--text-muted);">Gap: -3, Start: 10</p>
+                            <button class="btn btn-reveal" style="background: var(--warning); color:black;" onclick="this.innerHTML='-3n + 13'; this.style.background='var(--bg-card)'; this.style.color='white'">Rule?</button>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 9. Visual Pattern 1
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2>Visual Pattern 1</h2>
+                        <div class="note-box">
+                             <span class="note-badge"><i class="fa-solid fa-pen-to-square"></i> NOTE</span>
+                             <p style="color:white; margin:0;">Turn the pictures into a list of numbers first!</p>
+                        </div>
+                        
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <div style="font-size: 1.5rem; display: flex; gap: 1rem; justify-content: center; font-weight: 800;">
+                                <span class="text-white">3</span>
+                                <span class="text-white">5</span>
+                                <span class="text-white">7</span>
+                                <span id="tri-hidden-terms" style="display:none; color: var(--accent);">9, 11</span>
+                            </div>
+                            <button class="btn btn-sm btn-nav" style="width: 100%; margin-top: 1rem;" 
+                                onclick="document.getElementById('tri-hidden-terms').style.display='inline'; document.getElementById('tri-visual-4').style.display='flex'; document.getElementById('tri-visual-5').style.display='flex'">
+                                Find 4th & 5th
+                            </button>
+                        </div>
+
+                        <div id="tri-rule-panel" style="display:none;" class="slide-up">
+                            <div class="card">
+                                <p><strong>Gap:</strong> +2 (2n)</p>
+                                <p><strong>Pos 1:</strong> 2 × 1 = 2</p>
+                                <p><strong>Adjust:</strong> Need 3 (+1)</p>
+                                <div class="answer-box visible" style="margin-top: 1rem; text-align: center;">
+                                    <strong style="font-size: 1.5rem;">2n + 1</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="tri-reveal-btn" class="btn btn-reveal" onclick="document.getElementById('tri-rule-panel').style.display='block'; this.style.display='none'">Find the Rule</button>
+
+                    </div>
+                    
+                    <div class="card card-light" style="display: flex; gap: 1rem; align-items: flex-end; justify-content: center; min-height: 400px; flex-wrap: wrap; align-content: center;">
+                        ${drawTriangleTower(1, 'Term 1')}
+                        ${drawTriangleTower(2, 'Term 2')}
+                        ${drawTriangleTower(3, 'Term 3')}
+                        <div id="tri-visual-4" style="display:none">${drawTriangleTower(4, 'Term 4')}</div>
+                        <div id="tri-visual-5" style="display:none">${drawTriangleTower(5, 'Term 5')}</div>
+                    </div>
+                </div>
+            `
+        },
+        {
+             // 10. Visual Pattern 2
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2>Visual Pattern 2</h2>
+                         
+                         <div class="card" style="margin-bottom: 1rem;">
+                            <div style="font-size: 1.5rem; display: flex; gap: 1rem; justify-content: center; font-weight: 800;">
+                                <span class="text-white">5</span>
+                                <span class="text-white">8</span>
+                                <span class="text-white">11</span>
+                                <span id="sq-hidden-terms" style="display:none; color: var(--secondary);">14, 17</span>
+                            </div>
+                            <button class="btn btn-sm btn-nav" style="width: 100%; margin-top: 1rem;" 
+                                onclick="document.getElementById('sq-hidden-terms').style.display='inline'; document.getElementById('sq-visual-4').style.display='flex'; document.getElementById('sq-visual-5').style.display='flex'">
+                                Find 4th & 5th
+                            </button>
+                        </div>
+
+                         <div id="sq-rule-panel" style="display:none;" class="slide-up">
+                             <div class="card">
+                                <p><strong>Gap:</strong> +3 (3n)</p>
+                                <p><strong>Pos 1:</strong> 3 × 1 = 3</p>
+                                <p><strong>Adjust:</strong> Need 5 (+2)</p>
+                                <div class="answer-box visible" style="margin-top: 1rem; text-align: center; border-color: var(--secondary); color: var(--secondary); background: rgba(236, 72, 153, 0.15);">
+                                    <strong style="font-size: 1.5rem;">3n + 2</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="sq-reveal-btn" class="btn btn-reveal" style="background: var(--secondary);" onclick="document.getElementById('sq-rule-panel').style.display='block'; this.style.display='none'">Find the Rule</button>
+                    </div>
+
+                    <div class="card card-light" style="display: flex; gap: 1rem; align-items: flex-end; justify-content: center; min-height: 400px; flex-wrap: wrap; align-content: center;">
+                        ${drawSquareStack(1, 'Term 1')}
+                        ${drawSquareStack(2, 'Term 2')}
+                        ${drawSquareStack(3, 'Term 3')}
+                        <div id="sq-visual-4" style="display:none">${drawSquareStack(4, 'Term 4')}</div>
+                        <div id="sq-visual-5" style="display:none">${drawSquareStack(5, 'Term 5')}</div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 11. Common Error
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <div class="note-box" style="border-color: var(--danger); background: rgba(239, 68, 68, 0.1);">
+                            <span class="note-badge" style="background: var(--danger);"><i class="fa-solid fa-pen-to-square"></i> WARNING NOTE</span>
+                            <h2 style="color: white; margin-bottom: 0;">Common Mistake</h2>
+                        </div>
+                        
+                        <div class="card" style="border-left: 4px solid var(--danger);">
+                            <p><strong>Sequence:</strong> 6, 11, 16...</p>
+                            <p><strong>Gap:</strong> 5</p>
+                            <div style="margin-top: 1rem; padding: 1rem; background: rgba(239, 68, 68, 0.2); border-radius: 8px;">
+                                <em class="text-white">Student says: "Rule is n + 5"</em>
+                            </div>
+                        </div>
+                        <button class="btn btn-reveal" style="background: var(--danger);" onclick="toggleVisibility('err-expl', this)">Why is this wrong?</button>
+                        <div id="err-expl" class="answer-box" style="border-color: var(--danger); color: #fca5a5; background: rgba(239, 68, 68, 0.2);">
+                            <strong class="text-white">n + 5</strong> means "Position plus 5".<br>
+                            Pos 1: 1 + 5 = 6 (Correct)<br>
+                            Pos 2: 2 + 5 = 7 <strong style="color: white; background: var(--danger); padding: 0 4px; border-radius: 4px;">WRONG!</strong> (Should be 11)<br><br>
+                            The Gap is the <strong class="text-white">Multiplier</strong> (5n).
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <i class="fa-solid fa-triangle-exclamation" style="font-size: 8rem; color: var(--danger); opacity: 0.8; margin-top: 3rem;"></i>
+                        <h3 style="margin-top: 2rem;">Gap = Multiplier</h3>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 12. Summary / Notes Checklist
+            render: () => `
+                <div class="text-center fade-in">
+                    <h2>✅ Checklist & Homework</h2>
+                    
+                    <div class="grid-2 slide-up" style="max-width: 1000px; margin: 0 auto;">
+                        <div class="note-box" style="text-align: left; margin:0;">
+                            <span class="note-badge"><i class="fa-solid fa-list-check"></i> CHECK YOUR NOTES</span>
+                            <ul style="list-style: none; margin-top: 1rem; font-size: 1.1rem; color: white;">
+                                <li style="margin-bottom: 0.8rem;"><i class="fa-solid fa-check" style="color: var(--success); margin-right: 10px;"></i> Title: 9.3 Finding Rules</li>
+                                <li style="margin-bottom: 0.8rem;"><i class="fa-solid fa-check" style="color: var(--success); margin-right: 10px;"></i> Definitions (Sequence, Term, Nth Term)</li>
+                                <li style="margin-bottom: 0.8rem;"><i class="fa-solid fa-check" style="color: var(--success); margin-right: 10px;"></i> Strategy: Gap & Adjust steps</li>
+                                <li style="margin-bottom: 0.8rem;"><i class="fa-solid fa-check" style="color: var(--success); margin-right: 10px;"></i> Example 1 (Calculated)</li>
+                                <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 10px;"></i> Warning Note (Gap is Multiplier)</li>
+                            </ul>
+                        </div>
+
+                        <div class="card card-light" style="text-align: left;">
+                            <h3 style="color: var(--primary);">Unit 9.3 Workbook</h3>
+                            <div style="display: flex; align-items: center; gap: 1.5rem; margin-top: 1.5rem;">
+                                <div style="width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                    <i class="fa-solid fa-book-open"></i>
+                                </div>
+                                <div>
+                                    <p style="font-size: 1.2rem; font-weight: 700; color: #0f172a;">Pages 116 - 119</p>
+                                    <p style="font-size: 0.9rem;">Complete all questions.</p>
+                                </div>
+                            </div>
+                            <div style="margin-top: 2rem; background: #fffbeb; color: #b45309; padding: 1rem; border-radius: 8px; font-weight: 700; text-align: center;">
+                                DUE: Monday 12 January 2026
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- HELPER FUNCTIONS ---
+    
+    function createFlipCard(front, backTitle, backDesc, extraDesc, icon, color) {
+        return `
+            <div class="flip-card" onclick="this.classList.toggle('flipped')" tabindex="0" onkeypress="if(event.key === 'Enter') this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <i class="fa-solid ${icon}" style="font-size: 3rem; margin-bottom: 1rem; color: ${color};"></i>
+                        <h3 style="color: white;">${front}</h3>
+                        <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 1rem;">(Click to Flip)</p>
+                    </div>
+                    <div class="flip-back" style="background: ${color};">
+                        <h3>${backTitle}</h3>
+                        <p style="color: white;">${backDesc}</p>
+                         ${extraDesc ? `<p style="font-size: 0.9rem; margin-top:0.5rem; opacity:0.9; color:white;">${extraDesc}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function createStepCard(step, hidden, result) {
+        return `
+            <div class="card">
+                <p style="text-transform: uppercase; font-size: 0.9rem; color: var(--text-muted); font-weight: 700;">${step}</p>
+                <div class="ans-hidden" style="display:none; margin-top: 1rem;">
+                    <h3 style="color: var(--primary);">${hidden}</h3>
+                    <p class="text-white">${result}</p>
+                </div>
+                <button class="btn btn-nav btn-sm" style="margin-top: 1rem; width: 100%; border-radius: 6px;" 
+                    onclick="this.previousElementSibling.style.display='block'; this.style.display='none'">
+                    Show
+                </button>
+            </div>
+        `;
+    }
+
+    function renderArrow(text, color) {
+        return `
+            <div class="seq-arrow-box">
+                <div class="seq-gap-text" style="color:${color}">${text}</div>
+                <svg class="seq-arrow-svg" viewBox="0 0 40 20" preserveAspectRatio="none">
+                    <path d="M 0,18 Q 20,-5 40,18" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" />
+                    <polygon points="36,12 40,18 34,18" fill="${color}" />
+                </svg>
+            </div>
+        `;
+    }
+
+    // UPDATED LOGIC: 2n + 1 (1 top, n rows of 2)
+    function drawTriangleTower(n, label) {
+        const trianglePath = `<polygon points="15,5 5,25 25,25" fill="#64748B" stroke="#475569" stroke-width="2"/>`;
+        let svgs = '';
+        
+        // 1. Always 1 on top
+        svgs += `<div style="display:flex; justify-content:center; width:100%;"><svg width="24" height="24" viewBox="0 0 30 30" style="margin: 1px;">${trianglePath}</svg></div>`;
+        
+        // 2. n rows of 2 beneath
+        const rows = n; 
+        
+        for(let r=0; r<rows; r++){
+             svgs += `<div style="display:flex; justify-content:center; width:100%;">
+                <svg width="24" height="24" viewBox="0 0 30 30" style="margin: 1px;">${trianglePath}</svg>
+                <svg width="24" height="24" viewBox="0 0 30 30" style="margin: 1px;">${trianglePath}</svg>
+             </div>`;
+        }
+        
+        return `
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                <div style="display: flex; flex-direction:column;">${svgs}</div>
+                <span style="font-size: 0.8rem; font-weight: 700; color: #94a3b8; border-top: 1px solid #e2e8f0; width: 100%; text-align: center; margin-top: 5px; padding-top: 4px;">${label}</span>
+            </div>
+        `;
+    }
+
+    // UPDATED LOGIC: 3n + 2 (Base of 2, n columns of 3)
+    function drawSquareStack(n, label) {
+        const squarePath = `<rect x="2" y="2" width="26" height="26" rx="4" fill="#ec4899" stroke="#db2777" stroke-width="2"/>`;
+        let content = '';
+
+        // Base 2 (Fixed)
+        let fixedBlock = `
+            <div style="display:flex; gap:2px; justify-content:center; border-top: 2px solid #ddd; padding-top:2px;">
+                <svg width="20" height="20" viewBox="0 0 30 30">${squarePath}</svg>
+                <svg width="20" height="20" viewBox="0 0 30 30">${squarePath}</svg>
+            </div>
+        `;
+
+        // Columns of 3 growing (Renders n times)
+        let growingBlock = '';
+        for(let i=0; i<n; i++) {
+             growingBlock += `
+                <div style="display:flex; flex-direction:column; margin: 0 2px;">
+                    <svg width="20" height="20" viewBox="0 0 30 30">${squarePath}</svg>
+                    <svg width="20" height="20" viewBox="0 0 30 30">${squarePath}</svg>
+                    <svg width="20" height="20" viewBox="0 0 30 30">${squarePath}</svg>
+                </div>
+             `;
+        }
+        
+        return `
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="display: flex; align-items: flex-end; margin-bottom: 2px;">${growingBlock}</div>
+                ${fixedBlock}
+                <span style="font-size: 0.8rem; font-weight: 700; color: #94a3b8; border-top: 1px solid #e2e8f0; width: 100%; text-align: center; margin-top: 5px; padding-top: 4px;">${label}</span>
+            </div>
+        `;
+    }
+
+    // --- INTERACTION ---
+    
+    function toggleVisibility(id, btn) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.add('visible');
+            btn.style.display = 'none';
+        }
+    }
+
+    function nextStepP2() {
+        state.stepCounter++;
+        const btn = document.getElementById('p2-btn');
+        
+        if (state.stepCounter === 1) {
+            document.getElementById('p2-s1').classList.add('visible');
+            btn.innerHTML = "2. Check Position 1";
+        } else if (state.stepCounter === 2) {
+            document.getElementById('p2-s2').classList.add('visible');
+            btn.innerHTML = "3. The Rule";
+        } else if (state.stepCounter === 3) {
+            document.getElementById('p2-s3').classList.add('visible');
+            btn.style.display = 'none';
+        }
+    }
+
+    // --- CORE ---
+
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        state.stepCounter = 0;
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    render();
+
+</script>
+</body>
+</html>
