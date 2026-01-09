@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9.2 Non-Linear Sequences - Year 9 Math</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Math/Space Theme */
+            --bg-deep: #0f0518;       
+            --bg-card: #1e1b2e;       
+            --bg-card-hover: #2d2645; 
+            
+            --primary: #8b5cf6;   /* Violet */
+            --secondary: #f43f5e; /* Rose */
+            --accent: #06b6d4;    /* Cyan */
+            --success: #10b981;   /* Emerald */
+            --warning: #f59e0b;   /* Amber */
+
+            /* Typography */
+            --text-main: #ffffff;      
+            --text-muted: #94a3b8;     
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(139, 92, 246, 0.15), transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(244, 63, 94, 0.1), transparent 40%),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 5, 24, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 5, 24, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:hover { background: #7c3aed; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(139, 92, 246, 0.4); }
+        
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            transition: width 0.4s ease;
+        }
+
+        /* Typography & Layout */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; }
+        strong { color: white; font-weight: 800; }
+        
+        .text-accent { color: var(--accent); }
+        .text-secondary { color: var(--secondary); }
+        .text-primary { color: var(--primary); }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Flip Cards */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 280px; 
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .flip-front { background: var(--bg-card); }
+        .flip-front:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+        .flip-back { background: linear-gradient(135deg, var(--primary), var(--secondary)); transform: rotateY(180deg); color: white; border: none; box-shadow: 0 0 30px rgba(139, 92, 246, 0.5); }
+        .flip-back h3 { color: white !important; }
+
+        /* Answer Panels */
+        .answer-box {
+            background: rgba(6, 182, 212, 0.1);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .answer-box.visible { display: block; animation: slideUp 0.3s ease; }
+        
+        /* Term Table Styling */
+        .term-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            color: white;
+            font-size: 1.2rem;
+        }
+        .term-table th { color: var(--text-muted); padding: 10px; border-bottom: 2px solid var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.9rem; }
+        .term-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; font-weight: 700; }
+        .term-table tr:last-child td { border-bottom: none; }
+        .term-table .n-row { color: var(--accent); }
+        .term-table .val-row { color: var(--secondary); font-size: 1.5rem; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 9 Math</div>
+            <span style="font-weight: 700; color: var(--text-muted); font-size: 0.9rem;">Topic 9.2</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            Non-Linear Sequences
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    const state = {
+        currentSlide: 0,
+        slides: []
+    };
+
+    // --- SVG GENERATORS FOR MATH VISUALS ---
+    function getSquareVisual() {
+        // Visualizing n=3 (3x3 squares)
+        let rects = '';
+        for(let i=0; i<3; i++) {
+            for(let j=0; j<3; j++) {
+                rects += `<rect x="${i*35 + 50}" y="${j*35 + 50}" width="30" height="30" rx="4" fill="#f43f5e" opacity="${(i+j+2)/6}" />`;
+            }
+        }
+        return `
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            ${rects}
+            <text x="100" y="170" fill="white" text-anchor="middle" font-weight="bold">n = 3, Term = 9</text>
+        </svg>`;
+    }
+
+    function getDifferenceTreeSVG() {
+        return `
+        <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+            <text x="50" y="40" fill="white" font-size="20" text-anchor="middle" font-weight="bold">1</text>
+            <text x="150" y="40" fill="white" font-size="20" text-anchor="middle" font-weight="bold">4</text>
+            <text x="250" y="40" fill="white" font-size="20" text-anchor="middle" font-weight="bold">9</text>
+            <text x="350" y="40" fill="white" font-size="20" text-anchor="middle" font-weight="bold">16</text>
+            
+            <line x1="50" y1="50" x2="100" y2="80" stroke="#06b6d4" stroke-width="2" />
+            <line x1="150" y1="50" x2="100" y2="80" stroke="#06b6d4" stroke-width="2" />
+            <circle cx="100" cy="80" r="15" fill="#1e1b2e" stroke="#06b6d4" stroke-width="2"/>
+            <text x="100" y="86" fill="#06b6d4" font-size="16" text-anchor="middle">+3</text>
+
+            <line x1="150" y1="50" x2="200" y2="80" stroke="#06b6d4" stroke-width="2" />
+            <line x1="250" y1="50" x2="200" y2="80" stroke="#06b6d4" stroke-width="2" />
+            <circle cx="200" cy="80" r="15" fill="#1e1b2e" stroke="#06b6d4" stroke-width="2"/>
+            <text x="200" y="86" fill="#06b6d4" font-size="16" text-anchor="middle">+5</text>
+
+            <line x1="250" y1="50" x2="300" y2="80" stroke="#06b6d4" stroke-width="2" />
+            <line x1="350" y1="50" x2="300" y2="80" stroke="#06b6d4" stroke-width="2" />
+            <circle cx="300" cy="80" r="15" fill="#1e1b2e" stroke="#06b6d4" stroke-width="2"/>
+            <text x="300" y="86" fill="#06b6d4" font-size="16" text-anchor="middle">+7</text>
+
+            <line x1="100" y1="95" x2="150" y2="130" stroke="#f43f5e" stroke-width="2" />
+            <line x1="200" y1="95" x2="150" y2="130" stroke="#f43f5e" stroke-width="2" />
+            <circle cx="150" cy="130" r="15" fill="#1e1b2e" stroke="#f43f5e" stroke-width="2"/>
+            <text x="150" y="136" fill="#f43f5e" font-size="16" text-anchor="middle">+2</text>
+
+            <line x1="200" y1="95" x2="250" y2="130" stroke="#f43f5e" stroke-width="2" />
+            <line x1="300" y1="95" x2="250" y2="130" stroke="#f43f5e" stroke-width="2" />
+            <circle cx="250" cy="130" r="15" fill="#1e1b2e" stroke="#f43f5e" stroke-width="2"/>
+            <text x="250" y="136" fill="#f43f5e" font-size="16" text-anchor="middle">+2</text>
+        </svg>`;
+    }
+
+    // --- SLIDE DATA ---
+    state.slides = [
+        {
+            // 1. Title
+            render: () => `
+                <div class="text-center fade-in">
+                    <div style="font-size: 5rem; margin-bottom: 1rem; color: var(--primary);">📈</div>
+                    <h1>Using the nth Term</h1>
+                    <p style="font-size: 1.5rem; color: var(--secondary); font-weight: 600;">Part 2: Non-Linear Sequences</p>
+                    
+                    <div class="card slide-up" style="margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; text-align: left;">
+                        <h3 style="color: var(--accent); border-bottom: 1px solid rgba(6, 182, 212, 0.3); padding-bottom: 1rem;">
+                            🎯 Learning Goals
+                        </h3>
+                        <ul style="list-style: none; margin-top: 1.5rem; display: grid; gap: 1rem;">
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Substitute values into quadratic rules (e.g., <span style="font-family:serif;">n</span>&sup2; + 1).</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Identify non-linear sequences using the <strong>Second Difference</strong>.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Solve inverse problems (Is 292 a term?).</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 2. Linear vs Non-Linear Warm Up
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Warm Up: Linear vs Non-Linear</h2>
+                    <p style="margin-bottom: 2rem;">Which of these grow by the <strong>same amount</strong> every time?</p>
+                    
+                    <div class="grid-2 slide-up">
+                        ${createFlipCard(
+                            '2, 4, 6, 8...',
+                            'Linear Sequence',
+                            'This adds <strong>+2</strong> every time.<br>Rule: <span style="font-family:serif; font-style: italic;">2n</span>',
+                            'fa-arrow-right-long',
+                            'var(--accent)'
+                        )}
+                        ${createFlipCard(
+                            '1, 4, 9, 16...',
+                            'Non-Linear (Quadratic)',
+                            'The gap changes: +3, +5, +7...<br>Rule: <span style="font-family:serif; font-style: italic;">n</span>&sup2;',
+                            'fa-arrow-trend-up',
+                            'var(--secondary)'
+                        )}
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 3. What is a Quadratic Sequence?
+            render: () => `
+                <div class="grid-2 fade-in items-center">
+                    <div>
+                        <h2>The Quadratic Sequence</h2>
+                        <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">A <strong>Quadratic Sequence</strong> involves an <span style="color: var(--secondary); font-weight:bold; font-family:serif; font-style:italic;">n</span><sup style="color: var(--secondary); font-weight:bold;">2</sup> term.</p>
+                        
+                        <div class="card" style="border-left: 4px solid var(--secondary);">
+                            <h3 class="text-secondary">Key Features</h3>
+                            <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                                <li>The terms do <strong>not</strong> go up by a constant amount.</li>
+                                <li>The graph is a <strong>curve</strong>, not a straight line.</li>
+                                <li>It is based on Square Numbers: <br><strong style="font-size:1.5rem;">1, 4, 9, 16, 25...</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="text-center slide-up">
+                        <div style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                            ${getSquareVisual()}
+                        </div>
+                        <p style="font-size: 0.9rem; opacity: 0.7;">Visualizing n=3 as a 3x3 square</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 4. Generating Terms (n² - 1)
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--primary);">Exercise 9.2 - Q2</span>
+                    <h2 style="margin: 1rem 0;">Generating Terms: <span style="font-family:serif; font-style:italic;">n</span>&sup2; - 1</h2>
+                    <p>Substitute <strong>1, 2, 3</strong> and <strong>10</strong> into the rule.</p>
+
+                    <div class="card slide-up" style="max-width: 800px; margin: 2rem auto;">
+                        <table class="term-table">
+                            <tr>
+                                <th>Position (n)</th>
+                                <th>1</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>10</th>
+                            </tr>
+                            <tr class="n-row">
+                                <td>Calculation</td>
+                                <td>1&sup2; - 1</td>
+                                <td>2&sup2; - 1</td>
+                                <td>3&sup2; - 1</td>
+                                <td>10&sup2; - 1</td>
+                            </tr>
+                            <tr class="val-row">
+                                <td>Term</td>
+                                <td><span id="ans-1" class="blur">0</span></td>
+                                <td><span id="ans-2" class="blur">3</span></td>
+                                <td><span id="ans-3" class="blur">8</span></td>
+                                <td><span id="ans-10" class="blur">99</span></td>
+                            </tr>
+                        </table>
+                        
+                        <button class="btn btn-reveal" onclick="document.querySelectorAll('.blur').forEach(el => el.classList.remove('blur')); this.style.display='none'">
+                            Reveal Answers
+                        </button>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 5. Harder Substitution (n² + 2n - 1)
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--warning); color: black;">Harder Challenge</span>
+                    <h2 style="margin: 1rem 0;">Complex Rules: <span style="font-family:serif; font-style:italic;">n</span>&sup2; + 2<span style="font-family:serif; font-style:italic;">n</span> - 1</h2>
+                    <p>Be careful! You must substitute <strong>n</strong> into two places.</p>
+
+                    <div class="grid-2 slide-up" style="margin-top: 2rem;">
+                        <div class="card" style="border-top: 4px solid var(--warning);">
+                            <h3>Find the 5th Term (n=5) [Cite: Question 15]</h3>
+                            <div style="font-size: 1.5rem; margin: 1.5rem 0; line-height: 2;">
+                                = <strong>(5)</strong>&sup2; + 2<strong>(5)</strong> - 1<br>
+                                = <span style="color: var(--secondary);">25</span> + <span style="color: var(--accent);">10</span> - 1<br>
+                                = <span class="blur-reveal" id="calc-hard">34</span>
+                            </div>
+                            <button class="btn btn-nav btn-sm" onclick="document.getElementById('calc-hard').classList.add('visible')">Reveal</button>
+                        </div>
+                        
+                        <div class="card" style="border-top: 4px solid var(--success);">
+                            <h3>Find the 3rd Term (n=3)</h3>
+                             <div style="font-size: 1.5rem; margin: 1.5rem 0; line-height: 2;">
+                                = <strong>(3)</strong>&sup2; + 2<strong>(3)</strong> - 1<br>
+                                = <span style="color: var(--secondary);">9</span> + <span style="color: var(--accent);">6</span> - 1<br>
+                                = <span class="blur-reveal" id="calc-hard-2">14</span>
+                            </div>
+                            <button class="btn btn-nav btn-sm" onclick="document.getElementById('calc-hard-2').classList.add('visible')">Reveal</button>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 6. Identifying Quadratics (2nd Difference)
+            render: () => `
+                <div class="grid-2 fade-in items-center">
+                    <div>
+                        <h2>How to Spot a Quadratic</h2>
+                        <p>If you have a sequence of numbers, how do you know if it's <span style="font-family:serif; font-style:italic;">n</span>&sup2;?</p>
+                        
+                        <div class="card" style="margin-top: 2rem;">
+                            <h3 class="text-accent"><i class="fa-solid fa-lightbulb"></i> The Tip [Cite: Page 120]</h3>
+                            <p><strong>Linear Sequence:</strong> The <span class="text-accent">First Difference</span> is the same.</p>
+                            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:1rem 0;">
+                            <p><strong>Quadratic Sequence:</strong> The <span class="text-secondary">Second Difference</span> is the same.</p>
+                        </div>
+                    </div>
+                    <div class="text-center slide-up">
+                        <div style="background: var(--bg-card); padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                            ${getDifferenceTreeSVG()}
+                        </div>
+                        <p style="margin-top: 1rem;">Example: 1, 4, 9, 16</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 7. Inverse Problems
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--secondary);">Inverse Operations</span>
+                    <h2 style="margin: 1rem 0;">Is 292 in the sequence?</h2>
+                    <p>Rule: <span style="font-family:serif; font-style:italic;">n</span>&sup2; + 34 [Cite: Question 13a]</p>
+                    
+                    <div class="card slide-up" style="max-width: 700px; margin: 2rem auto; text-align: left;">
+                        <p style="margin-bottom: 1rem;">Set up the equation:</p>
+                        <div style="font-size: 1.5rem; font-family: monospace; color: var(--accent);">
+                            n&sup2; + 34 = 292
+                        </div>
+                        
+                        <div id="inv-steps" style="display:none; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                            <p><strong>Step 1:</strong> Subtract 34</p>
+                            <div style="font-size: 1.5rem; font-family: monospace; color: white; margin-bottom: 1rem;">
+                                n&sup2; = 258
+                            </div>
+                            <p><strong>Step 2:</strong> Square Root</p>
+                            <div style="font-size: 1.5rem; font-family: monospace; color: white;">
+                                n = &radic;258 &approx; 16.06
+                            </div>
+                            <div class="answer-box visible" style="border-color: var(--secondary); background: rgba(244, 63, 94, 0.1); color: var(--secondary);">
+                                <i class="fa-solid fa-xmark"></i> <strong>No.</strong> <br>
+                                Since <strong>n</strong> is not a whole number, 292 is NOT in the sequence.
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-reveal" style="margin-top: 2rem;" onclick="document.getElementById('inv-steps').style.display='block'; this.style.display='none'">
+                            Solve It
+                        </button>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 8. Fractional Sequences
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--accent); color: black;">Extensions</span>
+                    <h2 style="margin: 1rem 0;">Fractional Sequences</h2>
+                    <p>Sometimes the rule involves division. [Cite: Question 2c]</p>
+
+                    <div class="grid-2 slide-up" style="max-width: 900px; margin: 2rem auto;">
+                        <div class="card">
+                            <h3>Rule: &frac12; <span style="font-family:serif; font-style:italic;">n</span></h3>
+                            <p style="color: var(--text-muted);">Multiply n by 0.5 (or divide by 2)</p>
+                            <div style="margin-top: 1rem; font-size: 1.2rem;">
+                                Term 1: <strong>0.5</strong><br>
+                                Term 2: <strong>1</strong><br>
+                                Term 3: <strong>1.5</strong>
+                            </div>
+                        </div>
+                        <div class="card" style="border: 2px solid var(--accent);">
+                            <h3>Rule: <span style="font-family:serif; font-style:italic;">n</span> / 2</h3>
+                            <p style="color: var(--text-muted);">Divide n by 2</p>
+                            <div style="margin-top: 1rem; font-size: 1.2rem;">
+                                Term 1: <strong>0.5</strong><br>
+                                Term 2: <strong>1</strong><br>
+                                Term 3: <strong>1.5</strong>
+                            </div>
+                            <div class="answer-box visible" style="margin-top: 1rem; text-align: center;">
+                                Notice: They are the same!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 9. Homework
+            render: () => `
+                <div class="text-center fade-in">
+                    <h2>📚 Homework Assignment</h2>
+                    <div class="card slide-up" style="max-width: 600px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--primary);">
+                        <h3 style="color: var(--primary);">Exercise 9.2</h3>
+                        
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(139, 92, 246, 0.2); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Practice</p>
+                                <p>Page 121: <strong>Questions 5, 8, 9</strong></p>
+                                <p style="font-size: 0.9rem; color: var(--text-muted);">Focus on spotting the quadratic sequences.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(244, 63, 94, 0.2); color: var(--secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Challenge</p>
+                                <p>Page 121: <strong>Question 13 & 15</strong></p>
+                                <p style="font-size: 0.9rem; color: var(--text-muted);">Justify your answers with working.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- HELPER FUNCTIONS ---
+    function createFlipCard(front, backTitle, backDesc, icon, color) {
+        return `
+            <div class="flip-card" onclick="this.classList.toggle('flipped')" tabindex="0" onkeypress="if(event.key === 'Enter') this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <i class="fa-solid ${icon}" style="font-size: 3rem; margin-bottom: 1rem; color: ${color};"></i>
+                        <h3 style="color: white;">${front}</h3>
+                        <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 1rem;">(Click to Flip)</p>
+                    </div>
+                    <div class="flip-back" style="background: linear-gradient(135deg, ${color}, var(--primary));">
+                        <h3>${backTitle}</h3>
+                        <p style="color: white; font-size: 1.1rem;">${backDesc}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- CORE LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENTS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    render();
+
+</script>
+</body>
+</html>
