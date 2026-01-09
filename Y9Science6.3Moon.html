@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6.3 Formation of the Moon - Year 9 Science</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Deep Space Science Theme */
+            --bg-deep: #020617;       
+            --bg-card: #1e293b;       
+            --bg-card-hover: #334155; 
+            
+            --primary: #6366f1;   /* Indigo - Main Elements */
+            --secondary: #ec4899; /* Pink - Highlights/Collision */
+            --accent: #22d3ee;    /* Cyan - Key Terms/Earth */
+            --amber: #fbbf24;     /* Amber - Impact/Molten */
+            --success: #34d399;   
+            --danger: #f87171;    
+
+            /* Typography */
+            --text-main: #ffffff;      
+            --text-muted: #e2e8f0;     
+            --text-on-light: #0f172a; 
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            /* Deep Space Background Effect */
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.15), transparent 40%),
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+            background-size: 100% 100%, 100% 100%, 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 0 0, 0 0, 100px 30px, 200px 100px;
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(2, 6, 23, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--bg-deep);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(2, 6, 23, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:hover { background: #4f46e5; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(99, 102, 241, 0.4); }
+        
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 8px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            transition: width 0.4s ease;
+        }
+
+        /* Typography & Layout */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; }
+        strong { color: white; font-weight: 800; }
+
+        /* Helpers for color emphasis */
+        .text-accent { color: var(--accent) !important; }
+        .text-secondary { color: var(--secondary) !important; }
+        .text-amber { color: var(--amber) !important; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+        }
+        /* Oscilloscope/Screen Aesthetic for Diagrams */
+        .card-screen {
+            background: rgba(2, 6, 23, 0.8);
+            border: 2px solid var(--accent);
+            box-shadow: inset 0 0 20px rgba(34, 211, 238, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-screen::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: rgba(34, 211, 238, 0.5);
+            animation: scanline 3s linear infinite;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        @keyframes scanline { 0% { top: 0; } 100% { top: 100%; } }
+
+        /* Flip Cards */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 350px; /* Increased height for content */
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .flip-front { background: var(--bg-card); }
+        .flip-front:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+        .flip-back { background: linear-gradient(135deg, var(--primary), var(--secondary)); transform: rotateY(180deg); color: white; border: none; box-shadow: 0 0 30px rgba(99, 102, 241, 0.5); }
+        .flip-back h3 { color: white; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; margin-bottom: 15px; }
+
+        /* Answer Panels */
+        .answer-box {
+            background: rgba(34, 211, 238, 0.1);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .answer-box.visible { display: block; animation: slideUp 0.3s ease; }
+        .answer-box strong { color: white; }
+        
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+        /* SVGs Specific Styles */
+        .glow-accent { filter: drop-shadow(0 0 8px var(--accent)); }
+        .glow-secondary { filter: drop-shadow(0 0 8px var(--secondary)); }
+        .glow-amber { filter: drop-shadow(0 0 12px var(--amber)); }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            .header, .footer { padding: 0 1rem; }
+            h1 { font-size: 2.5rem; }
+            .flip-card { height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 9 Science</div>
+            <span style="font-weight: 700; color: var(--text-muted); font-size: 0.9rem;">Topic 6.3 Earth & Space</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            Formation of the Moon
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    const state = {
+        currentSlide: 0,
+        slides: []
+    };
+
+    // --- SVG GENERATORS FOR DIAGRAMS ---
+    function getImpactSVG() {
+        return `
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="glow-amber">
+            <circle cx="80" cy="120" r="50" fill="#22d3ee" opacity="0.8" />
+            <circle cx="140" cy="70" r="35" fill="#ec4899" opacity="0.9" />
+            <path d="M110 95 L130 110 L100 130 L115 105 Z" fill="#fbbf24" />
+            <circle cx="110" cy="95" r="15" fill="#fbbf24" opacity="0.6">
+                <animate attributeName="r" values="15;25;15" dur="1s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="100" cy="80" r="3" fill="#fbbf24"><animate attributeName="cy" from="80" to="20" dur="1.5s" repeatCount="indefinite"/></circle>
+            <circle cx="150" cy="110" r="4" fill="#ec4899"><animate attributeName="cx" from="150" to="190" dur="1.2s" repeatCount="indefinite"/></circle>
+        </svg>`;
+    }
+
+    function getRingSVG() {
+        return `
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="55" fill="#22d3ee" class="glow-accent" opacity="0.9" />
+            <path d="M 30,100 a 70,30 0 1,0 140,0 a 70,30 0 1,0 -140,0" fill="none" stroke="#fbbf24" stroke-width="8" opacity="0.4" class="glow-amber" />
+            <path d="M 40,105 a 60,25 0 1,0 120,0 a 60,25 0 1,0 -120,0" fill="none" stroke="#ec4899" stroke-width="4" opacity="0.6" stroke-dasharray="10,5" class="glow-secondary">
+                 <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="20s" repeatCount="indefinite"/>
+            </path>
+            <circle cx="160" cy="90" r="6" fill="#e2e8f0" opacity="0.8" />
+            <circle cx="150" cy="115" r="8" fill="#e2e8f0" opacity="0.8" />
+        </svg>`;
+    }
+
+    function getFormationSVG() {
+        return `
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+             <circle cx="80" cy="100" r="55" fill="#22d3ee" class="glow-accent" />
+            <path d="M 140,100 L 160,100" stroke="#6366f1" stroke-width="2" stroke-dasharray="4,2">
+                <animate attributeName="stroke-dashoffset" from="12" to="0" dur="1s" repeatCount="indefinite"/>
+            </path>
+             <circle cx="170" cy="100" r="20" fill="#e2e8f0" class="glow-accent">
+                <circle cx="165" cy="95" r="3" fill="#cbd5e1" opacity="0.5" />
+                <circle cx="175" cy="105" r="4" fill="#cbd5e1" opacity="0.5" />
+            </circle>
+        </svg>`;
+    }
+
+    // --- SLIDE DATA ---
+    state.slides = [
+        {
+            // 1. Title & Goals
+            render: () => `
+                <div class="text-center fade-in">
+                    <i class="fa-solid fa-meteor" style="font-size: 5rem; color: var(--secondary); margin-bottom: 1.5rem; filter: drop-shadow(0 0 15px var(--secondary));"></i>
+                    <h1>6.3 Formation of the Moon</h1>
+                    <p style="font-size: 1.5rem; color: var(--accent); font-weight: 600; letter-spacing: 1px;">How did our satellite get here?</p>
+                    
+                    <div class="card card-screen slide-up" style="margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; text-align: left;">
+                        <h3 style="color: var(--accent); border-bottom: 1px solid rgba(34, 211, 238, 0.3); padding-bottom: 1rem;">
+                            <i class="fa-solid fa-crosshairs"></i> Learning Goals
+                        </h3>
+                        <ul style="list-style: none; margin-top: 1.5rem; display: grid; gap: 1rem;">
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Describe evidence for the <strong class="text-secondary">collision theory</strong>.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Understand the role of <strong class="text-accent">gravity</strong> in the Moon's formation.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 2. Warm Up (Flip Card)
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--amber); color: var(--bg-deep);">Warm Up</span>
+                    <h2 style="margin-top: 1rem;">Recall: Solar System Formation</h2>
+                    <div style="max-width: 600px; margin: 3rem auto;" class="slide-up">
+                        ${createFlipCard(
+                            'How was the Solar System formed?', 
+                            'Gravity\'s Role', 
+                            'It formed from a giant cloud of <strong class="text-accent">dust and gas</strong> (nebula).', 
+                            '<strong class="text-accent">Gravity</strong> pulled the material together to form the Sun and planets.',
+                            'fa-cloud-sun', 
+                            'var(--primary)'
+                        )}
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 3. Where did the Moon come from?
+            render: () => `
+                <div class="grid-2 fade-in items-center">
+                    <div>
+                        <h2>Where did the Moon come from?</h2>
+                        <p>For a long time, scientists weren't sure. In the early 20th century, a popular idea was the <strong class="text-secondary">"Splitting Theory"</strong>.</p>
+                        <p style="margin-top: 1rem;">This theory suggested early Earth was spinning so fast that a chunk spun off and became the Moon.</p>
+                        <div class="card" style="margin-top: 2rem; border-left: 4px solid var(--accent);">
+                            <h3 class="text-accent"><i class="fa-solid fa-circle-info"></i> Key Fact</h3>
+                            <p>We know the Moon is slowly moving <strong>away</strong> from Earth at a rate of about <strong class="text-accent">4cm per year</strong>.</p>
+                        </div>
+                    </div>
+                    <div class="text-center slide-up">
+                         <i class="fa-solid fa-earth-americas" style="font-size: 8rem; color: var(--accent); opacity: 0.5;"></i>
+                         <i class="fa-solid fa-arrow-right-long" style="font-size: 4rem; color: var(--text-muted); margin: 0 2rem;"></i>
+                         <i class="fa-solid fa-moon" style="font-size: 4rem; color: var(--text-muted);"></i>
+                         <p style="margin-top: 1rem; font-style: italic; color: var(--text-muted);">The old "splitting" idea is no longer accepted.</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 4. The Giant Impact Hypothesis
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>The Giant Impact Hypothesis</h2>
+                    <p style="max-width: 800px; margin: 0 auto 3rem auto; font-size: 1.3rem;">
+                        This is currently the most accepted scientific theory, first proposed in 1974.
+                    </p>
+                    
+                    <div class="grid-2 slide-up">
+                        <div class="card" style="border-top: 4px solid var(--secondary);">
+                            <h3 class="text-secondary" style="font-size: 2rem;">The Event</h3>
+                            <p>About 4.5 billion years ago, young Earth collide with another protoplanet.</p>
+                            <i class="fa-solid fa-burst" style="font-size: 4rem; color: var(--secondary); margin-top: 2rem;"></i>
+                        </div>
+                        <div class="card" style="border-top: 4px solid var(--amber);">
+                            <h3 class="text-amber" style="font-size: 2rem;">"Theia"</h3>
+                            <p>The name given to the impacting planet. It was roughly the size of <strong>Mars</strong>.</p>
+                            <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2rem;">
+                                <div style="width: 40px; height: 40px; background: var(--accent); border-radius: 50%;"></div>
+                                <span>vs</span>
+                                <div style="width: 60px; height: 60px; background: var(--amber); border-radius: 50%;"></div>
+                            </div>
+                            <p style="font-size: 0.9rem; margin-top: 0.5rem;">(Size comparison)</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 5. The Collision (Visual Slide)
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2 style="margin-bottom: 2rem;">The 3 Stages of Formation</h2>
+                    <div class="grid-3 slide-up" style="align-items: stretch;">
+                        <div class="card card-screen" style="padding: 1.5rem;">
+                            <div style="height: 200px; display: flex; justify-content: center; align-items: center;">
+                                ${getImpactSVG()}
+                            </div>
+                            <h3 class="text-amber" style="margin-top: 1rem;">1. The Impact</h3>
+                            <p>Theia crashes into young Earth. Massive amounts of energy melt rock and blast debris into space.</p>
+                        </div>
+                        <div class="card card-screen" style="padding: 1.5rem;">
+                             <div style="height: 200px; display: flex; justify-content: center; align-items: center;">
+                                ${getRingSVG()}
+                            </div>
+                            <h3 class="text-secondary" style="margin-top: 1rem;">2. The Ring</h3>
+                            <p>The debris forms a hot ring of molten rock and dust orbiting Earth.</p>
+                        </div>
+                        <div class="card card-screen" style="padding: 1.5rem;">
+                             <div style="height: 200px; display: flex; justify-content: center; align-items: center;">
+                                ${getFormationSVG()}
+                            </div>
+                            <h3 class="text-accent" style="margin-top: 1rem;">3. Formation</h3>
+                            <p><strong class="text-accent">Gravity</strong> pulls the debris ring together (accretion) to form the Moon.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 6. Evidence FOR the Theory
+            render: () => `
+                <div class="fade-in">
+                    <h2 class="text-center" style="margin-bottom: 2rem;"><i class="fa-solid fa-thumbs-up text-success"></i> Evidence FOR the Theory</h2>
+                    <div class="grid-3 slide-up">
+                        <div class="card">
+                            <i class="fa-solid fa-volcano" style="font-size: 3rem; color: var(--amber); margin-bottom: 1rem;"></i>
+                            <h3>Moon Rocks</h3>
+                            <p>Samples brought back by Apollo missions show Moon rocks were once completely <strong class="text-amber">molten</strong> (melted by intense heat).</p>
+                        </div>
+                        <div class="card">
+                            <i class="fa-solid fa-scale-unbalanced" style="font-size: 3rem; color: var(--secondary); margin-bottom: 1rem;"></i>
+                            <h3>Density</h3>
+                            <p>The Moon is much <strong class="text-secondary">less dense</strong> than Earth. It formed mostly from the lighter outer layers blasted off during impact.</p>
+                        </div>
+                        <div class="card">
+                            <i class="fa-solid fa-magnet" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                            <h3>Iron Core</h3>
+                            <p>Earth has a large iron core. The Moon has a very <strong class="text-accent">small iron core</strong>, suggesting Theia's core sank into Earth during the collision.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 7. Evidence AGAINST/Challenges
+            render: () => `
+                <div class="fade-in">
+                    <h2 class="text-center" style="margin-bottom: 2rem;"><i class="fa-solid fa-thumbs-down text-danger"></i> Challenges to the Theory</h2>
+                    <div class="grid-2 slide-up" style="max-width: 1000px; margin: 0 auto;">
+                        <div class="card" style="border-left: 4px solid var(--danger);">
+                            <i class="fa-solid fa-temperature-naught" style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;"></i>
+                            <h3>Earth's Surface</h3>
+                            <p>Such a massive impact should have melted the <em>entire</em> Earth. Geological evidence suggests Earth wasn't completely molten.</p>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--danger);">
+                            <i class="fa-solid fa-planet-moon" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem; opacity: 0.6;"></i>
+                            <h3>Venus has no moon</h3>
+                            <p>Venus is similar in size to Earth and likely suffered impacts too. Why doesn't it have a moon formed the same way?</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 8. The Mystery of Rock Composition
+            render: () => `
+                <div class="grid-2 fade-in items-center">
+                    <div>
+                        <h2>The Chemical Mystery</h2>
+                        <p>Every object in the solar system has a unique chemical "fingerprint" (isotope ratio).</p>
+                        <p style="margin-top: 1rem; font-size: 1.2rem;">However, <strong>Earth and Moon rocks are almost identical chemically.</strong></p>
+                        <p style="margin-top: 1rem;">If Theia was different from Earth, why are they so similar?</p>
+                        
+                        <div class="answer-box" id="mix-reveal" style="border-color: var(--success);">
+                            <strong class="text-success">The Solution: Intense Mixing</strong><br>
+                            The impact was so violent that Theia and Earth's outer layers vaporized and mixed thoroughly before the Moon formed, creating identical compositions.
+                        </div>
+                    </div>
+                    <div class="text-center slide-up">
+                        <div style="position: relative; width: 300px; height: 300px; margin: 0 auto;">
+                            <i class="fa-solid fa-flask" style="font-size: 12rem; color: var(--primary); opacity: 0.3; position: absolute; left:0; top:0;"></i>
+                            <i class="fa-solid fa-dna" style="font-size: 6rem; color: var(--accent); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                        </div>
+                         <button class="btn btn-reveal" onclick="document.getElementById('mix-reveal').classList.add('visible'); this.style.display='none'">Reveal Solution</button>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 9. Critical Thinking - Mars' Moons
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--primary);">Critical Thinking</span>
+                    <h2 style="margin-top: 1rem;">Not All Moons Are Equal</h2>
+                    <p style="margin-bottom: 3rem;">Compare Earth's moon with the moons of Mars (Phobos and Deimos).</p>
+
+                    <div class="grid-2 slide-up">
+                        <div class="card card-screen" style="border-color: var(--accent);">
+                            <h3 class="text-accent">Earth's Moon</h3>
+                            <i class="fa-solid fa-circle" style="font-size: 6rem; color: var(--text-muted); margin: 1.5rem 0; text-shadow: 2px 2px 10px rgba(255,255,255,0.3);"></i>
+                            <ul style="text-align: left; display: inline-block; margin-top: 1rem;">
+                                <li>Large</li>
+                                <li>Spherical shape</li>
+                                <li>Formed from <strong class="text-accent">collision debris</strong>.</li>
+                            </ul>
+                        </div>
+                        <div class="card card-screen" style="border-color: var(--danger);">
+                            <h3 class="text-danger">Mars' Moons</h3>
+                            <div style="display: flex; gap: 1rem; justify-content: center; margin: 1.5rem 0;">
+                                <i class="fa-solid fa-cookie-bite" style="font-size: 3rem; color: var(--danger); transform: rotate(45deg);"></i>
+                                <i class="fa-solid fa-cookie" style="font-size: 4rem; color: var(--danger);"></i>
+                            </div>
+                            <ul style="text-align: left; display: inline-block; margin-top: 1rem;">
+                                <li>Very small</li>
+                                <li>Lumpy, irregular shapes</li>
+                                <li>Likely captured <strong class="text-danger">asteroids</strong> (gravity caught them).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 10. Check Understanding
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2><i class="fa-solid fa-clipboard-question"></i> Check Your Understanding</h2>
+                    <div class="grid-2 slide-up" style="margin-top: 3rem;">
+                        <div class="card">
+                            <h3>Question 1</h3>
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">Which planet was closest in size to the hypothetical planet <strong>Theia</strong>?</p>
+                            <button class="btn btn-reveal" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Check Answer</button>
+                            <div class="answer-box">
+                                <strong class="text-amber" style="font-size: 1.5rem;">Mars</strong>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3>Question 2</h3>
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">Why are Earth and Moon rocks so chemically similar?</p>
+                            <button class="btn btn-reveal" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Check Answer</button>
+                            <div class="answer-box">
+                                Because materials from Earth and Theia <strong class="text-secondary">vaporized and mixed thoroughly</strong> during the violent impact.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 11. Video Demonstration Placeholder
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Visualizing the Impact</h2>
+                    <p style="margin-bottom: 2rem;">Watch this simulation of the Giant Impact Hypothesis.</p>
+                    
+                    <div class="slide-up" style="max-width: 800px; margin: 0 auto; aspect-ratio: 16/9; background: #000; border: 3px solid var(--primary); border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);">
+                        <div style="position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(99,102,241,0.2), transparent); z-index: 1;"></div>
+                        <i class="fa-brands fa-youtube" style="font-size: 5rem; color: var(--primary); z-index: 2;"></i>
+                        <span style="position: absolute; bottom: 20px; color: var(--text-muted);">Video Placeholder (Collision Simulation)</span>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 12. Homework & Review
+            render: () => `
+                <div class="text-center fade-in">
+                    <h2>📚 Homework & Review</h2>
+                    <div class="card slide-up" style="max-width: 600px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--primary);">
+                        <h3 style="color: var(--primary);">Topic 6.3 Tasks</h3>
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(99, 102, 241, 0.2); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-book-open"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Textbook Reading</p>
+                                <p>Read pages <strong>224 - 227</strong>.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(236, 72, 153, 0.2); color: var(--secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Questions</p>
+                                <p>Answer <strong>Questions 1-4</strong> on page 227.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- HELPER FUNCTIONS ---
+    function createFlipCard(front, backTitle, backDesc, extraDesc, icon, color) {
+        return `
+            <div class="flip-card" onclick="this.classList.toggle('flipped')" tabindex="0" onkeypress="if(event.key === 'Enter') this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <i class="fa-solid ${icon}" style="font-size: 3rem; margin-bottom: 1rem; color: ${color};"></i>
+                        <h3 style="color: white;">${front}</h3>
+                        <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 1rem;">(Click to Flip)</p>
+                    </div>
+                    <div class="flip-back" style="background: linear-gradient(135deg, ${color}, var(--primary));">
+                        <h3>${backTitle}</h3>
+                        <p style="color: white; font-size: 1.1rem;">${backDesc}</p>
+                         ${extraDesc ? `<p style="font-size: 1rem; margin-top:1rem; opacity:0.9; color:white; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1rem;">${extraDesc}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- CORE APP LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        
+        // Update UI Elements
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+
+</script>
+</body>
+</html>
