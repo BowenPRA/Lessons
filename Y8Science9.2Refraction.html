@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6.2 Refraction - Year 8 Science</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Deep Space Science Theme */
+            --bg-deep: #020617;        
+            --bg-card: #1e293b;        
+            --bg-card-hover: #334155; 
+            
+            --primary: #6366f1;   /* Indigo - Main Elements */
+            --secondary: #ec4899; /* Pink - Highlights/Collision */
+            --accent: #22d3ee;    /* Cyan - Key Terms/Earth */
+            --amber: #fbbf24;     /* Amber - Impact/Molten */
+            --success: #34d399;   
+            --danger: #f87171;    
+
+            /* Typography */
+            --text-main: #ffffff;       
+            --text-muted: #e2e8f0;      
+            --text-on-light: #0f172a; 
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            /* Deep Space Background Effect */
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.15), transparent 40%),
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+            background-size: 100% 100%, 100% 100%, 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 0 0, 0 0, 100px 30px, 200px 100px;
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(2, 6, 23, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--bg-deep);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(2, 6, 23, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:hover { background: #4f46e5; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(99, 102, 241, 0.4); }
+        
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 8px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            transition: width 0.4s ease;
+        }
+
+        /* Typography & Layout */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; }
+        strong { color: white; font-weight: 800; }
+
+        /* Helpers for color emphasis */
+        .text-accent { color: var(--accent) !important; }
+        .text-secondary { color: var(--secondary) !important; }
+        .text-amber { color: var(--amber) !important; }
+        .text-success { color: var(--success) !important; }
+        .text-danger { color: var(--danger) !important; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Flip Cards */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 350px; 
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .flip-front { background: var(--bg-card); }
+        .flip-front:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+        .flip-back { background: linear-gradient(135deg, var(--primary), var(--secondary)); transform: rotateY(180deg); color: white; border: none; box-shadow: 0 0 30px rgba(99, 102, 241, 0.5); }
+        .flip-back h3 { color: white; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; margin-bottom: 15px; }
+
+        /* Answer Panels */
+        .answer-box {
+            background: rgba(34, 211, 238, 0.1);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .answer-box.visible { display: block; animation: slideUp 0.3s ease; }
+        .answer-box strong { color: white; }
+        
+        /* Image Styling */
+        .slide-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            .header, .footer { padding: 0 1rem; }
+            h1 { font-size: 2.5rem; }
+            .flip-card { height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 8 Science</div>
+            <span style="font-weight: 700; color: var(--text-muted); font-size: 0.9rem;">Topic 6.2 Refraction</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            Friday 9 January 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    const state = {
+        currentSlide: 0,
+        slides: []
+    };
+
+    // --- SLIDE DATA ---
+    state.slides = [
+        {
+            // 1. Title & Goals
+            render: () => `
+                <div class="text-center fade-in">
+                    <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 5rem; color: var(--accent); margin-bottom: 1.5rem; filter: drop-shadow(0 0 15px var(--accent));"></i>
+                    <h1>6.2 Refraction</h1>
+                    <p style="font-size: 1.5rem; color: var(--secondary); font-weight: 600; letter-spacing: 1px;">The Bending of Light</p>
+                    
+                    <div class="card slide-up" style="margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; text-align: left;">
+                        <h3 style="color: var(--accent); border-bottom: 1px solid rgba(34, 211, 238, 0.3); padding-bottom: 1rem;">
+                            <i class="fa-solid fa-crosshairs"></i> Learning Goals
+                        </h3>
+                        <ul style="list-style: none; margin-top: 1.5rem; display: grid; gap: 1rem;">
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Describe how light <strong class="text-accent">bends</strong> at boundaries.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Understand how <strong class="text-secondary">density</strong> affects light speed.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Draw <strong class="text-amber">ray diagrams</strong> correctly.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 2. Warm Up (Flip Cards)
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--amber); color: var(--bg-deep);">Warm Up</span>
+                    <h2 style="margin-top: 1rem;">Thinking About Light</h2>
+                    <div class="grid-2 slide-up" style="max-width: 900px; margin: 3rem auto;">
+                        ${createFlipCard(
+                            'Transparent Materials', 
+                            'Examples', 
+                            'Can you list 3 materials light can pass through?', 
+                            'Glass, Water, Perspex (Plastic), Diamond, Air.',
+                            'fa-layer-group', 
+                            'var(--primary)'
+                        )}
+                        ${createFlipCard(
+                            'The Water Glass', 
+                            'Refraction', 
+                            'Why does a straw look broken in water?', 
+                            'Because light <strong class="text-accent">changes direction</strong> when it moves from water to air.',
+                            'fa-glass-water', 
+                            'var(--secondary)'
+                        )}
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 3. What is Refraction?
+            render: () => `
+                <div class="grid-2 fade-in items-center">
+                    <div>
+                        <h2>What is Refraction?</h2>
+                        <p style="font-size: 1.3rem;">Refraction is the change in <strong class="text-accent">direction</strong> of light when passing from one medium to another.</p>
+                        <div class="card" style="margin-top: 2rem; border-left: 4px solid var(--accent);">
+                            <h3 class="text-accent"><i class="fa-solid fa-bolt"></i> Why does it happen?</h3>
+                            <p>It happens because light changes <strong class="text-white">SPEED</strong>.</p>
+                        </div>
+                    </div>
+                    <div class="slide-up">
+                        <div class="card" style="background: rgba(255,255,255,0.05);">
+                            <h3 class="text-center" style="margin-bottom: 1.5rem;">Speed of Light</h3>
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div style="display: flex; justify-content: space-between; padding: 1rem; background: rgba(99, 102, 241, 0.2); border-radius: 8px; align-items: center;">
+                                    <span style="font-size: 1.2rem; font-weight: 800;"><i class="fa-solid fa-wind"></i> AIR</span>
+                                    <span class="text-accent" style="font-size: 1.5rem;">300,000 km/s</span>
+                                </div>
+                                <div style="display: flex; justify-content: center; opacity: 0.5;"><i class="fa-solid fa-arrow-down"></i> Slows Down</div>
+                                <div style="display: flex; justify-content: space-between; padding: 1rem; background: rgba(236, 72, 153, 0.2); border-radius: 8px; align-items: center;">
+                                    <span style="font-size: 1.2rem; font-weight: 800;"><i class="fa-solid fa-cube"></i> GLASS</span>
+                                    <span class="text-secondary" style="font-size: 1.5rem;">200,000 km/s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 4. The Rules
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>The Rules of Refraction</h2>
+                    <p style="margin-bottom: 3rem;">How does the light bend? It depends on the density.</p>
+                    
+                    <div class="grid-2 slide-up">
+                        <div class="card" style="border-top: 4px solid var(--secondary);">
+                            <h3 class="text-secondary">1. Into Denser Medium</h3>
+                            <p style="font-size: 0.9rem; margin-bottom: 1rem; opacity: 0.7;">(e.g., Air into Glass)</p>
+                            <p style="font-size: 1.2rem;">Light <strong class="text-danger">SLOWS DOWN</strong>.</p>
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0;">
+                            <p>It bends <strong class="text-secondary">TOWARDS</strong> the normal.</p>
+                            <i class="fa-solid fa-arrow-right-to-bracket" style="font-size: 2rem; margin-top: 1rem; color: var(--secondary);"></i>
+                        </div>
+
+                        <div class="card" style="border-top: 4px solid var(--accent);">
+                            <h3 class="text-accent">2. Into Less Dense Medium</h3>
+                            <p style="font-size: 0.9rem; margin-bottom: 1rem; opacity: 0.7;">(e.g., Glass into Air)</p>
+                            <p style="font-size: 1.2rem;">Light <strong class="text-success">SPEEDS UP</strong>.</p>
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0;">
+                            <p>It bends <strong class="text-accent">AWAY</strong> from the normal.</p>
+                            <i class="fa-solid fa-arrow-right-from-bracket" style="font-size: 2rem; margin-top: 1rem; color: var(--accent);"></i>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 5. Visual Diagram 1 (Refraction1.jpg)
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2 class="text-secondary">Air into Glass</h2>
+                    <div class="card slide-up" style="max-width: 800px; margin: 2rem auto; padding: 1rem;">
+                        <img src="Refraction1.jpg" alt="Ray diagram showing light entering glass" class="slide-img">
+                        <div style="text-align: left; margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            <p><strong class="text-amber">Incident Ray:</strong> The ray hitting the block.</p>
+                            <p><strong class="text-secondary">Refracted Ray:</strong> Notice it bends <strong>TOWARDS</strong> the dotted Normal line.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 6. Visual Diagram 2 (Refraction2.jpg)
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2 class="text-accent">The Full Block</h2>
+                    <div class="card slide-up" style="max-width: 800px; margin: 2rem auto; padding: 1rem;">
+                        <img src="Refraction2.jpg" alt="Ray diagram showing light leaving glass" class="slide-img">
+                        <div style="text-align: left; margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            <p><strong class="text-accent">Emergent Ray:</strong> As light leaves the block, it speeds up.</p>
+                            <p>It bends <strong>AWAY</strong> from the Normal.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 7. Roller Skate Analogy
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--success); color: var(--bg-deep);">Analogy</span>
+                    <h2 style="margin-top: 1rem;">Why does it bend?</h2>
+                    <div style="max-width: 600px; margin: 3rem auto;" class="slide-up">
+                        ${createFlipCard(
+                            'The Roller Skate Analogy', 
+                            'One side slows down first!', 
+                            'Imagine a pair of roller skates hitting grass at an angle.', 
+                            'The first wheel to hit the grass slows down, while the other is still fast on the pavement. This causes the skater to <strong>turn</strong>.',
+                            'fa-person-skating', 
+                            'var(--success)'
+                        )}
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 8. Real World Effects
+            render: () => `
+                <div class="fade-in">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Real World Effects</h2>
+                    <div class="grid-2 slide-up">
+                        <div class="card" style="border-left: 4px solid var(--amber);">
+                            <i class="fa-solid fa-coins" style="font-size: 3rem; color: var(--amber); margin-bottom: 1rem;"></i>
+                            <h3>The Appearing Coin</h3>
+                            <p>If a coin is hidden by the rim of a cup, pouring water in can make it appear!</p>
+                            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">The light from the coin bends at the water surface towards your eye.</p>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--primary);">
+                            <i class="fa-solid fa-glasses" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                            <h3>Lenses</h3>
+                            <p><strong>Cameras</strong> and our <strong>Eyes</strong> use curved pieces of glass (lenses) to use refraction.</p>
+                            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">They bend light to focus it onto a specific point (the retina or film).</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 9. Check Understanding
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2><i class="fa-solid fa-clipboard-question"></i> Check Your Understanding</h2>
+                    <div class="grid-2 slide-up" style="margin-top: 3rem;">
+                        <div class="card">
+                            <h3>Question 1</h3>
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">Does light travel faster in <strong>Air</strong> or <strong>Water</strong>?</p>
+                            <button class="btn btn-reveal" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Check Answer</button>
+                            <div class="answer-box">
+                                <strong class="text-accent" style="font-size: 1.5rem;">Air</strong>
+                                <p style="margin-top: 0.5rem; font-size: 0.9rem;">It is less dense (300,000 km/s).</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3>Question 2</h3>
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">When light enters a <strong>denser</strong> medium (like glass), which way does it bend?</p>
+                            <button class="btn btn-reveal" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Check Answer</button>
+                            <div class="answer-box">
+                                <strong class="text-secondary" style="font-size: 1.5rem;">Towards the Normal</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 10. Homework
+            render: () => `
+                <div class="text-center fade-in">
+                    <h2>📚 Homework Tasks</h2>
+                    <div class="card slide-up" style="max-width: 600px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--primary);">
+                        <h3 style="color: var(--primary);">Topic 6.2 Tasks</h3>
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(99, 102, 241, 0.2); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-book-open"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Textbook Reading</p>
+                                <p>Read pages <strong>198 - 199</strong>.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(236, 72, 153, 0.2); color: var(--secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Questions</p>
+                                <p>Answer <strong>Questions 1-4</strong> on page 200.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- HELPER FUNCTIONS ---
+    function createFlipCard(front, backTitle, backDesc, extraDesc, icon, color) {
+        return `
+            <div class="flip-card" onclick="this.classList.toggle('flipped')" tabindex="0" onkeypress="if(event.key === 'Enter') this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <i class="fa-solid ${icon}" style="font-size: 3rem; margin-bottom: 1rem; color: ${color};"></i>
+                        <h3 style="color: white;">${front}</h3>
+                        <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 1rem;">(Click to Flip)</p>
+                    </div>
+                    <div class="flip-back" style="background: linear-gradient(135deg, ${color}, var(--primary));">
+                        <h3>${backTitle}</h3>
+                        <p style="color: white; font-size: 1.1rem;">${backDesc}</p>
+                         ${extraDesc ? `<p style="font-size: 1rem; margin-top:1rem; opacity:0.9; color:white; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1rem;">${extraDesc}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- CORE APP LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        
+        // Update UI Elements
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+
+</script>
+</body>
+</html>
