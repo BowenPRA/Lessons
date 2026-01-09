@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -15,19 +15,19 @@
         /* --- CSS VARIABLES & THEME --- */
         :root {
             /* Palette - Math/Space Theme */
-            --bg-deep: #0f0518;       
-            --bg-card: #1e1b2e;       
+            --bg-deep: #0f0518;        
+            --bg-card: #1e1b2e;        
             --bg-card-hover: #2d2645; 
             
             --primary: #8b5cf6;   /* Violet */
-            --secondary: #f43f5e; /* Rose */
-            --accent: #06b6d4;    /* Cyan */
+            --secondary: #f43f5e; /* Rose - FOR 2ND DIFFERENCE */
+            --accent: #06b6d4;    /* Cyan - FOR 1ST DIFFERENCE */
             --success: #10b981;   /* Emerald */
             --warning: #f59e0b;   /* Amber */
 
             /* Typography */
-            --text-main: #ffffff;      
-            --text-muted: #94a3b8;     
+            --text-main: #ffffff;       
+            --text-muted: #94a3b8;      
 
             --header-h: 70px;
             --footer-h: 80px;
@@ -156,6 +156,27 @@
         }
         .btn-reveal:hover { background: #7c3aed; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(139, 92, 246, 0.4); }
         
+        /* NEW: Pedagogical Number Pills */
+        .num-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            margin: 0 0.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Strict Color Logic */
+        .pill-term { background: #334155; color: white; border-color: rgba(255,255,255,0.3); }
+        .pill-diff1 { background: rgba(6, 182, 212, 0.2); color: var(--accent); border-color: var(--accent); }
+        .pill-diff2 { background: rgba(244, 63, 94, 0.2); color: var(--secondary); border-color: var(--secondary); }
+
         .progress-container {
             flex: 1;
             margin: 0 2rem;
@@ -183,9 +204,8 @@
         .text-secondary { color: var(--secondary); }
         .text-primary { color: var(--primary); }
 
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; align-items: start; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; align-items: center; }
+        
         /* Cards */
         .card {
             background: var(--bg-card);
@@ -197,77 +217,51 @@
             position: relative;
             overflow: hidden;
         }
-        
-        /* Flip Cards */
-        .flip-card {
-            background-color: transparent;
-            width: 100%;
-            height: 280px; 
-            perspective: 1000px;
-            cursor: pointer;
-        }
-        .flip-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-        }
-        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .flip-front, .flip-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: var(--border-radius);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            border: 2px solid rgba(255,255,255,0.1);
-        }
-        .flip-front { background: var(--bg-card); }
-        .flip-front:hover { background: var(--bg-card-hover); border-color: var(--accent); }
-        .flip-back { background: linear-gradient(135deg, var(--primary), var(--secondary)); transform: rotateY(180deg); color: white; border: none; box-shadow: 0 0 30px rgba(139, 92, 246, 0.5); }
-        .flip-back h3 { color: white !important; }
 
-        /* Answer Panels */
-        .answer-box {
-            background: rgba(6, 182, 212, 0.1);
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-top: 1rem;
-            display: none;
-        }
-        .answer-box.visible { display: block; animation: slideUp 0.3s ease; }
+        /* --- SPECIFIC VISUALS --- */
         
-        /* Term Table Styling */
-        .term-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            color: white;
-            font-size: 1.2rem;
+        /* The Growing Grid (Slide 3) */
+        .square-grid-container {
+            display: grid;
+            gap: 4px;
+            margin: 0 auto;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .term-table th { color: var(--text-muted); padding: 10px; border-bottom: 2px solid var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.9rem; }
-        .term-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; font-weight: 700; }
-        .term-table tr:last-child td { border-bottom: none; }
-        .term-table .n-row { color: var(--accent); }
-        .term-table .val-row { color: var(--secondary); font-size: 1.5rem; }
+        .grid-cell {
+            background: var(--secondary);
+            border-radius: 4px;
+            aspect-ratio: 1;
+            width: 100%;
+            animation: popIn 0.3s ease forwards;
+            box-shadow: 0 0 10px rgba(244, 63, 94, 0.4);
+        }
+
+        /* The Difference Tree (Slide 6) */
+        .tree-row {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            min-height: 70px;
+        }
+        .tree-connector {
+            flex: 1;
+            border-left: 2px dashed rgba(255,255,255,0.1);
+            border-right: 2px dashed rgba(255,255,255,0.1);
+            height: 30px;
+        }
 
         /* Animations */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.6s ease-out; }
         .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
 
         @media (max-width: 768px) {
-            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            .grid-2 { grid-template-columns: 1fr; gap: 2rem; }
             h1 { font-size: 2.5rem; }
+            .num-pill { width: 45px; height: 45px; font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -307,58 +301,72 @@
 <script>
     const state = {
         currentSlide: 0,
+        squareN: 1,  // For Slide 3
+        treeStep: 0, // For Slide 6
         slides: []
     };
 
-    // --- SVG GENERATORS FOR MATH VISUALS ---
-    function getSquareVisual() {
-        // Visualizing n=3 (3x3 squares)
-        let rects = '';
-        for(let i=0; i<3; i++) {
-            for(let j=0; j<3; j++) {
-                rects += `<rect x="${i*35 + 50}" y="${j*35 + 50}" width="30" height="30" rx="4" fill="#f43f5e" opacity="${(i+j+2)/6}" />`;
-            }
+    // --- RENDER HELPERS ---
+
+    // Slide 3: Interactive Square Visual
+    function renderSquareGrid(n) {
+        let cells = '';
+        const total = n * n;
+        for(let i=0; i<total; i++) {
+            cells += `<div class="grid-cell" style="animation-delay: ${i*0.05}s"></div>`;
         }
+        
+        // CSS Grid calculation to make it a perfect square
         return `
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            ${rects}
-            <text x="100" y="170" fill="white" text-anchor="middle" font-weight="bold">n = 3, Term = 9</text>
-        </svg>`;
+            <div class="square-grid-container" style="
+                grid-template-columns: repeat(${n}, 1fr); 
+                width: ${n * 50}px;
+                max-width: 100%;">
+                ${cells}
+            </div>
+            <p style="margin-top: 1rem; font-size: 1.2rem;">
+                <span style="color:var(--text-muted)">Width:</span> <strong>${n}</strong> &times; 
+                <span style="color:var(--text-muted)">Height:</span> <strong>${n}</strong> 
+                = <strong class="text-secondary" style="font-size: 1.5rem">${total}</strong>
+            </p>
+        `;
     }
 
-    function getDifferenceTreeSVG() {
-        return `
-        <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-            <text x="50" y="40" fill="white" font-size="20" text-anchor="middle" font-weight="bold">1</text>
-            <text x="150" y="40" fill="white" font-size="20" text-anchor="middle" font-weight="bold">4</text>
-            <text x="250" y="40" fill="white" font-size="20" text-anchor="middle" font-weight="bold">9</text>
-            <text x="350" y="40" fill="white" font-size="20" text-anchor="middle" font-weight="bold">16</text>
-            
-            <line x1="50" y1="50" x2="100" y2="80" stroke="#06b6d4" stroke-width="2" />
-            <line x1="150" y1="50" x2="100" y2="80" stroke="#06b6d4" stroke-width="2" />
-            <circle cx="100" cy="80" r="15" fill="#1e1b2e" stroke="#06b6d4" stroke-width="2"/>
-            <text x="100" y="86" fill="#06b6d4" font-size="16" text-anchor="middle">+3</text>
+    // Slide 6: Interactive Difference Tree
+    function renderDiffTree(step) {
+        // Data
+        const seq = [2, 5, 10, 17];
+        const diff1 = [3, 5, 7];
+        const diff2 = [2, 2];
 
-            <line x1="150" y1="50" x2="200" y2="80" stroke="#06b6d4" stroke-width="2" />
-            <line x1="250" y1="50" x2="200" y2="80" stroke="#06b6d4" stroke-width="2" />
-            <circle cx="200" cy="80" r="15" fill="#1e1b2e" stroke="#06b6d4" stroke-width="2"/>
-            <text x="200" y="86" fill="#06b6d4" font-size="16" text-anchor="middle">+5</text>
+        let html = '';
 
-            <line x1="250" y1="50" x2="300" y2="80" stroke="#06b6d4" stroke-width="2" />
-            <line x1="350" y1="50" x2="300" y2="80" stroke="#06b6d4" stroke-width="2" />
-            <circle cx="300" cy="80" r="15" fill="#1e1b2e" stroke="#06b6d4" stroke-width="2"/>
-            <text x="300" y="86" fill="#06b6d4" font-size="16" text-anchor="middle">+7</text>
+        // Row 1: The Sequence
+        html += `<div class="tree-row">`;
+        seq.forEach(n => {
+            html += `<div class="num-pill pill-term">${n}</div>`;
+        });
+        html += `</div>`;
 
-            <line x1="100" y1="95" x2="150" y2="130" stroke="#f43f5e" stroke-width="2" />
-            <line x1="200" y1="95" x2="150" y2="130" stroke="#f43f5e" stroke-width="2" />
-            <circle cx="150" cy="130" r="15" fill="#1e1b2e" stroke="#f43f5e" stroke-width="2"/>
-            <text x="150" y="136" fill="#f43f5e" font-size="16" text-anchor="middle">+2</text>
+        // Row 2: 1st Diff
+        if (step >= 1) {
+            html += `<div class="tree-row slide-up">`;
+            diff1.forEach(n => {
+                html += `<div class="num-pill pill-diff1">+${n}</div>`;
+            });
+            html += `</div>`;
+        }
 
-            <line x1="200" y1="95" x2="250" y2="130" stroke="#f43f5e" stroke-width="2" />
-            <line x1="300" y1="95" x2="250" y2="130" stroke="#f43f5e" stroke-width="2" />
-            <circle cx="250" cy="130" r="15" fill="#1e1b2e" stroke="#f43f5e" stroke-width="2"/>
-            <text x="250" y="136" fill="#f43f5e" font-size="16" text-anchor="middle">+2</text>
-        </svg>`;
+        // Row 3: 2nd Diff
+        if (step >= 2) {
+            html += `<div class="tree-row slide-up">`;
+            diff2.forEach(n => {
+                html += `<div class="num-pill pill-diff2">+${n}</div>`;
+            });
+            html += `</div>`;
+        }
+
+        return html;
     }
 
     // --- SLIDE DATA ---
@@ -382,11 +390,7 @@
                             </li>
                             <li style="display: flex; align-items: center; gap: 1rem;">
                                 <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
-                                <span>Identify non-linear sequences using the <strong>Second Difference</strong>.</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 1rem;">
-                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
-                                <span>Solve inverse problems (Is 292 a term?).</span>
+                                <span>Identify non-linear sequences using the <strong class="text-secondary">Second Difference</strong>.</span>
                             </li>
                         </ul>
                     </div>
@@ -397,222 +401,189 @@
             // 2. Linear vs Non-Linear Warm Up
             render: () => `
                 <div class="fade-in text-center">
-                    <h2>Warm Up: Linear vs Non-Linear</h2>
-                    <p style="margin-bottom: 2rem;">Which of these grow by the <strong>same amount</strong> every time?</p>
+                    <h2>Warm Up: Linear or Quadratic?</h2>
+                    <p style="margin-bottom: 2rem;">Click to reveal the hidden patterns.</p>
                     
                     <div class="grid-2 slide-up">
-                        ${createFlipCard(
-                            '2, 4, 6, 8...',
-                            'Linear Sequence',
-                            'This adds <strong>+2</strong> every time.<br>Rule: <span style="font-family:serif; font-style: italic;">2n</span>',
-                            'fa-arrow-right-long',
-                            'var(--accent)'
-                        )}
-                        ${createFlipCard(
-                            '1, 4, 9, 16...',
-                            'Non-Linear (Quadratic)',
-                            'The gap changes: +3, +5, +7...<br>Rule: <span style="font-family:serif; font-style: italic;">n</span>&sup2;',
-                            'fa-arrow-trend-up',
-                            'var(--secondary)'
-                        )}
+                        <div class="card" style="border-left: 5px solid var(--accent);">
+                            <h3 class="text-accent">Linear</h3>
+                            <div style="display:flex; justify-content:center; margin: 1.5rem 0;">
+                                <div class="num-pill pill-term">2</div>
+                                <div class="num-pill pill-term">4</div>
+                                <div class="num-pill pill-term">6</div>
+                            </div>
+                            <button class="btn btn-reveal" style="background: var(--accent); color: #0f172a;" onclick="this.nextElementSibling.style.display='block'; this.style.display='none'">Check Gaps</button>
+                            <div style="display:none; animation: slideUp 0.3s ease;">
+                                <div style="display:flex; justify-content:center; gap: 1rem; margin-top:1rem;">
+                                    <span class="num-pill pill-diff1">+2</span>
+                                    <span class="num-pill pill-diff1">+2</span>
+                                </div>
+                                <p style="margin-top:1rem; font-weight:700;">Constant 1st Difference</p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="border-left: 5px solid var(--secondary);">
+                            <h3 class="text-secondary">Quadratic</h3>
+                            <div style="display:flex; justify-content:center; margin: 1.5rem 0;">
+                                <div class="num-pill pill-term">1</div>
+                                <div class="num-pill pill-term">4</div>
+                                <div class="num-pill pill-term">9</div>
+                            </div>
+                            <button class="btn btn-reveal" style="background: var(--secondary);" onclick="this.nextElementSibling.style.display='block'; this.style.display='none'">Check Gaps</button>
+                            <div style="display:none; animation: slideUp 0.3s ease;">
+                                <div style="display:flex; justify-content:center; gap: 1rem; margin-top:1rem;">
+                                    <span class="num-pill pill-diff1">+3</span>
+                                    <span class="num-pill pill-diff1">+5</span>
+                                </div>
+                                <p style="margin-top:1rem; color: var(--accent);">Gaps are changing!</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `
         },
         {
-            // 3. What is a Quadratic Sequence?
+            // 3. What is a Quadratic (Split View)
             render: () => `
-                <div class="grid-2 fade-in items-center">
+                <div class="grid-2 fade-in" style="height: 100%; align-content: center;">
                     <div>
-                        <h2>The Quadratic Sequence</h2>
-                        <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">A <strong>Quadratic Sequence</strong> involves an <span style="color: var(--secondary); font-weight:bold; font-family:serif; font-style:italic;">n</span><sup style="color: var(--secondary); font-weight:bold;">2</sup> term.</p>
+                        <span class="brand-pill" style="background: var(--secondary);">Concept</span>
+                        <h2 style="margin-top: 1rem;">Why "Quadratic"?</h2>
+                        <p style="font-size: 1.3rem; margin-bottom: 2rem;">
+                            It comes from the Latin <em>"quadratus"</em> meaning <strong>Square</strong>.
+                        </p>
                         
-                        <div class="card" style="border-left: 4px solid var(--secondary);">
-                            <h3 class="text-secondary">Key Features</h3>
-                            <ul style="margin-left: 1rem; margin-top: 0.5rem;">
-                                <li>The terms do <strong>not</strong> go up by a constant amount.</li>
-                                <li>The graph is a <strong>curve</strong>, not a straight line.</li>
-                                <li>It is based on Square Numbers: <br><strong style="font-size:1.5rem;">1, 4, 9, 16, 25...</strong></li>
-                            </ul>
+                        <div class="card" style="border: 2px solid var(--secondary);">
+                            <p>Sequence:</p>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                                <div class="num-pill pill-term" style="${state.squareN >= 1 ? 'opacity:1' : 'opacity:0.3'}">1</div>
+                                <div class="num-pill pill-term" style="${state.squareN >= 2 ? 'opacity:1' : 'opacity:0.3'}">4</div>
+                                <div class="num-pill pill-term" style="${state.squareN >= 3 ? 'opacity:1' : 'opacity:0.3'}">9</div>
+                                <div class="num-pill pill-term" style="${state.squareN >= 4 ? 'opacity:1' : 'opacity:0.3'}">16</div>
+                            </div>
+                            
+                            <button class="btn btn-reveal" style="background: var(--secondary); margin-top: 2rem;" 
+                                onclick="updateSquare()">
+                                Show Next Term <i class="fa-solid fa-arrow-right"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="text-center slide-up">
-                        <div style="height: 300px; display: flex; align-items: center; justify-content: center;">
-                            ${getSquareVisual()}
+                    
+                    <div class="text-center slide-up" style="background: rgba(0,0,0,0.3); border-radius: 20px; padding: 2rem; min-height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <h3 class="text-secondary">Visual Proof</h3>
+                        <div id="grid-visual-container">
+                            ${renderSquareGrid(state.squareN)}
                         </div>
-                        <p style="font-size: 0.9rem; opacity: 0.7;">Visualizing n=3 as a 3x3 square</p>
                     </div>
                 </div>
             `
         },
         {
-            // 4. Generating Terms (n² - 1)
+            // 4. Substitution (n^2 - 1)
             render: () => `
                 <div class="fade-in text-center">
-                    <span class="brand-pill" style="background: var(--primary);">Exercise 9.2 - Q2</span>
+                    <span class="brand-pill" style="background: var(--primary);">Practice</span>
                     <h2 style="margin: 1rem 0;">Generating Terms: <span style="font-family:serif; font-style:italic;">n</span>&sup2; - 1</h2>
-                    <p>Substitute <strong>1, 2, 3</strong> and <strong>10</strong> into the rule.</p>
-
-                    <div class="card slide-up" style="max-width: 800px; margin: 2rem auto;">
+                    
+                    <div class="card slide-up" style="max-width: 900px; margin: 2rem auto;">
                         <table class="term-table">
                             <tr>
                                 <th>Position (n)</th>
-                                <th>1</th>
-                                <th>2</th>
-                                <th>3</th>
-                                <th>10</th>
+                                <th class="text-accent">1</th>
+                                <th class="text-accent">2</th>
+                                <th class="text-accent">3</th>
                             </tr>
-                            <tr class="n-row">
+                            <tr style="font-size: 1.4rem;">
                                 <td>Calculation</td>
-                                <td>1&sup2; - 1</td>
-                                <td>2&sup2; - 1</td>
-                                <td>3&sup2; - 1</td>
-                                <td>10&sup2; - 1</td>
+                                <td><span class="text-accent">1</span>&sup2; - 1</td>
+                                <td><span class="text-accent">2</span>&sup2; - 1</td>
+                                <td><span class="text-accent">3</span>&sup2; - 1</td>
                             </tr>
-                            <tr class="val-row">
+                            <tr style="height: 80px;">
                                 <td>Term</td>
-                                <td><span id="ans-1" class="blur">0</span></td>
-                                <td><span id="ans-2" class="blur">3</span></td>
-                                <td><span id="ans-3" class="blur">8</span></td>
-                                <td><span id="ans-10" class="blur">99</span></td>
+                                <td>
+                                    <span class="num-pill pill-term" style="width:50px; height:50px; font-size:1.4rem; cursor:pointer;" onclick="this.innerHTML='0'; this.style.background='var(--success)'">?</span>
+                                </td>
+                                <td>
+                                    <span class="num-pill pill-term" style="width:50px; height:50px; font-size:1.4rem; cursor:pointer;" onclick="this.innerHTML='3'; this.style.background='var(--success)'">?</span>
+                                </td>
+                                <td>
+                                    <span class="num-pill pill-term" style="width:50px; height:50px; font-size:1.4rem; cursor:pointer;" onclick="this.innerHTML='8'; this.style.background='var(--success)'">?</span>
+                                </td>
                             </tr>
                         </table>
-                        
-                        <button class="btn btn-reveal" onclick="document.querySelectorAll('.blur').forEach(el => el.classList.remove('blur')); this.style.display='none'">
-                            Reveal Answers
-                        </button>
+                        <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.7;">(Tap the question marks to reveal)</p>
                     </div>
                 </div>
             `
         },
         {
-            // 5. Harder Substitution (n² + 2n - 1)
+            // 5. Harder Substitution
             render: () => `
                 <div class="fade-in text-center">
-                    <span class="brand-pill" style="background: var(--warning); color: black;">Harder Challenge</span>
-                    <h2 style="margin: 1rem 0;">Complex Rules: <span style="font-family:serif; font-style:italic;">n</span>&sup2; + 2<span style="font-family:serif; font-style:italic;">n</span> - 1</h2>
-                    <p>Be careful! You must substitute <strong>n</strong> into two places.</p>
+                    <span class="brand-pill" style="background: var(--warning); color: black;">Challenge</span>
+                    <h2 style="margin: 1rem 0;">Complex Rules: <span style="font-family:serif;">n</span>&sup2; + 2<span style="font-family:serif;">n</span> - 1</h2>
+                    <p>When substituting, replace <strong>every</strong> <span style="font-family:serif;">n</span> with the number.</p>
 
                     <div class="grid-2 slide-up" style="margin-top: 2rem;">
                         <div class="card" style="border-top: 4px solid var(--warning);">
-                            <h3>Find the 5th Term (n=5) [Cite: Question 15]</h3>
-                            <div style="font-size: 1.5rem; margin: 1.5rem 0; line-height: 2;">
-                                = <strong>(5)</strong>&sup2; + 2<strong>(5)</strong> - 1<br>
-                                = <span style="color: var(--secondary);">25</span> + <span style="color: var(--accent);">10</span> - 1<br>
-                                = <span class="blur-reveal" id="calc-hard">34</span>
+                            <h3>Find the 5th Term (<span class="text-warning">n=5</span>)</h3>
+                            <div style="font-size: 1.8rem; margin: 1.5rem 0; line-height: 2; font-family: 'JetBrains Mono', monospace;">
+                                = (<span class="text-warning">5</span>)&sup2; + 2(<span class="text-warning">5</span>) - 1<br>
+                                = <span class="text-secondary">25</span> + <span class="text-accent">10</span> - 1
                             </div>
-                            <button class="btn btn-nav btn-sm" onclick="document.getElementById('calc-hard').classList.add('visible')">Reveal</button>
+                            <div id="hard-ans-1" style="display:none; animation: popIn 0.3s;">
+                                <div class="num-pill pill-term" style="width:80px; height:80px; font-size: 2rem;">34</div>
+                            </div>
+                            <button class="btn btn-nav btn-sm" onclick="document.getElementById('hard-ans-1').style.display='block'">Reveal Answer</button>
                         </div>
                         
                         <div class="card" style="border-top: 4px solid var(--success);">
-                            <h3>Find the 3rd Term (n=3)</h3>
-                             <div style="font-size: 1.5rem; margin: 1.5rem 0; line-height: 2;">
-                                = <strong>(3)</strong>&sup2; + 2<strong>(3)</strong> - 1<br>
-                                = <span style="color: var(--secondary);">9</span> + <span style="color: var(--accent);">6</span> - 1<br>
-                                = <span class="blur-reveal" id="calc-hard-2">14</span>
+                            <h3>Find the 3rd Term (<span class="text-success">n=3</span>)</h3>
+                             <div style="font-size: 1.8rem; margin: 1.5rem 0; line-height: 2; font-family: 'JetBrains Mono', monospace;">
+                                = (<span class="text-success">3</span>)&sup2; + 2(<span class="text-success">3</span>) - 1<br>
+                                = <span class="text-secondary">9</span> + <span class="text-accent">6</span> - 1
                             </div>
-                            <button class="btn btn-nav btn-sm" onclick="document.getElementById('calc-hard-2').classList.add('visible')">Reveal</button>
+                            <div id="hard-ans-2" style="display:none; animation: popIn 0.3s;">
+                                <div class="num-pill pill-term" style="width:80px; height:80px; font-size: 2rem;">14</div>
+                            </div>
+                            <button class="btn btn-nav btn-sm" onclick="document.getElementById('hard-ans-2').style.display='block'">Reveal Answer</button>
                         </div>
                     </div>
                 </div>
             `
         },
         {
-            // 6. Identifying Quadratics (2nd Difference)
-            render: () => `
-                <div class="grid-2 fade-in items-center">
-                    <div>
-                        <h2>How to Spot a Quadratic</h2>
-                        <p>If you have a sequence of numbers, how do you know if it's <span style="font-family:serif; font-style:italic;">n</span>&sup2;?</p>
-                        
-                        <div class="card" style="margin-top: 2rem;">
-                            <h3 class="text-accent"><i class="fa-solid fa-lightbulb"></i> The Tip [Cite: Page 120]</h3>
-                            <p><strong>Linear Sequence:</strong> The <span class="text-accent">First Difference</span> is the same.</p>
-                            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:1rem 0;">
-                            <p><strong>Quadratic Sequence:</strong> The <span class="text-secondary">Second Difference</span> is the same.</p>
-                        </div>
-                    </div>
-                    <div class="text-center slide-up">
-                        <div style="background: var(--bg-card); padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
-                            ${getDifferenceTreeSVG()}
-                        </div>
-                        <p style="margin-top: 1rem;">Example: 1, 4, 9, 16</p>
-                    </div>
-                </div>
-            `
-        },
-        {
-            // 7. Inverse Problems
+            // 6. Interactive Difference Tree
             render: () => `
                 <div class="fade-in text-center">
-                    <span class="brand-pill" style="background: var(--secondary);">Inverse Operations</span>
-                    <h2 style="margin: 1rem 0;">Is 292 in the sequence?</h2>
-                    <p>Rule: <span style="font-family:serif; font-style:italic;">n</span>&sup2; + 34 [Cite: Question 13a]</p>
+                    <span class="brand-pill" style="background: var(--secondary);">The Core Skill</span>
+                    <h2 style="margin: 1rem 0;">How to Spot a Quadratic</h2>
                     
-                    <div class="card slide-up" style="max-width: 700px; margin: 2rem auto; text-align: left;">
-                        <p style="margin-bottom: 1rem;">Set up the equation:</p>
-                        <div style="font-size: 1.5rem; font-family: monospace; color: var(--accent);">
-                            n&sup2; + 34 = 292
-                        </div>
+                    <div class="card slide-up" style="max-width: 900px; margin: 2rem auto; min-height: 400px; display: flex; flex-direction: column; justify-content: center;">
                         
-                        <div id="inv-steps" style="display:none; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
-                            <p><strong>Step 1:</strong> Subtract 34</p>
-                            <div style="font-size: 1.5rem; font-family: monospace; color: white; margin-bottom: 1rem;">
-                                n&sup2; = 258
-                            </div>
-                            <p><strong>Step 2:</strong> Square Root</p>
-                            <div style="font-size: 1.5rem; font-family: monospace; color: white;">
-                                n = &radic;258 &approx; 16.06
-                            </div>
-                            <div class="answer-box visible" style="border-color: var(--secondary); background: rgba(244, 63, 94, 0.1); color: var(--secondary);">
-                                <i class="fa-solid fa-xmark"></i> <strong>No.</strong> <br>
-                                Since <strong>n</strong> is not a whole number, 292 is NOT in the sequence.
-                            </div>
+                        <div id="diff-tree-container">
+                            ${renderDiffTree(state.treeStep)}
                         </div>
-                        
-                        <button class="btn btn-reveal" style="margin-top: 2rem;" onclick="document.getElementById('inv-steps').style.display='block'; this.style.display='none'">
-                            Solve It
+
+                        <div id="tree-instruction" style="margin-top: 2rem; font-size: 1.2rem; font-weight: 700; color: var(--text-muted);">
+                            ${state.treeStep === 0 ? "Step 1: Look at the Sequence." : 
+                              state.treeStep === 1 ? "The 1st Difference changes (+3, +5...). It's NOT Linear." :
+                              "<span style='color:var(--secondary); font-size: 1.5rem;'>The 2nd Difference is Constant!</span>"}
+                        </div>
+
+                        <button class="btn btn-reveal" 
+                            id="tree-btn"
+                            style="width: auto; margin: 2rem auto; border-radius: 50px;" 
+                            onclick="updateTree()">
+                            ${state.treeStep === 0 ? "Find the Gap" : state.treeStep === 1 ? "Dig Deeper" : "Reset"}
                         </button>
                     </div>
                 </div>
             `
         },
         {
-            // 8. Fractional Sequences
-            render: () => `
-                <div class="fade-in text-center">
-                    <span class="brand-pill" style="background: var(--accent); color: black;">Extensions</span>
-                    <h2 style="margin: 1rem 0;">Fractional Sequences</h2>
-                    <p>Sometimes the rule involves division. [Cite: Question 2c]</p>
-
-                    <div class="grid-2 slide-up" style="max-width: 900px; margin: 2rem auto;">
-                        <div class="card">
-                            <h3>Rule: &frac12; <span style="font-family:serif; font-style:italic;">n</span></h3>
-                            <p style="color: var(--text-muted);">Multiply n by 0.5 (or divide by 2)</p>
-                            <div style="margin-top: 1rem; font-size: 1.2rem;">
-                                Term 1: <strong>0.5</strong><br>
-                                Term 2: <strong>1</strong><br>
-                                Term 3: <strong>1.5</strong>
-                            </div>
-                        </div>
-                        <div class="card" style="border: 2px solid var(--accent);">
-                            <h3>Rule: <span style="font-family:serif; font-style:italic;">n</span> / 2</h3>
-                            <p style="color: var(--text-muted);">Divide n by 2</p>
-                            <div style="margin-top: 1rem; font-size: 1.2rem;">
-                                Term 1: <strong>0.5</strong><br>
-                                Term 2: <strong>1</strong><br>
-                                Term 3: <strong>1.5</strong>
-                            </div>
-                            <div class="answer-box visible" style="margin-top: 1rem; text-align: center;">
-                                Notice: They are the same!
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `
-        },
-        {
-            // 9. Homework
+            // 7. Homework
             render: () => `
                 <div class="text-center fade-in">
                     <h2>📚 Homework Assignment</h2>
@@ -646,23 +617,19 @@
         }
     ];
 
-    // --- HELPER FUNCTIONS ---
-    function createFlipCard(front, backTitle, backDesc, icon, color) {
-        return `
-            <div class="flip-card" onclick="this.classList.toggle('flipped')" tabindex="0" onkeypress="if(event.key === 'Enter') this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <div class="flip-front">
-                        <i class="fa-solid ${icon}" style="font-size: 3rem; margin-bottom: 1rem; color: ${color};"></i>
-                        <h3 style="color: white;">${front}</h3>
-                        <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 1rem;">(Click to Flip)</p>
-                    </div>
-                    <div class="flip-back" style="background: linear-gradient(135deg, ${color}, var(--primary));">
-                        <h3>${backTitle}</h3>
-                        <p style="color: white; font-size: 1.1rem;">${backDesc}</p>
-                    </div>
-                </div>
-            </div>
-        `;
+    // --- INTERACTION LOGIC ---
+
+    function updateSquare() {
+        state.squareN++;
+        if(state.squareN > 5) state.squareN = 1; // Loop back
+        document.getElementById('grid-visual-container').innerHTML = renderSquareGrid(state.squareN);
+        render(); // Re-render to update opacity of pills
+    }
+
+    function updateTree() {
+        state.treeStep++;
+        if(state.treeStep > 2) state.treeStep = 0; // Loop back
+        render();
     }
 
     // --- CORE LOGIC ---
@@ -674,13 +641,15 @@
         document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
         document.getElementById('btn-prev').disabled = state.currentSlide === 0;
         document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
-        document.getElementById('viewport').scrollTop = 0;
     }
 
     function changeSlide(dir) {
         const next = state.currentSlide + dir;
         if (next >= 0 && next < state.slides.length) {
             state.currentSlide = next;
+            // Reset internal states when changing slides for fresh animations
+            state.squareN = 1; 
+            state.treeStep = 0;
             render();
         }
     }
