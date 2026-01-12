@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>9.3 Representing Functions</title>
+    <title>9.4 Representing Functions</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
 
             /* Typography - INCREASED CONTRAST */
             --text-main: #ffffff;        
-            --text-muted: #e2e8f0; /* Changed from dark gray to bright slate for readability */     
+            --text-muted: #e2e8f0; /* Bright slate for readability */      
 
             --header-h: 70px;
             --footer-h: 80px;
@@ -155,6 +155,8 @@
         }
         .btn-reveal:hover { background: #7c3aed; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(139, 92, 246, 0.4); }
         
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.9rem; width: auto; margin: 0.5rem 0; }
+
         /* Pedagogical Pills */
         .num-pill {
             font-family: 'JetBrains Mono', monospace;
@@ -203,8 +205,10 @@
         .text-accent { color: var(--accent); }
         .text-secondary { color: var(--secondary); }
         .text-primary { color: var(--primary); }
+        .text-success { color: var(--success); }
 
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; align-items: center; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; align-items: stretch; }
         
         /* Cards */
         .card {
@@ -216,6 +220,7 @@
             backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
+            height: 100%;
         }
 
         /* --- FUNCTION MACHINE GRAPHICS --- */
@@ -236,6 +241,7 @@
             position: relative;
             min-width: 120px;
             text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
         }
         .machine-box::before, .machine-box::after {
             content: '';
@@ -244,6 +250,7 @@
             width: 15px;
             height: 4px;
             background: white;
+            transform: translateY(-50%);
         }
         .machine-box::before { left: -15px; }
         .machine-box::after { right: -15px; }
@@ -262,7 +269,7 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            min-width: 100px;
+            min-width: 120px;
             align-items: center;
             background: rgba(0,0,0,0.2);
         }
@@ -277,7 +284,7 @@
         .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
 
         @media (max-width: 768px) {
-            .grid-2 { grid-template-columns: 1fr; gap: 2rem; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
             h1 { font-size: 2.5rem; }
             .header { flex-direction: column; height: auto; padding: 1rem; gap: 0.5rem; }
         }
@@ -288,9 +295,9 @@
 <div class="app-shell">
     <header class="header">
         <div style="display: flex; align-items: center; gap: 1rem;">
-            <div class="brand-pill">Year 9 Math</div>
+            <div class="brand-pill">Year 8 Math</div>
             <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
-                9.3 Representing Functions
+                9.4 Representing Functions
             </div>
         </div>
         
@@ -322,7 +329,6 @@
 <script>
     const state = {
         currentSlide: 0,
-        warmupRevealed: false,
         machineStep: 0,
         inverseStep: 0,
         slides: []
@@ -335,7 +341,7 @@
         {
             render: () => `
                 <div class="text-center fade-in">
-                    <div style="font-size: 5rem; margin-bottom: 1rem; color: var(--accent);">⚙️</div>
+                    <div style="font-size: 5rem; margin-bottom: 1rem; color: var(--accent); animation: popIn 1s;">⚙️</div>
                     <h1>Representing Functions</h1>
                     <p style="font-size: 1.5rem; color: var(--secondary); font-weight: 600;">Machines, Tables & Equations</p>
                     
@@ -369,13 +375,13 @@
                     <h2 style="margin-top: 1rem;">Spot the Difference</h2>
                     <p style="margin-bottom: 3rem;">We must be precise with our vocabulary.</p>
 
-                    <div class="grid-2 slide-up" style="gap: 1.5rem;">
+                    <div class="grid-3 slide-up" style="gap: 1.5rem;">
                         <div class="card" style="border-top: 4px solid var(--text-muted);">
                             <h3 style="color: var(--text-muted);">Expression</h3>
                             <div style="font-size: 2rem; font-family: 'JetBrains Mono'; margin: 1.5rem 0;">
                                 2<span class="text-accent">x</span> + 4
                             </div>
-                            <p style="color: white;">A collection of terms.<br>No equals sign.</p>
+                            <p style="color: white;">A collection of terms.<br><strong>No equals sign.</strong></p>
                         </div>
 
                         <div class="card" style="border-top: 4px solid var(--warning);">
@@ -383,7 +389,7 @@
                             <div style="font-size: 2rem; font-family: 'JetBrains Mono'; margin: 1.5rem 0;">
                                 A = &pi;r&sup2;
                             </div>
-                            <p style="color: white;">A rule connecting specific variables<br>(e.g. Area and radius).</p>
+                            <p style="color: white;">A rule connecting real-world variables<br>(e.g. Area and radius).</p>
                         </div>
 
                         <div class="card" style="border-top: 4px solid var(--accent);">
@@ -404,20 +410,20 @@
                     <h2>Warm Up: Substitution</h2>
                     <p>Before we use machines, let's practice the rule: <strong class="text-primary" style="font-size: 1.4rem;">4n - 3</strong></p>
                     
-                    <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                        ${[1, 2, 3, 4, 5, 100].map(n => `
+                    <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                        ${[1, 2, 3, 5, 10].map(n => `
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
                                 <div style="color: var(--text-muted); font-size: 0.9rem;">n = ${n}</div>
                                 <button class="num-pill pill-input" 
                                     onclick="this.innerText='${4*n-3}'; this.classList.remove('pill-input'); this.classList.add('pill-output'); this.style.transform='rotateY(360deg)';"
-                                    style="cursor: pointer; width: 80px; height: 80px; font-size: 1.5rem;">
+                                    style="cursor: pointer; width: 90px; height: 90px; font-size: 2rem;">
                                     ?
                                 </button>
                             </div>
                         `).join('')}
                     </div>
                     
-                    <p style="margin-top: 2rem; color: var(--text-muted);">Click the blue circles to reveal the answers.</p>
+                    <p style="margin-top: 3rem; color: var(--text-muted);">Click the blue circles to reveal the answers.</p>
                 </div>
             `
         },
