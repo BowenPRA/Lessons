@@ -3,27 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>9.4 Representing Functions (Year 8)</title>
+    <title>9.4 Representing Functions | Year 8</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
+        /* --- THEME VARIABLES --- */
         :root {
             --bg-deep: #0f0518;          
             --bg-card: #1e1b2e;          
-            --primary: #8b5cf6;   
-            --secondary: #f43f5e; 
-            --accent: #06b6d4;    
-            --success: #10b981;   
-            --warning: #f59e0b;   
+            
+            --primary: #8b5cf6;   /* Violet */
+            --secondary: #f43f5e; /* Rose - OUTPUTS */
+            --accent: #06b6d4;    /* Cyan - INPUTS */
+            --success: #10b981;   /* Emerald */
+            --warning: #f59e0b;   /* Amber */
+
             --text-main: #ffffff;        
-            --text-muted: #cbd5e1; 
+            --text-muted: #e2e8f0;       
+
             --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 4.5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.4rem);
         }
 
+        /* --- RESET & BASE --- */
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
         
         body {
@@ -32,397 +42,638 @@
             overflow: hidden;
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-deep);
-            background-image: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1), transparent 50%);
+            /* Subtle grid background for math feel */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.1), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.1), transparent 40%),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
             color: var(--text-main);
+            display: flex;
+            flex-direction: column;
         }
 
-        .header {
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; font-weight: 800; line-height: 1.1; }
+        h1 { font-size: var(--fs-h1); margin-bottom: 0.5rem; text-shadow: 0 0 30px rgba(139, 92, 246, 0.3); }
+        h2 { font-size: var(--fs-h2); margin-bottom: 1.5rem; color: white; }
+        p { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+        
+        .math-font { font-family: 'JetBrains Mono', monospace; }
+        .text-accent { color: var(--accent); }
+        .text-secondary { color: var(--secondary); }
+        .text-primary { color: var(--primary); }
+        .text-center { text-align: center; }
+
+        /* --- LAYOUT COMPONENTS --- */
+        header {
             padding: 1rem 2rem;
-            background: rgba(15, 5, 24, 0.95);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 70px;
+            background: rgba(15, 5, 24, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            z-index: 10;
         }
 
-        .slide-container {
-            height: calc(100vh - 150px);
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        main {
+            flex: 1;
+            position: relative;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            justify-content: center; /* Center slides vertically */
+        }
+
+        .slide-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
             padding: 2rem;
         }
 
-        .footer {
-            height: 80px;
-            background: rgba(15, 5, 24, 0.95);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 2rem;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 2rem;
+            align-items: start;
         }
 
-        /* --- TYPOGRAPHY & ELEMENTS --- */
-        h1 { font-family: 'Outfit', sans-serif; font-size: 3.5rem; margin-bottom: 0.5rem; text-align: center; }
-        h2 { font-family: 'Outfit', sans-serif; font-size: 2.5rem; margin-bottom: 1.5rem; color: var(--accent); text-align: center; }
-        p { font-size: 1.25rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
-
-        .tag {
-            background: rgba(255,255,255,0.1);
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            color: var(--accent);
-        }
-
+        /* --- CARDS & INTERACTIVE ELEMENTS --- */
         .card {
             background: var(--bg-card);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: var(--border-radius);
-            padding: 2rem;
-            max-width: 1000px;
-            width: 100%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            animation: slideUp 0.5s ease-out;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            position: relative;
+            transition: transform 0.3s ease;
         }
 
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-
-        /* --- INTERACTIVE PILLS --- */
-        .pill-box {
-            display: inline-flex;
+        /* Function Machine Graphics */
+        .machine-row {
+            display: flex;
             align-items: center;
+            justify-content: center;
             gap: 1rem;
-            background: rgba(255,255,255,0.05);
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
+            flex-wrap: wrap;
+            margin: 2rem 0;
         }
-        
-        .var-pill {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
+
+        .oval-pill {
+            min-width: 70px;
+            height: 70px;
+            border-radius: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'JetBrains Mono';
             font-size: 1.5rem;
             font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
+            border: 3px solid rgba(255,255,255,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
         }
 
-        .input-x { background: rgba(6, 182, 212, 0.2); color: var(--accent); border: 2px solid var(--accent); }
-        .output-y { background: rgba(244, 63, 94, 0.2); color: var(--secondary); border: 2px solid var(--secondary); }
-        .func-op { background: #334155; color: white; border: 2px solid white; border-radius: 8px; padding: 0 1rem; min-width: 80px; }
+        /* Distinct Input/Output Styles */
+        .pill-input { 
+            background: rgba(6, 182, 212, 0.15); 
+            border-color: var(--accent); 
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+        }
+        
+        .pill-output { 
+            background: rgba(244, 63, 94, 0.15); 
+            border-color: var(--secondary); 
+            color: var(--secondary);
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.2);
+        }
 
-        .hidden-ans {
+        .pill-neutral {
             background: #334155;
-            color: transparent;
+            color: white;
             cursor: pointer;
         }
-        .hidden-ans:hover { background: #475569; }
-        .revealed {
-            background: var(--success);
-            color: white;
-            animation: popIn 0.3s;
-        }
+        .pill-neutral:hover { transform: scale(1.05); background: #475569; }
 
+        .machine-box {
+            background: #2d2a42;
+            border: 2px solid white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-family: 'Outfit';
+            font-weight: 800;
+            font-size: 1.4rem;
+            position: relative;
+        }
+        /* Connectors */
+        .machine-box::before, .machine-box::after {
+            content: ''; position: absolute; top: 50%;
+            width: 15px; height: 3px; background: white;
+        }
+        .machine-box::before { left: -15px; }
+        .machine-box::after { right: -15px; }
+
+        .arrow { font-size: 1.5rem; color: rgba(255,255,255,0.3); }
+
+        /* Buttons */
         .btn {
             background: var(--primary);
             color: white;
             border: none;
             padding: 0.8rem 1.5rem;
-            border-radius: 8px;
+            border-radius: 10px;
+            font-family: 'Outfit';
             font-weight: 700;
             cursor: pointer;
-            font-family: 'Outfit';
+            transition: all 0.2s;
             font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.3); }
+        .btn:hover { background: #7c3aed; transform: translateY(-2px); }
+        .btn-nav { background: rgba(255,255,255,0.1); width: 50px; height: 50px; padding: 0; justify-content: center; border-radius: 50%; }
+        .btn-nav:hover { background: rgba(255,255,255,0.2); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn { from { transform: scale(0.8); } to { transform: scale(1); } }
+        /* Mapping Diagram Ovals */
+        .mapping-container {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 40px;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            min-width: 120px;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* --- UTILS & ANIMATION --- */
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-up { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pop { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .pop-anim { animation: pop 0.3s ease-out; }
+
+        /* Footer */
+        footer {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 5, 24, 0.9);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .progress-bar {
+            flex: 1; height: 6px; background: rgba(255,255,255,0.1);
+            margin: 0 2rem; border-radius: 3px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; background: var(--primary); width: 0%;
+            transition: width 0.3s ease;
+        }
+
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div style="font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
-        <span style="background:var(--primary); padding:2px 8px; border-radius:4px;">Y8</span>
-        9.4 Representing Functions
-    </div>
-    <div style="font-family: 'JetBrains Mono'; font-size: 0.9rem; opacity: 0.7;">Monday 12 Jan</div>
-</div>
+    <header>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 8</div>
+            <div style="font-weight: 700; color: var(--text-muted);">9.4 Representing Functions</div>
+        </div>
+        <div style="font-family: 'JetBrains Mono'; color: var(--text-muted); font-size: 0.9rem;">
+            Cambridge Mathematics
+        </div>
+    </header>
 
-<div class="slide-container" id="main-display">
-    </div>
+    <main id="main-content">
+        </main>
 
-<div class="footer">
-    <button class="btn btn-outline" onclick="changeSlide(-1)">Back</button>
-    
-    <div style="display: flex; gap: 0.5rem;">
-        <span id="dot-0" style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.3;"></span>
-        <span id="dot-1" style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.3;"></span>
-        <span id="dot-2" style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.3;"></span>
-        <span id="dot-3" style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.3;"></span>
-        <span id="dot-4" style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.3;"></span>
-        <span id="dot-5" style="width: 8px; height: 8px; background: white; border-radius: 50%; opacity: 0.3;"></span>
-    </div>
+    <footer>
+        <button class="btn btn-nav" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+        <button class="btn btn-nav" onclick="nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
 
-    <button class="btn" onclick="changeSlide(1)">Next Slide</button>
-</div>
-
-<script>
-    let currentSlide = 0;
-
-    const slides = [
-        // SLIDE 0: TITLE & OBJECTIVES
-        {
-            html: `
-                <h1>Representing Functions</h1>
-                <p style="text-align: center;">Workbook Pages 123-129</p>
-                <div class="card" style="margin-top: 2rem;">
-                    <h3 style="color: var(--primary); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
-                        📝 Today's Objectives
-                    </h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; font-size: 1.2rem;">
-                            <i class="fa-solid fa-check" style="color: var(--success);"></i>
-                            Find <strong>Outputs</strong> using function machines.
-                        </li>
-                        <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; font-size: 1.2rem;">
-                            <i class="fa-solid fa-check" style="color: var(--success);"></i>
-                            Write functions as <strong>Equations</strong> ($y = ...$).
-                        </li>
-                        <li style="display: flex; align-items: center; gap: 1rem; font-size: 1.2rem;">
-                            <i class="fa-solid fa-check" style="color: var(--success);"></i>
-                            Find inputs using <strong>Inverse</strong> operations.
-                        </li>
-                    </ul>
-                </div>
-            `
-        },
-        // SLIDE 1: DEFINITIONS (Specific User Request)
-        {
-            html: `
-                <h2>Spot the Difference</h2>
-                <p style="text-align:center;">Copy these three definitions down. Details matter!</p>
-                
-                <div class="grid-3" style="margin-top: 2rem;">
-                    <div class="card" style="border-top: 4px solid var(--text-muted);">
-                        <div class="tag">Algebra</div>
-                        <h3 style="margin: 1rem 0; font-size: 1.5rem;">Expression</h3>
-                        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 1.3rem; margin-bottom: 1rem; text-align: center;">
-                            2x + 5
-                        </div>
-                        <p style="font-size: 1rem;">A math phrase. No equals sign.</p>
-                    </div>
-
-                    <div class="card" style="border-top: 4px solid var(--warning);">
-                        <div class="tag" style="color: var(--warning);">Science/Real World</div>
-                        <h3 style="margin: 1rem 0; font-size: 1.5rem;">Formula</h3>
-                        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 1.3rem; margin-bottom: 1rem; text-align: center;">
-                            Area = l &times; w
-                        </div>
-                        <p style="font-size: 1rem;">A rule for a specific real-world relationship.</p>
-                    </div>
-
-                    <div class="card" style="border-top: 4px solid var(--primary);">
-                        <div class="tag" style="color: var(--primary);">Math Relationship</div>
-                        <h3 style="margin: 1rem 0; font-size: 1.5rem;">Function</h3>
-                        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 1.3rem; margin-bottom: 1rem; text-align: center;">
-                            <span style="color:var(--secondary)">y</span> = 2<span style="color:var(--accent)">x</span> + 5
-                        </div>
-                        <p style="font-size: 1rem;">Connects an <strong>Input (x)</strong> to an <strong>Output (y)</strong>.</p>
-                    </div>
-                </div>
-            `
-        },
-        // SLIDE 2: WORKBOOK EXAMPLES (Page 126 Q4)
-        {
-            html: `
-                <h2>Inputs & Outputs</h2>
-                <p>Let's use the examples from <strong>Workbook Page 126 (Q4)</strong>.</p>
-
-                <div class="card" style="margin-bottom: 2rem;">
-                    <h3 style="margin-bottom: 1rem;">Example 1: Single Step</h3>
-                    <div style="display: flex; justify-content: center; align-items: center; gap: 1rem;">
-                        <div style="text-align: center;">
-                            <div style="color: var(--accent); font-weight: bold; margin-bottom: 0.5rem;">Input (x)</div>
-                            <div class="var-pill input-x">10</div>
-                        </div>
-                        <i class="fa-solid fa-arrow-right"></i>
-                        <div class="var-pill func-op">- 9</div>
-                        <i class="fa-solid fa-arrow-right"></i>
-                        <div style="text-align: center;">
-                            <div style="color: var(--secondary); font-weight: bold; margin-bottom: 0.5rem;">Output (y)</div>
-                            <div class="var-pill hidden-ans" onclick="this.innerText='1'; this.classList.remove('hidden-ans'); this.classList.add('revealed');">?</div>
-                        </div>
-                    </div>
-                    <div style="text-align: center; margin-top: 1rem; font-family: 'JetBrains Mono'; color: var(--text-muted);">
-                        Equation: y = x - 9
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3 style="margin-bottom: 1rem;">Example 2: Two Steps</h3>
-                    <div style="display: flex; justify-content: center; align-items: center; gap: 1rem;">
-                        <div class="var-pill input-x">30</div>
-                        <i class="fa-solid fa-arrow-right"></i>
-                        <div class="var-pill func-op">&div; 5</div>
-                        <i class="fa-solid fa-arrow-right"></i>
-                        <div class="var-pill func-op">- 4</div>
-                        <i class="fa-solid fa-arrow-right"></i>
-                        <div class="var-pill hidden-ans" onclick="this.innerText='2'; this.classList.remove('hidden-ans'); this.classList.add('revealed');">?</div>
-                    </div>
-                     <div style="text-align: center; margin-top: 1rem; font-family: 'JetBrains Mono'; color: var(--text-muted);">
-                        Equation: y = (x &div; 5) - 4
-                    </div>
-                    <button class="btn btn-outline" style="margin-top: 1rem; width: 100%;" onclick="alert('Order matters! Divide 30 by 5 first (6), then subtract 4.')">
-                        <i class="fa-regular fa-lightbulb"></i> Show Hint
-                    </button>
-                </div>
-            `
-        },
-        // SLIDE 3: TABLES (Page 124)
-        {
-            html: `
-                <h2>From Machine to Table</h2>
-                <p>Complete the table of values for: <strong style="color: var(--primary);">y = 2x - 1</strong></p>
-
-                <div class="card">
-                    <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem;">
-                         <div class="var-pill input-x">x</div>
-                         <i class="fa-solid fa-arrow-right"></i>
-                         <div class="var-pill func-op">&times; 2</div>
-                         <i class="fa-solid fa-arrow-right"></i>
-                         <div class="var-pill func-op">- 1</div>
-                         <i class="fa-solid fa-arrow-right"></i>
-                         <div class="var-pill output-y">y</div>
-                    </div>
-
-                    <table style="width: 100%; border-collapse: collapse; font-size: 1.2rem; text-align: center;">
-                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            <td style="padding: 1rem; color: var(--accent); font-weight: bold;">x (Input)</td>
-                            <td style="padding: 1rem;">2</td>
-                            <td style="padding: 1rem;">3</td>
-                            <td style="padding: 1rem;">4</td>
-                            <td style="padding: 1rem;">10</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 1rem; color: var(--secondary); font-weight: bold;">y (Output)</td>
-                            <td style="padding: 1rem;"><span class="hidden-ans var-pill" style="width: 50px; height: 50px; font-size: 1.2rem;" onclick="this.innerText='3'; this.classList.add('revealed');">?</span></td>
-                            <td style="padding: 1rem;"><span class="hidden-ans var-pill" style="width: 50px; height: 50px; font-size: 1.2rem;" onclick="this.innerText='5'; this.classList.add('revealed');">?</span></td>
-                            <td style="padding: 1rem;"><span class="hidden-ans var-pill" style="width: 50px; height: 50px; font-size: 1.2rem;" onclick="this.innerText='7'; this.classList.add('revealed');">?</span></td>
-                            <td style="padding: 1rem;"><span class="hidden-ans var-pill" style="width: 50px; height: 50px; font-size: 1.2rem;" onclick="this.innerText='19'; this.classList.add('revealed');">?</span></td>
-                        </tr>
-                    </table>
-                </div>
-            `
-        },
-        // SLIDE 4: INVERSE MACHINES (Page 126 Q5)
-        {
-            html: `
-                <h2>Inverse Functions</h2>
-                <p>Based on <strong>Question 5</strong>. If we know the Output, how do we find the Input?</p>
-
-                <div class="grid-2">
-                    <div class="card">
-                        <h3 style="color: var(--primary);">Forward (Function)</h3>
-                        <p>Equation: <strong>y = x + 11</strong></p>
-                        
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem;">
-                            <div class="var-pill input-x">x</div>
-                            <i class="fa-solid fa-arrow-right"></i>
-                            <div class="var-pill func-op">+ 11</div>
-                            <i class="fa-solid fa-arrow-right"></i>
-                            <div class="var-pill output-y">y</div>
-                        </div>
-                    </div>
-
-                    <div class="card" style="border: 2px solid var(--warning);">
-                        <h3 style="color: var(--warning);">Reverse (Inverse)</h3>
-                        <p>Inverse Equation: <strong>x = y - 11</strong></p>
-                        
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; flex-direction: row-reverse;">
-                            <div class="var-pill input-x">x</div>
-                            <i class="fa-solid fa-arrow-left"></i>
-                            <div class="var-pill func-op" style="border-color: var(--warning);">- 11</div>
-                            <i class="fa-solid fa-arrow-left"></i>
-                            <div class="var-pill output-y">y</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card" style="margin-top: 2rem; text-align: center;">
-                    <h3>Practice:</h3>
-                    <p>If the function is <strong>y = 4x</strong>, what is the inverse equation?</p>
-                    <button class="btn btn-outline" onclick="this.innerHTML='Inverse: <strong>x = y &div; 4</strong>'; this.style.color='var(--success)';">Reveal Answer</button>
-                </div>
-            `
-        },
-        // SLIDE 5: CLOSING & HOMEWORK
-        {
-            html: `
-                <h1>Homework</h1>
-                
-                <div class="grid-2" style="margin-top: 2rem;">
-                    <div class="card">
-                        <h3><i class="fa-solid fa-book"></i> Workbook</h3>
-                        <ul style="margin-top: 1rem; list-style: none; line-height: 2;">
-                            <li><strong>Page 126:</strong> Q4 (Complete the tables)</li>
-                            <li><strong>Page 126:</strong> Q5 (Inverse machines)</li>
-                            <li><strong>Page 128:</strong> Q8 (Writing equations)</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="card" style="border-color: var(--warning);">
-                        <h3 style="color: var(--warning);"><i class="fa-solid fa-triangle-exclamation"></i> The Trap to Avoid</h3>
-                        <p style="margin-top: 1rem;">When substituting negative numbers:</p>
-                        <div style="font-family: 'JetBrains Mono'; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
-                            Input: -5<br>
-                            Function: x&sup2;<br>
-                            <br>
-                            <span style="color: var(--success);">Correct: (-5) &times; (-5) = 25</span><br>
-                            <span style="color: var(--secondary);">Wrong: -5 &times; 5 = -25</span>
-                        </div>
-                    </div>
-                </div>
-            `
-        }
-    ];
-
-    function renderSlide() {
-        document.getElementById('main-display').innerHTML = slides[currentSlide].html;
+    <script>
+        // --- DATA & STATE ---
+        let currentSlide = 0;
         
-        // Update dots
-        for(let i=0; i<6; i++) {
-            document.getElementById(`dot-${i}`).style.opacity = (i === currentSlide) ? '1' : '0.3';
+        // --- CONTENT GENERATION ---
+        const slides = [
+            // Slide 1: Title & Objectives
+            {
+                render: () => `
+                    <div class="slide-container fade-in text-center">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">⚙️</div>
+                        <h1>Representing Functions</h1>
+                        <p style="font-size: 1.5rem; color: var(--accent);">Machines, Mappings & Equations</p>
+                        
+                        <div class="card slide-up" style="max-width: 800px; margin: 3rem auto; text-align: left;">
+                            <h3 style="color: var(--primary); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                                📝 Objectives (Please Copy)
+                            </h3>
+                            <ul style="list-style: none; display: flex; flex-direction: column; gap: 1.5rem;">
+                                <li style="display: flex; align-items: center; gap: 1rem; font-size: 1.3rem;">
+                                    <span class="oval-pill pill-neutral" style="min-width: 40px; height: 40px; font-size: 1rem;">1</span>
+                                    <span>Find <span class="text-secondary">Outputs</span> from a function machine.</span>
+                                </li>
+                                <li style="display: flex; align-items: center; gap: 1rem; font-size: 1.3rem;">
+                                    <span class="oval-pill pill-neutral" style="min-width: 40px; height: 40px; font-size: 1rem;">2</span>
+                                    <span>Represent functions as algebraic equations (<span class="math-font text-secondary">y</span> = ...).</span>
+                                </li>
+                                <li style="display: flex; align-items: center; gap: 1rem; font-size: 1.3rem;">
+                                    <span class="oval-pill pill-neutral" style="min-width: 40px; height: 40px; font-size: 1rem;">3</span>
+                                    <span>Use <strong>inverse operations</strong> to find Inputs.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+
+            // Slide 2: Warm Up
+            {
+                render: () => `
+                    <div class="slide-container fade-in text-center">
+                        <span class="brand-pill" style="background: var(--warning);">Warm Up</span>
+                        <h2 style="margin-top: 1rem;">Quick Substitution</h2>
+                        <p>Evaluate the expression <span class="math-font text-primary" style="font-size: 1.5rem; padding: 0 0.5rem;">5n - 2</span> for the following values of <span class="math-font">n</span>.</p>
+                        
+                        <div class="grid-2 slide-up" style="margin-top: 3rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                            ${[3, 5, 10, -2].map(val => `
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                                    <div class="math-font" style="color: var(--text-muted);">n = ${val}</div>
+                                    <button class="oval-pill pill-neutral" style="width: 100px; height: 100px; font-size: 2rem; border-color: var(--accent);"
+                                        onclick="this.innerText = '${5*val - 2}'; this.classList.remove('pill-neutral'); this.classList.add('pill-output'); this.classList.add('pop-anim');">
+                                        ?
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <p style="margin-top: 3rem; font-size: 0.9rem;">Click the circles to reveal.</p>
+                    </div>
+                `
+            },
+
+            // Slide 3: Review / Definitions
+            {
+                render: () => `
+                    <div class="slide-container fade-in text-center">
+                        <span class="brand-pill">Review</span>
+                        <h2 style="margin-top: 1rem;">Spot the Difference</h2>
+                        <p>Math is a precise language. We must use the correct terms.</p>
+
+                        <div class="grid-2 slide-up" style="margin-top: 2rem;">
+                            <div class="card" style="border-top: 5px solid var(--text-muted);">
+                                <h3 style="color: var(--text-muted);">Expression</h3>
+                                <div class="math-font" style="font-size: 2rem; margin: 1.5rem 0;">2x + 4</div>
+                                <p style="font-size: 1rem;">A mathematical phrase combining numbers and variables. <br><strong>No equals sign.</strong></p>
+                            </div>
+
+                            <div class="card" style="border-top: 5px solid var(--warning);">
+                                <h3 style="color: var(--warning);">Formula</h3>
+                                <div class="math-font" style="font-size: 2rem; margin: 1.5rem 0;">A = &pi;r&sup2;</div>
+                                <p style="font-size: 1rem;">A rule connecting specific quantities (like Area and radius).</p>
+                            </div>
+
+                            <div class="card" style="border-top: 5px solid var(--primary); grid-column: 1 / -1;">
+                                <h3 style="color: var(--primary);">Function</h3>
+                                <div class="math-font" style="font-size: 2.5rem; margin: 1.5rem 0;">
+                                    <span class="text-secondary">y</span> = <span class="text-accent">2x</span> + 4
+                                </div>
+                                <p style="font-size: 1.1rem;">A relationship where every <span class="text-accent">Input (x)</span> produces a specific <span class="text-secondary">Output (y)</span>.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            // Slide 4: The Function Machine
+            {
+                render: () => `
+                    <div class="slide-container fade-in text-center">
+                        <span class="brand-pill" style="background: var(--accent);">Visualizing</span>
+                        <h2 style="margin-top: 1rem;">The Function Machine</h2>
+                        <p>Think of it like a factory. Raw material goes in, product comes out.</p>
+
+                        <div class="card slide-up" style="margin-top: 2rem; padding: 4rem 1rem;">
+                            <div class="machine-row">
+                                <div style="text-align: center;">
+                                    <div class="text-accent" style="margin-bottom: 0.5rem; font-weight: 700;">Input (x)</div>
+                                    <div class="oval-pill pill-input">5</div>
+                                </div>
+
+                                <i class="fa-solid fa-arrow-right arrow"></i>
+
+                                <div class="machine-box">
+                                    &times; 4
+                                </div>
+
+                                <i class="fa-solid fa-arrow-right arrow"></i>
+
+                                <div class="machine-box">
+                                    - 2
+                                </div>
+
+                                <i class="fa-solid fa-arrow-right arrow"></i>
+
+                                <div style="text-align: center;">
+                                    <div class="text-secondary" style="margin-bottom: 0.5rem; font-weight: 700;">Output (y)</div>
+                                    <button class="oval-pill pill-neutral" id="machine-out" 
+                                        onclick="this.innerText='18'; this.classList.remove('pill-neutral'); this.classList.add('pill-output');">
+                                        ?
+                                    </button>
+                                </div>
+                            </div>
+                            <p style="margin-top: 2rem;">Steps: 5 &times; 4 = 20. Then 20 - 2 = <strong>18</strong>.</p>
+                        </div>
+                    </div>
+                `
+            },
+
+            // Slide 5: The TRAP (Negatives)
+            {
+                render: () => `
+                    <div class="slide-container fade-in text-center">
+                        <span class="brand-pill" style="background: var(--secondary);">Caution</span>
+                        <h2 style="margin-top: 1rem;">The "Negative" Trap</h2>
+                        
+                        <div class="grid-2 slide-up" style="align-items: center;">
+                            <div>
+                                <p style="font-size: 1.2rem;">Calculate the output when Input = <span class="text-accent">-3</span>.</p>
+                                <div class="machine-row">
+                                    <div class="oval-pill pill-input">-3</div>
+                                    <i class="fa-solid fa-arrow-right arrow"></i>
+                                    <div class="machine-box">Square ( )&sup2;</div>
+                                    <i class="fa-solid fa-arrow-right arrow"></i>
+                                    <button class="oval-pill pill-neutral" onclick="this.innerText='9'; this.classList.add('pill-output'); this.classList.remove('pill-neutral');">?</button>
+                                </div>
+                            </div>
+
+                            <div class="card" style="border: 2px solid var(--secondary); background: rgba(244, 63, 94, 0.1);">
+                                <h3 class="text-secondary"><i class="fa-solid fa-triangle-exclamation"></i> Common Mistake</h3>
+                                <p style="margin-top: 1rem; color: white;">A negative number squared is <br><strong>ALWAYS POSITIVE</strong>.</p>
+                                
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin: 1rem 0; font-family: 'JetBrains Mono'; text-align: left;">
+                                    <span style="color: var(--success);">✔ Correct:</span> (-3) &times; (-3) = 9<br><br>
+                                    <span style="color: var(--secondary);">✘ Wrong:</span> -3 &times; 3 = -9
+                                </div>
+                                <p style="font-size: 0.9rem;">Calculator Tip: Use brackets! <code>(-3)^2</code></p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            // Slide 6: Two Step Machines (Order)
+            {
+                render: () => `
+                    <div class="slide-container fade-in text-center">
+                        <h2>Order Matters</h2>
+                        <p>Compare these two machines with Input <span class="text-accent">x = 4</span>.</p>
+
+                        <div class="grid-2 slide-up" style="gap: 1.5rem;">
+                            <div class="card">
+                                <h3>Machine A</h3>
+                                <div class="math-font text-primary" style="margin-bottom: 1rem;">y = 2(x + 3)</div>
+                                <div class="machine-row" style="font-size: 0.8rem; gap: 0.5rem;">
+                                    <div class="oval-pill pill-input" style="min-width: 50px; height: 50px;">4</div>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                    <div class="machine-box">+ 3</div>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                    <div class="machine-box">&times; 2</div>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                    <button class="oval-pill pill-neutral" style="min-width: 50px; height: 50px;" onclick="this.innerText='14'; this.classList.add('pill-output');">?</button>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <h3>Machine B</h3>
+                                <div class="math-font text-primary" style="margin-bottom: 1rem;">y = 2x + 3</div>
+                                <div class="machine-row" style="font-size: 0.8rem; gap: 0.5rem;">
+                                    <div class="oval-pill pill-input" style="min-width: 50px; height: 50px;">4</div>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                    <div class="machine-box">&times; 2</div>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                    <div class="machine-box">+ 3</div>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                    <button class="oval-pill pill-neutral" style="min-width: 50px; height: 50px;" onclick="this.innerText='11'; this.classList.add('pill-output');">?</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            // Slide 7: Mapping Diagrams
+            {
+                render: () => `
+                    <div class="slide-container fade-in text-center">
+                        <h2>Mapping Diagrams</h2>
+                        <p>Another way to show <span class="math-font">y = x + 5</span>.</p>
+
+                        <div class="card slide-up" style="display: flex; justify-content: center; align-items: center; gap: 3rem; margin-top: 2rem;">
+                            
+                            <div>
+                                <h4 class="text-accent" style="margin-bottom: 1rem;">Input (x)</h4>
+                                <div class="mapping-container" style="border-color: var(--accent);">
+                                    <div class="oval-pill pill-input" style="width: 60px; height: 60px;">1</div>
+                                    <div class="oval-pill pill-input" style="width: 60px; height: 60px;">3</div>
+                                    <div class="oval-pill pill-input" style="width: 60px; height: 60px;">10</div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 2.5rem; opacity: 0.5;">
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+
+                            <div>
+                                <h4 class="text-secondary" style="margin-bottom: 1rem;">Output (y)</h4>
+                                <div class="mapping-container" style="border-color: var(--secondary);">
+                                    <div id="map1" class="oval-pill pill-neutral" style="width: 60px; height: 60px;">?</div>
+                                    <div id="map2" class="oval-pill pill-neutral" style="width: 60px; height: 60px;">?</div>
+                                    <div id="map3" class="oval-pill pill-neutral" style="width: 60px; height: 60px;">?</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn" style="margin-top: 2rem;" 
+                            onclick="document.getElementById('map1').innerText='6'; document.getElementById('map2').innerText='8'; document.getElementById('map3').innerText='15'; 
+                            document.querySelectorAll('.pill-neutral').forEach(el => { el.classList.remove('pill-neutral'); el.classList.add('pill-output'); })">
+                            Map Values
+                        </button>
+                    </div>
+                `
+            },
+
+            // Slide 8: Writing Equations
+            {
+                render: () => `
+                    <div class="slide-container fade-in text-center">
+                        <h2>Writing Equations</h2>
+                        <p>Translate the machine into Algebra.</p>
+
+                        <div class="grid-2 slide-up">
+                            <div class="card">
+                                <div class="machine-row" style="font-size: 0.9rem;">
+                                    <span class="text-accent math-font">x</span>
+                                    <i class="fa-solid fa-arrow-right arrow"></i>
+                                    <div class="machine-box">&times; 6</div>
+                                    <i class="fa-solid fa-arrow-right arrow"></i>
+                                    <div class="machine-box">- 2</div>
+                                    <i class="fa-solid fa-arrow-right arrow"></i>
+                                    <span class="text-secondary math-font">y</span>
+                                </div>
+                                <button class="btn" onclick="this.nextElementSibling.classList.remove('hidden')">Reveal</button>
+                                <div class="hidden math-font text-success" style="font-size: 2rem; margin-top: 1rem;">y = 6x - 2</div>
+                            </div>
+
+                            <div class="card">
+                                <div class="machine-row" style="font-size: 0.9rem;">
+                                    <span class="text-accent math-font">x</span>
+                                    <i class="fa-solid fa-arrow-right arrow"></i>
+                                    <div class="machine-box">+ 4</div>
+                                    <i class="fa-solid fa-arrow-right arrow"></i>
+                                    <div class="machine-box">&divide; 2</div>
+                                    <i class="fa-solid fa-arrow-right arrow"></i>
+                                    <span class="text-secondary math-font">y</span>
+                                </div>
+                                <button class="btn" onclick="this.nextElementSibling.classList.remove('hidden')">Reveal</button>
+                                <div class="hidden math-font text-success" style="font-size: 2rem; margin-top: 1rem;">y = &frac12;(x + 4)</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            // Slide 9: Inverse Operations
+            {
+                render: () => `
+                    <div class="slide-container fade-in text-center">
+                        <span class="brand-pill" style="background: var(--warning);">Inverse</span>
+                        <h2 style="margin-top: 1rem;">Working Backwards</h2>
+                        <p>We have the Output (<span class="text-secondary">y = 23</span>). Find the Input.</p>
+                        <p class="math-font">y = 3x + 2</p>
+
+                        <div class="card slide-up" style="margin-top: 2rem;">
+                            <div class="machine-row">
+                                <button class="oval-pill pill-neutral" id="inv-res">x = ?</button>
+                                <i class="fa-solid fa-arrow-left arrow"></i>
+                                <div class="machine-box" style="border-color: var(--warning);">&div; 3</div>
+                                <i class="fa-solid fa-arrow-left arrow"></i>
+                                <div class="machine-box" style="border-color: var(--warning);">- 2</div>
+                                <i class="fa-solid fa-arrow-left arrow"></i>
+                                <div class="oval-pill pill-output">23</div>
+                            </div>
+
+                            <div class="text-left" style="max-width: 400px; margin: 0 auto; color: var(--text-muted);">
+                                <p>1. Inverse of +2 is <strong>Subtract 2</strong>: <br>23 - 2 = 21</p>
+                                <p>2. Inverse of &times;3 is <strong>Divide by 3</strong>: <br>21 &div; 3 = ...</p>
+                            </div>
+
+                            <button class="btn" onclick="document.getElementById('inv-res').innerText='7'; document.getElementById('inv-res').classList.add('pill-input'); document.getElementById('inv-res').classList.remove('pill-neutral');">
+                                Reveal Input
+                            </button>
+                        </div>
+                    </div>
+                `
+            },
+
+            // Slide 10: Homework
+            {
+                render: () => `
+                    <div class="slide-container fade-in text-center">
+                        <h2>📚 Homework Assignment</h2>
+                        
+                        <div class="card slide-up" style="max-width: 600px; margin: 2rem auto; text-align: left; border-top: 5px solid var(--primary);">
+                            <h3 style="color: var(--primary); margin-bottom: 1rem;">Workbook Ex 9.4 (p.123)</h3>
+                            
+                            <ul style="list-style: none; display: flex; flex-direction: column; gap: 1.5rem;">
+                                <li style="display: flex; gap: 1rem;">
+                                    <div class="oval-pill pill-neutral" style="width: 40px; height: 40px; min-width: 40px; font-size: 1rem;">Q4</div>
+                                    <div>
+                                        <strong>Function Machines</strong><br>
+                                        <span style="font-size: 0.9rem; color: var(--text-muted);">Complete the tables. Watch out for order of operations!</span>
+                                    </div>
+                                </li>
+                                <li style="display: flex; gap: 1rem;">
+                                    <div class="oval-pill pill-neutral" style="width: 40px; height: 40px; min-width: 40px; font-size: 1rem;">Q5</div>
+                                    <div>
+                                        <strong>Inverse Machines</strong><br>
+                                        <span style="font-size: 0.9rem; color: var(--text-muted);">Draw the reverse machine to find the input.</span>
+                                    </div>
+                                </li>
+                                <li style="display: flex; gap: 1rem;">
+                                    <div class="oval-pill pill-neutral" style="width: 40px; height: 40px; min-width: 40px; font-size: 1rem;">Q6</div>
+                                    <div>
+                                        <strong>Matching Equations</strong><br>
+                                        <span style="font-size: 0.9rem; color: var(--text-muted);">Match the function to its inverse equation.</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        // --- NAVIGATION LOGIC ---
+        function updateSlide() {
+            const main = document.getElementById('main-content');
+            main.innerHTML = slides[currentSlide].render();
+            
+            // Progress Bar
+            const percent = ((currentSlide + 1) / slides.length) * 100;
+            document.getElementById('progress').style.width = percent + '%';
         }
-    }
 
-    function changeSlide(dir) {
-        if(currentSlide + dir >= 0 && currentSlide + dir < slides.length) {
-            currentSlide += dir;
-            renderSlide();
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlide();
+            }
         }
-    }
 
-    // Initial Render
-    renderSlide();
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
 
-</script>
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Initialize
+        updateSlide();
+
+    </script>
 </body>
 </html>
