@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6.2 Khúc xạ - Khoa học Lớp 8</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Deep Space Science Theme */
+            --bg-deep: #020617;          
+            --bg-card: #1e293b;          
+            --bg-card-hover: #334155;   
+            
+            --primary: #6366f1;   /* Indigo - Main Elements */
+            --secondary: #ec4899; /* Pink - Highlights/Collision */
+            --accent: #22d3ee;    /* Cyan - Key Terms/Earth */
+            --amber: #fbbf24;     /* Amber - Impact/Molten */
+            --success: #34d399;   
+            --danger: #f87171;    
+
+            /* Typography */
+            --text-main: #ffffff;        
+            --text-muted: #e2e8f0;       
+            --text-on-light: #0f172a; 
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            /* Deep Space Background Effect */
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.15), transparent 40%),
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+            background-size: 100% 100%, 100% 100%, 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 0 0, 0 0, 100px 30px, 200px 100px;
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(2, 6, 23, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--bg-deep);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(2, 6, 23, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:hover { background: #4f46e5; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(99, 102, 241, 0.4); }
+        
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 8px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            transition: width 0.4s ease;
+        }
+
+        /* Typography & Layout */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; }
+        strong { color: white; font-weight: 800; }
+
+        /* Helpers for color emphasis */
+        .text-accent { color: var(--accent) !important; }
+        .text-secondary { color: var(--secondary) !important; }
+        .text-amber { color: var(--amber) !important; }
+        .text-success { color: var(--success) !important; }
+        .text-danger { color: var(--danger) !important; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Flip Cards */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 350px; 
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .flip-front { background: var(--bg-card); }
+        .flip-front:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+        .flip-back { background: linear-gradient(135deg, var(--primary), var(--secondary)); transform: rotateY(180deg); color: white; border: none; box-shadow: 0 0 30px rgba(99, 102, 241, 0.5); }
+        .flip-back h3 { color: white; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; margin-bottom: 15px; }
+
+        /* Answer Panels */
+        .answer-box {
+            background: rgba(34, 211, 238, 0.1);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .answer-box.visible { display: block; animation: slideUp 0.3s ease; }
+        .answer-box strong { color: white; }
+        
+        /* Image Styling */
+        .slide-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* Video Styling */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            .header, .footer { padding: 0 1rem; }
+            h1 { font-size: 2.5rem; }
+            .flip-card { height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Khoa học Lớp 8</div>
+            <span style="font-weight: 700; color: var(--text-muted); font-size: 0.9rem;">Chủ đề 6.2 Khúc xạ</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            Thứ Sáu, 9/1/2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    const state = {
+        currentSlide: 0,
+        slides: []
+    };
+
+    // --- SLIDE DATA ---
+    state.slides = [
+        {
+            // 1. Title & Goals
+            render: () => `
+                <div class="text-center fade-in">
+                    <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 5rem; color: var(--accent); margin-bottom: 1.5rem; filter: drop-shadow(0 0 15px var(--accent));"></i>
+                    <h1>6.2 Khúc xạ Ánh sáng</h1>
+                    <p style="font-size: 1.5rem; color: var(--secondary); font-weight: 600; letter-spacing: 1px;">Sự Bẻ Cong của Ánh Sáng</p>
+                    
+                    <div class="card slide-up" style="margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; text-align: left;">
+                        <h3 style="color: var(--accent); border-bottom: 1px solid rgba(34, 211, 238, 0.3); padding-bottom: 1rem;">
+                            <i class="fa-solid fa-crosshairs"></i> Mục tiêu Bài học
+                        </h3>
+                        <ul style="list-style: none; margin-top: 1.5rem; display: grid; gap: 1rem;">
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Mô tả cách ánh sáng bị <strong class="text-accent">bẻ cong</strong> tại các ranh giới.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Hiểu <strong class="text-secondary">mật độ</strong> ảnh hưởng thế nào đến tốc độ ánh sáng.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Vẽ <strong class="text-amber">sơ đồ tia sáng</strong> một cách chính xác.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 2. Warm Up (Flip Cards)
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--amber); color: var(--bg-deep);">Khởi động</span>
+                    <h2 style="margin-top: 1rem;">Tư duy về Ánh sáng</h2>
+                    <div class="grid-2 slide-up" style="max-width: 900px; margin: 3rem auto;">
+                        ${createFlipCard(
+                            'Vật liệu Trong suốt', 
+                            'Ví dụ', 
+                            'Em hãy kể tên 3 vật liệu mà ánh sáng có thể đi qua?', 
+                            'Thủy tinh, Nước, Nhựa trong, Kim cương, Không khí.',
+                            'fa-layer-group', 
+                            'var(--primary)'
+                        )}
+                        ${createFlipCard(
+                            'Ly Nước', 
+                            'Sự Khúc xạ', 
+                            'Tại sao ống hút trông như bị gãy khi ở trong nước?', 
+                            'Bởi vì ánh sáng <strong class="text-accent">đổi hướng</strong> khi di chuyển từ nước sang không khí.',
+                            'fa-glass-water', 
+                            'var(--secondary)'
+                        )}
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 3. What is Refraction?
+            render: () => `
+                <div class="grid-2 fade-in items-center">
+                    <div>
+                        <h2>Khúc xạ là gì?</h2>
+                        <p style="font-size: 1.3rem;">Khúc xạ là sự thay đổi <strong class="text-accent">hướng đi</strong> của ánh sáng khi truyền từ môi trường này sang môi trường khác.</p>
+                        <div class="card" style="margin-top: 2rem; border-left: 4px solid var(--accent);">
+                            <h3 class="text-accent"><i class="fa-solid fa-bolt"></i> Tại sao nó xảy ra?</h3>
+                            <p>Nó xảy ra vì ánh sáng thay đổi <strong class="text-white">TỐC ĐỘ</strong>.</p>
+                        </div>
+                    </div>
+                    <div class="slide-up">
+                        <div class="card" style="background: rgba(255,255,255,0.05);">
+                            <h3 class="text-center" style="margin-bottom: 1.5rem;">Tốc độ Ánh sáng</h3>
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div style="display: flex; justify-content: space-between; padding: 1rem; background: rgba(99, 102, 241, 0.2); border-radius: 8px; align-items: center;">
+                                    <span style="font-size: 1.2rem; font-weight: 800;"><i class="fa-solid fa-wind"></i> KHÔNG KHÍ</span>
+                                    <span class="text-accent" style="font-size: 1.5rem;">300,000 km/s</span>
+                                </div>
+                                <div style="display: flex; justify-content: center; opacity: 0.5;"><i class="fa-solid fa-arrow-down"></i> Chậm lại (Slows Down)</div>
+                                <div style="display: flex; justify-content: space-between; padding: 1rem; background: rgba(236, 72, 153, 0.2); border-radius: 8px; align-items: center;">
+                                    <span style="font-size: 1.2rem; font-weight: 800;"><i class="fa-solid fa-cube"></i> THỦY TINH</span>
+                                    <span class="text-secondary" style="font-size: 1.5rem;">200,000 km/s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 4. The Rules
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Quy tắc Khúc xạ</h2>
+                    <p style="margin-bottom: 3rem;">Ánh sáng bẻ cong như thế nào? Nó phụ thuộc vào mật độ.</p>
+                    
+                    <div class="grid-2 slide-up">
+                        <div class="card" style="border-top: 4px solid var(--secondary);">
+                            <h3 class="text-secondary">1. Vào môi trường ĐẶC hơn</h3>
+                            <p style="font-size: 0.9rem; margin-bottom: 1rem; opacity: 0.7;">(Ví dụ: Không khí vào Thủy tinh)</p>
+                            <p style="font-size: 1.2rem;">Ánh sáng đi <strong class="text-danger">CHẬM LẠI</strong>.</p>
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0;">
+                            <p>Nó bẻ cong <strong class="text-secondary">LẠI GẦN</strong> pháp tuyến.</p>
+                            <i class="fa-solid fa-arrow-right-to-bracket" style="font-size: 2rem; margin-top: 1rem; color: var(--secondary);"></i>
+                        </div>
+
+                        <div class="card" style="border-top: 4px solid var(--accent);">
+                            <h3 class="text-accent">2. Vào môi trường KÉM ĐẶC hơn</h3>
+                            <p style="font-size: 0.9rem; margin-bottom: 1rem; opacity: 0.7;">(Ví dụ: Thủy tinh ra Không khí)</p>
+                            <p style="font-size: 1.2rem;">Ánh sáng đi <strong class="text-success">NHANH HƠN</strong>.</p>
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0;">
+                            <p>Nó bẻ cong <strong class="text-accent">RA XA</strong> pháp tuyến.</p>
+                            <i class="fa-solid fa-arrow-right-from-bracket" style="font-size: 2rem; margin-top: 1rem; color: var(--accent);"></i>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 5. Visual Diagram 1 (Refraction1.png)
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2 class="text-secondary">Không khí vào Thủy tinh</h2>
+                    <div class="card slide-up" style="max-width: 800px; margin: 2rem auto; padding: 1rem;">
+                        <img src="Refraction1.png" alt="Sơ đồ tia sáng đi vào khối thủy tinh" class="slide-img">
+                        <div style="text-align: left; margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            <p><strong class="text-amber">Tia tới (Incident Ray):</strong> Tia sáng chiếu vào khối vật chất.</p>
+                            <p><strong class="text-secondary">Tia khúc xạ (Refracted Ray):</strong> Chú ý nó bẻ cong <strong>LẠI GẦN</strong> đường Pháp tuyến (nét đứt).</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 6. Visual Diagram 2 (Refraction2.png)
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2 class="text-accent">Toàn bộ quá trình</h2>
+                    <div class="card slide-up" style="max-width: 800px; margin: 2rem auto; padding: 1rem;">
+                        <img src="Refraction2.png" alt="Sơ đồ tia sáng rời khỏi thủy tinh" class="slide-img">
+                        <div style="text-align: left; margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            <p><strong class="text-accent">Tia ló (Emergent Ray):</strong> Khi ánh sáng rời khỏi khối, nó tăng tốc.</p>
+                            <p>Nó bẻ cong <strong>RA XA</strong> đường Pháp tuyến.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 7. Video Embed
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2 style="margin-bottom: 2rem;">Xem & Học</h2>
+                    <div class="slide-up" style="max-width: 900px; margin: 0 auto;">
+                        <div class="card" style="padding: 1rem;">
+                            <div class="video-container">
+                                <iframe 
+                                    src="https://www.youtube.com/embed/UUc44Vg5pCI?start=73" 
+                                    title="Video Khúc xạ" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+                            <p style="margin-top: 1rem; text-align: left; font-size: 0.95rem; opacity: 0.8;">
+                                <i class="fa-brands fa-youtube" style="color: #ff0000;"></i> 
+                                Hãy quan sát cách tia sáng đổi hướng khi đi vào và đi ra khỏi khối thủy tinh.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 8. Roller Skate Analogy
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--success); color: var(--bg-deep);">Ví dụ so sánh</span>
+                    <h2 style="margin-top: 1rem;">Tại sao nó bẻ cong?</h2>
+                    <div style="max-width: 600px; margin: 3rem auto;" class="slide-up">
+                        ${createFlipCard(
+                            'Ví dụ Giày trượt Patin', 
+                            'Một bên chậm lại trước!', 
+                            'Hãy tưởng tượng đôi giày trượt patin đi từ vỉa hè vào bãi cỏ theo một góc chéo.', 
+                            'Bánh xe đầu tiên chạm cỏ sẽ chậm lại, trong khi bánh kia vẫn đi nhanh trên vỉa hè. Điều này làm người trượt bị <strong>xoay hướng</strong>.',
+                            'fa-person-skating', 
+                            'var(--success)'
+                        )}
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 9. Real World Effects
+            render: () => `
+                <div class="fade-in">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Hiệu ứng Thực tế</h2>
+                    <div class="grid-2 slide-up">
+                        <div class="card" style="border-left: 4px solid var(--amber);">
+                            <i class="fa-solid fa-coins" style="font-size: 3rem; color: var(--amber); margin-bottom: 1rem;"></i>
+                            <h3>Đồng xu xuất hiện</h3>
+                            <p>Nếu đồng xu bị che bởi thành cốc, đổ nước vào có thể làm nó hiện ra!</p>
+                            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">Ánh sáng từ đồng xu bị bẻ cong tại mặt nước để đi tới mắt em.</p>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--primary);">
+                            <i class="fa-solid fa-glasses" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                            <h3>Thấu kính (Lenses)</h3>
+                            <p><strong>Máy ảnh</strong> và <strong>Mắt</strong> của chúng ta sử dụng các miếng thủy tinh cong (thấu kính) để dùng khúc xạ.</p>
+                            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">Chúng bẻ cong ánh sáng để hội tụ tại một điểm (trên võng mạc hoặc phim).</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 10. Challenge 1
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2 class="text-accent"><i class="fa-solid fa-pencil"></i> Thử thách 1: Vẽ hình</h2>
+                    <p style="font-size: 1.2rem;">Vẽ một tia sáng đi từ <strong>Nước</strong> vào <strong>Khối Nhựa</strong>.</p>
+                    
+                    <div class="card slide-up" style="max-width: 700px; margin: 2rem auto;">
+                        <p style="text-align: left; margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                            <i class="fa-solid fa-circle-info"></i> 
+                            Nhựa thì <strong>đặc hơn</strong> Nước.
+                        </p>
+                        
+                        <div style="background: #0f172a; border-radius: 8px; border: 2px solid rgba(255,255,255,0.1); padding: 1rem; position: relative;">
+                            <svg viewBox="0 0 400 250" style="width: 100%; height: auto; overflow: visible;">
+                                <rect x="0" y="0" width="400" height="125" fill="#3b82f6" fill-opacity="0.2" /> <text x="10" y="30" fill="#60a5fa" font-size="14" font-weight="bold">NƯỚC (Kém đặc hơn)</text>
+                                
+                                <rect x="0" y="125" width="400" height="125" fill="#94a3b8" fill-opacity="0.2" /> <text x="10" y="230" fill="#cbd5e1" font-size="14" font-weight="bold">NHỰA (Đặc hơn)</text>
+                                
+                                <line x1="200" y1="20" x2="200" y2="230" stroke="white" stroke-width="2" stroke-dasharray="5,5" opacity="0.5" />
+                                <text x="205" y="40" fill="white" font-size="10" opacity="0.5">Pháp tuyến</text>
+                                
+                                <line x1="50" y1="20" x2="200" y2="125" stroke="var(--amber)" stroke-width="3" marker-end="url(#arrowhead)" />
+                                <text x="100" y="80" fill="var(--amber)" font-size="12">Tia tới</text>
+                                
+                                <g class="svg-solution" style="display: none;">
+                                    <line x1="200" y1="125" x2="280" y2="250" stroke="var(--secondary)" stroke-width="3" />
+                                    <text x="220" y="180" fill="var(--secondary)" font-size="12" font-weight="bold">Tia khúc xạ</text>
+                                    
+                                    <path d="M 200 160 Q 210 160 212 145" fill="none" stroke="white" stroke-width="1" opacity="0.8" />
+                                    <text x="225" y="150" fill="white" font-size="12">Bẻ LẠI GẦN Pháp tuyến</text>
+                                </g>
+
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="var(--amber)" />
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                        
+                        <button class="btn btn-reveal" onclick="this.previousElementSibling.querySelector('.svg-solution').style.display = 'block'; this.style.display='none'">
+                            <i class="fa-solid fa-eye"></i> Xem Đáp Án
+                        </button>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 11. Challenge 2
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2 class="text-secondary"><i class="fa-regular fa-gem"></i> Thử thách 2: Lấp lánh</h2>
+                    <p style="font-size: 1.2rem;">Vẽ một tia sáng đi từ <strong>Kim cương</strong> ra ngoài <strong>Không khí</strong>.</p>
+                    
+                    <div class="card slide-up" style="max-width: 700px; margin: 2rem auto;">
+                        <p style="text-align: left; margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                            <i class="fa-solid fa-circle-info"></i> 
+                            Kim cương <strong>đặc hơn nhiều</strong> so với Không khí.
+                        </p>
+                        
+                        <div style="background: #0f172a; border-radius: 8px; border: 2px solid rgba(255,255,255,0.1); padding: 1rem; position: relative;">
+                            <svg viewBox="0 0 400 250" style="width: 100%; height: auto; overflow: visible;">
+                                <rect x="0" y="0" width="400" height="125" fill="transparent" /> <text x="10" y="30" fill="white" font-size="14" font-weight="bold">KHÔNG KHÍ (Kém đặc hơn)</text>
+                                
+                                <rect x="0" y="125" width="400" height="125" fill="#22d3ee" fill-opacity="0.15" /> <text x="10" y="230" fill="#22d3ee" font-size="14" font-weight="bold">KIM CƯƠNG (Rất đặc)</text>
+                                
+                                <line x1="200" y1="20" x2="200" y2="230" stroke="white" stroke-width="2" stroke-dasharray="5,5" opacity="0.5" />
+                                
+                                <line x1="120" y1="250" x2="200" y2="125" stroke="var(--amber)" stroke-width="3" marker-end="url(#arrowhead2)" />
+                                <text x="130" y="200" fill="var(--amber)" font-size="12">Tia tới</text>
+                                
+                                <g class="svg-solution" style="display: none;">
+                                    <line x1="200" y1="125" x2="350" y2="80" stroke="var(--secondary)" stroke-width="3" />
+                                    <text x="280" y="70" fill="var(--secondary)" font-size="12" font-weight="bold">Tia khúc xạ</text>
+                                    
+                                    <path d="M 200 90 Q 210 90 220 110" fill="none" stroke="white" stroke-width="1" opacity="0.8" />
+                                    <text x="230" y="100" fill="white" font-size="12">Bẻ RA XA Pháp tuyến</text>
+                                    <text x="230" y="115" fill="#22d3ee" font-size="11">(Tăng tốc!)</text>
+                                </g>
+
+                                <defs>
+                                    <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="var(--amber)" />
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                        
+                        <button class="btn btn-reveal" onclick="this.previousElementSibling.querySelector('.svg-solution').style.display = 'block'; this.style.display='none'">
+                            <i class="fa-solid fa-eye"></i> Xem Đáp Án
+                        </button>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 12. Check Understanding
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2><i class="fa-solid fa-clipboard-question"></i> Kiểm tra Kiến thức</h2>
+                    <div class="grid-2 slide-up" style="margin-top: 3rem;">
+                        <div class="card">
+                            <h3>Câu hỏi 1</h3>
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">Ánh sáng đi nhanh hơn trong <strong>Không khí</strong> hay <strong>Nước</strong>?</p>
+                            <button class="btn btn-reveal" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Kiểm tra</button>
+                            <div class="answer-box">
+                                <strong class="text-accent" style="font-size: 1.5rem;">Không khí</strong>
+                                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Vì nó kém đặc hơn (300,000 km/s).</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3>Câu hỏi 2</h3>
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">Khi ánh sáng đi vào môi trường <strong>đặc hơn</strong> (như thủy tinh), nó bẻ cong theo hướng nào?</p>
+                            <button class="btn btn-reveal" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Kiểm tra</button>
+                            <div class="answer-box">
+                                <strong class="text-secondary" style="font-size: 1.5rem;">Lại gần Pháp tuyến</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 13. Homework
+            render: () => `
+                <div class="text-center fade-in">
+                    <h2>📚 Bài tập về nhà</h2>
+                    <div class="card slide-up" style="max-width: 600px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--primary);">
+                        <h3 style="color: var(--primary);">Nhiệm vụ Chủ đề 6.2</h3>
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(99, 102, 241, 0.2); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-book-open"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Đọc sách giáo khoa</p>
+                                <p>Đọc trang <strong>198 - 199</strong>.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(236, 72, 153, 0.2); color: var(--secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Câu hỏi</p>
+                                <p>Trả lời <strong>Câu hỏi 1-4</strong> ở trang 200.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- HELPER FUNCTIONS ---
+    function createFlipCard(front, backTitle, backDesc, extraDesc, icon, color) {
+        return `
+            <div class="flip-card" onclick="this.classList.toggle('flipped')" tabindex="0" onkeypress="if(event.key === 'Enter') this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <i class="fa-solid ${icon}" style="font-size: 3rem; margin-bottom: 1rem; color: ${color};"></i>
+                        <h3 style="color: white;">${front}</h3>
+                        <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 1rem;">(Nhấn để Lật)</p>
+                    </div>
+                    <div class="flip-back" style="background: linear-gradient(135deg, ${color}, var(--primary));">
+                        <h3>${backTitle}</h3>
+                        <p style="color: white; font-size: 1.1rem;">${backDesc}</p>
+                         ${extraDesc ? `<p style="font-size: 1rem; margin-top:1rem; opacity:0.9; color:white; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1rem;">${extraDesc}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- CORE APP LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        
+        // Update UI Elements
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+
+</script>
+</body>
+</html>
