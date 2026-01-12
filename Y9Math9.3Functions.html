@@ -1,0 +1,807 @@
+Here is the complete, single-file HTML lesson for "9.3 Representing Functions". I have maintained the strict "Space/Math Theme" architecture, integrated the interactive function machines, and included the specific pedagogical steps you requested.
+
+The code includes the "Definition Slide" (Expression vs Function) as requested, inserted logically before the main activity.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9.3 Representing Functions</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Math/Space Theme */
+            --bg-deep: #0f0518;         
+            --bg-card: #1e1b2e;         
+            --bg-card-hover: #2d2645; 
+            
+            --primary: #8b5cf6;   /* Violet */
+            --secondary: #f43f5e; /* Rose - OUTPUTS */
+            --accent: #06b6d4;    /* Cyan - INPUTS */
+            --success: #10b981;   /* Emerald */
+            --warning: #f59e0b;   /* Amber */
+
+            /* Typography */
+            --text-main: #ffffff;        
+            --text-muted: #94a3b8;      
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(139, 92, 246, 0.15), transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(244, 63, 94, 0.1), transparent 40%),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 5, 24, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 5, 24, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:hover { background: #7c3aed; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(139, 92, 246, 0.4); }
+        
+        /* Pedagogical Pills */
+        .num-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            padding: 0 1rem;
+            margin: 0 0.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .pill-input { background: rgba(6, 182, 212, 0.15); color: var(--accent); border-color: var(--accent); }
+        .pill-output { background: rgba(244, 63, 94, 0.15); color: var(--secondary); border-color: var(--secondary); }
+        .pill-neutral { background: #334155; color: white; }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            transition: width 0.4s ease;
+        }
+
+        /* Typography & Layout */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; }
+        strong { color: white; font-weight: 800; }
+        
+        .text-accent { color: var(--accent); }
+        .text-secondary { color: var(--secondary); }
+        .text-primary { color: var(--primary); }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; align-items: center; }
+        
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- FUNCTION MACHINE GRAPHICS --- */
+        .machine-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .machine-box {
+            background: #334155;
+            border: 2px solid white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            position: relative;
+            min-width: 120px;
+            text-align: center;
+        }
+        .machine-box::before, .machine-box::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 15px;
+            height: 4px;
+            background: white;
+        }
+        .machine-box::before { left: -15px; }
+        .machine-box::after { right: -15px; }
+
+        .arrow-right {
+            font-size: 2rem;
+            color: var(--text-muted);
+            animation: pulse 2s infinite;
+        }
+
+        /* Mapping Diagram Ovals */
+        .mapping-oval {
+            border: 3px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            min-width: 100px;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* Animations */
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; transform: translateX(5px); } 100% { opacity: 0.5; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; gap: 2rem; }
+            h1 { font-size: 2.5rem; }
+            .header { flex-direction: column; height: auto; padding: 1rem; gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 9 Math</div>
+            <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+                9.3 Representing Functions
+            </div>
+        </div>
+        
+        <div style="font-size: 1rem; color: var(--text-muted); font-weight: 500;">
+            Monday 12 January 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    const state = {
+        currentSlide: 0,
+        warmupRevealed: false,
+        machineStep: 0,
+        inverseStep: 0,
+        slides: []
+    };
+
+    // --- SLIDE DEFINITIONS ---
+
+    state.slides = [
+        // Slide 1: Title
+        {
+            render: () => `
+                <div class="text-center fade-in">
+                    <div style="font-size: 5rem; margin-bottom: 1rem; color: var(--accent);">⚙️</div>
+                    <h1>Representing Functions</h1>
+                    <p style="font-size: 1.5rem; color: var(--secondary); font-weight: 600;">From Machines to Mapping Diagrams</p>
+                    
+                    <div class="card slide-up" style="margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; text-align: left;">
+                        <h3 style="color: var(--primary); border-bottom: 1px solid rgba(139, 92, 246, 0.3); padding-bottom: 1rem;">
+                            🎯 Learning Goals
+                        </h3>
+                        <ul style="list-style: none; margin-top: 1.5rem; display: grid; gap: 1rem;">
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Evaluate functions using machines and tables.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-exclamation-triangle" style="color: var(--warning);"></i>
+                                <span>Correctly handle <strong>negative numbers</strong> (The Trap!).</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check-circle" style="color: var(--success);"></i>
+                                <span>Draw and interpret <strong>mapping diagrams</strong>.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-rotate-left" style="color: var(--accent);"></i>
+                                <span>Find inputs by working backwards (Inverse).</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        // Slide 2: Definitions (Expression vs Function)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--primary);">Vocabulary</span>
+                    <h2 style="margin-top: 1rem;">Spot the Difference</h2>
+                    <p style="margin-bottom: 3rem;">We use these words often. What exactly do they mean?</p>
+
+                    <div class="grid-2 slide-up" style="gap: 1.5rem;">
+                        <div class="card" style="border-top: 4px solid var(--text-muted);">
+                            <h3 style="color: var(--text-muted);">Expression</h3>
+                            <div style="font-size: 2rem; font-family: 'JetBrains Mono'; margin: 1.5rem 0;">
+                                2<span class="text-accent">x</span> + 4
+                            </div>
+                            <p>A collection of terms.<br>No equals sign.</p>
+                        </div>
+
+                        <div class="card" style="border-top: 4px solid var(--warning);">
+                            <h3 style="color: var(--warning);">Formula / Equation</h3>
+                            <div style="font-size: 2rem; font-family: 'JetBrains Mono'; margin: 1.5rem 0;">
+                                A = 2<span class="text-accent">x</span> + 4
+                            </div>
+                            <p>Shows a relationship.<br>Has an equals sign.</p>
+                        </div>
+
+                        <div class="card" style="border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--accent);">Function</h3>
+                            <div style="font-size: 2rem; font-family: 'JetBrains Mono'; margin: 1.5rem 0;">
+                                <span class="text-secondary">y</span> = 2<span class="text-accent">x</span> + 4
+                            </div>
+                            <p>An <span class="text-accent">Input</span> produces a specific <span class="text-secondary">Output</span>.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        // Slide 3: Warm Up
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Warm Up: Substitution Fluency</h2>
+                    <p>Before we use machines, let's practice the rule: <strong class="text-primary" style="font-size: 1.4rem;">4n - 3</strong></p>
+                    
+                    <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                        ${[1, 2, 3, 4, 5, 100].map(n => `
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                                <div style="color: var(--text-muted); font-size: 0.9rem;">n = ${n}</div>
+                                <button class="num-pill pill-input" 
+                                    onclick="this.innerText='${4*n-3}'; this.classList.remove('pill-input'); this.classList.add('pill-output'); this.style.transform='rotateY(360deg)';"
+                                    style="cursor: pointer; width: 80px; height: 80px; font-size: 1.5rem;">
+                                    ?
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <p style="margin-top: 2rem; color: var(--text-muted);">Click the blue circles to reveal the answers.</p>
+                </div>
+            `
+        },
+        // Slide 4: The Function Machine
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--accent);">Visualizing</span>
+                    <h2 style="margin-top: 1rem;">The Function Machine</h2>
+                    <p>Functions work like a factory line. Something goes in, gets processed, and comes out.</p>
+
+                    <div class="card slide-up" style="margin-top: 2rem; padding: 4rem 2rem;">
+                        <div class="machine-container">
+                            <div style="text-align: center;">
+                                <h4 class="text-accent">Input (x)</h4>
+                                <div class="num-pill pill-input" style="width: 80px; height: 80px;">
+                                    ${state.machineStep === 0 ? '2' : state.machineStep === 1 ? '4' : '10'}
+                                </div>
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right arrow-right"></i>
+
+                            <div class="machine-box">
+                                <span style="font-family: 'Outfit'; font-weight: 800; font-size: 1.5rem;">&times; 5</span>
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right arrow-right"></i>
+
+                            <div style="text-align: center;">
+                                <h4 class="text-secondary">Output (y)</h4>
+                                <div class="num-pill pill-output" style="width: 80px; height: 80px; transition: transform 0.5s;">
+                                    ${state.machineStep === 0 ? '10' : state.machineStep === 1 ? '20' : '50'}
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-reveal" style="width: auto; margin: 0 auto; border-radius: 50px;" onclick="nextMachineStep()">
+                            Next Example <i class="fa-solid fa-forward"></i>
+                        </button>
+                    </div>
+                </div>
+            `
+        },
+        // Slide 5: The Trap (Negatives)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--secondary);">Common Error</span>
+                    <h2 style="margin-top: 1rem;">The "Trap": Squaring Negatives</h2>
+                    
+                    <div class="grid-2 slide-up" style="align-items: center;">
+                        <div class="card">
+                            <h3>Calculate this:</h3>
+                            <div class="machine-container" style="justify-content: center;">
+                                <div class="num-pill pill-input">-6</div>
+                                <i class="fa-solid fa-arrow-right arrow-right"></i>
+                                <div class="machine-box">x&sup2;</div>
+                                <i class="fa-solid fa-arrow-right arrow-right"></i>
+                                <div class="num-pill pill-neutral" id="trap-output">?</div>
+                            </div>
+                            <button class="btn btn-nav btn-sm" onclick="document.getElementById('trap-output').innerText='36'; document.getElementById('trap-output').classList.add('pill-output');">Reveal</button>
+                        </div>
+
+                        <div class="card" style="border: 2px solid var(--secondary); background: rgba(244, 63, 94, 0.1);">
+                            <h3 class="text-secondary"><i class="fa-solid fa-triangle-exclamation"></i> Warning</h3>
+                            <p style="font-size: 1.3rem; margin: 1.5rem 0;">
+                                A negative number squared is <br><strong>ALWAYS POSITIVE</strong>.
+                            </p>
+                            <div style="font-family: 'JetBrains Mono'; font-size: 1.2rem; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                                (-6) &times; (-6) = <span class="text-success">+36</span>
+                            </div>
+                            <p style="margin-top: 1rem; font-size: 1rem;">Calculator Note: You must type <code>(-6)^2</code>, not <code>-6^2</code>.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        // Slide 6: Two-Step Machines
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Order Matters</h2>
+                    <p>Compare these two machines with the input <strong class="text-accent">x = 3</strong>.</p>
+                    
+                    <div class="grid-2 slide-up" style="gap: 1rem;">
+                        <div class="card">
+                            <h3>Machine A: <span class="text-primary">y = 2x&sup2;</span></h3>
+                            <div class="machine-container" style="font-size: 0.9rem; gap: 0.5rem;">
+                                <div class="num-pill pill-input" style="width: 50px; height: 50px;">3</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="machine-box">Square</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="machine-box">&times; 2</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="num-pill pill-output" id="res-A" style="width: 50px; height: 50px;">?</div>
+                            </div>
+                            <div id="expl-A" style="display:none; text-align:left; font-size: 0.9rem; color: var(--text-muted);">
+                                1. Square 3 &rarr; 9<br>
+                                2. 9 &times; 2 &rarr; <strong>18</strong>
+                            </div>
+                            <button class="btn btn-reveal" onclick="document.getElementById('res-A').innerText='18'; document.getElementById('expl-A').style.display='block'; this.style.display='none'">Run</button>
+                        </div>
+
+                        <div class="card">
+                            <h3>Machine B: <span class="text-primary">y = (2x)&sup2;</span></h3>
+                            <div class="machine-container" style="font-size: 0.9rem; gap: 0.5rem;">
+                                <div class="num-pill pill-input" style="width: 50px; height: 50px;">3</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="machine-box">&times; 2</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="machine-box">Square</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="num-pill pill-output" id="res-B" style="width: 50px; height: 50px;">?</div>
+                            </div>
+                            <div id="expl-B" style="display:none; text-align:left; font-size: 0.9rem; color: var(--text-muted);">
+                                1. 3 &times; 2 &rarr; 6<br>
+                                2. Square 6 &rarr; <strong>36</strong>
+                            </div>
+                            <button class="btn btn-reveal" onclick="document.getElementById('res-B').innerText='36'; document.getElementById('expl-B').style.display='block'; this.style.display='none'">Run</button>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        // Slide 7: Mapping Diagrams
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Mapping Diagrams</h2>
+                    <p>Another way to show <span class="text-primary">y = x + 3</span>.</p>
+                    
+                    <div class="card slide-up" style="margin-top: 2rem; display: flex; justify-content: center; gap: 4rem; align-items: center;">
+                        
+                        <div>
+                            <h4 class="text-accent">Domain (x)</h4>
+                            <div class="mapping-oval" style="border-color: var(--accent);">
+                                <div class="num-pill pill-input" style="width: 50px; height: 50px; font-size: 1.2rem;">-2</div>
+                                <div class="num-pill pill-input" style="width: 50px; height: 50px; font-size: 1.2rem;">0</div>
+                                <div class="num-pill pill-input" style="width: 50px; height: 50px; font-size: 1.2rem;">5</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+                            <i class="fa-solid fa-arrow-right text-muted"></i>
+                            <i class="fa-solid fa-arrow-right text-muted"></i>
+                            <i class="fa-solid fa-arrow-right text-muted"></i>
+                        </div>
+
+                        <div>
+                            <h4 class="text-secondary">Range (y)</h4>
+                            <div class="mapping-oval" style="border-color: var(--secondary);">
+                                <div id="map-1" class="num-pill pill-neutral" style="width: 50px; height: 50px; font-size: 1.2rem;">?</div>
+                                <div id="map-2" class="num-pill pill-neutral" style="width: 50px; height: 50px; font-size: 1.2rem;">?</div>
+                                <div id="map-3" class="num-pill pill-neutral" style="width: 50px; height: 50px; font-size: 1.2rem;">?</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-reveal" style="max-width: 300px; margin: 2rem auto;" 
+                        onclick="document.getElementById('map-1').innerText='1'; document.getElementById('map-2').innerText='3'; document.getElementById('map-3').innerText='8'; 
+                        document.querySelectorAll('.pill-neutral').forEach(e => {e.classList.add('pill-output'); e.classList.remove('pill-neutral')})">
+                        Map Values
+                    </button>
+                </div>
+            `
+        },
+        // Slide 8: Writing Equations
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Writing Equations</h2>
+                    <p>Convert the machines into algebraic equations.</p>
+
+                    <div class="grid-2 slide-up" style="align-items: flex-start;">
+                        <div class="card">
+                            <div class="machine-container" style="justify-content: center; font-size: 0.8rem; margin: 1rem 0;">
+                                <div class="num-pill pill-input" style="width: 40px; height: 40px;">x</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="machine-box">&times; 4</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="machine-box">- 1</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="num-pill pill-output" style="width: 40px; height: 40px;">y</div>
+                            </div>
+                            <button class="btn btn-nav btn-sm" onclick="this.nextElementSibling.style.display='block'">Show Equation</button>
+                            <div style="display:none; font-size: 2rem; font-family: 'JetBrains Mono'; margin-top: 1rem; color: var(--success); animation: popIn 0.3s;">
+                                y = 4x - 1
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="machine-container" style="justify-content: center; font-size: 0.8rem; margin: 1rem 0;">
+                                <div class="num-pill pill-input" style="width: 40px; height: 40px;">x</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="machine-box">+ 3</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="machine-box">Square</div>
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <div class="num-pill pill-output" style="width: 40px; height: 40px;">y</div>
+                            </div>
+                            <p style="font-size: 0.9rem; color: var(--warning); margin-bottom: 0.5rem;">Think: Do we need brackets?</p>
+                            <button class="btn btn-nav btn-sm" onclick="this.nextElementSibling.style.display='block'">Show Equation</button>
+                            <div style="display:none; font-size: 2rem; font-family: 'JetBrains Mono'; margin-top: 1rem; color: var(--success); animation: popIn 0.3s;">
+                                y = (x + 3)&sup2;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        // Slide 9: Inverse Operations
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--warning);">Inverse</span>
+                    <h2>Working Backwards</h2>
+                    <p>The Output is <strong>26</strong>. What was the Input?</p>
+                    <p style="font-size: 0.9rem; margin-bottom: 2rem;">Rule: <span style="font-family: 'JetBrains Mono'">y = 3x + 5</span></p>
+
+                    <div class="card slide-up">
+                        <div class="machine-container" style="justify-content: center;">
+                            <div class="num-pill pill-input" id="inv-input">?</div>
+                            
+                            <i class="fa-solid fa-arrow-right"></i>
+                            <div class="machine-box">&times; 3</div>
+                            
+                            <i class="fa-solid fa-arrow-right"></i>
+                            <div class="machine-box">+ 5</div>
+                            
+                            <i class="fa-solid fa-arrow-right"></i>
+                            <div class="num-pill pill-output">26</div>
+                        </div>
+
+                        <div id="inv-steps" style="min-height: 100px; margin-top: 2rem;">
+                            ${state.inverseStep >= 1 ? '<div class="slide-up text-accent">Reverse [+ 5] &rarr; Subtract 5 &rarr; 26 - 5 = 21</div>' : ''}
+                            ${state.inverseStep >= 2 ? '<div class="slide-up text-accent" style="margin-top: 0.5rem">Reverse [&times; 3] &rarr; Divide by 3 &rarr; 21 &div; 3 = <strong>7</strong></div>' : ''}
+                        </div>
+
+                        <button class="btn btn-reveal" style="width: auto; border-radius: 50px; margin: 1rem auto;" onclick="nextInverseStep()">
+                            ${state.inverseStep === 0 ? 'Start Reversing' : state.inverseStep === 1 ? 'Next Step' : 'Reset'}
+                        </button>
+                    </div>
+                </div>
+            `
+        },
+        // Slide 10: Square Root Challenge
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--secondary);">Challenge</span>
+                    <h2 style="margin-top: 1rem;">The "Sofia & Zara" Problem</h2>
+                    <p>If <span class="text-primary">y = x&sup2;</span> and the Output is <strong>25</strong>...</p>
+                    
+                    <div class="grid-2 slide-up">
+                        <div style="text-align: right;">
+                            <i class="fa-solid fa-user" style="font-size: 3rem; color: #fbbf24;"></i>
+                            <div class="card" style="margin-top: 1rem; border-color: #fbbf24;">
+                                <p>"I think the reverse is just <span style="font-family:'JetBrains Mono'">&radic;25</span>.<br>So <strong class="text-success">x = 5</strong>."</p>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: left;">
+                            <i class="fa-solid fa-user" style="font-size: 3rem; color: #a78bfa;"></i>
+                            <div class="card" style="margin-top: 1rem; border-color: #a78bfa;">
+                                <p>"Wait! <strong class="text-success">x = -5</strong> also works!<br>(-5) &times; (-5) = 25."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-top: 2rem; border: 2px solid var(--success);">
+                        <h3>Correct Notation</h3>
+                        <p>When working backwards from a square, we write:</p>
+                        <div style="font-size: 2.5rem; font-family: 'JetBrains Mono'; color: white; margin: 1rem 0;">
+                            x = &plusmn;&radic;y
+                        </div>
+                        <p>So, x = 5 OR x = -5.</p>
+                    </div>
+                </div>
+            `
+        },
+        // Slide 11: Homework
+        {
+            render: () => `
+                <div class="text-center fade-in">
+                    <h2>📚 Homework Assignment</h2>
+                    <div class="card slide-up" style="max-width: 600px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--primary);">
+                        <h3 style="color: var(--primary);">Exercise 9.3</h3>
+                        
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(139, 92, 246, 0.2); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Workbook Pages 122-125</p>
+                                <ul style="margin-left: 1rem; color: var(--text-muted);">
+                                    <li><strong>Q4:</strong> Two-step machines.</li>
+                                    <li><strong>Q6:</strong> Drawing machines.</li>
+                                    <li><strong>Q7:</strong> Negative Inputs.</li>
+                                    <li><strong>Q9:</strong> Reverse equations.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(244, 63, 94, 0.2); color: var(--secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Extension</p>
+                                <p><strong>Q10:</strong> Sorting function families.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- INTERACTION FUNCTIONS ---
+
+    function nextMachineStep() {
+        state.machineStep++;
+        if(state.machineStep > 2) state.machineStep = 0;
+        render();
+    }
+
+    function nextInverseStep() {
+        state.inverseStep++;
+        if(state.inverseStep > 2) {
+            state.inverseStep = 0;
+            render();
+            document.getElementById('inv-input').innerText = '?';
+        } else {
+            render();
+            if(state.inverseStep === 2) document.getElementById('inv-input').innerText = '7';
+        }
+    }
+
+    // --- CORE LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            // Reset local slide states when leaving
+            state.machineStep = 0;
+            state.inverseStep = 0;
+            render();
+        }
+    }
+
+    // --- EVENTS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+
+</script>
+</body>
+</html>
+
+```
