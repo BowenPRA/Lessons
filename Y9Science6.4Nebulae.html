@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6.4 Nebulae - Year 9 Science</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Deep Space Nebulae Theme */
+            --bg-deep: #000000;        
+            --bg-card: #111827;        
+            --bg-card-hover: #1f2937; 
+            
+            --primary: #8b5cf6;   /* Violet - Main Elements */
+            --secondary: #ec4899; /* Pink - Emission/Hot */
+            --accent: #06b6d4;    /* Cyan - Reflection/Ice */
+            --amber: #f59e0b;     /* Amber - Stars/Dust */
+            --success: #10b981;   
+            --danger: #ef4444;    
+
+            /* Typography - TV Optimized */
+            --text-main: #ffffff;       
+            --text-muted: #cbd5e1;      
+            
+            --header-h: 80px;
+            --footer-h: 90px;
+            --border-radius: 20px;
+            
+            /* Massive Font Sizes for TV Visibility */
+            --fs-h1: clamp(3rem, 6vw, 6rem);
+            --fs-h2: clamp(2.2rem, 4vw, 4.5rem);
+            --fs-h3: clamp(1.5rem, 2.5vw, 2.5rem);
+            --fs-body: clamp(1.4rem, 1.5vw, 1.8rem); /* Minimum ~24px equivalent */
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            /* Starfield Background */
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 3rem;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 4rem; /* Generous padding for TV safe zones */
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 16px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: transform 0.2s;
+        }
+        .btn:active { transform: scale(0.95); }
+        
+        .btn-nav {
+            width: 70px; /* Large touch/click targets */
+            height: 70px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1.5rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            font-size: 1.4rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+        .btn-reveal:hover { background: #7c3aed; }
+        
+        .progress-container {
+            flex: 1;
+            margin: 0 3rem;
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.4s ease;
+        }
+
+        /* Typography & Layout */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1.5rem; text-shadow: 0 0 30px rgba(139, 92, 246, 0.6); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 2rem; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: var(--text-main); }
+        p, li { font-size: var(--fs-body); line-height: 1.5; color: var(--text-muted); }
+        strong { color: white; font-weight: 800; }
+
+        /* Color Utils */
+        .text-accent { color: var(--accent) !important; }
+        .text-secondary { color: var(--secondary) !important; }
+        .text-amber { color: var(--amber) !important; }
+        .text-primary { color: var(--primary) !important; }
+
+        /* Grids */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+
+        /* Cards */
+        .card {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            backdrop-filter: blur(12px);
+            transition: transform 0.3s ease;
+        }
+        .card:hover { border-color: var(--accent); }
+
+        /* Flip Cards */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 400px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .flip-front { background: var(--bg-card); }
+        .flip-back { background: linear-gradient(135deg, var(--secondary), var(--primary)); transform: rotateY(180deg); }
+
+        /* Answer Reveal Box */
+        .answer-box {
+            background: rgba(6, 182, 212, 0.15);
+            border: 2px solid var(--accent);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-top: 2rem;
+            display: none;
+            font-size: var(--fs-body);
+        }
+        .answer-box.visible { display: block; animation: slideUp 0.4s ease; }
+
+        /* Images */
+        .feature-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .img-container {
+            height: 400px; 
+            width: 100%;
+            position: relative;
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.8s ease-out; }
+        .slide-up { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+        /* Mobile Fixes */
+        @media (max-width: 1024px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            .header { padding: 0 1.5rem; }
+            .slide-wrapper { padding: 1.5rem; }
+            h1 { font-size: 3.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div class="brand-pill">Year 9 Science</div>
+            <span style="font-weight: 700; color: var(--text-muted); font-size: 1.2rem;">6.4: Nebulae</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.4rem; color: var(--accent);">
+            Tuesday 13 January 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slides Injected Here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    const state = {
+        currentSlide: 0,
+        slides: []
+    };
+
+    // --- SLIDE DATA ---
+    state.slides = [
+        {
+            // 1. Title Slide
+            render: () => `
+                <div class="text-center fade-in">
+                    <div style="margin-bottom: 2rem;">
+                         <i class="fa-solid fa-cloud" style="font-size: 6rem; color: var(--accent); filter: drop-shadow(0 0 20px var(--accent));"></i>
+                    </div>
+                    <h1>Nebulae</h1>
+                    <p style="font-size: 2rem; color: var(--secondary); font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">The Clouds of Space</p>
+                    
+                    <div class="grid-2 slide-up" style="max-width: 900px; margin: 4rem auto 0 auto; gap: 2rem;">
+                        <div class="card" style="text-align: left; padding: 1.5rem; display: flex; align-items: center; gap: 1.5rem;">
+                             <i class="fa-solid fa-star" style="font-size: 2.5rem; color: var(--amber);"></i>
+                             <div>
+                                <h3>Star Birth</h3>
+                                <p style="font-size: 1.2rem; margin: 0;">How stars are created.</p>
+                             </div>
+                        </div>
+                        <div class="card" style="text-align: left; padding: 1.5rem; display: flex; align-items: center; gap: 1.5rem;">
+                             <i class="fa-solid fa-skull" style="font-size: 2.5rem; color: var(--secondary);"></i>
+                             <div>
+                                <h3>Star Death</h3>
+                                <p style="font-size: 1.2rem; margin: 0;">What remains after death.</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 2. Retrieval / Hook
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--amber); color: black;">Retrieval Practice</span>
+                    <h2 style="margin-top: 1.5rem;">Before we begin...</h2>
+                    
+                    <div style="max-width: 700px; margin: 3rem auto;" class="slide-up">
+                        ${createFlipCard(
+                            'What are the two main elements found in stars?', 
+                            'Hydrogen & Helium', 
+                            'Stars are mostly <strong class="text-secondary">Hydrogen (H)</strong> fusing into <strong class="text-accent">Helium (He)</strong>.', 
+                            'This creates the energy (light & heat) we see.',
+                            'fa-atom', 
+                            'var(--amber)'
+                        )}
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 3. Definition (Visual Heavy)
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2>What is a Nebula?</h2>
+                        <p style="margin-bottom: 2rem; font-size: 1.8rem;">A nebula is a giant cloud of <strong class="text-accent">dust and gas</strong> in space.</p>
+                        
+                        <div class="card" style="border-left: 6px solid var(--primary);">
+                            <h3><i class="fa-solid fa-flask"></i> Composition</h3>
+                            <ul style="list-style: none; margin-top: 1rem;">
+                                <li style="margin-bottom: 0.8rem;"><strong class="text-secondary">90%</strong> Hydrogen</li>
+                                <li style="margin-bottom: 0.8rem;"><strong class="text-accent">10%</strong> Helium</li>
+                                <li><strong class="text-muted">Trace</strong> amounts of heavier elements (dust)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="img-container slide-up">
+                        <img src="Nebula1.jpg" alt="A colorful nebula in space" class="feature-img">
+                        <div style="position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.7); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.9rem;">
+                            Latin for "Mist" or "Cloud"
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 4. Three Main Types Overview
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>The 3 Types of Nebulae</h2>
+                    <p style="margin-bottom: 3rem;">Classified by how they interact with light.</p>
+                    
+                    <div class="grid-3 slide-up">
+                        <div class="card" style="border-top: 5px solid var(--secondary);">
+                            <i class="fa-solid fa-fire" style="font-size: 3rem; color: var(--secondary); margin-bottom: 1.5rem;"></i>
+                            <h3>1. Emission</h3>
+                            <p><strong>Glows</strong> brightly because the gas is hot.</p>
+                        </div>
+                        <div class="card" style="border-top: 5px solid var(--accent);">
+                            <i class="fa-solid fa-snowflake" style="font-size: 3rem; color: var(--accent); margin-bottom: 1.5rem;"></i>
+                            <h3>2. Reflection</h3>
+                            <p>Does not create light. <strong>Reflects</strong> light from nearby stars.</p>
+                        </div>
+                        <div class="card" style="border-top: 5px solid var(--amber);">
+                            <i class="fa-regular fa-circle-dot" style="font-size: 3rem; color: var(--amber); margin-bottom: 1.5rem;"></i>
+                            <h3>3. Planetary</h3>
+                            <p>A shell of gas ejected by a <strong>dying star</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 5. Deep Dive: Emission / Nursery
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div class="img-container slide-up" style="height: 500px;">
+                        <img src="Y9Science6.4Nebulae2.jpg" alt="Pillars of creation style nebula" class="feature-img">
+                    </div>
+                    <div>
+                        <span class="brand-pill" style="background: var(--secondary); font-size: 0.9rem;">Type 1</span>
+                        <h2 class="text-secondary" style="margin-top: 1rem;">Emission Nebulae</h2>
+                        <h3 style="color: white; font-weight: 300; margin-bottom: 2rem;">"Stellar Nurseries"</h3>
+                        
+                        <p>These are places where <strong>new stars are born</strong>.</p>
+                        <p style="margin-top: 1.5rem;">Gravity pulls the dust and gas together until it gets hot enough to start nuclear fusion.</p>
+                        
+                        <div class="answer-box" id="nursery-reveal" style="border-color: var(--secondary); color: var(--text-muted);">
+                            <strong class="text-secondary">Did you know?</strong><br>
+                            The Orion Nebula is the closest stellar nursery to Earth. It's visible with the naked eye!
+                        </div>
+                        <button class="btn btn-reveal" onclick="document.getElementById('nursery-reveal').classList.add('visible'); this.style.display='none'">Fun Fact</button>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 6. Reflection vs Planetary
+            render: () => `
+                <div class="fade-in">
+                    <h2 class="text-center">Reflection & Planetary</h2>
+                    <div class="grid-2 slide-up" style="margin-top: 3rem;">
+                        <!-- Reflection -->
+                        <div class="card">
+                            <h3 class="text-accent"><i class="fa-solid fa-mirror"></i> Reflection Nebulae</h3>
+                            <p>These clouds are cold. They act like a <strong>mirror</strong>.</p>
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1.5rem 0;">
+                            <p style="font-size: 1.3rem;">They look <strong class="text-accent">BLUE</strong> because dust scatters blue light more than red light (just like our sky).</p>
+                        </div>
+                        
+                        <!-- Planetary -->
+                        <div class="card">
+                            <h3 class="text-amber"><i class="fa-solid fa-dizzy"></i> Planetary Nebulae</h3>
+                            <p>Misleading name! They have <strong>nothing to do with planets</strong>.</p>
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1.5rem 0;">
+                            <p style="font-size: 1.3rem;">They are the <strong class="text-danger">death shroud</strong> of a medium-sized star (like our Sun) puffing off its outer layers.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 7. Life Cycle Connection
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>The Cosmic Circle of Life</h2>
+                    <p style="max-width: 800px; margin: 0 auto 3rem auto;">Nebulae are both the beginning and the end of a star's life.</p>
+                    
+                    <div class="slide-up" style="display: flex; align-items: center; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                        <div style="text-align: center;">
+                            <div style="width: 150px; height: 150px; background: radial-gradient(circle, var(--secondary), transparent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                <i class="fa-solid fa-baby" style="font-size: 3rem;"></i>
+                            </div>
+                            <h3 style="margin-top: 1rem;">Nebula</h3>
+                            <p>(Birth)</p>
+                        </div>
+                        
+                        <i class="fa-solid fa-arrow-right" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <div style="text-align: center;">
+                            <div style="width: 150px; height: 150px; background: radial-gradient(circle, var(--amber), transparent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                <i class="fa-solid fa-star" style="font-size: 3rem;"></i>
+                            </div>
+                            <h3 style="margin-top: 1rem;">Star</h3>
+                            <p>(Life)</p>
+                        </div>
+
+                        <i class="fa-solid fa-arrow-right" style="font-size: 2rem; color: var(--text-muted);"></i>
+
+                        <div style="text-align: center;">
+                            <div style="width: 150px; height: 150px; background: radial-gradient(circle, var(--danger), transparent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                <i class="fa-solid fa-skull" style="font-size: 3rem;"></i>
+                            </div>
+                            <h3 style="margin-top: 1rem;">Nebula</h3>
+                            <p>(Death)</p>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top: 3rem; display: inline-block;">
+                        <p style="font-size: 1.2rem;"><strong>Recycling:</strong> The material from dead stars creates the next generation of stars.</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 8. Check for Understanding
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2><i class="fa-solid fa-clipboard-check"></i> Knowledge Check</h2>
+                    
+                    <div class="grid-2 slide-up" style="align-items: start; margin-top: 2rem;">
+                        <div class="card">
+                            <h3>Question 1</h3>
+                            <p style="margin-bottom: 2rem;">Which type of nebula is associated with the <strong>birth</strong> of new stars?</p>
+                            <button class="btn btn-reveal" style="width: 100%; margin-top:0;" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Check Answer</button>
+                            <div class="answer-box">
+                                <strong class="text-secondary" style="font-size: 1.5rem;">Emission Nebula</strong><br>
+                                (Stellar Nursery)
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>Question 2</h3>
+                            <p style="margin-bottom: 2rem;">Why does a <strong>Reflection</strong> nebula appear blue?</p>
+                            <button class="btn btn-reveal" style="width: 100%; margin-top:0;" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Check Answer</button>
+                            <div class="answer-box">
+                                Because the dust <strong>scatters blue light</strong> from nearby stars.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 9. Homework
+            render: () => `
+                <div class="text-center fade-in">
+                    <h2>📚 Homework & Tasks</h2>
+                    <div class="card slide-up" style="max-width: 800px; margin: 3rem auto; text-align: left; border-top: 6px solid var(--primary);">
+                        <div style="display: flex; gap: 2rem; align-items: center; margin-bottom: 2rem;">
+                             <div style="background: rgba(139, 92, 246, 0.2); width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-book-open" style="font-size: 2.5rem; color: var(--primary);"></i>
+                             </div>
+                             <div>
+                                <h3>Textbook Reading</h3>
+                                <p>Read Pages <strong>230 - 232</strong> (Nebulae & Star Formation).</p>
+                             </div>
+                        </div>
+                         <div style="display: flex; gap: 2rem; align-items: center;">
+                             <div style="background: rgba(236, 72, 153, 0.2); width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-pencil" style="font-size: 2.5rem; color: var(--secondary);"></i>
+                             </div>
+                             <div>
+                                <h3>Questions</h3>
+                                <p>Complete <strong>Q1, Q3, and Q5</strong> on Page 233.</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- HELPER FUNCTIONS ---
+    function createFlipCard(front, backTitle, backDesc, extraDesc, icon, color) {
+        return `
+            <div class="flip-card" onclick="this.classList.toggle('flipped')" tabindex="0">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <i class="fa-solid ${icon}" style="font-size: 4rem; margin-bottom: 1.5rem; color: ${color};"></i>
+                        <h3 style="color: white; font-size: 2rem;">${front}</h3>
+                        <p style="font-size: 1rem; opacity: 0.7; margin-top: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">(Tap to Flip)</p>
+                    </div>
+                    <div class="flip-back">
+                        <h3 style="color: white; border-bottom: 2px solid rgba(255,255,255,0.2); padding-bottom: 1rem; margin-bottom: 1.5rem;">${backTitle}</h3>
+                        <p style="color: white; font-size: 1.6rem;">${backDesc}</p>
+                        ${extraDesc ? `<p style="font-size: 1.3rem; margin-top:1.5rem; opacity:0.9; color: rgba(255,255,255,0.8);">${extraDesc}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- CORE LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        
+        // Progress Bar
+        const progress = ((state.currentSlide + 1) / state.slides.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+        
+        // Button States
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        
+        // Reset Scroll
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        state.currentSlide += dir;
+        render();
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    // Keyboard Nav
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Init
+    render();
+</script>
+</body>
+</html>
