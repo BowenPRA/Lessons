@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notebook Guide: 6.3 & 6.4</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* Note Taking Theme */
+            --bg-deep: #0f172a;         
+            --paper-bg: #1e293b;         
+            --paper-line: #334155;  
+            
+            --primary: #818cf8;   /* Soft Indigo */
+            --accent: #22d3ee;    /* Cyan */
+            --yellow: #facc15;    
+            --red: #f87171;       
+            
+            --text-main: #ffffff;        
+            --text-muted: #94a3b8;       
+
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- UI SHELL --- */
+        .header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mode-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .main-stage {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* --- NOTEBOOK PAPER COMPONENT --- */
+        .notebook-page {
+            width: 100%;
+            max-width: 1000px;
+            min-height: 600px;
+            background-color: var(--paper-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            position: relative;
+            padding: 3rem 4rem;
+            /* Lined Paper Effect */
+            background-image: linear-gradient(var(--paper-line) 1px, transparent 1px);
+            background-size: 100% 3rem;
+            background-position: 0 1.5rem; /* Align lines */
+            border-left: 6px solid var(--primary); /* Margin line */
+            animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* Handwritten Font for "Example" feel */
+        .handwritten {
+            font-family: 'Kalam', cursive;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            transform: rotate(-2deg);
+            position: absolute;
+            top: -10px;
+            right: 20px;
+        }
+
+        /* Content Typography */
+        h1 { font-family: 'Outfit', sans-serif; font-size: 3rem; margin-bottom: 2rem; line-height: 1.2; }
+        h2 { font-family: 'Outfit', sans-serif; font-size: 2.2rem; color: var(--accent); margin-bottom: 1.5rem; }
+        h3 { font-size: 1.5rem; color: var(--yellow); margin-bottom: 1rem; margin-top: 1.5rem; }
+        
+        p, li { 
+            font-size: 1.6rem; 
+            line-height: 3rem; /* Matches grid lines */
+            margin-bottom: 0; 
+        }
+
+        ul { margin-left: 2rem; }
+        li::marker { color: var(--primary); }
+
+        strong { color: white; font-weight: 800; }
+        .keyword { color: var(--accent); text-decoration: underline; text-decoration-color: rgba(34, 211, 238, 0.5); text-underline-offset: 4px; }
+
+        /* --- DIAGRAM BOX --- */
+        .diagram-box {
+            margin-top: 1rem;
+            background: rgba(0,0,0,0.3);
+            border: 2px dashed var(--text-muted);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+        }
+        .diagram-box img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+        .draw-tag {
+            background: var(--text-muted);
+            color: var(--bg-deep);
+            padding: 0.2rem 0.8rem;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        /* --- CONTROLS --- */
+        .controls {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .btn {
+            background: var(--paper-bg);
+            border: 1px solid var(--paper-line);
+            color: white;
+            padding: 0.8rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn:hover { background: var(--primary); border-color: var(--primary); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* Animations */
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .action-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .fa-pen { color: var(--accent); animation: pulse 2s infinite; }
+        .fa-eye { color: var(--yellow); }
+
+        /* Color Circles for Notes */
+        .color-dot {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+            border: 1px solid white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="mode-badge">
+            <i class="fa-solid fa-book"></i> Note Taking Mode
+        </div>
+        <div style="color: var(--text-muted); font-size: 1.2rem;">
+            Unit 6: Light
+        </div>
+    </header>
+
+    <main class="main-stage" id="stage">
+        </main>
+
+    <footer class="controls">
+        <button class="btn" id="btn-prev">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </button>
+        <div style="color: var(--text-muted); display: flex; align-items: center;">
+            <span id="slide-count">1 / 5</span>
+        </div>
+        <button class="btn" id="btn-next">
+            Next <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </footer>
+
+    <script>
+        const slides = [
+            {
+                // Slide 1: Introduction
+                type: 'intro',
+                content: `
+                    <div style="text-align: center;">
+                        <i class="fa-solid fa-pencil" style="font-size: 4rem; color: var(--accent); margin-bottom: 2rem;"></i>
+                        <h1>Let's Write Our Notes</h1>
+                        <p style="font-size: 1.5rem; color: var(--text-muted); line-height: 1.5;">
+                            We will practice writing scientific notes clearly.
+                        </p>
+                        <div style="margin-top: 3rem; display: inline-block; text-align: left; background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 12px;">
+                            <p><i class="fa-solid fa-check" style="color: var(--primary);"></i> Open your notebook.</p>
+                            <p><i class="fa-solid fa-check" style="color: var(--primary);"></i> Get your Blue/Black pen.</p>
+                            <p><i class="fa-solid fa-check" style="color: var(--primary);"></i> Get a Ruler.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                // Slide 2: Header Info
+                type: 'note',
+                content: `
+                    <div class="handwritten">Copy exactly like this...</div>
+                    <div style="border-bottom: 2px solid var(--paper-line); margin-bottom: 1rem; padding-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                        <span><strong>Date:</strong> Tuesday 13 January 2026</span>
+                    </div>
+                    
+                    <h2 style="text-decoration: underline;">Topic 6.3 & 6.4: Rainbows and Color</h2>
+                    
+                    <h3><i class="fa-solid fa-pen action-icon"></i>Objectives:</h3>
+                    <ul>
+                        <li>Describe how a prism splits light (Dispersion).</li>
+                        <li>List the 7 colors of the spectrum.</li>
+                        <li>Explain how we see color.</li>
+                    </ul>
+                `
+            },
+            {
+                // Slide 3: Dispersion & Spectrum
+                type: 'note',
+                content: `
+                    <h3><i class="fa-solid fa-pen action-icon"></i>1. Dispersion</h3>
+                    <p><strong>Definition:</strong> When white light splits into different colors.</p>
+                    <ul>
+                        <li>We use a glass block called a <strong class="keyword">Prism</strong>.</li>
+                        <li>The list of colors is called the <strong class="keyword">Spectrum</strong>.</li>
+                    </ul>
+
+                    <div class="diagram-box" style="margin-top: 1rem;">
+                        <span class="draw-tag"><i class="fa-solid fa-pencil"></i> Draw This</span>
+                        <img src="Y8Science6.3Rainbows3.png" alt="Prism Diagram">
+                    </div>
+                `
+            },
+            {
+                // Slide 4: The Order of Colors
+                type: 'note',
+                content: `
+                    <h3><i class="fa-solid fa-pen action-icon"></i>2. The Spectrum Order</h3>
+                    <p>You must know the order (ROY-G-BIV):</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+                        <ul style="list-style: none; margin: 0;">
+                            <li><span class="color-dot" style="background: red;"></span> 1. Red (Bends the LEAST)</li>
+                            <li><span class="color-dot" style="background: orange;"></span> 2. Orange</li>
+                            <li><span class="color-dot" style="background: yellow;"></span> 3. Yellow</li>
+                            <li><span class="color-dot" style="background: green;"></span> 4. Green</li>
+                        </ul>
+                        <ul style="list-style: none; margin: 0;">
+                            <li><span class="color-dot" style="background: blue;"></span> 5. Blue</li>
+                            <li><span class="color-dot" style="background: indigo;"></span> 6. Indigo</li>
+                            <li><span class="color-dot" style="background: violet;"></span> 7. Violet (Bends the MOST)</li>
+                        </ul>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 1.3rem; color: var(--accent);"><em>*Red is fast, Violet is slow.</em></p>
+                `
+            },
+            {
+                // Slide 5: Primary Colors
+                type: 'note',
+                content: `
+                    <h3><i class="fa-solid fa-pen action-icon"></i>3. Primary Colors of Light</h3>
+                    <p>The 3 primary colors of light are different from paint.</p>
+                    
+                    <ul style="margin-top: 1rem;">
+                        <li><span class="color-dot" style="background: red;"></span> Red</li>
+                        <li><span class="color-dot" style="background: green;"></span> Green</li>
+                        <li><span class="color-dot" style="background: blue;"></span> Blue</li>
+                    </ul>
+
+                    <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                        <p><strong>Color Math:</strong></p>
+                        <p>Red + Green = <strong style="color: yellow;">Yellow</strong></p>
+                        <p>Red + Blue = <strong style="color: magenta;">Magenta</strong></p>
+                        <p>Blue + Green = <strong style="color: cyan;">Cyan</strong></p>
+                        <p>Red + Green + Blue = <strong>White</strong></p>
+                    </div>
+                `
+            },
+            {
+                // Slide 6: How we see color
+                type: 'note',
+                content: `
+                    <h3><i class="fa-solid fa-pen action-icon"></i>4. How we see objects</h3>
+                    <p>Why is a T-shirt Red?</p>
+                    <ul>
+                        <li>The shirt <strong>ABSORBS</strong> (keeps) all colors...</li>
+                        <li>...except Red.</li>
+                        <li>It <strong class="keyword">REFLECTS</strong> Red into your eye.</li>
+                    </ul>
+                    
+                    <div class="diagram-box" style="height: 200px; margin-top: 1rem;">
+                         <span class="draw-tag"><i class="fa-solid fa-eye"></i> Look</span>
+                        <img src="Y8Science6.3Rainbows5.png" alt="Reflection Diagram">
+                    </div>
+                `
+            },
+            {
+                // Slide 7: Complete
+                type: 'intro',
+                content: `
+                    <div style="text-align: center;">
+                        <i class="fa-solid fa-check-circle" style="font-size: 4rem; color: var(--primary); margin-bottom: 2rem;"></i>
+                        <h1>Notes Complete!</h1>
+                        <p style="font-size: 1.5rem; color: var(--text-muted);">
+                            Check your spelling. Make sure you underlined the keywords.
+                        </p>
+                        <button onclick="location.reload()" class="btn" style="margin: 2rem auto;">
+                            <i class="fa-solid fa-rotate-right"></i> Start Over
+                        </button>
+                    </div>
+                `
+            }
+        ];
+
+        let currentSlide = 0;
+        const stage = document.getElementById('stage');
+        const countDisplay = document.getElementById('slide-count');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        function render() {
+            const slide = slides[currentSlide];
+            
+            // Generate HTML based on slide type
+            let html = '';
+            if(slide.type === 'intro') {
+                html = slide.content; // Intro slides center themselves via flexbox in the CSS if needed, or inline styles
+            } else {
+                // Note pages get the notebook paper wrapper
+                html = `
+                    <div class="notebook-page">
+                        ${slide.content}
+                    </div>
+                `;
+            }
+            
+            stage.innerHTML = html;
+            
+            // Update UI State
+            countDisplay.textContent = `${currentSlide + 1} / ${slides.length}`;
+            btnPrev.disabled = currentSlide === 0;
+            btnNext.disabled = currentSlide === slides.length - 1;
+        }
+
+        function changeSlide(dir) {
+            if(currentSlide + dir >= 0 && currentSlide + dir < slides.length) {
+                currentSlide += dir;
+                render();
+            }
+        }
+
+        // Event Listeners
+        btnPrev.addEventListener('click', () => changeSlide(-1));
+        btnNext.addEventListener('click', () => changeSlide(1));
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowRight') changeSlide(1);
+            if(e.key === 'ArrowLeft') changeSlide(-1);
+        });
+
+        // Init
+        render();
+
+    </script>
+</body>
+</html>
