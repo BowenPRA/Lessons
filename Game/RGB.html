@@ -3,803 +3,799 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chroma Lab: Pro</title>
+    <title>Light Lab | Interactive RGB Physics</title>
     
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         :root {
-            /* --- THEME: Deep Cosmic --- */
-            --bg-deep: #020617;
-            --glass-panel: rgba(15, 23, 42, 0.85); /* Slightly more opaque for readability */
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
+            /* --- THEME: Physics Lab Dark Mode --- */
+            --bg-void: #050505;
+            --bg-panel: #121212;
+            --border-dim: rgba(255, 255, 255, 0.1);
+            --border-light: rgba(255, 255, 255, 0.2);
             
-            /* Channel Colors */
-            --channel-r: #ef4444;
-            --channel-g: #10b981;
-            --channel-b: #3b82f6;
+            /* Typography */
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
 
-            /* Accents */
-            --neon-cyan: #22d3ee;
-            --neon-gold: #fbbf24;
+            /* Physics/Light Channels (The "RGB Look") */
+            --light-red: #ff3333;
+            --light-green: #00ff00;
+            --light-blue: #3366ff;
             
-            /* Dimensions */
-            --sidebar-width: 300px;
+            /* UI Accents */
+            --accent-primary: #ffffff; /* Clean white for primary actions */
+            --accent-warn: #f59e0b;
+            
+            /* Spacing */
+            --radius-lg: 16px;
+            --radius-md: 8px;
+            --pad-container: 2rem;
         }
 
-        /* --- RESET & CORE --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
-        
+        /* --- RESET & ACCESSIBILITY --- */
+        *, *::before, *::after { box-sizing: border-box; }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-deep);
-            background: radial-gradient(circle at top right, #1e1b4b 0%, #020617 80%);
-            color: var(--text-primary);
+            margin: 0; padding: 0;
+            background-color: var(--bg-void);
+            color: var(--text-main);
+            font-family: var(--font-body);
             height: 100vh;
-            width: 100vw;
             overflow: hidden;
             display: flex;
+            flex-direction: column;
         }
 
-        /* --- LAYOUT --- */
-        .app-container {
+        /* Focus states for accessibility */
+        *:focus-visible {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
+        }
+
+        /* --- LAYOUT UTILS --- */
+        .flex-center { display: flex; align-items: center; justify-content: center; }
+        .flex-col { display: flex; flex-direction: column; }
+        .hidden { display: none !important; opacity: 0; pointer-events: none; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+        /* --- APP SHELL --- */
+        .app-shell {
+            flex: 1;
             display: flex;
+            position: relative;
+            max-width: 1800px;
             width: 100%;
-            height: 100%;
-            max-width: 2000px;
             margin: 0 auto;
         }
 
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--glass-panel);
-            backdrop-filter: blur(24px);
-            border-right: 1px solid var(--glass-border);
-            display: flex;
-            flex-direction: column;
-            padding: 2rem;
-            z-index: 50; /* High Z-index to stay on top */
-            transition: transform 0.3s ease;
-        }
-
-        .brand {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 800;
-            font-size: 2rem;
-            line-height: 1;
-            margin-bottom: 2rem;
-            background: linear-gradient(to right, #fff, var(--neon-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .scoreboard-header {
-            font-family: 'Outfit';
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 0.5rem;
-        }
-
-        .player-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 8px;
+        /* --- NAVIGATION / HEADER --- */
+        .lab-header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-dim);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 50;
         }
-        .player-card.leader {
-            border-color: var(--neon-cyan);
-            background: linear-gradient(90deg, rgba(34, 211, 238, 0.1), transparent);
-        }
-
-        /* --- MAIN ARENA --- */
-        .arena {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
+        
+        .brand {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.5rem;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.02em;
+        }
+        
+        .rgb-badge {
+            display: flex;
+            gap: 4px;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+        
+        .round-indicator {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border: 1px solid var(--border-dim);
+            padding: 4px 12px;
+            border-radius: 20px;
         }
 
-        /* --- SCREENS (CRITICAL FIXES HERE) --- */
+        /* --- SCREENS --- */
         .screen {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            padding: 2rem;
+            inset: 0;
+            padding: var(--pad-container);
+            overflow-y: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            pointer-events: none;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 0; /* Default low z-index */
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            transform: scale(0.98);
-            background: radial-gradient(circle at center, transparent 0%, var(--bg-deep) 100%); /* Fade edges */
         }
         
         .screen.active {
             opacity: 1;
+            transform: translateY(0);
             pointer-events: all;
-            z-index: 10; /* Bring to front */
-            transform: scale(1);
+            z-index: 10;
         }
 
-        /* --- TYPOGRAPHY & BUTTONS --- */
-        h2 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 3rem;
-            margin-bottom: 2rem;
+        /* --- INTRO SLIDE (EDUCATIONAL) --- */
+        .intro-content {
+            max-width: 800px;
             text-align: center;
-            font-weight: 700;
-            text-shadow: 0 0 30px rgba(34, 211, 238, 0.2);
+            margin-top: 4vh;
         }
+        
+        .prism-graphic {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(90deg, #000 0%, #111 40%, #222 50%, #111 60%, #000 100%);
+            position: relative;
+            border-radius: var(--radius-lg);
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-dim);
+        }
+
+        /* Simple CSS representation of additive light */
+        .light-circles { position: relative; width: 150px; height: 150px; }
+        .lc { position: absolute; width: 80px; height: 80px; border-radius: 50%; mix-blend-mode: screen; opacity: 0.9; }
+        .lc-r { background: var(--light-red); top: 0; left: 35px; box-shadow: 0 0 30px var(--light-red); }
+        .lc-g { background: var(--light-green); bottom: 10px; left: 0; box-shadow: 0 0 30px var(--light-green); }
+        .lc-b { background: var(--light-blue); bottom: 10px; right: 0; box-shadow: 0 0 30px var(--light-blue); }
+
+        h1 { font-family: var(--font-display); font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1; }
+        p.lead { font-size: 1.25rem; color: var(--text-muted); line-height: 1.6; max-width: 60ch; margin: 0 auto 2rem auto; }
 
         .btn {
-            background: linear-gradient(135deg, var(--neon-cyan) 0%, #0ea5e9 100%);
-            color: #0f172a;
-            border: none;
-            padding: 16px 36px;
-            border-radius: 12px;
-            font-family: 'Outfit';
-            font-weight: 800;
-            font-size: 1.2rem;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(34, 211, 238, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 1.5rem;
-        }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(34, 211, 238, 0.5); }
-        .btn:active { transform: translateY(0); }
-
-        /* --- SETUP SCREEN --- */
-        .panel {
-            background: var(--glass-panel);
-            border: 1px solid var(--glass-border);
-            padding: 3rem;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 500px;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        }
-        
-        .input-text {
-            width: 100%;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--glass-border);
-            color: white;
-            padding: 14px;
-            border-radius: 8px;
-            font-family: 'Outfit';
+            background: var(--text-main);
+            color: #000;
+            font-family: var(--font-display);
+            font-weight: 700;
             font-size: 1.1rem;
-            outline: none;
-            transition: 0.3s;
-        }
-        .input-text:focus { border-color: var(--neon-cyan); }
-
-        /* --- GAME SCREEN --- */
-        .target-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        .swatch {
-            width: 160px; height: 160px;
-            border-radius: 24px;
-            border: 4px solid rgba(255,255,255,0.2);
-            box-shadow: 0 0 40px rgba(0,0,0,0.5);
-            margin-bottom: 0.5rem;
-            transition: background-color 0.8s ease;
-        }
-        .swatch-label { font-family: 'Outfit'; font-size: 1.5rem; font-weight: 700; letter-spacing: 1px;}
-
-        .mixing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1400px;
-            flex: 1; /* Take up remaining space */
-            overflow-y: auto; /* Scrollable if many players */
-            padding: 10px;
-            min-height: 0; /* Important for flex child scrolling */
-        }
-
-        .mixing-board {
-            background: var(--glass-panel);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1.2rem;
-            display: flex;
-            gap: 1.2rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        
-        /* The player's "Live Preview" background bar on left of card */
-        .mixing-board::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 6px; height: 100%;
-            background: var(--current-mix, #000);
-            transition: background-color 0.1s;
-        }
-
-        .controls { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        
-        .channel-row {
-            display: flex;
+            padding: 1rem 2.5rem;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
             align-items: center;
             gap: 10px;
         }
-        .channel-label { font-weight: 800; font-size: 0.9rem; width: 15px; }
-        .cr { color: var(--channel-r); }
-        .cg { color: var(--channel-g); }
-        .cb { color: var(--channel-b); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        .btn-outline { background: transparent; border: 1px solid var(--text-muted); color: var(--text-main); }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); }
 
-        /* Custom Range Slider */
+        /* --- SETUP SCREEN --- */
+        .name-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            width: 100%;
+            margin-bottom: 2rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .name-input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-dim);
+            color: white;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 1rem;
+        }
+        .name-input:focus { border-color: var(--accent-primary); outline: none; }
+
+
+        /* --- GAMEPLAY --- */
+        .game-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            width: 100%;
+            height: 100%;
+            max-height: 800px;
+        }
+
+        /* Target Panel */
+        .target-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-dim);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .swatch-display {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #000;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+            border: 4px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.5s ease;
+        }
+
+        /* Shine effect on sphere */
+        .swatch-display::after {
+            content: ''; position: absolute; top: 10%; left: 10%; width: 40%; height: 40%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+            border-radius: 50%; opacity: 0.3;
+        }
+
+        .target-label {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .target-sub { font-size: 0.9rem; color: var(--text-muted); }
+
+        /* Laboratory (Mixing Area) */
+        .lab-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            align-content: start;
+            overflow-y: auto;
+        }
+
+        /* Player Station */
+        .station-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-dim);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            position: relative;
+            transition: border-color 0.3s;
+        }
+        .station-card:focus-within { border-color: var(--border-light); }
+
+        .station-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-dim);
+            padding-bottom: 1rem;
+        }
+        
+        .mystery-preview {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: #222;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            border: 1px dashed var(--border-light);
+        }
+
+        /* Sliders */
+        .slider-group { display: flex; flex-direction: column; gap: 1.5rem; }
+        .channel-control { display: grid; grid-template-columns: 20px 1fr 50px; gap: 1rem; align-items: center; }
+        
+        .channel-icon { font-weight: 800; font-family: var(--font-display); }
+        .c-red { color: var(--light-red); text-shadow: 0 0 10px rgba(255, 51, 51, 0.4); }
+        .c-green { color: var(--light-green); text-shadow: 0 0 10px rgba(0, 255, 0, 0.4); }
+        .c-blue { color: var(--light-blue); text-shadow: 0 0 10px rgba(51, 102, 255, 0.4); }
+
         input[type=range] {
-            flex: 1;
             -webkit-appearance: none;
-            background: transparent;
+            width: 100%; background: transparent; cursor: pointer;
         }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 18px; width: 18px;
+            height: 20px; width: 20px;
             border-radius: 50%;
             background: #fff;
-            cursor: pointer;
-            margin-top: -7px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            border: 2px solid rgba(0,0,0,0.1);
+            margin-top: -8px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+            border: 2px solid #000;
         }
         input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 6px;
-            cursor: pointer;
-            border-radius: 3px;
-            background: rgba(255,255,255,0.1); /* Fallback */
+            width: 100%; height: 4px; border-radius: 2px;
         }
-        /* Colored tracks */
-        .range-r::-webkit-slider-runnable-track { background: linear-gradient(90deg, #330000, var(--channel-r)); }
-        .range-g::-webkit-slider-runnable-track { background: linear-gradient(90deg, #003300, var(--channel-g)); }
-        .range-b::-webkit-slider-runnable-track { background: linear-gradient(90deg, #000033, var(--channel-b)); }
+        
+        /* Dynamic track gradients handled in JS or specific classes */
+        .track-r::-webkit-slider-runnable-track { background: linear-gradient(90deg, #331111, var(--light-red)); }
+        .track-g::-webkit-slider-runnable-track { background: linear-gradient(90deg, #113311, var(--light-green)); }
+        .track-b::-webkit-slider-runnable-track { background: linear-gradient(90deg, #111133, var(--light-blue)); }
 
-        .num-input {
-            width: 55px;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #fff;
-            padding: 6px;
-            border-radius: 6px;
-            text-align: center;
-            font-family: 'Outfit';
-            font-weight: 700;
-            font-size: 1rem;
+        .value-display {
+            font-family: var(--font-display);
+            font-variant-numeric: tabular-nums;
+            text-align: right;
+            font-weight: 600;
         }
 
-        .live-preview-box {
-            width: 90px;
-            border-radius: 12px;
-            background-color: var(--current-mix, #000);
-            border: 2px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            color: rgba(255,255,255,0.8);
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-            text-align: center;
-            font-weight: 700;
-            transition: background-color 0.1s;
-        }
-
-        /* --- RESULTS SCREEN --- */
-        .results-container {
-            display: flex;
-            width: 100%;
-            height: 100%;
+        /* --- RESULTS --- */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 2rem;
-            max-width: 1200px;
-            overflow: hidden;
+            width: 100%;
+            max-width: 1000px;
         }
-
-        .visualizer-col {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--glass-panel);
-            border-radius: 24px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .list-col {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .result-item {
+        .score-card {
             background: rgba(255,255,255,0.05);
-            margin-bottom: 1rem;
+            border-radius: var(--radius-md);
             padding: 1rem;
-            border-radius: 16px;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
         }
-        .result-item.winner {
-            border: 1px solid var(--neon-gold);
-            background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), transparent);
-        }
+        .score-card.winner { border-color: var(--accent-warn); background: rgba(245, 158, 11, 0.1); }
+        
+        .comparison { display: flex; gap: 10px; align-items: center; }
+        .comp-swatch { width: 30px; height: 30px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); }
 
-        .compare-swatches {
-            position: relative;
-            width: 60px; height: 40px;
-        }
-        .cs-target {
-            position: absolute; top: 0; left: 0; width: 40px; height: 40px;
-            border-radius: 8px; z-index: 1; border: 1px solid rgba(255,255,255,0.3);
-        }
-        .cs-guess {
-            position: absolute; bottom: -5px; right: 0; width: 30px; height: 30px;
-            border-radius: 6px; z-index: 2; border: 1px solid #000;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-        }
-
-        /* Mobile Responsive */
+        /* --- UTILS --- */
         @media (max-width: 900px) {
-            .app-container { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; padding: 1rem; flex-direction: row; align-items: center; gap: 20px; overflow-x: auto; flex-shrink: 0; border-bottom: 1px solid var(--glass-border); border-right: none;}
-            .brand { margin: 0; font-size: 1.5rem; }
-            .scoreboard-header { display: none; }
-            .results-container { flex-direction: column; overflow-y: auto;}
-            .visualizer-col { min-height: 300px; margin-bottom: 20px; flex: none;}
-            h2 { font-size: 2rem; margin-bottom: 1rem;}
+            .game-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+            .swatch-display { width: 120px; margin: 0 auto 1rem auto; }
+            .results-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 2.5rem; }
+            .name-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none; opacity:0.6; background-image: radial-gradient(1px 1px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(1px 1px at 100px 70px, #fff, rgba(0,0,0,0)); background-size: 550px 550px;"></div>
-    <canvas id="confetti-canvas" style="position:fixed; pointer-events:none; z-index:100;"></canvas>
-
-    <div class="app-container">
-        
-        <aside class="sidebar">
-            <div class="brand">Chroma Lab</div>
-            <div class="scoreboard-header">Active Players</div>
-            <div id="leaderboard">
-                </div>
-            <div style="margin-top:auto; font-size: 0.8rem; color: var(--text-secondary);">
-                Round: <span id="round-display" style="color:#fff; font-weight:700;">0</span>
+    <!-- Header -->
+    <header class="lab-header">
+        <div class="brand">
+            <div class="rgb-badge">
+                <div class="dot" style="background:var(--light-red)"></div>
+                <div class="dot" style="background:var(--light-green)"></div>
+                <div class="dot" style="background:var(--light-blue)"></div>
             </div>
-        </aside>
+            LIGHT LAB
+        </div>
+        <div class="round-indicator" id="round-indicator">Lab Setup</div>
+    </header>
 
-        <main class="arena">
+    <!-- MAIN CONTAINER -->
+    <main class="app-shell">
 
-            <div id="screen-setup" class="screen active">
-                <h2>Game Setup</h2>
-                <div class="panel">
-                    <label style="display:block; margin-bottom:10px; color:var(--text-secondary);">Number of Players</label>
-                    <input type="number" id="input-player-count" class="input-text" value="2" min="1" max="8" style="margin-bottom: 20px;">
-                    
-                    <button class="btn" id="btn-start-game" style="width:100%">Start Game</button>
-                </div>
-            </div>
-
-            <div id="screen-game" class="screen">
-                <div class="target-container">
-                    <div class="swatch" id="target-swatch"></div>
-                    <div class="swatch-label" id="target-name">Target</div>
-                </div>
-
-                <div class="mixing-grid" id="mixing-grid">
+        <!-- 1. INTRO / EDUCATION SCREEN -->
+        <section id="screen-intro" class="screen active">
+            <div class="intro-content">
+                <div class="prism-graphic">
+                    <div class="light-circles">
+                        <div class="lc lc-r"></div>
+                        <div class="lc lc-g"></div>
+                        <div class="lc lc-b"></div>
                     </div>
+                </div>
+                
+                <h1>The Physics of Color</h1>
+                <p class="lead">
+                    Welcome, scientists. In the digital world, every color you see is created by mixing just three beams of light: 
+                    <span style="color:var(--light-red)">Red</span>, 
+                    <span style="color:var(--light-green)">Green</span>, and 
+                    <span style="color:var(--light-blue)">Blue</span>.
+                </p>
+                <p style="color:var(--text-muted); margin-bottom: 3rem;">
+                    Unlike paint, light is <strong>additive</strong>. Combining them all creates white. 
+                    <br>Your mission: Analyze the target color and reconstruct it by adjusting the intensity of your RGB emitters.
+                    <br><br>
+                    <em style="font-size: 0.9em; opacity: 0.8; color: var(--accent-warn);"> <i class="fa-solid fa-triangle-exclamation"></i> Alert: Emitters are shielded. You must mix by numeric values alone. No peeking.</em>
+                </p>
 
-                <button class="btn" id="btn-submit-round">Analyze Spectrum</button>
+                <button class="btn" onclick="Game.goToSetup()">
+                    Enter Laboratory <i class="fa-solid fa-arrow-right"></i>
+                </button>
             </div>
+        </section>
 
-            <div id="screen-results" class="screen">
-                <h2>Analysis Complete</h2>
-                <div class="results-container">
+        <!-- 2. SETUP SCREEN -->
+        <section id="screen-setup" class="screen">
+            <div class="target-panel" style="max-width: 600px; width: 100%; margin: auto;">
+                <h2 style="font-family: var(--font-display); margin-bottom: 1rem;">Configure Experiment</h2>
+                
+                <div style="width:100%; margin-bottom: 1.5rem;">
+                    <label for="player-count" style="display:block; color:var(--text-muted); margin-bottom: 0.5rem; font-size: 0.9rem;">Number of Scientists</label>
+                    <div class="flex-center" style="gap: 1rem; margin-bottom: 1.5rem;">
+                        <button class="btn btn-outline" onclick="UI.adjustPlayerCount(-1)" aria-label="Decrease players"><i class="fa-solid fa-minus"></i></button>
+                        <input type="number" id="player-count" value="2" min="1" max="8" readonly 
+                            style="background: transparent; border: none; color: white; font-size: 2rem; font-family: var(--font-display); width: 60px; text-align: center;">
+                        <button class="btn btn-outline" onclick="UI.adjustPlayerCount(1)" aria-label="Increase players"><i class="fa-solid fa-plus"></i></button>
+                    </div>
                     
-                    <div class="visualizer-col">
-                        <canvas id="radarCanvas" width="400" height="400"></canvas>
-                        <div style="position:absolute; bottom:20px; font-size:0.9rem; color:rgba(255,255,255,0.6);">
-                            Target: <span id="reveal-values"></span>
+                    <label style="display:block; color:var(--text-muted); margin-bottom: 0.5rem; font-size: 0.9rem; text-align:left;">Scientist Names</label>
+                    <div id="name-container" class="name-grid">
+                        <!-- Inputs injected here -->
+                    </div>
+                </div>
+
+                <button class="btn" style="width: 100%; justify-content: center;" onclick="Game.startExperiment()">
+                    Initialize Systems
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. GAMEPLAY SCREEN -->
+        <section id="screen-game" class="screen">
+            <div class="game-layout">
+                <!-- Target (Left/Top) -->
+                <div class="target-panel">
+                    <div class="swatch-display" id="target-swatch"></div>
+                    <div class="target-label" id="target-name">Target Unknown</div>
+                    <div class="target-sub">Replicate this frequency</div>
+                    
+                    <div style="margin-top: auto; width: 100%;">
+                        <button class="btn" id="btn-submit" onclick="Game.submitRound()" style="width: 100%; justify-content: center;">
+                            Analyze Spectrum
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mixing Desk (Right/Bottom) -->
+                <div class="lab-area" id="lab-area">
+                    <!-- Player cards injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. RESULTS SCREEN -->
+        <section id="screen-results" class="screen">
+            <div class="intro-content" style="margin-top: 0;">
+                <h2 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 2rem;">Spectrum Analysis</h2>
+                
+                <div class="results-grid">
+                    <!-- Visualizer -->
+                    <div style="background: var(--bg-panel); border-radius: var(--radius-lg); padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <canvas id="analysis-canvas" width="340" height="340"></canvas>
+                        <div style="margin-top: 1rem; font-family: var(--font-display); font-size: 0.9rem; opacity: 0.7;">
+                            <i class="fa-solid fa-bullseye"></i> Proximity Radar
                         </div>
                     </div>
 
-                    <div class="list-col" id="results-list">
-                        </div>
+                    <!-- Leaderboard -->
+                    <div id="results-list" style="text-align: left;">
+                        <!-- Scores Injected Here -->
+                    </div>
                 </div>
 
-                <button class="btn" id="btn-next-round">Next Transmission</button>
+                <div style="margin-top: 3rem; display: flex; gap: 1rem; justify-content: center;">
+                    <button class="btn btn-outline" onclick="Game.resetGame()">End Session</button>
+                    <button class="btn" onclick="Game.nextRound()">Next Sample <i class="fa-solid fa-forward"></i></button>
+                </div>
             </div>
+        </section>
 
-        </main>
-    </div>
+    </main>
 
     <script>
         /**
-         * CHROMA LAB PRO - Logic
+         * LIGHT LAB
+         * Professional Refactor for Education
          */
 
-        // --- CONSTANTS ---
-        const COLORS = [
-            { name: "Neon Red", r: 255, g: 0, b: 50 },
-            { name: "Lime Pulse", r: 50, g: 255, b: 50 },
-            { name: "Deep Ocean", r: 0, g: 100, b: 200 },
+        // --- DATA & CONFIG ---
+        const PALETTE = [
+            { name: "Nebula Red", r: 255, g: 20, b: 60 },
+            { name: "Krypton Green", r: 50, g: 255, b: 50 },
+            { name: "Deep Space Blue", r: 0, g: 80, b: 220 },
             { name: "Solar Flare", r: 255, g: 200, b: 0 },
-            { name: "Cyber Cyan", r: 0, g: 255, b: 255 },
-            { name: "Hot Magenta", r: 255, g: 0, b: 255 },
-            { name: "Void Purple", r: 100, g: 0, b: 200 },
-            { name: "Forest", r: 34, g: 139, b: 34 },
-            { name: "Slate", r: 112, g: 128, b: 144 },
-            { name: "Coral", r: 255, g: 127, b: 80 }
+            { name: "Cyber Cyan", r: 0, g: 255, b: 240 },
+            { name: "Plasma Magenta", r: 255, g: 0, b: 255 },
+            { name: "Ultraviolet", r: 100, g: 0, b: 220 },
+            { name: "Biosphere", r: 34, g: 139, b: 34 },
+            { name: "Moon Dust", r: 112, g: 128, b: 144 },
+            { name: "Supernova Orange", r: 255, g: 100, b: 40 },
+            { name: "White Dwarf", r: 230, g: 230, b: 255 }
         ];
 
-        // --- MATH UTILS ---
+        // --- UTILS ---
         const Utils = {
-            getColorDiff: (c1, c2) => {
-                return Math.sqrt(
-                    Math.pow(c1.r - c2.r, 2) +
-                    Math.pow(c1.g - c2.g, 2) +
-                    Math.pow(c1.b - c2.b, 2)
-                );
-            },
-            rgbString: (r,g,b) => `rgb(${r}, ${g}, ${b})`
+            rgb: (r,g,b) => `rgb(${r}, ${g}, ${b})`,
+            // Euclidean distance in 3D color space
+            getDiff: (c1, c2) => Math.sqrt((c1.r-c2.r)**2 + (c1.g-c2.g)**2 + (c1.b-c2.b)**2),
         };
 
-        // --- APP CONTROLLER ---
-        const App = {
+        // --- GAME ENGINE ---
+        const Game = {
             state: {
                 players: [],
                 round: 0,
-                target: null
+                targetColor: null
             },
 
-            initGame() {
-                console.log("Initializing Game...");
-                const countInput = document.getElementById('input-player-count');
-                const count = parseInt(countInput.value) || 2;
+            // Navigation
+            goToSetup: () => {
+                UI.switchScreen('screen-setup');
+                UI.renderNameInputs(); // Initial render of inputs
+            },
+            
+            startExperiment: () => {
+                const count = parseInt(document.getElementById('player-count').value) || 1;
                 
-                this.state.players = Array.from({length: count}, (_, i) => ({
-                    id: i,
-                    name: `Player ${i + 1}`,
-                    score: 0,
-                    currentGuess: { r: 0, g: 0, b: 0 } // Live tracking
-                }));
+                // Collect names from inputs
+                const newPlayers = [];
+                for(let i=0; i<count; i++) {
+                    const nameInput = document.getElementById(`name-input-${i}`);
+                    const name = (nameInput && nameInput.value.trim() !== "") 
+                        ? nameInput.value.trim() 
+                        : `Scientist ${i + 1}`;
+                    
+                    newPlayers.push({
+                        id: i + 1,
+                        name: name,
+                        score: 0,
+                        guess: { r: 0, g: 0, b: 0 }
+                    });
+                }
                 
-                this.updateLeaderboard();
-                this.nextRound();
+                Game.state.players = newPlayers;
+                Game.state.round = 0;
+                Game.nextRound();
             },
 
-            nextRound() {
-                console.log("Starting Next Round...");
-                this.state.round++;
-                document.getElementById('round-display').innerText = this.state.round;
+            nextRound: () => {
+                Game.state.round++;
+                Game.state.targetColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+                Game.state.players.forEach(p => p.guess = {r:0, g:0, b:0});
                 
-                // Pick random color
-                this.state.target = COLORS[Math.floor(Math.random() * COLORS.length)];
-                
-                // Reset Guesses
-                this.state.players.forEach(p => p.currentGuess = {r:0, g:0, b:0});
-
-                // UI Updates
-                UI.updateTargetDisplay(this.state.target);
-                UI.generateMixingBoard(this.state.players);
+                document.getElementById('round-indicator').textContent = `Sample #${Game.state.round}`;
+                UI.renderGameScreen();
                 UI.switchScreen('screen-game');
-                Confetti.stop();
             },
 
-            handleInput(playerId, channel, value) {
-                const p = this.state.players.find(pl => pl.id === playerId);
-                if(!p) return;
-
-                const val = Math.min(255, Math.max(0, parseInt(value) || 0));
-                p.currentGuess[channel] = val;
-                
-                // Sync the UI (Range <-> Number)
-                UI.syncInputs(playerId, channel, val);
-                
-                // Update Player Card Color
-                UI.updatePlayerCard(playerId, p.currentGuess);
-            },
-
-            submitRound() {
-                // Calculate scores
-                this.state.players.forEach(p => {
-                    const diff = Utils.getColorDiff(p.currentGuess, this.state.target);
-                    const points = Math.max(0, 500 - Math.floor(diff));
-                    p.lastScore = points;
-                    p.lastDiff = diff;
-                    p.score += points;
-                });
-
-                // Sort by performance this round
-                const sortedResults = [...this.state.players].sort((a,b) => a.lastDiff - b.lastDiff);
-
-                UI.renderResults(sortedResults, this.state.target);
-                this.updateLeaderboard();
-                UI.switchScreen('screen-results');
-                
-                Confetti.start();
-            },
-
-            updateLeaderboard() {
-                const sortedTotal = [...this.state.players].sort((a,b) => b.score - a.score);
-                UI.renderLeaderboard(sortedTotal);
-            }
-        };
-
-        // --- UI MANAGER ---
-        const UI = {
-            // FIXED: Keys now match HTML IDs exactly
-            screens: {
-                'screen-setup': document.getElementById('screen-setup'),
-                'screen-game': document.getElementById('screen-game'),
-                'screen-results': document.getElementById('screen-results')
-            },
-
-            switchScreen(id) {
-                console.log("Switching to screen:", id);
-                // Remove active from all
-                Object.values(this.screens).forEach(el => {
-                    if(el) el.classList.remove('active');
-                });
-                
-                // Add active to target
-                if(this.screens[id]) {
-                    this.screens[id].classList.add('active');
-                } else {
-                    console.error("Screen ID not found:", id);
+            updateGuess: (playerId, channel, value) => {
+                const player = Game.state.players.find(p => p.id === playerId);
+                if (player) {
+                    player.guess[channel] = parseInt(value);
+                    const display = document.getElementById(`val-${playerId}-${channel}`);
+                    if(display) display.textContent = value;
                 }
             },
 
-            updateTargetDisplay(color) {
-                const el = document.getElementById('target-swatch');
-                el.style.backgroundColor = Utils.rgbString(color.r, color.g, color.b);
-                document.getElementById('target-name').innerText = color.name;
+            submitRound: () => {
+                Game.state.players.forEach(p => {
+                    const diff = Utils.getDiff(p.guess, Game.state.targetColor);
+                    // Max distance is roughly 441 (sqrt(255^2 * 3)). 
+                    const roundScore = Math.max(0, Math.floor((442 - diff) * 2));
+                    p.lastScore = roundScore;
+                    p.lastDiff = diff;
+                    p.score += roundScore;
+                });
+
+                UI.renderResults();
+                UI.switchScreen('screen-results');
             },
 
-            generateMixingBoard(players) {
-                const grid = document.getElementById('mixing-grid');
-                grid.innerHTML = '';
+            resetGame: () => {
+                window.location.reload();
+            }
+        };
 
-                players.forEach(p => {
-                    const card = document.createElement('div');
-                    card.className = 'mixing-board';
-                    card.id = `p-card-${p.id}`;
-                    card.style.setProperty('--current-mix', 'rgb(0,0,0)');
+        // --- UI CONTROLLER ---
+        const UI = {
+            screens: ['screen-intro', 'screen-setup', 'screen-game', 'screen-results'],
 
-                    card.innerHTML = `
-                        <div class="live-preview-box" id="preview-${p.id}">
-                            ${p.name}
+            switchScreen: (id) => {
+                UI.screens.forEach(s => {
+                    document.getElementById(s).classList.remove('active');
+                });
+                document.getElementById(id).classList.add('active');
+            },
+
+            adjustPlayerCount: (delta) => {
+                const input = document.getElementById('player-count');
+                let val = parseInt(input.value) + delta;
+                if(val < 1) val = 1;
+                if(val > 8) val = 8;
+                input.value = val;
+                
+                // Re-render name inputs
+                UI.renderNameInputs();
+            },
+
+            renderNameInputs: () => {
+                const count = parseInt(document.getElementById('player-count').value);
+                const container = document.getElementById('name-container');
+                container.innerHTML = '';
+                
+                for(let i=0; i<count; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'name-input';
+                    input.id = `name-input-${i}`;
+                    input.placeholder = `Scientist ${i+1} Name`;
+                    container.appendChild(input);
+                }
+            },
+
+            renderGameScreen: () => {
+                const t = Game.state.targetColor;
+                const swatch = document.getElementById('target-swatch');
+                swatch.style.backgroundColor = Utils.rgb(t.r, t.g, t.b);
+                swatch.style.boxShadow = `0 0 50px ${Utils.rgb(t.r, t.g, t.b)}`;
+                document.getElementById('target-name').textContent = t.name;
+
+                const area = document.getElementById('lab-area');
+                area.innerHTML = '';
+
+                Game.state.players.forEach(p => {
+                    const el = document.createElement('div');
+                    el.className = 'station-card';
+                    el.innerHTML = `
+                        <div class="station-header">
+                            <span style="font-weight:700; font-family:var(--font-display)">${p.name}</span>
+                            <div class="mystery-preview" title="Emitters Shielded">
+                                <i class="fa-solid fa-eye-slash"></i>
+                            </div>
                         </div>
-                        <div class="controls">
-                            ${this.createSlider(p.id, 'r', 'range-r', 'Red')}
-                            ${this.createSlider(p.id, 'g', 'range-g', 'Green')}
-                            ${this.createSlider(p.id, 'b', 'range-b', 'Blue')}
+                        <div class="slider-group">
+                            ${UI.createSlider(p.id, 'r', 'Red', p.guess.r, 'c-red', 'track-r')}
+                            ${UI.createSlider(p.id, 'g', 'Green', p.guess.g, 'c-green', 'track-g')}
+                            ${UI.createSlider(p.id, 'b', 'Blue', p.guess.b, 'c-blue', 'track-b')}
                         </div>
                     `;
-                    grid.appendChild(card);
+                    area.appendChild(el);
                 });
             },
 
-            createSlider(id, channel, classColor, label) {
+            createSlider: (pid, chan, label, val, colorClass, trackClass) => {
                 return `
-                <div class="channel-row">
-                    <span class="channel-label c${channel}">${label.charAt(0)}</span>
-                    <input type="range" min="0" max="255" value="0" 
-                        class="${classColor}" 
-                        data-pid="${id}" data-channel="${channel}" data-type="range"
-                        id="range-${id}-${channel}">
-                    <input type="number" min="0" max="255" value="0" class="num-input"
-                        data-pid="${id}" data-channel="${channel}" data-type="num"
-                        id="num-${id}-${channel}">
-                </div>`;
-            },
-
-            syncInputs(pid, channel, val) {
-                // If user moved slider, update number box, and vice versa
-                const range = document.getElementById(`range-${pid}-${channel}`);
-                const num = document.getElementById(`num-${pid}-${channel}`);
-                if(range) range.value = val;
-                if(num) num.value = val;
-            },
-
-            updatePlayerCard(id, rgb) {
-                const card = document.getElementById(`p-card-${id}`);
-                const colStr = Utils.rgbString(rgb.r, rgb.g, rgb.b);
-                if(card) card.style.setProperty('--current-mix', colStr);
-                
-                const preview = document.getElementById(`preview-${id}`);
-                if(preview) preview.style.backgroundColor = colStr;
-            },
-
-            renderLeaderboard(players) {
-                const lb = document.getElementById('leaderboard');
-                lb.innerHTML = players.map((p, i) => `
-                    <div class="player-card ${i===0 ? 'leader' : ''}">
-                        <span style="font-weight:700">${p.name}</span>
-                        <span style="color:var(--neon-cyan); font-family:'Outfit'">${p.score}</span>
+                    <div class="channel-control">
+                        <span class="channel-icon ${colorClass}">${label[0]}</span>
+                        <input type="range" min="0" max="255" value="${val}" 
+                            class="${trackClass}"
+                            aria-label="${label} Intensity"
+                            oninput="Game.updateGuess(${pid}, '${chan}', this.value)">
+                        <span class="value-display" id="val-${pid}-${chan}">${val}</span>
                     </div>
-                `).join('');
+                `;
             },
 
-            renderResults(players, target) {
+            renderResults: () => {
+                const target = Game.state.targetColor;
+                const sorted = [...Game.state.players].sort((a,b) => a.lastDiff - b.lastDiff);
                 const list = document.getElementById('results-list');
-                document.getElementById('reveal-values').innerText = `R:${target.r} G:${target.g} B:${target.b}`;
+                list.innerHTML = '';
 
-                list.innerHTML = players.map((p, i) => {
-                    const guessStr = Utils.rgbString(p.currentGuess.r, p.currentGuess.g, p.currentGuess.b);
-                    const targetStr = Utils.rgbString(target.r, target.g, target.b);
+                sorted.forEach((p, index) => {
+                    const isWinner = index === 0;
+                    const pColor = Utils.rgb(p.guess.r, p.guess.g, p.guess.b);
+                    const tColor = Utils.rgb(target.r, target.g, target.b);
                     
-                    return `
-                    <div class="result-item ${i===0 ? 'winner' : ''}">
-                        <div class="compare-swatches">
-                            <div class="cs-target" style="background:${targetStr}"></div>
-                            <div class="cs-guess" style="background:${guessStr}"></div>
+                    list.innerHTML += `
+                        <div class="score-card ${isWinner ? 'winner' : ''}">
+                            <div>
+                                <div style="font-weight:700; font-size:1.1rem; color:${isWinner ? 'var(--accent-warn)' : 'white'}">
+                                    ${p.name} ${isWinner ? '<i class="fa-solid fa-trophy" style="margin-left:8px"></i>' : ''}
+                                </div>
+                                <div class="comparison">
+                                    <div class="comp-swatch" style="background:${pColor}" title="Your Mix"></div>
+                                    <span style="font-size:0.8rem; color:var(--text-muted);">
+                                        RGB(${p.guess.r},${p.guess.g},${p.guess.b})
+                                    </span>
+                                </div>
+                            </div>
+                            <div style="text-align:right">
+                                <div style="font-size:1.5rem; font-weight:700; font-family:var(--font-display)">+${p.lastScore}</div>
+                                <div style="font-size:0.8rem; opacity:0.7">Total: ${p.score}</div>
+                            </div>
                         </div>
-                        <div style="flex:1">
-                            <div style="font-weight:700; font-size:1.1rem;">${p.name}</div>
-                            <div style="font-size:0.8rem; color:var(--text-secondary)">Guess: ${p.currentGuess.r}, ${p.currentGuess.g}, ${p.currentGuess.b}</div>
-                        </div>
-                        <div style="font-family:'Outfit'; font-weight:700; color:var(--neon-cyan); font-size:1.2rem;">
-                            +${p.lastScore}
-                        </div>
-                    </div>
                     `;
-                }).join('');
+                });
 
-                this.drawRadar(players, target);
+                UI.drawRadialGraph(sorted, target);
             },
 
-            drawRadar(players, target) {
-                const canvas = document.getElementById('radarCanvas');
+            drawRadialGraph: (players, target) => {
+                const canvas = document.getElementById('analysis-canvas');
                 const ctx = canvas.getContext('2d');
-                // Ensure correct scaling
-                canvas.width = canvas.parentElement.clientWidth || 400;
-                canvas.height = canvas.width; 
-                
+                // Use actual canvas dimensions
                 const w = canvas.width;
                 const h = canvas.height;
-                const cx = w/2;
-                const cy = h/2;
-                
-                ctx.clearRect(0,0,w,h);
-                
-                // Background Rings
-                ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                const cx = w / 2;
+                const cy = h / 2;
+                const maxRadius = (w / 2) - 30; // Leave margin for labels
+
+                ctx.clearRect(0, 0, w, h);
+
+                // 1. Draw Bullseye / Zones
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
                 ctx.lineWidth = 1;
-                const maxR = (w/2) - 20;
-                [0.3, 0.6, 1].forEach(m => { 
-                    ctx.beginPath(); ctx.arc(cx,cy, maxR * m, 0, Math.PI*2); ctx.stroke(); 
+                
+                // Draw 3 rings: 25%, 50%, 75% error distance
+                [0.25, 0.5, 0.75, 1.0].forEach(r => {
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, maxRadius * r, 0, Math.PI * 2);
+                    ctx.stroke();
                 });
 
-                // Target Center
-                ctx.fillStyle = Utils.rgbString(target.r, target.g, target.b);
-                ctx.beginPath(); ctx.arc(cx,cy,15,0,Math.PI*2); ctx.fill();
-                ctx.stroke();
+                // 2. Draw Target Center
+                ctx.fillStyle = Utils.rgb(target.r, target.g, target.b);
+                ctx.beginPath();
+                ctx.arc(cx, cy, 15, 0, Math.PI * 2);
+                ctx.fill();
+                // Add a glow
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = Utils.rgb(target.r, target.g, target.b);
+                ctx.stroke(); // stroke over it
+                ctx.shadowBlur = 0;
 
-                // Player Pins
+                // 3. Plot Players radially
+                const totalPlayers = players.length;
+                const maxDiff = 442; // Theoretical max Euclidean distance
+
                 players.forEach((p, i) => {
-                    const angle = (Math.PI * 2 / players.length) * i - Math.PI/2;
-                    // Map diff (0-450) to radius
-                    const dist = Math.min(maxR, (p.lastDiff / 450) * maxR); 
+                    // Angle: Distribute evenly around circle
+                    const angle = (i / totalPlayers) * (Math.PI * 2) - (Math.PI / 2); // Start at top
                     
-                    const px = cx + Math.cos(angle) * (dist + 20); 
-                    const py = cy + Math.sin(angle) * (dist + 20);
+                    // Distance: Normalize diff (0 is center, 442 is edge)
+                    // We clamp it so even bad guesses stay on board
+                    let normalizedDiff = p.lastDiff / maxDiff;
+                    if(normalizedDiff > 1) normalizedDiff = 1;
+                    const r = normalizedDiff * maxRadius;
 
-                    // Line
-                    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py);
-                    ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.stroke();
+                    // Coords
+                    const px = cx + Math.cos(angle) * r;
+                    const py = cy + Math.sin(angle) * r;
 
-                    // Dot
-                    ctx.fillStyle = Utils.rgbString(p.currentGuess.r, p.currentGuess.g, p.currentGuess.b);
-                    ctx.beginPath(); ctx.arc(px,py,10,0,Math.PI*2); ctx.fill();
+                    // Draw Line (Spider leg)
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(px, py);
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+                    ctx.stroke();
+
+                    // Draw Player Dot
+                    ctx.fillStyle = Utils.rgb(p.guess.r, p.guess.g, p.guess.b);
+                    ctx.beginPath();
+                    ctx.arc(px, py, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = "#fff";
                     ctx.lineWidth = 2;
-                    ctx.strokeStyle = '#fff'; ctx.stroke();
+                    ctx.stroke();
+
+                    // Draw Name Label
+                    ctx.fillStyle = "#fff";
+                    ctx.font = "12px Inter";
+                    ctx.textAlign = "center";
+                    // Push label slightly outward from dot
+                    const labelDist = 20;
+                    ctx.fillText(p.name, px, py + labelDist);
                 });
             }
         };
 
-        // --- FX: CONFETTI ---
-        const Confetti = {
-            active: false,
-            canvas: document.getElementById('confetti-canvas'),
-            particles: [],
-            
-            start() {
-                this.active = true;
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-                this.particles = Array.from({length: 80}, () => ({
-                    x: this.canvas.width/2, y: this.canvas.height/2,
-                    vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15 - 5,
-                    color: `hsl(${Math.random()*360}, 100%, 50%)`,
-                    life: 1.0
-                }));
-                this.loop();
-            },
-            stop() { this.active = false; },
-            loop() {
-                if(!this.active) {
-                    const ctx = this.canvas.getContext('2d');
-                    ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
-                    return;
-                }
-                const ctx = this.canvas.getContext('2d');
-                ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
-                
-                this.particles.forEach(p => {
-                    p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.life -= 0.01;
-                    ctx.fillStyle = p.color; ctx.globalAlpha = p.life;
-                    ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI*2); ctx.fill();
-                });
-                
-                this.particles = this.particles.filter(p => p.life > 0);
-                if(this.particles.length) requestAnimationFrame(() => this.loop());
-                else this.active = false;
-            }
-        };
-
-        // --- EVENT LISTENERS ---
+        // Init
         document.addEventListener('DOMContentLoaded', () => {
-            console.log("DOM Loaded.");
-            
-            // 1. Start Game
-            const btnStart = document.getElementById('btn-start-game');
-            if(btnStart) {
-                btnStart.addEventListener('click', () => {
-                    console.log("Start button clicked");
-                    App.initGame();
-                });
-            } else {
-                console.error("Start Button Not Found");
-            }
-
-            // 2. Mixing Grid Inputs
-            const grid = document.getElementById('mixing-grid');
-            if(grid) {
-                grid.addEventListener('input', (e) => {
-                    if(e.target.dataset.pid) {
-                        const pid = parseInt(e.target.dataset.pid);
-                        const channel = e.target.dataset.channel;
-                        const value = e.target.value;
-                        App.handleInput(pid, channel, value);
-                    }
-                });
-            }
-
-            // 3. Submit Round
-            document.getElementById('btn-submit-round').addEventListener('click', () => {
-                App.submitRound();
-            });
-
-            // 4. Next Round
-            document.getElementById('btn-next-round').addEventListener('click', () => {
-                App.nextRound();
-            });
+            // Initial render handled by defaults
         });
 
     </script>
