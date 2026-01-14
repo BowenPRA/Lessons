@@ -1,9 +1,20 @@
+I have fixed the issue with the "Initialize" button (likely a scope issue or a syntax error in the complex inline HTML generation) and updated the terminology as requested.
+
+**Changes Made:**
+
+1. **Bug Fix:** Switched from inline `onclick="..."` to proper JavaScript **Event Listeners** and **Event Delegation**. This makes the button reliable and the sliders much smoother.
+2. **Terminology:** Renamed "Agents" to **"Players"** and "Initialize System" to **"Start Game"**.
+3. **UI Logic:** Consolidated the input logic so the "Range Sliders" and "Number Boxes" stay perfectly synced without complex inline code.
+
+Here is the fully functional, polished code.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Chroma Lab: Interactive RGB Color Mixer">
+    <meta name="description" content="Chroma Lab: RGB Color Mixer">
     <title>Chroma Lab: Pro</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -387,7 +398,7 @@
         
         <aside class="sidebar">
             <div class="brand">Chroma Lab</div>
-            <div class="scoreboard-header">Active Agents</div>
+            <div class="scoreboard-header">Active Players</div>
             <div id="leaderboard">
                 </div>
             <div style="margin-top:auto; font-size: 0.8rem; color: var(--text-secondary);">
@@ -398,12 +409,12 @@
         <main class="arena">
 
             <div id="screen-setup" class="screen active">
-                <h2>Mission Config</h2>
+                <h2>Game Setup</h2>
                 <div class="panel">
-                    <label style="display:block; margin-bottom:10px; color:var(--text-secondary);">Number of Agents</label>
-                    <input type="number" id="player-count" class="input-text" value="2" min="1" max="6" style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:10px; color:var(--text-secondary);">Number of Players</label>
+                    <input type="number" id="input-player-count" class="input-text" value="2" min="1" max="6" style="margin-bottom: 20px;">
                     
-                    <button class="btn" style="width:100%" onclick="App.initGame()">Initialize System</button>
+                    <button class="btn" id="btn-start-game" style="width:100%">Start Game</button>
                 </div>
             </div>
 
@@ -416,7 +427,7 @@
                 <div class="mixing-grid" id="mixing-grid">
                     </div>
 
-                <button class="btn" onclick="App.submitRound()">Analyze Spectrum</button>
+                <button class="btn" id="btn-submit-round">Analyze Spectrum</button>
             </div>
 
             <div id="screen-results" class="screen">
@@ -434,7 +445,7 @@
                         </div>
                 </div>
 
-                <button class="btn" onclick="App.nextRound()">Next Transmission</button>
+                <button class="btn" id="btn-next-round">Next Transmission</button>
             </div>
 
         </main>
@@ -443,7 +454,6 @@
     <script>
         /**
          * CHROMA LAB PRO - Logic
-         * Modular structure for cleaner maintenance.
          */
 
         // --- CONSTANTS ---
@@ -462,7 +472,6 @@
 
         // --- MATH UTILS ---
         const Utils = {
-            // Euclidean distance in 3D color space
             getColorDiff: (c1, c2) => {
                 return Math.sqrt(
                     Math.pow(c1.r - c2.r, 2) +
@@ -470,11 +479,10 @@
                     Math.pow(c1.b - c2.b, 2)
                 );
             },
-            // CSS String generator
             rgbString: (r,g,b) => `rgb(${r}, ${g}, ${b})`
         };
 
-        // --- GAME ENGINE ---
+        // --- APP CONTROLLER ---
         const App = {
             state: {
                 players: [],
@@ -483,10 +491,12 @@
             },
 
             initGame() {
-                const count = parseInt(document.getElementById('player-count').value) || 2;
+                const countInput = document.getElementById('input-player-count');
+                const count = parseInt(countInput.value) || 2;
+                
                 this.state.players = Array.from({length: count}, (_, i) => ({
                     id: i,
-                    name: `Agent ${i + 1}`,
+                    name: `Player ${i + 1}`,
                     score: 0,
                     currentGuess: { r: 0, g: 0, b: 0 } // Live tracking
                 }));
@@ -513,11 +523,16 @@
             },
 
             handleInput(playerId, channel, value) {
-                const p = this.state.players[playerId];
-                const val = parseInt(value) || 0;
+                const p = this.state.players.find(pl => pl.id === playerId);
+                if(!p) return;
+
+                const val = Math.min(255, Math.max(0, parseInt(value) || 0));
                 p.currentGuess[channel] = val;
                 
-                // Update UI for this player immediately (The "Live Mix" feature)
+                // Sync the UI (Range <-> Number)
+                UI.syncInputs(playerId, channel, val);
+                
+                // Update Player Card Color
                 UI.updatePlayerCard(playerId, p.currentGuess);
             },
 
@@ -525,7 +540,6 @@
                 // Calculate scores
                 this.state.players.forEach(p => {
                     const diff = Utils.getColorDiff(p.currentGuess, this.state.target);
-                    // Max diff is ~441. Map to score (500 max).
                     const points = Math.max(0, 500 - Math.floor(diff));
                     p.lastScore = points;
                     p.lastDiff = diff;
@@ -539,7 +553,6 @@
                 this.updateLeaderboard();
                 UI.switchScreen('screen-results');
                 
-                // Winner Effect
                 Confetti.start();
             },
 
@@ -593,22 +606,35 @@
             },
 
             createSlider(id, channel, classColor, label) {
+                // Using data-attributes for easier event delegation
                 return `
                 <div class="channel-row">
                     <span class="channel-label c${channel}">${label}</span>
                     <input type="range" min="0" max="255" value="0" 
                         class="${classColor}" 
-                        oninput="App.handleInput(${id}, '${channel}', this.value); document.getElementById('num-${id}-${channel').value = this.value">
-                    <input type="number" min="0" max="255" value="0" id="num-${id}-${channel}" class="num-input"
-                        oninput="App.handleInput(${id}, '${channel}', this.value); this.previousElementSibling.value = this.value">
+                        data-pid="${id}" data-channel="${channel}" data-type="range"
+                        id="range-${id}-${channel}">
+                    <input type="number" min="0" max="255" value="0" class="num-input"
+                        data-pid="${id}" data-channel="${channel}" data-type="num"
+                        id="num-${id}-${channel}">
                 </div>`;
+            },
+
+            syncInputs(pid, channel, val) {
+                // If user moved slider, update number box, and vice versa
+                const range = document.getElementById(`range-${pid}-${channel}`);
+                const num = document.getElementById(`num-${pid}-${channel}`);
+                if(range) range.value = val;
+                if(num) num.value = val;
             },
 
             updatePlayerCard(id, rgb) {
                 const card = document.getElementById(`p-card-${id}`);
                 const colStr = Utils.rgbString(rgb.r, rgb.g, rgb.b);
-                card.style.setProperty('--current-mix', colStr);
-                document.getElementById(`preview-${id}`).style.backgroundColor = colStr;
+                if(card) card.style.setProperty('--current-mix', colStr);
+                
+                const preview = document.getElementById(`preview-${id}`);
+                if(preview) preview.style.backgroundColor = colStr;
             },
 
             renderLeaderboard(players) {
@@ -650,7 +676,8 @@
             },
 
             drawRadar(players, target) {
-                const ctx = document.getElementById('radarCanvas').getContext('2d');
+                const canvas = document.getElementById('radarCanvas');
+                const ctx = canvas.getContext('2d');
                 const w = 400, h = 400, cx = 200, cy = 200;
                 
                 ctx.clearRect(0,0,w,h);
@@ -707,7 +734,8 @@
             stop() { this.active = false; },
             loop() {
                 if(!this.active) {
-                    this.canvas.getContext('2d').clearRect(0,0,this.canvas.width,this.canvas.height);
+                    const ctx = this.canvas.getContext('2d');
+                    ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
                     return;
                 }
                 const ctx = this.canvas.getContext('2d');
@@ -725,6 +753,38 @@
             }
         };
 
+        // --- EVENT LISTENERS (The Fix) ---
+        // We wait for the DOM to load, then attach listeners safely.
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Start Game Button
+            document.getElementById('btn-start-game').addEventListener('click', () => {
+                App.initGame();
+            });
+
+            // 2. Mixing Grid Event Delegation (Handles all sliders/inputs efficiently)
+            document.getElementById('mixing-grid').addEventListener('input', (e) => {
+                if(e.target.dataset.pid) {
+                    const pid = parseInt(e.target.dataset.pid);
+                    const channel = e.target.dataset.channel;
+                    const value = e.target.value;
+                    App.handleInput(pid, channel, value);
+                }
+            });
+
+            // 3. Submit Round Button
+            document.getElementById('btn-submit-round').addEventListener('click', () => {
+                App.submitRound();
+            });
+
+            // 4. Next Round Button
+            document.getElementById('btn-next-round').addEventListener('click', () => {
+                App.nextRound();
+            });
+        });
+
     </script>
 </body>
 </html>
+
+```
