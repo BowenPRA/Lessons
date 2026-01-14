@@ -478,6 +478,10 @@
                         <div style="margin-top: 1rem; font-family: var(--font-display); font-size: 0.9rem; opacity: 0.7;">
                             <i class="fa-solid fa-bullseye"></i> Proximity Radar
                         </div>
+                        <!-- Target Code Reveal -->
+                        <div id="target-reveal-display" style="margin-top: 0.5rem; font-family: var(--font-body); font-size: 1.1rem; color: var(--text-main); font-weight: 600;">
+                            Target: Unknown
+                        </div>
                     </div>
 
                     <!-- Leaderboard -->
@@ -683,6 +687,13 @@
                 const target = Game.state.targetColor;
                 const sorted = [...Game.state.players].sort((a,b) => a.lastDiff - b.lastDiff);
                 const list = document.getElementById('results-list');
+                const revealDisplay = document.getElementById('target-reveal-display');
+                
+                // Show Target Values
+                if (revealDisplay) {
+                    revealDisplay.innerHTML = `Target: <span style="color:${Utils.rgb(target.r, target.g, target.b)}">RGB(${target.r}, ${target.g}, ${target.b})</span>`;
+                }
+
                 list.innerHTML = '';
 
                 sorted.forEach((p, index) => {
@@ -698,7 +709,9 @@
                                 </div>
                                 <div class="comparison">
                                     <div class="comp-swatch" style="background:${pColor}" title="Your Mix"></div>
-                                    <span style="font-size:0.8rem; color:var(--text-muted);">
+                                    <i class="fa-solid fa-arrow-right" style="font-size:0.8rem; opacity:0.5"></i>
+                                    <div class="comp-swatch" style="background:${tColor}" title="Target"></div>
+                                    <span style="font-size:0.8rem; color:var(--text-muted); margin-left: 8px;">
                                         RGB(${p.guess.r},${p.guess.g},${p.guess.b})
                                     </span>
                                 </div>
