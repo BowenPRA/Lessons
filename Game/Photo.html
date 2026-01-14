@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Light Lab | Interactive RGB Physics</title>
+    <title>Photo Guesser | The RGB Challenge</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,7 @@
 
     <style>
         :root {
-            /* --- THEME: Physics Lab Dark Mode --- */
+            /* --- THEME: Gamer Dark Mode --- */
             --bg-void: #050505;
             --bg-panel: #121212;
             --border-dim: rgba(255, 255, 255, 0.1);
@@ -33,7 +33,7 @@
             --light-blue: #3366ff;
             
             /* UI Accents */
-            --accent-primary: #ffffff; /* Clean white for primary actions */
+            --accent-primary: #ffffff; 
             --accent-warn: #f59e0b;
             
             /* Spacing */
@@ -180,6 +180,7 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
+            text-decoration: none;
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(255,255,255,0.3); }
         .btn-outline { background: transparent; border: 1px solid var(--text-muted); color: var(--text-main); }
@@ -297,9 +298,9 @@
             border: 1px dashed var(--border-light);
         }
 
-        /* Sliders */
+        /* Sliders & Inputs */
         .slider-group { display: flex; flex-direction: column; gap: 1.5rem; }
-        .channel-control { display: grid; grid-template-columns: 20px 1fr 50px; gap: 1rem; align-items: center; }
+        .channel-control { display: grid; grid-template-columns: 20px 1fr 60px; gap: 1rem; align-items: center; }
         
         .channel-icon { font-weight: 800; font-family: var(--font-display); }
         .c-red { color: var(--light-red); text-shadow: 0 0 10px rgba(255, 51, 51, 0.4); }
@@ -328,11 +329,27 @@
         .track-g::-webkit-slider-runnable-track { background: linear-gradient(90deg, #113311, var(--light-green)); }
         .track-b::-webkit-slider-runnable-track { background: linear-gradient(90deg, #111133, var(--light-blue)); }
 
-        .value-display {
+        .value-input {
             font-family: var(--font-display);
             font-variant-numeric: tabular-nums;
-            text-align: right;
+            text-align: center;
             font-weight: 600;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border-dim);
+            color: #fff;
+            padding: 4px;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .value-input:focus {
+            border-color: var(--accent-primary);
+            outline: none;
+        }
+        /* Remove arrows from number input */
+        .value-input::-webkit-outer-spin-button,
+        .value-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
 
         /* --- RESULTS --- */
@@ -358,6 +375,37 @@
         .comparison { display: flex; gap: 10px; align-items: center; }
         .comp-swatch { width: 30px; height: 30px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); }
 
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: none;
+            align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.open { display: flex; opacity: 1; }
+        
+        .modal-content {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-dim);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .modal-title { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 1rem; color: #fff; }
+        .modal-body { line-height: 1.6; color: var(--text-muted); font-size: 1rem; }
+        .close-modal {
+            position: absolute; top: 1rem; right: 1rem;
+            background: transparent; border: none; color: #fff;
+            font-size: 1.5rem; cursor: pointer;
+        }
+
         /* --- UTILS --- */
         @media (max-width: 900px) {
             .game-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
@@ -378,9 +426,9 @@
                 <div class="dot" style="background:var(--light-green)"></div>
                 <div class="dot" style="background:var(--light-blue)"></div>
             </div>
-            LIGHT LAB
+            PHOTO GUESSER
         </div>
-        <div class="round-indicator" id="round-indicator">Lab Setup</div>
+        <div class="round-indicator" id="round-indicator">Game Setup</div>
     </header>
 
     <!-- MAIN CONTAINER -->
@@ -397,22 +445,17 @@
                     </div>
                 </div>
                 
-                <h1>The Physics of Color</h1>
+                <h1>Photo Guesser</h1>
                 <p class="lead">
-                    Welcome, scientists. In the digital world, every color you see is created by mixing just three beams of light: 
-                    <span style="color:var(--light-red)">Red</span>, 
-                    <span style="color:var(--light-green)">Green</span>, and 
-                    <span style="color:var(--light-blue)">Blue</span>.
+                    In the digital world, every color is a mix of Red, Green, and Blue light.
+                    Your Goal: Guess the RGB code for the hidden photo swatch.
                 </p>
                 <p style="color:var(--text-muted); margin-bottom: 3rem;">
-                    Unlike paint, light is <strong>additive</strong>. Combining them all creates white. 
-                    <br>Your mission: Analyze the target color and reconstruct it by adjusting the intensity of your RGB emitters.
-                    <br><br>
-                    <em style="font-size: 0.9em; opacity: 0.8; color: var(--accent-warn);"> <i class="fa-solid fa-triangle-exclamation"></i> Alert: Emitters are shielded. You must mix by numeric values alone. No peeking.</em>
+                    Light is additive: <span style="color:#fff">Red</span> + <span style="color:#fff">Green</span> + <span style="color:#fff">Blue</span> = White.
                 </p>
 
                 <button class="btn" onclick="Game.goToSetup()">
-                    Enter Laboratory <i class="fa-solid fa-arrow-right"></i>
+                    Start Game <i class="fa-solid fa-play" style="margin-left: 10px;"></i>
                 </button>
             </div>
         </section>
@@ -420,10 +463,10 @@
         <!-- 2. SETUP SCREEN -->
         <section id="screen-setup" class="screen">
             <div class="target-panel" style="max-width: 600px; width: 100%; margin: auto;">
-                <h2 style="font-family: var(--font-display); margin-bottom: 1rem;">Configure Experiment</h2>
+                <h2 style="font-family: var(--font-display); margin-bottom: 1rem;">Game Setup</h2>
                 
                 <div style="width:100%; margin-bottom: 1.5rem;">
-                    <label for="player-count" style="display:block; color:var(--text-muted); margin-bottom: 0.5rem; font-size: 0.9rem;">Number of Scientists</label>
+                    <label for="player-count" style="display:block; color:var(--text-muted); margin-bottom: 0.5rem; font-size: 0.9rem;">Number of Players</label>
                     <div class="flex-center" style="gap: 1rem; margin-bottom: 1.5rem;">
                         <button class="btn btn-outline" onclick="UI.adjustPlayerCount(-1)" aria-label="Decrease players"><i class="fa-solid fa-minus"></i></button>
                         <input type="number" id="player-count" value="2" min="1" max="8" readonly 
@@ -431,14 +474,14 @@
                         <button class="btn btn-outline" onclick="UI.adjustPlayerCount(1)" aria-label="Increase players"><i class="fa-solid fa-plus"></i></button>
                     </div>
                     
-                    <label style="display:block; color:var(--text-muted); margin-bottom: 0.5rem; font-size: 0.9rem; text-align:left;">Scientist Names</label>
+                    <label style="display:block; color:var(--text-muted); margin-bottom: 0.5rem; font-size: 0.9rem; text-align:left;">Player Names</label>
                     <div id="name-container" class="name-grid">
                         <!-- Inputs injected here -->
                     </div>
                 </div>
 
                 <button class="btn" style="width: 100%; justify-content: center;" onclick="Game.startExperiment()">
-                    Initialize Systems
+                    Initialize Game
                 </button>
             </div>
         </section>
@@ -450,11 +493,11 @@
                 <div class="target-panel">
                     <div class="swatch-display" id="target-swatch"></div>
                     <div class="target-label" id="target-name">Target Unknown</div>
-                    <div class="target-sub">Replicate this frequency</div>
+                    <div class="target-sub">Guess the RGB mix</div>
                     
                     <div style="margin-top: auto; width: 100%;">
                         <button class="btn" id="btn-submit" onclick="Game.submitRound()" style="width: 100%; justify-content: center;">
-                            Analyze Spectrum
+                            Submit Guess
                         </button>
                     </div>
                 </div>
@@ -469,7 +512,7 @@
         <!-- 4. RESULTS SCREEN -->
         <section id="screen-results" class="screen">
             <div class="intro-content" style="margin-top: 0;">
-                <h2 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 2rem;">Spectrum Analysis</h2>
+                <h2 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 2rem;">Round Results</h2>
                 
                 <div class="results-grid">
                     <!-- Visualizer -->
@@ -490,19 +533,42 @@
                     </div>
                 </div>
 
-                <div style="margin-top: 3rem; display: flex; gap: 1rem; justify-content: center;">
-                    <button class="btn btn-outline" onclick="Game.resetGame()">End Session</button>
-                    <button class="btn" onclick="Game.nextRound()">Next Sample <i class="fa-solid fa-forward"></i></button>
+                <div style="margin-top: 3rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-outline" onclick="UI.showScoringInfo()">
+                        How Scoring Works <i class="fa-solid fa-circle-question" style="margin-left: 8px;"></i>
+                    </button>
+                    <button class="btn btn-outline" onclick="Game.resetGame()">End Game</button>
+                    <button class="btn" onclick="Game.nextRound()">Next Round <i class="fa-solid fa-forward" style="margin-left: 8px;"></i></button>
                 </div>
             </div>
         </section>
 
     </main>
 
+    <!-- Scoring Info Modal -->
+    <div id="scoring-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal" onclick="UI.hideScoringInfo()">&times;</button>
+            <div class="modal-title">The Science of Scoring</div>
+            <div class="modal-body">
+                <p><strong>Colors are points in 3D Space.</strong></p>
+                <p>Imagine a cube where every point is a mix of Red, Green, and Blue.</p>
+                <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                    <li style="margin-bottom: 0.5rem;">We calculate the <strong>3D Distance</strong> between your guess and the target.</li>
+                    <li style="margin-bottom: 0.5rem;">The closer you are, the higher your score.</li>
+                    <li><strong>1000 Points</strong> = Perfect Match.</li>
+                </ul>
+                <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; font-size: 0.9rem; border: 1px solid var(--border-dim);">
+                    <code style="color: var(--accent-warn);">Score = 1000 - (Distance × Scaling)</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         /**
-         * LIGHT LAB
-         * Professional Refactor for Education
+         * PHOTO GUESSER
+         * Interactive RGB Physics Game
          */
 
         // --- DATA & CONFIG ---
@@ -550,7 +616,7 @@
                     const nameInput = document.getElementById(`name-input-${i}`);
                     const name = (nameInput && nameInput.value.trim() !== "") 
                         ? nameInput.value.trim() 
-                        : `Scientist ${i + 1}`;
+                        : `Player ${i + 1}`;
                     
                     newPlayers.push({
                         id: i + 1,
@@ -570,25 +636,50 @@
                 Game.state.targetColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
                 Game.state.players.forEach(p => p.guess = {r:0, g:0, b:0});
                 
-                document.getElementById('round-indicator').textContent = `Sample #${Game.state.round}`;
+                document.getElementById('round-indicator').textContent = `Round #${Game.state.round}`;
                 UI.renderGameScreen();
                 UI.switchScreen('screen-game');
             },
 
-            updateGuess: (playerId, channel, value) => {
+            handleInput: (playerId, channel, value) => {
+                // Clamp and parse
+                let val = parseInt(value);
+                if(isNaN(val)) val = 0;
+                if(val < 0) val = 0;
+                if(val > 255) val = 255;
+
                 const player = Game.state.players.find(p => p.id === playerId);
                 if (player) {
-                    player.guess[channel] = parseInt(value);
-                    const display = document.getElementById(`val-${playerId}-${channel}`);
-                    if(display) display.textContent = value;
+                    player.guess[channel] = val;
+                    
+                    // Sync inputs (slider and text)
+                    const range = document.getElementById(`range-${playerId}-${channel}`);
+                    const num = document.getElementById(`num-${playerId}-${channel}`);
+                    
+                    // Only update if value matches purely to avoid fighting the user typing
+                    // In a simple app, forcing the value is usually cleaner to ensure consistency
+                    if(range && range.value != val) range.value = val;
+                    if(num && num.value != val) num.value = val;
                 }
             },
 
             submitRound: () => {
+                const maxDist = 442; // ~Sqrt(255^2 * 3)
+                
                 Game.state.players.forEach(p => {
                     const diff = Utils.getDiff(p.guess, Game.state.targetColor);
-                    // Max distance is roughly 441 (sqrt(255^2 * 3)). 
-                    const roundScore = Math.max(0, Math.floor((442 - diff) * 2));
+                    
+                    // NEW SCORING: 1000 point scale
+                    // 1. Calculate percentage distance (0 to 1)
+                    // 2. Invert it (1 to 0)
+                    // 3. Multiply by 1000
+                    let normalizedScore = (1 - (diff / maxDist));
+                    if(normalizedScore < 0) normalizedScore = 0;
+                    
+                    // Apply a slight curve so close guesses feel more rewarding? 
+                    // Let's stick to linear for transparency, it's easier to explain.
+                    const roundScore = Math.round(normalizedScore * 1000);
+
                     p.lastScore = roundScore;
                     p.lastDiff = diff;
                     p.score += roundScore;
@@ -614,6 +705,14 @@
                 document.getElementById(id).classList.add('active');
             },
 
+            showScoringInfo: () => {
+                document.getElementById('scoring-modal').classList.add('open');
+            },
+            
+            hideScoringInfo: () => {
+                document.getElementById('scoring-modal').classList.remove('open');
+            },
+
             adjustPlayerCount: (delta) => {
                 const input = document.getElementById('player-count');
                 let val = parseInt(input.value) + delta;
@@ -635,7 +734,7 @@
                     input.type = 'text';
                     input.className = 'name-input';
                     input.id = `name-input-${i}`;
-                    input.placeholder = `Scientist ${i+1} Name`;
+                    input.placeholder = `Player ${i+1} Name`;
                     container.appendChild(input);
                 }
             },
@@ -656,7 +755,7 @@
                     el.innerHTML = `
                         <div class="station-header">
                             <span style="font-weight:700; font-family:var(--font-display)">${p.name}</span>
-                            <div class="mystery-preview" title="Emitters Shielded">
+                            <div class="mystery-preview" title="Preview Shielded">
                                 <i class="fa-solid fa-eye-slash"></i>
                             </div>
                         </div>
@@ -676,9 +775,15 @@
                         <span class="channel-icon ${colorClass}">${label[0]}</span>
                         <input type="range" min="0" max="255" value="${val}" 
                             class="${trackClass}"
+                            id="range-${pid}-${chan}"
                             aria-label="${label} Intensity"
-                            oninput="Game.updateGuess(${pid}, '${chan}', this.value)">
-                        <span class="value-display" id="val-${pid}-${chan}">${val}</span>
+                            oninput="Game.handleInput(${pid}, '${chan}', this.value)">
+                        
+                        <input type="number" min="0" max="255" value="${val}" 
+                            class="value-input"
+                            id="num-${pid}-${chan}"
+                            aria-label="${label} Value"
+                            oninput="Game.handleInput(${pid}, '${chan}', this.value)">
                     </div>
                 `;
             },
