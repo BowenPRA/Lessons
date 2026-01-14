@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Bad Translator Quiz</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE: Deep Cosmic Theme --- */
+            --bg-deep: #020617; /* Slate 950 */
+            
+            /* UI Elements */
+            --glass-panel: rgba(15, 23, 42, 0.75); 
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+
+            /* Accents */
+            --neon-blue: #3b82f6;
+            --neon-cyan: #22d3ee;
+            --neon-pink: #f43f5e;
+            --neon-purple: #c084fc;
+            --neon-orange: #f59e0b;
+            --neon-green: #10b981;
+
+            /* Dimensions */
+            --sidebar-width: 280px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            /* Complex gradient background */
+            background: radial-gradient(circle at 10% 20%, #1e1b4b 0%, #020617 40%),
+                        radial-gradient(circle at 90% 80%, #312e81 0%, #020617 40%);
+            color: var(--text-primary);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* --- ANIMATED STARS --- */
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(1px 1px at 50px 50px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 120px 250px, rgba(255,255,255,0.7), rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 300px 100px, #fff, rgba(0,0,0,0));
+            background-size: 400px 400px;
+            animation: twinkle 80s linear infinite;
+            z-index: -1;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-400px); } }
+
+        /* --- LAYOUT --- */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--glass-panel);
+            backdrop-filter: blur(16px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            z-index: 20;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            text-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+        }
+        .brand span { color: var(--neon-cyan); }
+
+        .level-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .level-btn {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .level-btn:hover { background: rgba(255,255,255,0.03); color: #fff; }
+        
+        .level-btn.active {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+        }
+
+        /* --- MAIN ARENA --- */
+        .arena {
+            flex: 1;
+            display: flex;
+            padding: 2rem;
+            gap: 2rem;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* LEFT COLUMN: ROCKET (DOOM METER) */
+        .col-rocket {
+            flex: 0 0 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        /* Rocket SVG Styles */
+        #rocket-svg {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            filter: drop-shadow(0 0 20px rgba(34, 211, 238, 0.15));
+            overflow: visible;
+            transform: translateY(0) scale(1.1);
+            transition: transform 0.5s ease;
+        }
+
+        /* Launch Animation */
+        #rocket-svg.launching {
+            animation: launchAnim 3s cubic-bezier(0.6, 0.05, 0.2, 0.99) forwards;
+        }
+        @keyframes launchAnim {
+            0% { transform: translateY(0) scale(1.1); }
+            10% { transform: translateY(10px) scale(1.05); } /* Compress before launch */
+            20% { transform: translateY(-20px) scale(1.15) rotate(2deg); } /* Shake */
+            30% { transform: translateY(-20px) scale(1.15) rotate(-2deg); } /* Shake */
+            100% { transform: translateY(-2000px) scale(1.5); opacity: 0; }
+        }
+
+        /* Rocket Parts Styling */
+        .rocket-part {
+            fill: #0f172a; 
+            stroke-width: 3px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .rocket-part.visible {
+            opacity: 1;
+            animation: neonDraw 0.8s ease forwards;
+        }
+        @keyframes neonDraw {
+            from { stroke-dasharray: 1000; stroke-dashoffset: 1000; filter: brightness(0); }
+            to { stroke-dasharray: 1000; stroke-dashoffset: 0; filter: brightness(1.2); }
+        }
+
+        /* Specific Colors */
+        #part-1 { stroke: var(--neon-purple); fill: rgba(192, 132, 252, 0.1); }
+        #part-2, #part-3 { stroke: var(--neon-pink); fill: rgba(244, 63, 94, 0.1); }
+        #part-4 { stroke: var(--neon-cyan); fill: rgba(34, 211, 238, 0.1); }
+        #part-5 { stroke: var(--neon-blue); }
+        #part-6 { stroke: var(--neon-orange); }
+
+        .rocket-part.super-fire {
+            stroke: #fef08a; fill: #f59e0b;
+            filter: drop-shadow(0 0 20px #f59e0b) drop-shadow(0 0 40px #ef4444);
+            animation: firePulse 0.1s infinite alternate;
+            opacity: 1;
+        }
+        @keyframes firePulse { from { stroke-width: 4px; transform: scale(1); } to { stroke-width: 8px; transform: scale(1.02); } }
+
+        /* Blueprint Lines */
+        .rocket-blueprint path, .rocket-blueprint ellipse, .rocket-blueprint circle {
+            fill: none; stroke: rgba(255, 255, 255, 0.1); stroke-width: 1px; stroke-dasharray: 4, 4;
+        }
+
+        /* RIGHT COLUMN: QUIZ CONTENT */
+        .col-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            justify-content: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* The "Bad Translation" Clue Card */
+        .clue-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            padding: 2.5rem;
+            border-radius: 24px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .label {
+            font-family: 'Outfit';
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--neon-blue);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .clue-text {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: clamp(2.5rem, 4vw, 4rem);
+            color: #fff;
+            line-height: 1.1;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        /* The Answer (Real Movie) */
+        .answer-container {
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .answer-text {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 3rem;
+            color: var(--neon-green);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+        }
+        .answer-text.revealed { opacity: 1; transform: translateY(0); }
+
+        /* The Cycle Timeline (Vertical Flow) */
+        .timeline-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            display: none; /* Hidden until revealed */
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .timeline-container.visible { display: flex; flex-direction: column; gap: 0; opacity: 1; }
+
+        .timeline-step {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 0.8rem 1rem;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.4s ease;
+        }
+        .timeline-step.show { opacity: 1; transform: translateX(0); }
+
+        /* Dotted Line connector */
+        .timeline-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 24px; /* Align with icon center */
+            top: 40px;
+            bottom: -15px;
+            width: 2px;
+            background: rgba(255,255,255,0.1);
+            z-index: 0;
+        }
+
+        .step-icon {
+            width: 32px; height: 32px;
+            background: var(--glass-panel);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            z-index: 1;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .step-lang {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--neon-purple);
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        
+        .step-text {
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        /* Teacher Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: auto;
+        }
+
+        .btn {
+            padding: 20px;
+            border-radius: 16px;
+            border: none;
+            font-family: 'Outfit';
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.1), transparent);
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .btn:hover::after { opacity: 1; }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-wrong {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: var(--neon-pink);
+        }
+        .btn-wrong:hover {
+            background: rgba(244, 63, 94, 0.15);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.15);
+        }
+
+        .btn-reveal {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            grid-column: span 2; /* Full width */
+            display: none;
+        }
+
+        /* Canvas for Confetti */
+        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+
+        /* Mobile Responsive */
+        @media (max-width: 1000px) {
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; height: 70px; flex-direction: row; align-items: center; padding: 0 1rem; border-right: none; border-bottom: 1px solid var(--glass-border); }
+            .brand { border: none; margin: 0; padding: 0; font-size: 1.2rem; margin-right: 20px; }
+            .level-list { flex-direction: row; overflow-x: auto; width: 100%; }
+            .level-btn { white-space: nowrap; padding: 8px 12px; }
+            
+            .arena { flex-direction: column; padding: 1rem; gap: 1rem; overflow-y: auto; height: auto; }
+            .col-rocket { flex: none; height: 250px; width: 100%; }
+            #rocket-svg { max-height: 100%; }
+            .col-content { width: 100%; padding-bottom: 40px; }
+            .clue-text { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+    <canvas id="confetti"></canvas>
+
+    <div class="app-container">
+        
+        <nav class="sidebar">
+            <div class="brand">Bad <span>Translator</span></div>
+            <div class="level-list" id="level-list">
+                </div>
+        </nav>
+
+        <main class="arena">
+            
+            <div class="col-rocket">
+                <svg id="rocket-svg" viewBox="0 0 300 500" xmlns="http://www.w3.org/2000/svg">
+                    <g class="rocket-blueprint">
+                        <ellipse cx="150" cy="250" rx="60" ry="140" />
+                        <path d="M96 168 Q150 60 204 168" />
+                        <path d="M95 300 L30 380 L105 360" />
+                        <path d="M205 300 L270 380 L195 360" />
+                        <circle cx="150" cy="220" r="30" />
+                    </g>
+
+                    <path id="part-6" class="rocket-part" d="M110 380 Q150 500 190 380 Q170 420 150 450 Q130 420 110 380" fill="none" />
+                    <g id="part-5" class="rocket-part">
+                        <circle cx="150" cy="220" r="30" fill="none" />
+                        <circle cx="150" cy="220" r="22" fill="var(--neon-cyan)" style="fill-opacity: 0.15; stroke:none;" />
+                    </g>
+                    <path id="part-4" class="rocket-part" d="M96 168 Q150 60 204 168 L204 168" fill="none" />
+                    <path id="part-3" class="rocket-part" d="M205 300 L270 380 L195 360 Z" fill="none" />
+                    <path id="part-2" class="rocket-part" d="M95 300 L30 380 L105 360 Z" fill="none" />
+                    <ellipse id="part-1" class="rocket-part" cx="150" cy="250" rx="60" ry="140" fill="none" />
+                </svg>
+            </div>
+
+            <div class="col-content">
+                
+                <div class="clue-card">
+                    <span class="label">The Clue</span>
+                    <h1 class="clue-text" id="clue-display">Loading...</h1>
+                </div>
+
+                <div class="answer-container">
+                    <span class="label" id="answer-label" style="opacity:0">Actual Movie</span>
+                    <div class="answer-text" id="answer-display">HIDDEN</div>
+                </div>
+
+                <div class="timeline-container" id="timeline-display">
+                    </div>
+
+                <div class="controls">
+                    <button class="btn btn-wrong" id="btn-wrong" onclick="game.handleWrong()">
+                        <i class="fa-solid fa-xmark"></i> Wrong Guess
+                    </button>
+                    
+                    <button class="btn btn-reveal" id="btn-reveal" onclick="game.revealAnswer()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Reveal Answer
+                    </button>
+
+                    <button class="btn btn-next" id="btn-next" onclick="game.nextLevel()">
+                        Next Question <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        /**
+         * DATA: The Bad Translator Cycle
+         * Structured for the timeline visualizer.
+         */
+        const QUIZ_DATA = [
+            {
+                clue: "Unfamiliar Objects",
+                answer: "Stranger Things",
+                steps: [
+                    { lang: "English", text: "Stranger Things" },
+                    { lang: "German", text: "Fremde Dinge" },
+                    { lang: "Vietnamese", text: "Những vật lạ" },
+                    { lang: "English", text: "Unfamiliar Objects" }
+                ]
+            },
+            {
+                clue: "I Am A Vile Person",
+                answer: "Despicable Me",
+                steps: [
+                    { lang: "English", text: "Despicable Me" },
+                    { lang: "French", text: "Moi méprisable" },
+                    { lang: "Japanese", text: "卑劣な私 (Hiretsuna watashi)" },
+                    { lang: "English", text: "I Am A Vile Person" }
+                ]
+            },
+            {
+                clue: "Refrigerated",
+                answer: "Frozen",
+                steps: [
+                    { lang: "English", text: "Frozen" },
+                    { lang: "Spanish", text: "Congelado" },
+                    { lang: "Korean", text: "냉동 (Naengdong)" },
+                    { lang: "English", text: "Refrigerated" }
+                ]
+            },
+            {
+                clue: "The Revengers: Final Sport",
+                answer: "Avengers: Endgame",
+                steps: [
+                    { lang: "English", text: "Avengers: Endgame" },
+                    { lang: "Hungarian", text: "Bosszúállók: Végjáték" },
+                    { lang: "Thai", text: "ผู้แก้แค้น: เกมสุดท้าย" },
+                    { lang: "English", text: "The Revengers: Final Sport" }
+                ]
+            },
+            {
+                clue: "Solitary in the House",
+                answer: "Home Alone",
+                steps: [
+                    { lang: "English", text: "Home Alone" },
+                    { lang: "Latin", text: "Solus in Domo" },
+                    { lang: "Haitian Creole", text: "Pou kont li nan kay la" },
+                    { lang: "English", text: "Solitary in the House" }
+                ]
+            },
+            {
+                clue: "Public Garden of the Jurassic",
+                answer: "Jurassic Park",
+                steps: [
+                    { lang: "English", text: "Jurassic Park" },
+                    { lang: "Portuguese", text: "Parque Jurássico" },
+                    { lang: "Vietnamese", text: "Công viên kỷ Jura" },
+                    { lang: "English", text: "Public Garden of the Jurassic" }
+                ]
+            },
+            {
+                clue: "The Commencement",
+                answer: "Inception",
+                steps: [
+                    { lang: "English", text: "Inception" },
+                    { lang: "German", text: "Gründung" },
+                    { lang: "Spanish", text: "El Comienzo" },
+                    { lang: "English", text: "The Commencement" }
+                ]
+            }
+        ];
+
+        const game = {
+            state: {
+                levelIndex: 0,
+                mistakes: 0,
+                maxMistakes: 6,
+                isRevealed: false
+            },
+
+            dom: {
+                clue: document.getElementById('clue-display'),
+                answer: document.getElementById('answer-display'),
+                answerLabel: document.getElementById('answer-label'),
+                timeline: document.getElementById('timeline-display'),
+                levelList: document.getElementById('level-list'),
+                btnWrong: document.getElementById('btn-wrong'),
+                btnReveal: document.getElementById('btn-reveal'),
+                btnNext: document.getElementById('btn-next'),
+                rocket: document.getElementById('rocket-svg')
+            },
+
+            init() {
+                this.renderSidebar();
+                this.loadLevel(0);
+                window.addEventListener('resize', () => {
+                    document.getElementById('confetti').width = window.innerWidth;
+                    document.getElementById('confetti').height = window.innerHeight;
+                });
+            },
+
+            renderSidebar() {
+                this.dom.levelList.innerHTML = '';
+                QUIZ_DATA.forEach((item, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'level-btn';
+                    btn.innerHTML = `<i class="fa-solid fa-circle-play"></i> Question ${idx + 1}`;
+                    btn.onclick = () => this.loadLevel(idx);
+                    btn.id = `lvl-btn-${idx}`;
+                    this.dom.levelList.appendChild(btn);
+                });
+            },
+
+            loadLevel(index) {
+                // Bounds check
+                if (index < 0) index = 0;
+                if (index >= QUIZ_DATA.length) index = 0;
+
+                this.state.levelIndex = index;
+                this.state.mistakes = 0;
+                this.state.isRevealed = false;
+
+                // UI Reset
+                this.dom.clue.innerText = QUIZ_DATA[index].clue;
+                this.dom.answer.innerText = QUIZ_DATA[index].answer;
+                
+                // Hide Answer & Timeline
+                this.dom.answer.classList.remove('revealed');
+                this.dom.answerLabel.style.opacity = '0';
+                this.dom.timeline.innerHTML = ''; // Clear timeline
+                this.dom.timeline.classList.remove('visible');
+
+                // Reset Rocket
+                this.resetRocket();
+
+                // Buttons
+                this.dom.btnWrong.style.display = 'flex';
+                this.dom.btnReveal.style.display = 'flex';
+                this.dom.btnNext.style.display = 'none';
+
+                // Sidebar Active State
+                document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+                const currBtn = document.getElementById(`lvl-btn-${index}`);
+                if(currBtn) currBtn.classList.add('active');
+
+                // Stop visuals
+                confettiEffects.stop();
+            },
+
+            handleWrong() {
+                if (this.state.isRevealed || this.state.mistakes >= this.state.maxMistakes) return;
+                
+                this.state.mistakes++;
+                const part = document.getElementById(`part-${this.state.mistakes}`);
+                if (part) part.classList.add('visible');
+
+                if (this.state.mistakes >= this.state.maxMistakes) {
+                    this.launchRocket();
+                }
+            },
+
+            launchRocket() {
+                const flame = document.getElementById('part-6');
+                if (flame) flame.classList.add('super-fire');
+                
+                setTimeout(() => {
+                    this.dom.rocket.classList.add('launching');
+                }, 200);
+
+                // Auto reveal (Failure Mode)
+                setTimeout(() => {
+                    this.revealAnswer(false);
+                }, 2500);
+            },
+
+            revealAnswer(isWin = true) {
+                if (this.state.isRevealed) return;
+                this.state.isRevealed = true;
+
+                // 1. Show the Real Title
+                this.dom.answerLabel.style.opacity = '1';
+                this.dom.answer.classList.add('revealed');
+
+                // 2. Build and Show the Timeline
+                this.buildTimeline(QUIZ_DATA[this.state.levelIndex].steps);
+
+                // 3. Swap Buttons
+                this.dom.btnWrong.style.display = 'none';
+                this.dom.btnReveal.style.display = 'none';
+                this.dom.btnNext.style.display = 'flex';
+
+                if (isWin) confettiEffects.start();
+            },
+
+            buildTimeline(steps) {
+                this.dom.timeline.innerHTML = '';
+                this.dom.timeline.classList.add('visible');
+
+                steps.forEach((step, idx) => {
+                    const el = document.createElement('div');
+                    el.className = 'timeline-step';
+                    el.innerHTML = `
+                        <div class="step-icon">${idx + 1}</div>
+                        <div class="step-content">
+                            <div class="step-lang">${step.lang}</div>
+                            <div class="step-text">${step.text}</div>
+                        </div>
+                    `;
+                    this.dom.timeline.appendChild(el);
+
+                    // Staggered Animation
+                    setTimeout(() => {
+                        el.classList.add('show');
+                    }, 100 + (idx * 300)); // 300ms delay per step
+                });
+            },
+
+            nextLevel() {
+                this.loadLevel(this.state.levelIndex + 1);
+            },
+
+            resetRocket() {
+                this.dom.rocket.classList.remove('launching');
+                for(let i=1; i<=6; i++) {
+                    const el = document.getElementById(`part-${i}`);
+                    if(el) {
+                        el.classList.remove('visible');
+                        el.classList.remove('super-fire');
+                    }
+                }
+            }
+        };
+
+        // --- VISUALS (Simple Canvas Confetti) ---
+        const confettiEffects = {
+            running: false, frameId: null, particles: [],
+            start() {
+                if(this.running) return;
+                this.running = true;
+                const cvs = document.getElementById('confetti');
+                const ctx = cvs.getContext('2d');
+                cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+                this.particles = [];
+                const colors = ['#22d3ee', '#f43f5e', '#c084fc', '#f59e0b', '#10b981'];
+                for(let i=0; i<150; i++) {
+                    this.particles.push({
+                        x: cvs.width/2, y: cvs.height/2,
+                        vx: (Math.random()-0.5)*20, vy: (Math.random()-0.5)*20 - 5,
+                        size: Math.random()*6+4, color: colors[Math.floor(Math.random()*colors.length)],
+                        drag: 0.96, gravity: 0.8
+                    });
+                }
+                this.loop(ctx, cvs);
+            },
+            loop(ctx, cvs) {
+                if(!this.running) { ctx.clearRect(0,0,cvs.width,cvs.height); return; }
+                ctx.clearRect(0,0,cvs.width,cvs.height);
+                let active = false;
+                this.particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.vx *= p.drag; p.vy *= p.drag;
+                    if(p.y < cvs.height + 20) active = true;
+                    ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size/2, 0, Math.PI*2); ctx.fill();
+                });
+                if(active) this.frameId = requestAnimationFrame(()=>this.loop(ctx,cvs));
+                else this.running = false;
+            },
+            stop() {
+                this.running = false; cancelAnimationFrame(this.frameId);
+                const cvs = document.getElementById('confetti');
+                if(cvs) cvs.getContext('2d').clearRect(0,0,cvs.width,cvs.height);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => game.init());
+    </script>
+</body>
+</html>
