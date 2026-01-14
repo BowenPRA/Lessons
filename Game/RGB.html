@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Chroma Lab: RGB Color Mixer">
     <title>Chroma Lab: Pro</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,8 +14,8 @@
         :root {
             /* --- THEME: Deep Cosmic --- */
             --bg-deep: #020617;
-            --glass-panel: rgba(15, 23, 42, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-panel: rgba(15, 23, 42, 0.85); /* Slightly more opaque for readability */
+            --glass-border: rgba(255, 255, 255, 0.15);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             
@@ -30,7 +29,7 @@
             --neon-gold: #fbbf24;
             
             /* Dimensions */
-            --sidebar-width: 320px;
+            --sidebar-width: 300px;
         }
 
         /* --- RESET & CORE --- */
@@ -39,28 +38,13 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-deep);
-            background: radial-gradient(circle at top right, #172554 0%, #020617 60%);
+            background: radial-gradient(circle at top right, #1e1b4b 0%, #020617 80%);
             color: var(--text-primary);
             height: 100vh;
             width: 100vw;
             overflow: hidden;
             display: flex;
         }
-
-        /* --- ANIMATED BACKGROUND --- */
-        .stars {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                radial-gradient(1px 1px at 20px 30px, #eee, rgba(0,0,0,0)),
-                radial-gradient(1px 1px at 100px 70px, #fff, rgba(0,0,0,0)),
-                radial-gradient(1.5px 1.5px at 150px 200px, #ffffff, rgba(0,0,0,0));
-            background-size: 550px 550px;
-            animation: starScroll 120s linear infinite;
-            z-index: -1;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        @keyframes starScroll { from { transform: translateY(0); } to { transform: translateY(-550px); } }
 
         /* --- LAYOUT --- */
         .app-container {
@@ -80,8 +64,7 @@
             display: flex;
             flex-direction: column;
             padding: 2rem;
-            z-index: 20;
-            overflow-y: auto;
+            z-index: 50; /* High Z-index to stay on top */
             transition: transform 0.3s ease;
         }
 
@@ -90,7 +73,7 @@
             font-weight: 800;
             font-size: 2rem;
             line-height: 1;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
             background: linear-gradient(to right, #fff, var(--neon-cyan));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -131,10 +114,10 @@
             flex-direction: column;
         }
 
-        /* --- SCREENS --- */
+        /* --- SCREENS (CRITICAL FIXES HERE) --- */
         .screen {
             position: absolute;
-            inset: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             padding: 2rem;
             display: flex;
             flex-direction: column;
@@ -142,12 +125,16 @@
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0; /* Default low z-index */
+            transition: opacity 0.4s ease, transform 0.4s ease;
             transform: scale(0.98);
+            background: radial-gradient(circle at center, transparent 0%, var(--bg-deep) 100%); /* Fade edges */
         }
+        
         .screen.active {
             opacity: 1;
             pointer-events: all;
+            z-index: 10; /* Bring to front */
             transform: scale(1);
         }
 
@@ -158,17 +145,18 @@
             margin-bottom: 2rem;
             text-align: center;
             font-weight: 700;
+            text-shadow: 0 0 30px rgba(34, 211, 238, 0.2);
         }
 
         .btn {
             background: linear-gradient(135deg, var(--neon-cyan) 0%, #0ea5e9 100%);
             color: #0f172a;
             border: none;
-            padding: 14px 32px;
+            padding: 16px 36px;
             border-radius: 12px;
             font-family: 'Outfit';
             font-weight: 800;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             cursor: pointer;
             box-shadow: 0 4px 20px rgba(34, 211, 238, 0.3);
             transition: transform 0.2s, box-shadow 0.2s;
@@ -181,11 +169,12 @@
         .panel {
             background: var(--glass-panel);
             border: 1px solid var(--glass-border);
-            padding: 2.5rem;
+            padding: 3rem;
             border-radius: 24px;
             width: 100%;
             max-width: 500px;
             backdrop-filter: blur(12px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
         
         .input-text {
@@ -193,10 +182,10 @@
             background: rgba(0,0,0,0.3);
             border: 1px solid var(--glass-border);
             color: white;
-            padding: 12px;
+            padding: 14px;
             border-radius: 8px;
             font-family: 'Outfit';
-            font-size: 1rem;
+            font-size: 1.1rem;
             outline: none;
             transition: 0.3s;
         }
@@ -207,40 +196,43 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         .swatch {
-            width: 180px; height: 180px;
+            width: 160px; height: 160px;
             border-radius: 24px;
-            border: 4px solid rgba(255,255,255,0.1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            margin-bottom: 1rem;
+            border: 4px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            margin-bottom: 0.5rem;
             transition: background-color 0.8s ease;
         }
-        .swatch-label { font-family: 'Outfit'; font-size: 1.5rem; font-weight: 700; }
+        .swatch-label { font-family: 'Outfit'; font-size: 1.5rem; font-weight: 700; letter-spacing: 1px;}
 
         .mixing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 20px;
             width: 100%;
-            max-width: 1200px;
-            max-height: 55vh;
-            overflow-y: auto;
+            max-width: 1400px;
+            flex: 1; /* Take up remaining space */
+            overflow-y: auto; /* Scrollable if many players */
             padding: 10px;
+            min-height: 0; /* Important for flex child scrolling */
         }
 
         .mixing-board {
             background: var(--glass-panel);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
-            padding: 1.5rem;
+            padding: 1.2rem;
             display: flex;
-            gap: 1.5rem;
+            gap: 1.2rem;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        /* The player's "Live Preview" background */
+        
+        /* The player's "Live Preview" background bar on left of card */
         .mixing-board::before {
             content: '';
             position: absolute;
@@ -249,14 +241,14 @@
             transition: background-color 0.1s;
         }
 
-        .controls { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+        .controls { flex: 1; display: flex; flex-direction: column; gap: 10px; }
         
         .channel-row {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .channel-label { font-weight: 800; font-size: 0.8rem; width: 15px; }
+        .channel-label { font-weight: 800; font-size: 0.9rem; width: 15px; }
         .cr { color: var(--channel-r); }
         .cg { color: var(--channel-g); }
         .cb { color: var(--channel-b); }
@@ -269,17 +261,19 @@
         }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 16px; width: 16px;
+            height: 18px; width: 18px;
             border-radius: 50%;
             background: #fff;
             cursor: pointer;
-            margin-top: -6px;
+            margin-top: -7px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            border: 2px solid rgba(0,0,0,0.1);
         }
         input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px;
+            width: 100%; height: 6px;
             cursor: pointer;
-            border-radius: 2px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1); /* Fallback */
         }
         /* Colored tracks */
         .range-r::-webkit-slider-runnable-track { background: linear-gradient(90deg, #330000, var(--channel-r)); }
@@ -287,29 +281,31 @@
         .range-b::-webkit-slider-runnable-track { background: linear-gradient(90deg, #000033, var(--channel-b)); }
 
         .num-input {
-            width: 50px;
+            width: 55px;
             background: rgba(0,0,0,0.4);
             border: 1px solid rgba(255,255,255,0.1);
             color: #fff;
-            padding: 4px;
+            padding: 6px;
             border-radius: 6px;
             text-align: center;
             font-family: 'Outfit';
             font-weight: 700;
+            font-size: 1rem;
         }
 
         .live-preview-box {
-            width: 80px;
-            height: auto;
+            width: 90px;
             border-radius: 12px;
             background-color: var(--current-mix, #000);
             border: 2px solid rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.8);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
             text-align: center;
+            font-weight: 700;
             transition: background-color 0.1s;
         }
 
@@ -320,6 +316,7 @@
             height: 100%;
             gap: 2rem;
             max-width: 1200px;
+            overflow: hidden;
         }
 
         .visualizer-col {
@@ -330,6 +327,7 @@
             background: var(--glass-panel);
             border-radius: 24px;
             position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .list-col {
@@ -349,7 +347,7 @@
         }
         .result-item.winner {
             border: 1px solid var(--neon-gold);
-            background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), transparent);
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), transparent);
         }
 
         .compare-swatches {
@@ -369,18 +367,18 @@
         /* Mobile Responsive */
         @media (max-width: 900px) {
             .app-container { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; padding: 1rem; flex-direction: row; align-items: center; gap: 20px; overflow-x: auto; flex-shrink: 0; }
+            .sidebar { width: 100%; height: auto; padding: 1rem; flex-direction: row; align-items: center; gap: 20px; overflow-x: auto; flex-shrink: 0; border-bottom: 1px solid var(--glass-border); border-right: none;}
             .brand { margin: 0; font-size: 1.5rem; }
             .scoreboard-header { display: none; }
-            .results-container { flex-direction: column; }
-            .visualizer-col { min-height: 300px; }
-            h2 { font-size: 2rem; }
+            .results-container { flex-direction: column; overflow-y: auto;}
+            .visualizer-col { min-height: 300px; margin-bottom: 20px; flex: none;}
+            h2 { font-size: 2rem; margin-bottom: 1rem;}
         }
     </style>
 </head>
 <body>
 
-    <div class="stars"></div>
+    <div style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none; opacity:0.6; background-image: radial-gradient(1px 1px at 20px 30px, #eee, rgba(0,0,0,0)), radial-gradient(1px 1px at 100px 70px, #fff, rgba(0,0,0,0)); background-size: 550px 550px;"></div>
     <canvas id="confetti-canvas" style="position:fixed; pointer-events:none; z-index:100;"></canvas>
 
     <div class="app-container">
@@ -401,7 +399,7 @@
                 <h2>Game Setup</h2>
                 <div class="panel">
                     <label style="display:block; margin-bottom:10px; color:var(--text-secondary);">Number of Players</label>
-                    <input type="number" id="input-player-count" class="input-text" value="2" min="1" max="6" style="margin-bottom: 20px;">
+                    <input type="number" id="input-player-count" class="input-text" value="2" min="1" max="8" style="margin-bottom: 20px;">
                     
                     <button class="btn" id="btn-start-game" style="width:100%">Start Game</button>
                 </div>
@@ -480,6 +478,7 @@
             },
 
             initGame() {
+                console.log("Initializing Game...");
                 const countInput = document.getElementById('input-player-count');
                 const count = parseInt(countInput.value) || 2;
                 
@@ -495,6 +494,7 @@
             },
 
             nextRound() {
+                console.log("Starting Next Round...");
                 this.state.round++;
                 document.getElementById('round-display').innerText = this.state.round;
                 
@@ -553,15 +553,26 @@
 
         // --- UI MANAGER ---
         const UI = {
+            // FIXED: Keys now match HTML IDs exactly
             screens: {
-                setup: document.getElementById('screen-setup'),
-                game: document.getElementById('screen-game'),
-                results: document.getElementById('screen-results')
+                'screen-setup': document.getElementById('screen-setup'),
+                'screen-game': document.getElementById('screen-game'),
+                'screen-results': document.getElementById('screen-results')
             },
 
             switchScreen(id) {
-                Object.values(this.screens).forEach(el => el.classList.remove('active'));
-                this.screens[id].classList.add('active');
+                console.log("Switching to screen:", id);
+                // Remove active from all
+                Object.values(this.screens).forEach(el => {
+                    if(el) el.classList.remove('active');
+                });
+                
+                // Add active to target
+                if(this.screens[id]) {
+                    this.screens[id].classList.add('active');
+                } else {
+                    console.error("Screen ID not found:", id);
+                }
             },
 
             updateTargetDisplay(color) {
@@ -585,9 +596,9 @@
                             ${p.name}
                         </div>
                         <div class="controls">
-                            ${this.createSlider(p.id, 'r', 'range-r', 'R')}
-                            ${this.createSlider(p.id, 'g', 'range-g', 'G')}
-                            ${this.createSlider(p.id, 'b', 'range-b', 'B')}
+                            ${this.createSlider(p.id, 'r', 'range-r', 'Red')}
+                            ${this.createSlider(p.id, 'g', 'range-g', 'Green')}
+                            ${this.createSlider(p.id, 'b', 'range-b', 'Blue')}
                         </div>
                     `;
                     grid.appendChild(card);
@@ -595,10 +606,9 @@
             },
 
             createSlider(id, channel, classColor, label) {
-                // Using data-attributes for easier event delegation
                 return `
                 <div class="channel-row">
-                    <span class="channel-label c${channel}">${label}</span>
+                    <span class="channel-label c${channel}">${label.charAt(0)}</span>
                     <input type="range" min="0" max="255" value="0" 
                         class="${classColor}" 
                         data-pid="${id}" data-channel="${channel}" data-type="range"
@@ -667,14 +677,24 @@
             drawRadar(players, target) {
                 const canvas = document.getElementById('radarCanvas');
                 const ctx = canvas.getContext('2d');
-                const w = 400, h = 400, cx = 200, cy = 200;
+                // Ensure correct scaling
+                canvas.width = canvas.parentElement.clientWidth || 400;
+                canvas.height = canvas.width; 
+                
+                const w = canvas.width;
+                const h = canvas.height;
+                const cx = w/2;
+                const cy = h/2;
                 
                 ctx.clearRect(0,0,w,h);
                 
                 // Background Rings
                 ctx.strokeStyle = 'rgba(255,255,255,0.1)';
                 ctx.lineWidth = 1;
-                [50, 100, 150].forEach(r => { ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke(); });
+                const maxR = (w/2) - 20;
+                [0.3, 0.6, 1].forEach(m => { 
+                    ctx.beginPath(); ctx.arc(cx,cy, maxR * m, 0, Math.PI*2); ctx.stroke(); 
+                });
 
                 // Target Center
                 ctx.fillStyle = Utils.rgbString(target.r, target.g, target.b);
@@ -684,19 +704,20 @@
                 // Player Pins
                 players.forEach((p, i) => {
                     const angle = (Math.PI * 2 / players.length) * i - Math.PI/2;
-                    // Map diff (0-450) to radius (0-180)
-                    const dist = Math.min(180, (p.lastDiff / 450) * 180); 
+                    // Map diff (0-450) to radius
+                    const dist = Math.min(maxR, (p.lastDiff / 450) * maxR); 
                     
-                    const px = cx + Math.cos(angle) * (dist + 20); // +20 to clear center
+                    const px = cx + Math.cos(angle) * (dist + 20); 
                     const py = cy + Math.sin(angle) * (dist + 20);
 
                     // Line
                     ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py);
-                    ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.stroke();
+                    ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.stroke();
 
                     // Dot
                     ctx.fillStyle = Utils.rgbString(p.currentGuess.r, p.currentGuess.g, p.currentGuess.b);
-                    ctx.beginPath(); ctx.arc(px,py,8,0,Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(px,py,10,0,Math.PI*2); ctx.fill();
+                    ctx.lineWidth = 2;
                     ctx.strokeStyle = '#fff'; ctx.stroke();
                 });
             }
@@ -742,31 +763,40 @@
             }
         };
 
-        // --- EVENT LISTENERS (The Fix) ---
-        // We wait for the DOM to load, then attach listeners safely.
+        // --- EVENT LISTENERS ---
         document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM Loaded.");
             
-            // 1. Start Game Button
-            document.getElementById('btn-start-game').addEventListener('click', () => {
-                App.initGame();
-            });
+            // 1. Start Game
+            const btnStart = document.getElementById('btn-start-game');
+            if(btnStart) {
+                btnStart.addEventListener('click', () => {
+                    console.log("Start button clicked");
+                    App.initGame();
+                });
+            } else {
+                console.error("Start Button Not Found");
+            }
 
-            // 2. Mixing Grid Event Delegation (Handles all sliders/inputs efficiently)
-            document.getElementById('mixing-grid').addEventListener('input', (e) => {
-                if(e.target.dataset.pid) {
-                    const pid = parseInt(e.target.dataset.pid);
-                    const channel = e.target.dataset.channel;
-                    const value = e.target.value;
-                    App.handleInput(pid, channel, value);
-                }
-            });
+            // 2. Mixing Grid Inputs
+            const grid = document.getElementById('mixing-grid');
+            if(grid) {
+                grid.addEventListener('input', (e) => {
+                    if(e.target.dataset.pid) {
+                        const pid = parseInt(e.target.dataset.pid);
+                        const channel = e.target.dataset.channel;
+                        const value = e.target.value;
+                        App.handleInput(pid, channel, value);
+                    }
+                });
+            }
 
-            // 3. Submit Round Button
+            // 3. Submit Round
             document.getElementById('btn-submit-round').addEventListener('click', () => {
                 App.submitRound();
             });
 
-            // 4. Next Round Button
+            // 4. Next Round
             document.getElementById('btn-next-round').addEventListener('click', () => {
                 App.nextRound();
             });
@@ -775,5 +805,3 @@
     </script>
 </body>
 </html>
-
-```
