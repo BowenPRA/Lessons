@@ -555,35 +555,34 @@
          */
 
         // --- DATA & CONFIG ---
-        // EDITED: Updated Palette with Primaries, Secondaries, and Tricky mixes
+        // EDITED: New Palette based on request
         const PALETTE = [
-            // 1. The Basics (Primaries)
-            { name: "Pure Red", r: 255, g: 0, b: 0 },
-            { name: "Pure Green", r: 0, g: 255, b: 0 },
-            { name: "Pure Blue", r: 0, g: 0, b: 255 },
-
-            // 2. The Secondary Colors (Perfect Mixes)
+            // --- PHASE 1: The Secondaries (3 Versions) ---
+            
+            // Version 1: The Pure Mixes (Standard CMY)
             { name: "Cyan (Aqua)", r: 0, g: 255, b: 255 },
             { name: "Magenta (Fuchsia)", r: 255, g: 0, b: 255 },
             { name: "Electric Yellow", r: 255, g: 255, b: 0 },
 
-            // 3. The Half-Tones (Darker Secondaries)
-            { name: "Teal", r: 0, g: 128, b: 128 },       // Half Cyan
-            { name: "Olive", r: 128, g: 128, b: 0 },      // Half Yellow
-            { name: "Purple", r: 128, g: 0, b: 128 },     // Half Magenta
+            // Version 2: The Darker Tones (Half intensity)
+            { name: "Teal", r: 0, g: 128, b: 128 },       // Dark Cyan
+            { name: "Deep Purple", r: 128, g: 0, b: 128 },// Dark Magenta
+            { name: "Olive", r: 128, g: 128, b: 0 },      // Dark Yellow
 
-            // 4. Interesting Challenges
+            // Version 3: The Shifted/Complex Variations
+            { name: "Turquoise", r: 64, g: 224, b: 208 }, // Cyan variant
+            { name: "Hot Pink", r: 255, g: 105, b: 180 }, // Magenta variant
+            { name: "Gold", r: 255, g: 215, b: 0 },       // Yellow variant
+
+            // --- PHASE 2: The Singularity ---
+            { name: "Pure White", r: 255, g: 255, b: 255 },
+
+            // --- PHASE 3: Interesting Hues & Challenges ---
+            { name: "Slate Blue", r: 106, g: 90, b: 205 }, // Interesting Purple-blue
             { name: "Orange Peel", r: 255, g: 165, b: 0 },
-            { name: "Hot Pink", r: 255, g: 105, b: 180 },
             { name: "Lime Green", r: 50, g: 205, b: 50 },
-            { name: "Coral", r: 255, g: 127, b: 80 },
-            { name: "Turquoise", r: 64, g: 224, b: 208 },
             { name: "Cornflower Blue", r: 100, g: 149, b: 237 },
-            
-            // 5. Hard Mode (Requires mixing all 3)
-            { name: "Slate Blue", r: 106, g: 90, b: 205 },
-            { name: "Chocolate", r: 210, g: 105, b: 30 }, // Browns are hard in RGB
-            { name: "Gold", r: 255, g: 215, b: 0 },       // Yellow with a dip in Green
+            { name: "Chocolate", r: 210, g: 105, b: 30 },
             { name: "Crimson", r: 220, g: 20, b: 60 }
         ];
 
@@ -634,8 +633,16 @@
 
             nextRound: () => {
                 Game.state.round++;
-                // Pick random color from new list
-                Game.state.targetColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+                
+                // Pick color based on round number if within list size, else random
+                let chosenColor;
+                if (Game.state.round <= PALETTE.length) {
+                    chosenColor = PALETTE[Game.state.round - 1];
+                } else {
+                    chosenColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+                }
+
+                Game.state.targetColor = chosenColor;
                 Game.state.players.forEach(p => p.guess = {r:0, g:0, b:0});
                 
                 document.getElementById('round-indicator').textContent = `Round #${Game.state.round}`;
