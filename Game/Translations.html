@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>The Bad Translator Quiz</title>
     
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
@@ -20,7 +22,6 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --text-muted: #64748b;
 
             /* Accents */
             --neon-blue: #3b82f6;
@@ -40,7 +41,6 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-deep);
-            /* Complex gradient background */
             background: radial-gradient(circle at 10% 20%, #1e1b4b 0%, #020617 40%),
                         radial-gradient(circle at 90% 80%, #312e81 0%, #020617 40%);
             color: var(--text-primary);
@@ -144,7 +144,6 @@
             position: relative;
         }
         
-        /* Rocket SVG Styles */
         #rocket-svg {
             width: 100%;
             height: auto;
@@ -155,19 +154,17 @@
             transition: transform 0.5s ease;
         }
 
-        /* Launch Animation */
         #rocket-svg.launching {
             animation: launchAnim 3s cubic-bezier(0.6, 0.05, 0.2, 0.99) forwards;
         }
         @keyframes launchAnim {
             0% { transform: translateY(0) scale(1.1); }
-            10% { transform: translateY(10px) scale(1.05); } /* Compress before launch */
-            20% { transform: translateY(-20px) scale(1.15) rotate(2deg); } /* Shake */
-            30% { transform: translateY(-20px) scale(1.15) rotate(-2deg); } /* Shake */
+            10% { transform: translateY(10px) scale(1.05); } 
+            20% { transform: translateY(-20px) scale(1.15) rotate(2deg); }
+            30% { transform: translateY(-20px) scale(1.15) rotate(-2deg); }
             100% { transform: translateY(-2000px) scale(1.5); opacity: 0; }
         }
 
-        /* Rocket Parts Styling */
         .rocket-part {
             fill: #0f172a; 
             stroke-width: 3px;
@@ -186,7 +183,6 @@
             to { stroke-dasharray: 1000; stroke-dashoffset: 0; filter: brightness(1.2); }
         }
 
-        /* Specific Colors */
         #part-1 { stroke: var(--neon-purple); fill: rgba(192, 132, 252, 0.1); }
         #part-2, #part-3 { stroke: var(--neon-pink); fill: rgba(244, 63, 94, 0.1); }
         #part-4 { stroke: var(--neon-cyan); fill: rgba(34, 211, 238, 0.1); }
@@ -201,7 +197,6 @@
         }
         @keyframes firePulse { from { stroke-width: 4px; transform: scale(1); } to { stroke-width: 8px; transform: scale(1.02); } }
 
-        /* Blueprint Lines */
         .rocket-blueprint path, .rocket-blueprint ellipse, .rocket-blueprint circle {
             fill: none; stroke: rgba(255, 255, 255, 0.1); stroke-width: 1px; stroke-dasharray: 4, 4;
         }
@@ -217,11 +212,11 @@
             margin: 0 auto;
         }
 
-        /* The "Bad Translation" Clue Card */
+        /* CLUE CARD */
         .clue-card {
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(34, 211, 238, 0.2);
-            padding: 2.5rem;
+            padding: 2rem;
             border-radius: 24px;
             text-align: center;
             position: relative;
@@ -236,7 +231,7 @@
             letter-spacing: 3px;
             color: var(--neon-blue);
             font-size: 0.85rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             display: block;
         }
 
@@ -249,13 +244,77 @@
             text-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
-        /* The Answer (Real Movie) */
+        /* --- INPUT AREA --- */
+        .input-group {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .guess-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            color: #fff;
+            outline: none;
+            text-transform: uppercase; /* Force capitals */
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .guess-input:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.15), inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .guess-input::placeholder { color: rgba(255,255,255,0.2); font-weight: 500; }
+
+        /* Error Shake Animation */
+        .guess-input.shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+            border-color: var(--neon-pink);
+            color: var(--neon-pink);
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        .btn-check {
+            padding: 0 32px;
+            border-radius: 16px;
+            border: none;
+            background: var(--neon-cyan);
+            color: #0f172a;
+            font-family: 'Outfit';
+            font-weight: 800;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+        }
+        .btn-check:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(34, 211, 238, 0.5); }
+        .btn-check:active { transform: translateY(0); }
+
+        /* --- ANSWER & TIMELINE --- */
         .answer-container {
-            min-height: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            min-height: 0; /* Collapsed initially */
+            overflow: hidden;
+            transition: all 0.5s ease;
         }
         
         .answer-text {
@@ -268,20 +327,20 @@
             transform: translateY(20px);
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             text-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+            margin-bottom: 1rem;
         }
         .answer-text.revealed { opacity: 1; transform: translateY(0); }
 
-        /* The Cycle Timeline (Vertical Flow) */
+        /* Timeline */
         .timeline-container {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 16px;
             padding: 1.5rem;
-            margin-top: 1rem;
-            display: none; /* Hidden until revealed */
+            display: none;
             opacity: 0;
             transition: opacity 0.5s ease;
         }
-        .timeline-container.visible { display: flex; flex-direction: column; gap: 0; opacity: 1; }
+        .timeline-container.visible { display: flex; flex-direction: column; opacity: 1; }
 
         .timeline-step {
             display: flex;
@@ -295,16 +354,10 @@
         }
         .timeline-step.show { opacity: 1; transform: translateX(0); }
 
-        /* Dotted Line connector */
+        /* Connector Line */
         .timeline-step:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            left: 24px; /* Align with icon center */
-            top: 40px;
-            bottom: -15px;
-            width: 2px;
-            background: rgba(255,255,255,0.1);
-            z-index: 0;
+            content: ''; position: absolute; left: 24px; top: 40px; bottom: -15px; width: 2px;
+            background: rgba(255,255,255,0.1); z-index: 0;
         }
 
         .step-icon {
@@ -313,93 +366,56 @@
             border: 1px solid var(--glass-border);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            z-index: 1;
-            flex-shrink: 0;
+            font-size: 0.8rem; color: var(--text-secondary);
+            z-index: 1; flex-shrink: 0;
         }
-        
-        .step-content {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .step-lang {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--neon-purple);
-            font-weight: 700;
-            margin-bottom: 2px;
-        }
-        
-        .step-text {
-            font-size: 1.1rem;
-            color: #fff;
-            font-weight: 500;
-        }
+        .step-content { display: flex; flex-direction: column; }
+        .step-lang { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--neon-purple); font-weight: 700; }
+        .step-text { font-size: 1.1rem; color: #fff; font-weight: 500; }
 
-        /* Teacher Controls */
+        /* --- CONTROLS FOOTER --- */
         .controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            justify-content: flex-end; /* Align right */
             gap: 1rem;
             margin-top: auto;
         }
 
-        .btn {
-            padding: 20px;
-            border-radius: 16px;
+        .btn-reveal-secondary {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-family: 'Outfit';
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .btn-reveal-secondary:hover { color: #fff; border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.05); }
+
+        .btn-next {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            padding: 14px 32px;
+            border-radius: 12px;
             border: none;
+            color: white;
             font-family: 'Outfit';
             font-weight: 700;
             font-size: 1.1rem;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(255,255,255,0.1), transparent);
-            opacity: 0; transition: opacity 0.2s;
-        }
-        .btn:hover::after { opacity: 1; }
-        .btn:active { transform: scale(0.98); }
-
-        .btn-wrong {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(244, 63, 94, 0.3);
-            color: var(--neon-pink);
-        }
-        .btn-wrong:hover {
-            background: rgba(244, 63, 94, 0.15);
-            box-shadow: 0 0 20px rgba(244, 63, 94, 0.15);
-        }
-
-        .btn-reveal {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-        
-        .btn-next {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
-            grid-column: span 2; /* Full width */
             display: none;
+            align-items: center;
+            gap: 8px;
         }
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4); }
 
-        /* Canvas for Confetti */
+        /* Canvas */
         #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
 
-        /* Mobile Responsive */
+        /* Mobile */
         @media (max-width: 1000px) {
             .app-container { flex-direction: column; }
             .sidebar { width: 100%; height: 70px; flex-direction: row; align-items: center; padding: 0 1rem; border-right: none; border-bottom: 1px solid var(--glass-border); }
@@ -408,10 +424,11 @@
             .level-btn { white-space: nowrap; padding: 8px 12px; }
             
             .arena { flex-direction: column; padding: 1rem; gap: 1rem; overflow-y: auto; height: auto; }
-            .col-rocket { flex: none; height: 250px; width: 100%; }
+            .col-rocket { flex: none; height: 200px; width: 100%; }
             #rocket-svg { max-height: 100%; }
             .col-content { width: 100%; padding-bottom: 40px; }
             .clue-text { font-size: 2rem; }
+            .guess-input { font-size: 1.2rem; padding: 16px; }
         }
     </style>
 </head>
@@ -424,12 +441,12 @@
         
         <nav class="sidebar">
             <div class="brand">Bad <span>Translator</span></div>
-            <div class="level-list" id="level-list">
-                </div>
+            <div class="level-list" id="level-list"></div>
         </nav>
 
         <main class="arena">
             
+            <!-- DOOM METER -->
             <div class="col-rocket">
                 <svg id="rocket-svg" viewBox="0 0 300 500" xmlns="http://www.w3.org/2000/svg">
                     <g class="rocket-blueprint">
@@ -439,7 +456,6 @@
                         <path d="M205 300 L270 380 L195 360" />
                         <circle cx="150" cy="220" r="30" />
                     </g>
-
                     <path id="part-6" class="rocket-part" d="M110 380 Q150 500 190 380 Q170 420 150 450 Q130 420 110 380" fill="none" />
                     <g id="part-5" class="rocket-part">
                         <circle cx="150" cy="220" r="30" fill="none" />
@@ -452,6 +468,7 @@
                 </svg>
             </div>
 
+            <!-- CONTENT -->
             <div class="col-content">
                 
                 <div class="clue-card">
@@ -459,24 +476,27 @@
                     <h1 class="clue-text" id="clue-display">Loading...</h1>
                 </div>
 
+                <!-- NEW: INPUT AREA -->
+                <div class="input-group" id="input-group">
+                    <input type="text" id="guess-input" class="guess-input" placeholder="TYPE TITLE HERE" autocomplete="off" spellcheck="false">
+                    <button class="btn-check" onclick="game.checkGuess()">CHECK</button>
+                </div>
+
+                <!-- HIDDEN UNTIL REVEALED -->
                 <div class="answer-container">
-                    <span class="label" id="answer-label" style="opacity:0">Actual Movie</span>
                     <div class="answer-text" id="answer-display">HIDDEN</div>
                 </div>
 
                 <div class="timeline-container" id="timeline-display">
-                    </div>
+                    <!-- Populated via JS -->
+                </div>
 
                 <div class="controls">
-                    <button class="btn btn-wrong" id="btn-wrong" onclick="game.handleWrong()">
-                        <i class="fa-solid fa-xmark"></i> Wrong Guess
-                    </button>
-                    
-                    <button class="btn btn-reveal" id="btn-reveal" onclick="game.revealAnswer()">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Reveal Answer
+                    <button class="btn-reveal-secondary" id="btn-reveal" onclick="game.revealAnswer(false)">
+                        I Give Up / Show Answer
                     </button>
 
-                    <button class="btn btn-next" id="btn-next" onclick="game.nextLevel()">
+                    <button class="btn-next" id="btn-next" onclick="game.nextLevel()">
                         Next Question <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
@@ -487,10 +507,6 @@
     </div>
 
     <script>
-        /**
-         * DATA: The Bad Translator Cycle
-         * Structured for the timeline visualizer.
-         */
         const QUIZ_DATA = [
             {
                 clue: "Unfamiliar Objects",
@@ -575,10 +591,10 @@
             dom: {
                 clue: document.getElementById('clue-display'),
                 answer: document.getElementById('answer-display'),
-                answerLabel: document.getElementById('answer-label'),
                 timeline: document.getElementById('timeline-display'),
                 levelList: document.getElementById('level-list'),
-                btnWrong: document.getElementById('btn-wrong'),
+                inputGroup: document.getElementById('input-group'),
+                input: document.getElementById('guess-input'),
                 btnReveal: document.getElementById('btn-reveal'),
                 btnNext: document.getElementById('btn-next'),
                 rocket: document.getElementById('rocket-svg')
@@ -587,6 +603,16 @@
             init() {
                 this.renderSidebar();
                 this.loadLevel(0);
+                
+                // Input Listener for Enter Key
+                this.dom.input.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') this.checkGuess();
+                });
+                // Remove shake on input
+                this.dom.input.addEventListener('input', () => {
+                    this.dom.input.classList.remove('shake');
+                });
+
                 window.addEventListener('resize', () => {
                     document.getElementById('confetti').width = window.innerWidth;
                     document.getElementById('confetti').height = window.innerHeight;
@@ -606,7 +632,6 @@
             },
 
             loadLevel(index) {
-                // Bounds check
                 if (index < 0) index = 0;
                 if (index >= QUIZ_DATA.length) index = 0;
 
@@ -614,72 +639,102 @@
                 this.state.mistakes = 0;
                 this.state.isRevealed = false;
 
-                // UI Reset
+                // Reset UI Text
                 this.dom.clue.innerText = QUIZ_DATA[index].clue;
                 this.dom.answer.innerText = QUIZ_DATA[index].answer;
                 
-                // Hide Answer & Timeline
+                // Hide Answer Area
                 this.dom.answer.classList.remove('revealed');
-                this.dom.answerLabel.style.opacity = '0';
-                this.dom.timeline.innerHTML = ''; // Clear timeline
+                this.dom.timeline.innerHTML = '';
                 this.dom.timeline.classList.remove('visible');
+
+                // Reset Input
+                this.dom.inputGroup.style.display = 'flex';
+                this.dom.input.value = '';
+                this.dom.input.disabled = false;
+                this.dom.input.classList.remove('shake');
+                this.dom.input.focus();
 
                 // Reset Rocket
                 this.resetRocket();
 
                 // Buttons
-                this.dom.btnWrong.style.display = 'flex';
-                this.dom.btnReveal.style.display = 'flex';
+                this.dom.btnReveal.style.display = 'inline-block';
                 this.dom.btnNext.style.display = 'none';
 
-                // Sidebar Active State
+                // Sidebar
                 document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
                 const currBtn = document.getElementById(`lvl-btn-${index}`);
                 if(currBtn) currBtn.classList.add('active');
 
-                // Stop visuals
                 confettiEffects.stop();
+            },
+
+            // CLEAN STRING COMPARISON: "Avengers: Endgame" == "avengers endgame"
+            checkGuess() {
+                if (this.state.isRevealed) return;
+                
+                const userGuess = this.dom.input.value;
+                if (!userGuess.trim()) return; // Ignore empty
+
+                const correct = QUIZ_DATA[this.state.levelIndex].answer;
+                
+                // Normalize logic
+                const cleanGuess = userGuess.toLowerCase().replace(/[^a-z0-9]/g, '');
+                const cleanAnswer = correct.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+                if (cleanGuess === cleanAnswer) {
+                    // CORRECT
+                    this.revealAnswer(true);
+                } else {
+                    // WRONG
+                    this.handleWrong();
+                }
             },
 
             handleWrong() {
                 if (this.state.isRevealed || this.state.mistakes >= this.state.maxMistakes) return;
                 
+                // 1. Shake Animation
+                this.dom.input.classList.remove('shake');
+                void this.dom.input.offsetWidth; // trigger reflow
+                this.dom.input.classList.add('shake');
+                
+                // 2. Add Mistake Logic
                 this.state.mistakes++;
                 const part = document.getElementById(`part-${this.state.mistakes}`);
                 if (part) part.classList.add('visible');
 
+                // 3. Check Loss
                 if (this.state.mistakes >= this.state.maxMistakes) {
+                    this.dom.input.disabled = true; // Lock input
                     this.launchRocket();
+                } else {
+                     // Keep focus for quick correction
+                    this.dom.input.focus();
                 }
             },
 
             launchRocket() {
                 const flame = document.getElementById('part-6');
                 if (flame) flame.classList.add('super-fire');
-                
-                setTimeout(() => {
-                    this.dom.rocket.classList.add('launching');
-                }, 200);
-
-                // Auto reveal (Failure Mode)
-                setTimeout(() => {
-                    this.revealAnswer(false);
-                }, 2500);
+                setTimeout(() => { this.dom.rocket.classList.add('launching'); }, 200);
+                setTimeout(() => { this.revealAnswer(false); }, 2500);
             },
 
             revealAnswer(isWin = true) {
                 if (this.state.isRevealed) return;
                 this.state.isRevealed = true;
 
-                // 1. Show the Real Title
-                this.dom.answerLabel.style.opacity = '1';
-                this.dom.answer.classList.add('revealed');
+                // Disable Input
+                this.dom.input.disabled = true;
+                this.dom.inputGroup.style.display = 'none'; // Hide input to make room for answer
 
-                // 2. Build and Show the Timeline
+                // Show Answer
+                this.dom.answer.classList.add('revealed');
                 this.buildTimeline(QUIZ_DATA[this.state.levelIndex].steps);
 
-                // 3. Swap Buttons
-                this.dom.btnWrong.style.display = 'none';
+                // Buttons
                 this.dom.btnReveal.style.display = 'none';
                 this.dom.btnNext.style.display = 'flex';
 
@@ -689,7 +744,6 @@
             buildTimeline(steps) {
                 this.dom.timeline.innerHTML = '';
                 this.dom.timeline.classList.add('visible');
-
                 steps.forEach((step, idx) => {
                     const el = document.createElement('div');
                     el.className = 'timeline-step';
@@ -701,11 +755,7 @@
                         </div>
                     `;
                     this.dom.timeline.appendChild(el);
-
-                    // Staggered Animation
-                    setTimeout(() => {
-                        el.classList.add('show');
-                    }, 100 + (idx * 300)); // 300ms delay per step
+                    setTimeout(() => { el.classList.add('show'); }, 100 + (idx * 300));
                 });
             },
 
@@ -725,7 +775,7 @@
             }
         };
 
-        // --- VISUALS (Simple Canvas Confetti) ---
+        // --- CANVAS CONFETTI ---
         const confettiEffects = {
             running: false, frameId: null, particles: [],
             start() {
