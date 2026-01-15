@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6.5 Tectonics - Year 9 Science</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Deep Space Science Theme */
+            --bg-deep: #0f0518;        
+            --bg-card: #1e1b4b;        
+            --bg-card-hover: #312e81; 
+            
+            --primary: #8b5cf6;   /* Violet - Main Elements */
+            --secondary: #ec4899; /* Pink - Action/Draw */
+            --accent: #06b6d4;    /* Cyan - Key Terms */
+            --amber: #f59e0b;     /* Amber - Note Taking/Warning */
+            --success: #10b981;   
+            --danger: #ef4444;    
+
+            /* Typography */
+            --text-main: #ffffff;       
+            --text-muted: #cbd5e1;      
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            /* Deep Space Background Effect */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15), transparent 40%),
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.1) 1px, transparent 2px);
+            background-size: 100% 100%, 100% 100%, 550px 550px, 350px 350px;
+            background-position: 0 0, 0 0, 0 0, 100px 30px;
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 5, 24, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 5, 24, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:hover { background: #7c3aed; transform: translateY(-2px); }
+        
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 8px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            transition: width 0.4s ease;
+        }
+
+        /* INSTRUCTION PILLS (SCAFFOLDING) */
+        .note-pill {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.15);
+            border: 2px solid var(--amber);
+            color: var(--amber);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .draw-pill {
+            display: inline-block;
+            background: rgba(236, 72, 153, 0.15);
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        /* Typography & Layout */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; }
+        strong { color: white; font-weight: 800; }
+        
+        /* Key term highlights */
+        .term { color: var(--accent); font-weight: 800; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 3rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        
+        .img-card {
+            background: black;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .img-card img {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        /* Flip Cards */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .flip-front { background: var(--bg-card); }
+        .flip-front:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+        .flip-back { background: linear-gradient(135deg, var(--primary), var(--secondary)); transform: rotateY(180deg); color: white; border: none; }
+
+        /* Answer Panels */
+        .answer-box {
+            background: rgba(6, 182, 212, 0.1);
+            border: 2px solid var(--accent);
+            color: var(--text-muted);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: none;
+            text-align: left;
+        }
+        .answer-box.visible { display: block; animation: slideUp 0.3s ease; }
+        
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 9 Science</div>
+            <span style="font-weight: 700; color: var(--text-muted); font-size: 0.9rem;">6.5 Tectonics</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            Thursday 15 January 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    const state = {
+        currentSlide: 0,
+        slides: []
+    };
+
+    // --- SVG GENERATORS FOR ANIMATIONS ---
+    function getConvectionSVG() {
+        return `
+        <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
+            <rect x="0" y="50" width="400" height="150" fill="#c2410c" opacity="0.3" rx="10"/>
+            
+            <rect x="20" y="30" width="170" height="20" fill="#713f12" stroke="#fff" stroke-width="2">
+                <animate attributeName="x" from="20" to="0" dur="3s" repeatCount="indefinite" />
+            </rect>
+            <rect x="210" y="30" width="170" height="20" fill="#713f12" stroke="#fff" stroke-width="2">
+                 <animate attributeName="x" from="210" to="230" dur="3s" repeatCount="indefinite" />
+            </rect>
+
+            <path d="M 100 150 A 40 40 0 1 1 100 70" fill="none" stroke="#fca5a5" stroke-width="4" stroke-dasharray="10,5">
+                <animate attributeName="stroke-dashoffset" from="0" to="30" dur="1s" repeatCount="indefinite" />
+            </path>
+             <path d="M 100 70 A 40 40 0 1 1 100 150" fill="none" stroke="#fca5a5" stroke-width="4" stroke-dasharray="10,5" opacity="0.5">
+            </path>
+            
+            <path d="M 300 70 A 40 40 0 1 1 300 150" fill="none" stroke="#fca5a5" stroke-width="4" stroke-dasharray="10,5">
+                 <animate attributeName="stroke-dashoffset" from="30" to="0" dur="1s" repeatCount="indefinite" />
+            </path>
+            <path d="M 300 150 A 40 40 0 1 1 300 70" fill="none" stroke="#fca5a5" stroke-width="4" stroke-dasharray="10,5" opacity="0.5">
+            </path>
+
+            <text x="200" y="180" font-family="sans-serif" font-size="14" fill="#fbbf24" text-anchor="middle" font-weight="bold">HEAT FROM CORE</text>
+            <path d="M 200 160 L 200 100" stroke="#fbbf24" stroke-width="3" stroke-dasharray="5,5">
+                <animate attributeName="stroke-dashoffset" from="20" to="0" dur="0.5s" repeatCount="indefinite" />
+            </path>
+        </svg>`;
+    }
+
+    // --- SLIDE DATA ---
+    state.slides = [
+        {
+            // 1. Title & Goals
+            render: () => `
+                <div class="text-center fade-in">
+                    <i class="fa-solid fa-earth-americas" style="font-size: 5rem; color: var(--accent); margin-bottom: 1.5rem; filter: drop-shadow(0 0 15px var(--accent));"></i>
+                    <h1>6.5 Tectonics</h1>
+                    <p style="font-size: 1.5rem; color: var(--text-muted); font-weight: 600; letter-spacing: 1px;">Why does the Earth move?</p>
+                    
+                    <div class="card slide-up" style="margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; text-align: left; border-left: 5px solid var(--success);">
+                        <h3 style="color: var(--success); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                            <i class="fa-solid fa-crosshairs"></i> Learning Objectives
+                        </h3>
+                        <div class="note-pill">📝 Write these down</div>
+                        <ul style="list-style: none; display: grid; gap: 1rem;">
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check" style="color: var(--success);"></i>
+                                <span>Explain how <span class="term">convection currents</span> move tectonic plates.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check" style="color: var(--success);"></i>
+                                <span>Describe evidence for plate tectonics (fossils & continental fit).</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check" style="color: var(--success);"></i>
+                                <span>Link earthquakes and volcanoes to plate boundaries.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 2. Warm Up (Recall)
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--amber); color: var(--bg-deep);">Warm Up</span>
+                    <h2 style="margin-top: 1rem;">Recall: Structure of the Earth</h2>
+                    <div class="grid-3 slide-up" style="margin-top: 3rem;">
+                        ${createFlipCard('Crust', 'The Outside', 'The thin, solid rock layer we live on.', 'Like the skin of an apple.', 'fa-layer-group', 'var(--accent)')}
+                        ${createFlipCard('Mantle', 'The Middle', 'Thick layer of hot rock.', 'It is solid but flows slowly like plastic or thick honey.', 'fa-fire-flame-simple', 'var(--primary)')}
+                        ${createFlipCard('Core', 'The Center', 'Iron and Nickel.', 'Extremely hot! The heat source for the Earth.', 'fa-circle-dot', 'var(--secondary)')}
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 3. The Mechanism (Static Image)
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2>How do continents move?</h2>
+                        <div class="note-pill">📝 Write Definitions</div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                            <p style="color: white; margin-bottom: 0.5rem;"><strong class="term">Tectonic Plates:</strong></p>
+                            <p>Huge pieces of the Earth's solid crust that move slowly.</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                            <p style="color: white; margin-bottom: 0.5rem;"><strong class="term">Convection Currents:</strong></p>
+                            <p>The circular movement of the mantle caused by heat.</p>
+                        </div>
+                    </div>
+                    <div class="slide-up">
+                        <div class="draw-pill">🎨 Draw Diagram</div>
+                        <div class="img-card">
+                            <img src="Y9Science6.4Image1.jpg" alt="Convection Currents in Mantle">
+                        </div>
+                        <p class="text-center" style="margin-top:0.5rem; font-size: 0.9rem;">Label: Core, Mantle, Crust, Convection Current</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 4. The Mechanism (Analogy Animation)
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Visualize: The Conveyor Belt</h2>
+                    <p style="margin-bottom: 2rem;">The mantle is not water. It is like <span class="term">thick soup</span> or plastic.</p>
+                    
+                    <div class="card slide-up" style="max-width: 800px; margin: 0 auto; border-color: var(--secondary);">
+                        ${getConvectionSVG()}
+                        <div style="margin-top: 1.5rem; text-align: left;">
+                            <h3 style="color: var(--secondary);">How it works:</h3>
+                            <ol style="margin-left: 1.5rem; color: var(--text-muted);">
+                                <li>The <strong>Core</strong> heats the Mantle.</li>
+                                <li>Hot rock <strong>rises</strong> (less dense).</li>
+                                <li>Cool rock <strong>sinks</strong> (more dense).</li>
+                                <li>This circle drags the tectonic plates above it.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 5. Evidence 1: The Jigsaw Fit
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2 class="text-accent"><i class="fa-solid fa-puzzle-piece"></i> Evidence 1: The Fit</h2>
+                        <p style="font-size: 1.3rem; margin-bottom: 1.5rem;">Look at the map. Do you see a pattern?</p>
+                        
+                        <div class="card" style="border-left: 4px solid var(--accent);">
+                            <p>Scientists noticed that <strong>South America</strong> and <strong>Africa</strong> look like they fit together perfectly.</p>
+                            <p style="margin-top: 1rem;">This suggests they were once joined in a super-continent called <span class="term">Pangea</span>.</p>
+                        </div>
+                    </div>
+                    <div class="slide-up text-center">
+                        <div class="img-card" style="background: white;">
+                             <img src="Y9Science6.4Tectonics2.jpg" alt="Pangea Fit" style="object-fit: cover; object-position: right;">
+                        </div>
+                        <p class="text-center" style="margin-top: 1rem;"><i class="fa-solid fa-eye"></i> Observe the shape of the coasts.</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 6. Evidence 2: Fossils
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div class="slide-up order-2">
+                        <div class="img-card">
+                            <img src="Y9Science6.4Tectonics3.jpg" alt="Fossil Evidence">
+                        </div>
+                    </div>
+                    <div class="order-1">
+                        <h2 class="text-secondary"><i class="fa-solid fa-bone"></i> Evidence 2: Fossils</h2>
+                        <div class="note-pill">📝 Write this down</div>
+                        
+                        <ul style="margin-left: 1.5rem; margin-bottom: 2rem;">
+                            <li style="margin-bottom: 1rem;"><strong>Fossils</strong> of the same reptile (<em>Mesosaurus</em>) are found in South America and Africa.</li>
+                            <li>This animal could not swim across the ocean.</li>
+                            <li>Therefore, the continents must have been touching when it was alive.</li>
+                        </ul>
+
+                        <div class="card" style="background: rgba(236, 72, 153, 0.1); border: 1px solid var(--secondary);">
+                            <strong class="text-secondary">Key Definition:</strong><br>
+                            <span class="term">Fossil Record</span>: Historical evidence of past life preserved in stone.
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 7. Video Embed
+            render: () => `
+                 <div class="fade-in text-center">
+                    <h2>🎥 See it in Action</h2>
+                    <p style="margin-bottom: 2rem;">Watch how plates move and what happens when they crash.</p>
+                    
+                    <div class="slide-up" style="max-width: 800px; margin: 0 auto; aspect-ratio: 16/9; background: #000; border: 3px solid var(--primary); border-radius: var(--border-radius); position: relative; overflow: hidden; box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);">
+                        <iframe 
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                            src="https://www.youtube.com/embed/mDRZA-Q9aiM" 
+                            title="YouTube video player" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 8. Result: Boundaries
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2>Where is it dangerous?</h2>
+                        <p>Earthquakes and Volcanoes are not random. They happen at <span class="term">Plate Boundaries</span> (edges).</p>
+                        
+                        <div class="card" style="margin-top: 2rem; border-color: var(--danger);">
+                            <h3 class="text-danger">Safety Check</h3>
+                            <p>Look at the map. Is the middle of Australia safe?</p>
+                            <button class="btn btn-reveal" onclick="document.getElementById('safe-ans').classList.add('visible'); this.style.display='none'">Check Answer</button>
+                            <div class="answer-box" id="safe-ans">
+                                <strong>Yes.</strong> It is far away from the blue and red dots (boundaries).
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-up">
+                        <div class="img-card">
+                            <img src="Y9Science6.4Image3.jpg" alt="Map of Earthquakes and Volcanoes">
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; font-size: 0.9rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 10px; height: 10px; background: red;"></div> Volcanoes
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 10px; height: 10px; background: blue;"></div> Earthquakes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 9. Plenary / Critical Thinking
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--primary);">Brain Power 🧠</span>
+                    <h2 style="margin-top: 1rem;">Think Hard</h2>
+                    
+                    <div class="grid-2 slide-up" style="max-width: 1000px; margin: 3rem auto;">
+                        <div class="card">
+                            <h3><i class="fa-solid fa-calculator"></i> Numeracy Challenge</h3>
+                            <p>The magnetic field reverses 183 times in 83 million years.</p>
+                            <p style="margin: 1rem 0; color: white;">Calculate the average time between reversals.</p>
+                            <button class="btn btn-reveal" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Show Calculation</button>
+                            <div class="answer-box">
+                                <p>Calculation: $83,000,000 \\div 183$</p>
+                                <p style="margin-top:0.5rem; color: var(--accent); font-weight:bold;">= Approx 453,551 years</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3><i class="fa-solid fa-lightbulb"></i> Critical Thinking</h3>
+                            <p>If the Mantle was solid rock like the crust, would plates move?</p>
+                            <button class="btn btn-reveal" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Reveal Answer</button>
+                            <div class="answer-box">
+                                <strong>No.</strong> Convection currents only happen because the mantle is "plastic" and can flow. If it were solid, there would be no movement.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 10. Homework
+            render: () => `
+                 <div class="text-center fade-in">
+                    <h2>📚 Homework Checklist</h2>
+                    <div class="card slide-up" style="max-width: 600px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--primary);">
+                        <h3 style="color: var(--primary);">Topic 6.5 Tasks</h3>
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(139, 92, 246, 0.2); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-book-open"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Textbook Reading</p>
+                                <p>Read pages <strong>234 - 237</strong>.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(236, 72, 153, 0.2); color: var(--secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Questions</p>
+                                <p>Answer <strong>Questions 1-5</strong> on page 237.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- HELPER FUNCTION: CREATE FLIP CARD ---
+    function createFlipCard(front, backTitle, backDesc, extraDesc, icon, color) {
+        return `
+            <div class="flip-card" onclick="this.classList.toggle('flipped')" tabindex="0" onkeypress="if(event.key === 'Enter') this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <i class="fa-solid ${icon}" style="font-size: 3rem; margin-bottom: 1rem; color: ${color};"></i>
+                        <h3 style="color: white;">${front}</h3>
+                        <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 1rem;">(Click to Flip)</p>
+                    </div>
+                    <div class="flip-back">
+                        <h3>${backTitle}</h3>
+                        <p style="color: white; font-size: 1.1rem;">${backDesc}</p>
+                         ${extraDesc ? `<p style="font-size: 1rem; margin-top:1rem; opacity:0.9; color:white; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1rem;">${extraDesc}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- CORE APP LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        
+        // Update UI Elements
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+
+</script>
+</body>
+</html>
