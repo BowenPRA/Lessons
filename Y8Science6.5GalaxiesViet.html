@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6.5 Thiên hà & Đá trong Vũ trụ - Khoa học Lớp 8</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Deep Space Science Theme */
+            --bg-deep: #0f0518;        
+            --bg-card: #1e1b4b;        
+            --bg-card-hover: #312e81; 
+            
+            --primary: #8b5cf6;   /* Violet - Main Elements */
+            --secondary: #ec4899; /* Pink - Action/Draw */
+            --accent: #06b6d4;    /* Cyan - Key Terms */
+            --amber: #f59e0b;     /* Amber - Note Taking/Warning */
+            --success: #10b981;   
+            --danger: #ef4444;    
+
+            /* Typography */
+            --text-main: #ffffff;        
+            --text-muted: #f8fafc; /* Bright white-slate for high contrast */      
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            /* Deep Space Background Effect */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15), transparent 40%),
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.1) 1px, transparent 2px);
+            background-size: 100% 100%, 100% 100%, 550px 550px, 350px 350px;
+            background-position: 0 0, 0 0, 0 0, 100px 30px;
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 5, 24, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 5, 24, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:hover { background: #7c3aed; transform: translateY(-2px); }
+        
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 8px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            transition: width 0.4s ease;
+        }
+
+        /* INSTRUCTION PILLS (SCAFFOLDING) */
+        .note-pill {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.15);
+            border: 2px solid var(--amber);
+            color: var(--amber);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .draw-pill {
+            display: inline-block;
+            background: rgba(236, 72, 153, 0.15);
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        /* Typography & Layout */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; font-weight: 500; }
+        strong { color: white; font-weight: 800; }
+        
+        /* Key term highlights */
+        .term { color: var(--accent); font-weight: 800; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 3rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        
+        .img-card {
+            background: black;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .img-card img {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        /* Flip Cards */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .flip-front { background: var(--bg-card); }
+        .flip-front:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+        .flip-back { background: linear-gradient(135deg, var(--primary), var(--secondary)); transform: rotateY(180deg); color: white; border: none; }
+
+        /* Answer Panels */
+        .answer-box {
+            background: rgba(6, 182, 212, 0.1);
+            border: 2px solid var(--accent);
+            color: var(--text-muted);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: none;
+            text-align: left;
+        }
+        .answer-box.visible { display: block; animation: slideUp 0.3s ease; }
+        
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Khoa học Lớp 8</div>
+            <span style="font-weight: 700; color: var(--text-muted); font-size: 0.9rem;">Chủ đề 6.5 & 6.6</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            Thứ Năm, 15/01/2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    const state = {
+        currentSlide: 0,
+        slides: []
+    };
+
+    // --- SLIDE DATA ---
+    state.slides = [
+        {
+            // 1. Title & Goals
+            render: () => `
+                <div class="text-center fade-in">
+                    <!-- Changed Icon to pink galaxy (using hurricane as spiral galaxy proxy) -->
+                    <i class="fa-solid fa-hurricane" style="font-size: 5rem; color: var(--secondary); margin-bottom: 1.5rem; filter: drop-shadow(0 0 15px var(--secondary));"></i>
+                    <h1>Các Thiên hà & Đá trong Vũ trụ</h1>
+                    <p style="font-size: 1.5rem; color: var(--text-muted); font-weight: 600; letter-spacing: 1px;">Từ Dải Ngân Hà đến Vành đai Tiểu hành tinh</p>
+                    
+                    <div class="card slide-up" style="margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; text-align: left; border-left: 5px solid var(--success);">
+                        <h3 style="color: var(--success); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                            <i class="fa-solid fa-crosshairs"></i> Mục tiêu bài học
+                        </h3>
+                        <div class="note-pill">📝 Viết những điều này vào vở</div>
+                        <ul style="list-style: none; display: grid; gap: 1rem;">
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check" style="color: var(--success);"></i>
+                                <span>Phân loại các thiên hà thành ba loại dựa trên hình dạng.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check" style="color: var(--success);"></i>
+                                <span>Nhận diện <span class="term">Dải Ngân Hà</span> và vị trí của Trái Đất bên trong nó.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fa-solid fa-check" style="color: var(--success);"></i>
+                                <span>Giải thích sự khác biệt giữa các hành tinh và tiểu hành tinh.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 2. Warm Up (Scale) - FIXED: All 6 Cards, Icon, Shuffled
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--amber); color: var(--bg-deep);">Hoạt động Khởi động</span>
+                    <h2 style="margin-top: 1rem;">Quy mô Vũ trụ</h2>
+                    <p style="margin-bottom: 2rem;">Sắp xếp theo thứ tự từ <strong>nhỏ nhất</strong> đến <strong>lớn nhất</strong>.</p>
+                    
+                    <div class="grid-3 slide-up" style="max-width: 1400px; margin: 0 auto; gap: 1.5rem;">
+                        ${createFlipCard('Thiên hà (Galaxy)', '#5', 'Hàng tỷ ngôi sao.', 'Dải Ngân Hà chứa hơn 200 tỷ ngôi sao.', 'fa-hurricane', 'var(--secondary)')}
+                        ${createFlipCard('Mặt trăng (Moon)', '#1', 'Vệ tinh tự nhiên.', 'Nhỏ hơn một hành tinh.', 'fa-moon', 'var(--accent)')}
+                        ${createFlipCard('Vũ trụ (Universe)', '#6', 'Tất cả mọi thứ.', 'Chứa hàng tỷ thiên hà.', 'fa-infinity', 'var(--secondary)')}
+                        ${createFlipCard('Hành tinh (Planet)', '#2', 'Quay quanh một ngôi sao.', 'Trái Đất, Sao Hỏa, Sao Mộc...', 'fa-earth-americas', 'var(--accent)')}
+                        ${createFlipCard('Hệ Mặt Trời (Solar System)', '#4', 'Một ngôi sao + các hành tinh.', 'Lớn hơn ngôi sao, nhỏ hơn thiên hà.', 'fa-sun', 'var(--primary)')}
+                        ${createFlipCard('Ngôi sao (Star)', '#3', 'Một quả cầu khí đang cháy.', 'Mặt Trời là một ngôi sao.', 'fa-star', 'var(--primary)')}
+                    </div>
+
+                     <div class="card slide-up" style="margin-top: 2rem; border-color: var(--amber);">
+                        <h3 class="text-amber">Kiểm tra vở ghi 📝</h3>
+                        <p style="margin-top: 0.5rem; margin-bottom: 1rem;">Viết thứ tự đúng vào vở của em.</p>
+                        <button class="btn btn-reveal" onclick="document.getElementById('scale-ans').classList.add('visible'); this.style.display='none'">Hiện đáp án</button>
+                        <div class="answer-box" id="scale-ans" style="text-align: center;">
+                            <p style="font-size: 1.3rem; font-weight: 700; color: white;">
+                                Mặt trăng < Hành tinh < Ngôi sao < Hệ Mặt Trời < Thiên hà < Vũ trụ
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 3. Galaxy Shapes - FIXED: Definition, Icon, Rugby
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2>Thiên hà là gì?</h2>
+                        <div class="note-pill">📝 Định nghĩa chính</div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                            <p style="color: white; margin-bottom: 0.5rem;"><strong class="term">Thiên hà (Galaxy):</strong></p>
+                            <!-- Removed "whirlpool of stars" -->
+                            <p>Một nhóm khổng lồ gồm các ngôi sao, khí và bụi được giữ lại với nhau bởi lực hấp dẫn.</p>
+                        </div>
+
+                        <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid var(--primary); padding: 1.5rem; border-radius: 12px;">
+                            <div style="display:flex; align-items:center; gap: 1rem; margin-bottom: 1rem;">
+                                <h3 style="color: var(--primary); margin:0;">Ba hình dạng chính</h3>
+                                <!-- Added Write Icon -->
+                                <i class="fa-solid fa-pen-to-square" style="color: var(--primary); font-size: 1.5rem;"></i>
+                            </div>
+                            <ul style="margin-left: 1.5rem; line-height: 2;">
+                                <li><strong>Hình xoắn ốc (Spiral):</strong> Có các "cánh tay" giống như chong chóng.</li>
+                                <!-- Fixed Rugby -> American Football -->
+                                <li><strong>Hình Elip (Elliptical):</strong> Có hình dạng giống quả trứng hoặc <span style="text-decoration: line-through; opacity: 0.6;">bóng bầu dục</span> <strong>bóng bầu dục Mỹ</strong>.</li>
+                                <li><strong>Không định hình (Irregular):</strong> Không có hình dạng rõ ràng (lộn xộn).</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="slide-up">
+                        <div class="draw-pill">🎨 Vẽ & Ghi chú</div>
+                        <div class="img-card">
+                            <!-- UPDATED TO IMAGE 1 -->
+                            <img src="Y8Science6.5Image1.jpg" alt="Shapes of Galaxies Diagram">
+                        </div>
+                        <p class="text-center" style="margin-top:0.5rem; font-size: 0.9rem;">Phân loại chúng: Xoắn ốc, Elip, Không định hình</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 4. The Milky Way - FIXED: Use NASA Image 5
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div class="slide-up order-2" style="display: flex; flex-direction: column; align-items: center;">
+                        <!-- UPDATED TO NASA IMAGE 5 -->
+                        <div class="img-card" style="width: 100%; aspect-ratio: 1/1; max-width: 500px; margin-bottom: 1rem;">
+                            <img src="Y8Science6.5Image5.jpg" alt="NASA Image of the Milky Way" style="object-fit: cover;">
+                        </div>
+                        <p class="text-center" style="margin-top:0.5rem; font-size: 0.9rem;">Cấu trúc của một Thiên hà Xoắn ốc</p>
+                    </div>
+                    <div class="order-1">
+                        <h2 class="text-accent"><i class="fa-solid fa-location-dot"></i> Địa chỉ nhà của chúng ta</h2>
+                        <div class="note-pill">📝 Thông số quan trọng</div>
+                        
+                        <div class="card" style="border-left: 4px solid var(--accent);">
+                            <ul style="margin-left: 1.5rem; font-size: 1.1rem; line-height: 1.8;">
+                                <li><strong>Tên:</strong> Dải Ngân Hà (The Milky Way).</li>
+                                <li><strong>Loại:</strong> Thiên hà <span class="term">Xoắn ốc có thanh chắn</span>.</li>
+                                <li><strong>Kích thước:</strong> Rộng 100.000 Năm ánh sáng.</li>
+                                <li><strong>Dân số:</strong> 100 - 400 Tỷ ngôi sao.</li>
+                                <li><strong>Vị trí của chúng ta:</strong> Nhánh Orion (khoảng giữa tâm và rìa).</li>
+                            </ul>
+                            
+                            <div style="margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                                <p style="font-size: 1.1rem; color: var(--amber);"><strong>Tại sao nó trông giống như một dải sáng?</strong></p>
+                                <p>Bởi vì chúng ta đang ở <em>bên trong</em> đĩa phẳng, nhìn xuyên qua nó về phía trung tâm.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 5. MIDWAY BREAK
+            render: () => `
+                <div class="fade-in text-center" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                    <i class="fa-solid fa-child-reaching" style="font-size: 4rem; color: var(--success); margin-bottom: 1rem;"></i>
+                    <h2 style="font-size: 3rem;">Nghỉ giải lao!</h2>
+                    <p style="font-size: 1.5rem;">Đứng dậy và kiểm tra xem trọng lực còn hoạt động không.</p>
+                    
+                    <div class="card slide-up" style="margin-top: 2rem; max-width: 600px; border: 2px dashed var(--success);">
+                        <h3>🚀 Bài tập vươn vai Vũ trụ</h3>
+                        <ol style="text-align: left; margin: 1.5rem 2rem; font-size: 1.2rem; line-height: 1.8;">
+                            <li><strong>Hít vào (4s):</strong> Thu thập bụi sao (Vươn cao!).</li>
+                            <li><strong>Giữ (4s):</strong> Tạo thành ngôi sao (Căng cơ!).</li>
+                            <li><strong>Thở ra (4s):</strong> Siêu tân tinh! (Thả lỏng và lắc người).</li>
+                        </ol>
+                        <p style="color: var(--success); font-weight: 700;">Lặp lại 3 lần.</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 6. Rocks in Space (Asteroids) - FIXED: Image4
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2>Đá trong Vũ trụ</h2>
+                        <p>Không phải mọi thứ đều là sao hay hành tinh. Hãy gặp gỡ <span class="term">Tiểu hành tinh (Asteroid)</span>.</p>
+                        
+                        <div style="background: rgba(236, 72, 153, 0.1); border: 1px solid var(--secondary); border-radius: 12px; padding: 1.5rem; margin: 1rem 0;">
+                             <strong style="color: var(--secondary);">Định nghĩa:</strong> 
+                             <p style="margin-top: 0.5rem;">Một vật thể đá nhỏ quay quanh Mặt Trời. Thường được gọi là "Khoai tây Vũ trụ" vì chúng có hình dạng không đều.</p>
+                        </div>
+
+                        <div class="card" style="border-color: var(--amber);">
+                            <h3 class="text-amber">⚠️ Cảnh báo Hiểu lầm</h3>
+                            <p>Vành đai Tiểu hành tinh có đông đúc như trong phim không?</p>
+                            <button class="btn btn-reveal" onclick="document.getElementById('belt-ans').classList.add('visible'); this.style.display='none'">Kiểm tra đáp án</button>
+                            <div class="answer-box" id="belt-ans">
+                                <strong>Không!</strong> Vũ trụ rất rộng lớn. Các tiểu hành tinh thường cách nhau hàng nghìn km. Bạn có thể bay qua mà không va phải thứ gì.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide-up">
+                        <div class="draw-pill">🎨 Phác thảo & Ghi chú</div>
+                        <div class="img-card">
+                            <!-- UPDATED TO IMAGE 4 (BELT) -->
+                            <img src="Y8Science6.5Image4.jpg" alt="The Asteroid Belt Diagram">
+                        </div>
+                        <p class="text-center" style="margin-top: 1rem;"><strong>Vành đai Tiểu hành tinh</strong> nằm giữa Sao Hỏa và Sao Mộc.</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 7. Video Embed
+            render: () => `
+                 <div class="fade-in text-center">
+                    <h2>🎥 Tiểu hành tinh là gì?</h2>
+                    <p style="margin-bottom: 2rem;">Hãy xem kỹ về "Ceres" và tiểu hành tinh được làm bằng gì.</p>
+                    
+                    <div class="slide-up" style="max-width: 800px; margin: 0 auto; aspect-ratio: 16/9; background: #000; border: 3px solid var(--primary); border-radius: var(--border-radius); position: relative; overflow: hidden; box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);">
+                        <iframe 
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                            src="https://www.youtube.com/embed/amhE6rN4OpU" 
+                            title="YouTube video player" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 8. Detailed Facts - FIXED: Ceres Image2
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div class="slide-up order-2">
+                         <div class="card" style="background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);">
+                            <i class="fa-solid fa-wind" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                            <h3>Bụi Sao (Stellar Dust)</h3>
+                            <p>Nó không giống bụi trong nhà!</p>
+                            <ul style="margin-top: 1rem; margin-left: 1.5rem;">
+                                <li>Các hạt vật chất nhỏ xíu trong không gian.</li>
+                                <li>Nó rất loãng (thưa thớt).</li>
+                                <li><strong>Sự thật:</strong> Chỉ có một hạt trong mỗi 1 triệu mét khối!</li>
+                            </ul>
+                            <div class="note-pill" style="margin-top: 1rem; font-size: 0.9rem;">Mẫu câu: "Bụi sao khác biệt bởi vì..."</div>
+                        </div>
+                    </div>
+                    <div class="order-1">
+                        <h2 class="text-secondary"><i class="fa-solid fa-circle-info"></i> Ghi chép vào vở</h2>
+                        <div class="note-pill">📝 Viết những điều này vào vở</div>
+                        
+                        <div class="card" style="margin-bottom: 1.5rem;">
+                            <h3 class="term">Sự thật về "Ceres"</h3>
+                            <div style="display: flex; gap: 1rem; align-items: flex-start; margin-top: 1rem;">
+                                <div style="flex: 1;">
+                                    <p><strong>Ceres</strong> là vật thể lớn nhất trong vành đai tiểu hành tinh.</p>
+                                    <p style="margin-top: 0.5rem;">Không giống các "khoai tây vũ trụ" khác, trọng lực đã kéo Ceres thành hình <strong>Cầu</strong> (hình quả bóng). Nó là một Hành tinh lùn (Dwarf Planet).</p>
+                                </div>
+                                <!-- INSERTED CERES IMAGE HERE -->
+                                <div style="width: 120px; border-radius: 8px; overflow: hidden; border: 1px solid var(--secondary);">
+                                    <img src="Y8Science6.5Image2.jpg" alt="Ceres" style="width: 100%; height: auto; display: block;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-bottom: 1.5rem;">
+                            <h3 class="term">Vật liệu còn sót lại</h3>
+                            <p>Tiểu hành tinh là những "mảnh vụn" còn sót lại từ khi Hệ Mặt Trời hình thành cách đây 4,6 tỷ năm.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 9. Discussion / Real World - FIXED: Impact Image3
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--primary);">Liên hệ Thực tế 🌍</span>
+                    <h2 style="margin-top: 1rem;">Phòng thủ Hành tinh</h2>
+                    <p style="font-size: 1.4rem;">Tại sao chúng ta chi tiền để theo dõi các tiểu hành tinh?</p>
+                    
+                    <div class="grid-2 slide-up" style="max-width: 1000px; margin: 2rem auto; align-items: stretch;">
+                        <div class="card" style="border-top: 4px solid var(--danger);">
+                            <i class="fa-solid fa-meteor" style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--danger);">Mối đe dọa</h3>
+                            <p>Các tiểu hành tinh lớn có thể va vào Trái Đất. Khủng long có thể đã bị tuyệt chủng bởi một tiểu hành tinh.</p>
+                            <!-- INSERTED IMPACT IMAGE HERE -->
+                            <div style="margin-top: 1rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--danger);">
+                                <img src="Y8Science6.5Image3.jpg" alt="Asteroid Impact Crater" style="width: 100%; height: auto; display: block;">
+                            </div>
+                        </div>
+                        
+                        <div class="card" style="border-top: 4px solid var(--success);">
+                            <i class="fa-solid fa-satellite-dish" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--success);">Giải pháp</h3>
+                            <p>Bằng cách lập bản đồ quỹ đạo, chúng ta có thể dự đoán va chạm trước nhiều năm và có thể làm lệch hướng chúng.</p>
+                        </div>
+                    </div>
+                    
+                    <p class="slide-up" style="background: rgba(255,255,255,0.1); display: inline-block; padding: 1rem 2rem; border-radius: 50px; font-weight: 700;">
+                        <i class="fa-solid fa-comments"></i> Thảo luận: Chúng ta nên chi tiền cho vũ trụ hay Trái Đất?
+                    </p>
+                </div>
+            `
+        },
+        {
+            // 10. NEW SUMMARY SLIDE
+            render: () => `
+                <div class="fade-in">
+                    <h2 class="text-center">📝 Ôn tập Bài học</h2>
+                    <p class="text-center" style="margin-bottom: 2rem;">Kiểm tra Mục tiêu</p>
+                    
+                    <div class="grid-3 slide-up" style="gap: 1.5rem;">
+                        <!-- Objective 1 -->
+                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
+                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                                <strong style="color: var(--accent); text-transform: uppercase; font-size: 0.8rem;">Mục tiêu 1</strong>
+                                <p style="font-weight: 700; color: white;">3 hình dạng thiên hà là gì?</p>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <ul style="margin-left: 1.5rem; color: var(--text-muted);">
+                                    <li><strong style="color: var(--success);">Xoắn ốc (Spiral):</strong> Cánh tay chong chóng.</li>
+                                    <li><strong style="color: var(--success);">Elip (Elliptical):</strong> Hình trứng/Bóng bầu dục.</li>
+                                    <li><strong style="color: var(--success);">Không định hình:</strong> Không có hình dạng.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Objective 2 -->
+                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
+                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                                <strong style="color: var(--accent); text-transform: uppercase; font-size: 0.8rem;">Mục tiêu 2</strong>
+                                <p style="font-weight: 700; color: white;">Dải Ngân Hà & Chúng ta</p>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <p>Chúng ta sống trong một <strong style="color: var(--success);">Thiên hà Xoắn ốc</strong>.</p>
+                                <p style="margin-top:0.5rem;">Chúng ta ở trên <strong>Nhánh Orion</strong>.</p>
+                                <p style="margin-top:0.5rem;">Nó trông như một dải sáng vì chúng ta đang ở <strong>bên trong</strong> đĩa.</p>
+                            </div>
+                        </div>
+
+                        <!-- Objective 3 -->
+                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
+                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                                <strong style="color: var(--accent); text-transform: uppercase; font-size: 0.8rem;">Mục tiêu 3</strong>
+                                <p style="font-weight: 700; color: white;">Hành tinh và Tiểu hành tinh</p>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <p><strong style="color: var(--success);">Hành tinh:</strong> Lớn & Hình cầu (Trọng lực).</p>
+                                <p style="margin-top:0.5rem;"><strong style="color: var(--success);">Tiểu hành tinh:</strong> Nhỏ, là những "mảnh vụn" đá & kim loại không đều.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 11. Homework (Was 10)
+            render: () => `
+                 <div class="text-center fade-in">
+                    <h2>📚 Danh sách Bài tập về nhà</h2>
+                    <div class="card slide-up" style="max-width: 700px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--primary);">
+                        <h3 style="color: var(--primary);">Nhiệm vụ Chủ đề 6.5 & 6.6</h3>
+                        
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(139, 92, 246, 0.2); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-book-open"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Sách giáo khoa (Learner's Book)</p>
+                                <p><strong>Thiên hà (trang 219):</strong> Câu hỏi 1–5</p>
+                                <p><strong>Đá trong Vũ trụ (trang 225):</strong> Câu hỏi 1–4</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(236, 72, 153, 0.2); color: var(--secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Thử thách</p>
+                                <p>Tính tỷ lệ đường kính của Sao Mộc so với một tiểu hành tinh lớn (Hoạt động 6.6.1, Câu 2).</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem; opacity: 0.7; font-size: 0.9rem;">
+                        Tóm tắt: Chúng ta đã tìm hiểu vị trí của mình trong Dải Ngân Hà và biết rằng tiểu hành tinh là những vật liệu xây dựng còn sót lại của các hành tinh.
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- HELPER FUNCTION: CREATE FLIP CARD ---
+    function createFlipCard(front, backTitle, backDesc, extraDesc, icon, color) {
+        return `
+            <div class="flip-card" onclick="this.classList.toggle('flipped')" tabindex="0" onkeypress="if(event.key === 'Enter') this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <i class="fa-solid ${icon}" style="font-size: 3rem; margin-bottom: 1rem; color: ${color};"></i>
+                        <h3 style="color: white;">${front}</h3>
+                        <p style="font-size: 0.8rem; opacity: 0.9; margin-top: 1rem; color: #fff;">(Nhấn để lật)</p>
+                    </div>
+                    <div class="flip-back">
+                        <h3 style="color: ${color}; background: rgba(0,0,0,0.2); padding: 0.2rem 1rem; border-radius: 50px; font-size: 1.1rem; margin-bottom: 0.5rem;">${front}</h3>
+                        <h4 style="color: white; margin-bottom: 1rem; font-weight: 600;">${backTitle}</h4>
+                        <p style="color: white; font-size: 1.1rem; font-weight: 500;">${backDesc}</p>
+                         ${extraDesc ? `<p style="font-size: 1rem; margin-top:0.5rem; opacity:0.9; color:white;">${extraDesc}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- CORE APP LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        
+        // Update UI Elements
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+
+</script>
+</body>
+</html>
