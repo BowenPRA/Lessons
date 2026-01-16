@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Year 8 Cosmic Trivia</title>
+    <title>Year 8 Wheel of Memory</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -143,17 +143,20 @@
         .wheel-container {
             width: 400px; height: 400px; position: relative;
             border-radius: 50%;
-            border: 4px solid rgba(255,255,255,0.1);
-            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+            /* Thick border with inner shadow for depth */
+            border: 8px solid rgba(255,255,255,0.1);
+            box-shadow: 0 0 50px rgba(0,0,0,0.3), inset 0 0 30px rgba(0,0,0,0.5);
             transition: transform 4s cubic-bezier(0.1, 0.9, 0.2, 1);
             overflow: hidden;
             margin-bottom: 20px;
+            background: #020617; /* Fallback */
         }
 
         .wheel {
             width: 100%; height: 100%; border-radius: 50%;
-            background: conic-gradient(from 0deg, var(--neon-purple), var(--bg-deep), var(--neon-blue), var(--bg-deep), var(--neon-cyan), var(--bg-deep), var(--neon-pink), var(--bg-deep), var(--neon-purple));
             position: relative;
+            /* Conic gradient is now injected by JS for dynamic slicing */
+            transition: all 0.3s ease;
         }
         
         /* Wheel Names overlay */
@@ -163,34 +166,47 @@
             transform-origin: 0 0;
             width: 50%; height: 2px;
             display: flex; align-items: center;
-            padding-left: 60px; /* Push text to edge */
-            font-family: 'Outfit'; font-weight: 700; font-size: 1rem; color: white;
-            text-shadow: 1px 1px 2px black;
+            padding-left: 50px; /* Push text to edge */
+            font-family: 'Outfit'; font-weight: 800; font-size: 1.1rem; color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            /* Stronger shadow for neon background readability */
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.5);
         }
 
+        /* Center Hub / Spin Button */
+        .spin-btn {
+            width: 90px; height: 90px; border-radius: 50%;
+            background: linear-gradient(145deg, #ffffff, #e2e8f0);
+            border: 4px solid rgba(255,255,255,0.5);
+            cursor: pointer;
+            font-family: 'Outfit'; font-weight: 800; color: var(--bg-deep);
+            font-size: 1.1rem; letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2), inset 0 0 10px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 15;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .spin-btn::after {
+            content: ''; position: absolute; width: 85%; height: 85%; border-radius: 50%;
+            border: 2px dashed #cbd5e1; opacity: 0.5;
+        }
+        .spin-btn:hover { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 30px rgba(255,255,255,0.4); }
+        .spin-btn:disabled { background: #334155; border-color: #475569; color: #64748b; cursor: default; transform: translate(-50%, -50%) scale(1); box-shadow: none; }
+
         .wheel-pointer {
-            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
             width: 0; height: 0; 
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 30px solid var(--neon-orange);
-            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
-            z-index: 10;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid var(--neon-orange);
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+            z-index: 20;
         }
         
         /* Spin Controls */
         .control-group { display: flex; gap: 10px; z-index: 15; flex-direction: column; align-items: center; }
-
-        .spin-btn {
-            width: 80px; height: 80px; border-radius: 50%;
-            background: #fff; border: none; cursor: pointer;
-            font-family: 'Outfit'; font-weight: 800; color: var(--bg-deep);
-            box-shadow: 0 0 20px rgba(255,255,255,0.5);
-            transition: all 0.2s;
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        }
-        .spin-btn:hover { transform: translate(-50%, -50%) scale(1.1); }
-        .spin-btn:disabled { background: #334155; color: #64748b; cursor: default; transform: translate(-50%, -50%) scale(1); }
 
         .manual-btn {
             background: transparent; color: var(--neon-cyan); border: 1px solid var(--neon-cyan);
@@ -302,7 +318,7 @@
     <div class="app-container">
         <!-- SIDEBAR -->
         <nav class="sidebar">
-            <div class="brand">Year 8<br><span>Trivia Challenge</span></div>
+            <div class="brand">Year 8<br><span>Wheel of Memory</span></div>
             
             <!-- SCORE -->
             <div class="stat-card">
@@ -515,6 +531,7 @@
             // UI Elements
             ui: {
                 wheel: document.getElementById('wheel-container'),
+                wheelGraphic: document.getElementById('wheel-graphic'),
                 wheelNames: document.getElementById('wheel-names'),
                 spinBtn: document.getElementById('spin-btn'),
                 turnDisplay: document.getElementById('turn-display'),
@@ -553,14 +570,37 @@
                 const degPerSlice = 360 / count;
                 this.ui.wheelNames.innerHTML = '';
                 
+                // --- Dynamic Gradient Construction ---
+                // We use 3 repeating colors: Cyan, Purple, Pink
+                const wheelColors = ['#22d3ee', '#c084fc', '#f43f5e'];
+                let gradientStr = 'conic-gradient(';
+
+                // Add pointer adjustment offset to start at top (optional, but 0deg is usually Top in conic)
+                // Actually conic 0deg is Top.
+                
                 this.students.forEach((name, i) => {
+                    // 1. Setup Background Slice
+                    const color = wheelColors[i % 3];
                     const startDeg = i * degPerSlice;
+                    const endDeg = (i + 1) * degPerSlice;
+                    
+                    gradientStr += `${color} ${startDeg}deg ${endDeg}deg,`;
+
+                    // 2. Setup Name Text
                     const nameEl = document.createElement('div');
                     nameEl.className = 'wheel-name';
                     nameEl.innerText = name;
-                    nameEl.style.transform = `rotate(${startDeg + (degPerSlice/2)}deg)`;
+                    // Rotate to center of slice
+                    const rotateDeg = startDeg + (degPerSlice / 2);
+                    // -90deg offset often needed because text flows horizontal, we want it radial
+                    // But here we want text radiating OUT from center.
+                    nameEl.style.transform = `rotate(${rotateDeg}deg)`;
                     this.ui.wheelNames.appendChild(nameEl);
                 });
+                
+                // Clean up trailing comma and close
+                gradientStr = gradientStr.slice(0, -1) + ')';
+                this.ui.wheelGraphic.style.background = gradientStr;
             },
 
             spinWheel() {
@@ -581,9 +621,24 @@
                 
                 // Visuals: Spin
                 const sliceAngle = 360 / this.students.length;
-                const targetAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
-                const spins = 1800; // 5 full spins
-                const rotateAmount = spins + (360 - targetAngle) - 90; // -90 adjustment for top pointer
+                
+                // Target angle: Center of the winning slice
+                // Note: The pointer is at TOP (0 deg visually). 
+                // The gradient starts at 0deg (Top).
+                // So if Index 0 wins, it occupies 0 to X degrees. Center is X/2.
+                // To get X/2 to the Top, we need to rotate negative X/2.
+                
+                const targetCenterAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
+                
+                const spins = 1800; // 5 full spins (360 * 5)
+                
+                // Calculate rotation needed to bring target to top (0deg)
+                // We rotate the container clockwise.
+                // If Target is at 10deg. We need to rotate -10deg to bring it to 0.
+                // But we want to spin forward (positive).
+                // So we spin (360 - 10) = 350deg.
+                
+                const rotateAmount = spins + (360 - targetCenterAngle);
 
                 this.ui.wheel.style.transform = `rotate(${rotateAmount}deg)`;
 
