@@ -8,7 +8,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -16,33 +16,36 @@
         :root {
             /* --- COLOR PALETTE: Deep Cosmic Theme --- */
             --bg-deep: #020617;
-            --glass-panel: rgba(15, 23, 42, 0.85);
+            --glass-panel: rgba(15, 23, 42, 0.7);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
 
-            /* UI Colors */
+            /* Neon Accents */
             --neon-blue: #3b82f6;
-            --neon-cyan: #22d3ee;
+            --neon-cyan: #06b6d4;
             --neon-pink: #f43f5e;
-            --neon-purple: #c084fc;
+            --neon-purple: #a855f7;
             --neon-green: #22c55e;
             --neon-orange: #f59e0b;
-
-            --sidebar-width: 320px;
+            
+            /* Dimensions */
+            --sidebar-width: 300px;
         }
 
         /* --- RESET & BASE --- */
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-deep);
-            background: radial-gradient(ellipse at bottom, #4c1d95 0%, #1e1b4b 40%, #020617 100%);
+            background: radial-gradient(circle at 50% 100%, #1e1b4b 0%, #020617 60%);
             color: var(--text-primary);
             height: 100vh;
             width: 100vw;
             overflow: hidden;
             display: flex;
+            flex-direction: row;
         }
 
         /* --- STARFIELD ANIMATION --- */
@@ -53,75 +56,109 @@
                 radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0)),
                 radial-gradient(1.5px 1.5px at 50px 160px, #fff, rgba(0,0,0,0)),
                 radial-gradient(2px 2px at 150px 200px, rgba(255,255,255,0.8), rgba(0,0,0,0));
-            background-size: 300px 300px;
-            animation: twinkle 120s linear infinite;
+            background-size: 500px 500px;
+            animation: twinkle 100s linear infinite;
             z-index: -1;
-            opacity: 0.6;
+            opacity: 0.5;
             pointer-events: none;
         }
-        @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-300px); } }
+        @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-500px); } }
+
+        /* --- LOBBY (SETUP SCREEN) --- */
+        .lobby-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .lobby-card {
+            background: #0f172a; border: 1px solid var(--glass-border);
+            padding: 2rem; border-radius: 24px; width: 90%; max-width: 500px;
+            text-align: center; box-shadow: 0 0 50px rgba(59, 130, 246, 0.2);
+        }
+        .lobby-title { font-family: 'Outfit'; font-size: 2rem; margin-bottom: 1rem; color: #fff; }
+        .lobby-input-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 1.5rem 0;
+            max-height: 40vh; overflow-y: auto; padding: 5px;
+        }
+        .student-input {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: #fff; padding: 10px; border-radius: 8px; font-family: 'Outfit';
+            text-align: center; outline: none; transition: all 0.2s;
+        }
+        .student-input:focus { border-color: var(--neon-cyan); background: rgba(6, 182, 212, 0.1); }
+        .btn-start {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: white; border: none; padding: 1rem 3rem; border-radius: 50px;
+            font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem; cursor: pointer;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            transition: all 0.2s; margin-top: 1rem;
+        }
+        .btn-start:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); }
 
         /* --- LAYOUT --- */
         .app-container {
             display: flex; width: 100%; height: 100%; max-width: 1920px; margin: 0 auto;
         }
 
-        /* --- SIDEBAR (STATS) --- */
+        /* --- SIDEBAR --- */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--glass-panel);
             backdrop-filter: blur(20px);
             border-right: 1px solid var(--glass-border);
             display: flex; flex-direction: column; padding: 1.5rem; gap: 1.5rem;
-            z-index: 20;
-            overflow-y: auto;
+            z-index: 50; overflow-y: auto;
+            flex-shrink: 0;
         }
 
         .brand {
-            font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.75rem;
+            font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.5rem;
             line-height: 1.1; color: #fff; text-shadow: 0 0 20px rgba(192, 132, 252, 0.4);
         }
         .brand span { color: var(--neon-cyan); }
 
         .stat-card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 1.2rem; border-radius: 16px;
+            background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05);
+            padding: 1rem; border-radius: 16px;
         }
-        .stat-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 0.5rem; }
-        .stat-value { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 700; color: #fff; }
-        .stat-sub { font-size: 0.9rem; color: var(--neon-cyan); }
+        .stat-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .stat-value { font-family: 'Outfit'; font-size: 2rem; font-weight: 700; color: #fff; }
+        .stat-sub { font-size: 0.85rem; color: var(--neon-cyan); }
 
         /* Progress Bar */
-        .progress-bar-bg { background: rgba(255,255,255,0.1); height: 12px; border-radius: 6px; overflow: hidden; position: relative; }
-        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan)); width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .goal-marker { height: 16px; width: 2px; background: #fff; position: absolute; top: -2px; left: 60%; box-shadow: 0 0 10px white; z-index: 5; }
+        .progress-bar-bg { background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; position: relative; margin-top: 10px; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan)); width: 0%; transition: width 0.5s ease; }
+        .goal-marker { height: 12px; width: 2px; background: #fff; position: absolute; top: -2px; left: 60%; box-shadow: 0 0 8px white; z-index: 5; }
 
         /* Lifelines */
-        .lifeline-grid { display: flex; flex-direction: column; gap: 10px; }
+        .lifeline-grid { display: flex; flex-direction: column; gap: 8px; }
         .lifeline-btn {
             display: flex; align-items: center; justify-content: space-between;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px; border-radius: 12px; color: #fff; cursor: pointer;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            padding: 10px 12px; border-radius: 12px; color: #fff; cursor: pointer;
             transition: all 0.2s;
         }
-        .lifeline-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); transform: translateX(5px); }
-        .lifeline-btn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
-        .lifeline-icon { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; margin-right: 10px; color: var(--neon-cyan); }
-        .lifeline-text { flex: 1; font-family: 'Outfit'; font-weight: 600; font-size: 0.9rem; text-align: left; }
-        .lifeline-count { font-weight: 800; color: var(--neon-pink); background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 4px; }
+        .lifeline-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); border-color: var(--neon-purple); }
+        .lifeline-btn:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
+        .lifeline-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; margin-right: 10px; color: var(--neon-cyan); font-size: 0.8rem; }
+        .lifeline-text { flex: 1; font-family: 'Outfit'; font-weight: 600; font-size: 0.85rem; text-align: left; }
+        .lifeline-count { font-weight: 800; color: var(--neon-pink); background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; }
 
         /* --- MAIN ARENA --- */
         .arena {
             flex: 1; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             padding: 2rem; position: relative;
+            overflow: hidden;
         }
 
-        /* --- TOP HEADER (Current Student) --- */
+        /* --- TURN HEADER --- */
         .turn-display {
-            font-family: 'Outfit'; font-size: 2.5rem; font-weight: 700;
-            margin-bottom: 2rem; text-align: center; height: 60px;
+            font-family: 'Outfit'; font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 700;
+            margin-bottom: 2rem; text-align: center; min-height: 60px;
             text-shadow: 0 0 25px rgba(34, 211, 238, 0.3);
             opacity: 0; transform: translateY(-20px); transition: all 0.5s ease;
             z-index: 10;
@@ -131,183 +168,231 @@
 
         /* --- SPLIT CONTENT --- */
         .content-split {
-            display: flex; width: 100%; max-width: 1400px; height: 600px; gap: 3rem; align-items: center;
+            display: flex; width: 100%; max-width: 1400px; 
+            flex: 1; gap: 3rem; align-items: center; justify-content: center;
         }
 
-        /* --- LEFT: WHEEL --- */
+        /* --- WHEEL COMPONENT (Refactored) --- */
         .wheel-area {
             flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            position: relative;
+            position: relative; min-width: 300px;
         }
-        
-        .wheel-container {
-            width: 400px; height: 400px; position: relative;
+
+        /* The physical container */
+        .wheel-wrapper {
+            /* Fluid sizing for mobile & desktop */
+            width: clamp(280px, 50vmin, 500px);
+            aspect-ratio: 1 / 1;
+            position: relative;
             border-radius: 50%;
-            /* Thick border with inner shadow for depth */
-            border: 8px solid rgba(255,255,255,0.1);
-            box-shadow: 0 0 50px rgba(0,0,0,0.3), inset 0 0 30px rgba(0,0,0,0.5);
-            transition: transform 4s cubic-bezier(0.1, 0.9, 0.2, 1);
-            overflow: hidden;
-            margin-bottom: 20px;
-            background: #020617; /* Fallback */
+            /* Metallic Bezel */
+            box-shadow: 
+                0 0 0 10px #1e293b,
+                0 0 0 12px #334155,
+                0 0 0 13px rgba(34, 211, 238, 0.5), /* Neon ring */
+                0 20px 50px rgba(0,0,0,0.6);
+            margin-bottom: 2rem;
+            z-index: 5;
         }
 
         .wheel {
             width: 100%; height: 100%; border-radius: 50%;
             position: relative;
-            /* Conic gradient is now injected by JS for dynamic slicing */
-            transition: all 0.3s ease;
+            overflow: hidden;
+            /* Rotation Logic */
+            transition: transform 4s cubic-bezier(0.15, 0.85, 0.35, 1); 
+            /* Gradient injected by JS */
         }
         
-        /* Wheel Names overlay */
-        .wheel-names { position: absolute; top:0; left:0; width:100%; height:100%; border-radius:50%; }
-        .wheel-name {
+        /* Inner shadow for depth */
+        .wheel-overlay {
+            position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+            border: 4px solid rgba(255,255,255,0.05);
+            z-index: 2;
+        }
+
+        .wheel-text-layer {
+            position: absolute; inset: 0; border-radius: 50%;
+            pointer-events: none; z-index: 3;
+        }
+        
+        .wheel-name-segment {
             position: absolute; top: 50%; left: 50%;
+            width: 50%; height: 0px; /* Zero height, text centered */
             transform-origin: 0 0;
-            width: 50%; height: 2px;
-            display: flex; align-items: center;
-            padding-left: 50px; /* Push text to edge */
-            font-family: 'Outfit'; font-weight: 800; font-size: 1.1rem; color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            /* Stronger shadow for neon background readability */
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.5);
-        }
-
-        /* Center Hub / Spin Button */
-        .spin-btn {
-            width: 90px; height: 90px; border-radius: 50%;
-            background: linear-gradient(145deg, #ffffff, #e2e8f0);
-            border: 4px solid rgba(255,255,255,0.5);
-            cursor: pointer;
-            font-family: 'Outfit'; font-weight: 800; color: var(--bg-deep);
-            font-size: 1.1rem; letter-spacing: 1px;
-            box-shadow: 0 0 20px rgba(255,255,255,0.2), inset 0 0 10px rgba(0,0,0,0.1);
-            transition: all 0.2s;
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 15;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .spin-btn::after {
-            content: ''; position: absolute; width: 85%; height: 85%; border-radius: 50%;
-            border: 2px dashed #cbd5e1; opacity: 0.5;
-        }
-        .spin-btn:hover { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 30px rgba(255,255,255,0.4); }
-        .spin-btn:disabled { background: #334155; border-color: #475569; color: #64748b; cursor: default; transform: translate(-50%, -50%) scale(1); box-shadow: none; }
-
-        .wheel-pointer {
-            position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; 
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 40px solid var(--neon-orange);
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
-            z-index: 20;
+            display: flex; align-items: center; justify-content: flex-end;
+            padding-right: 40px; /* Push text in from edge */
         }
         
-        /* Spin Controls */
-        .control-group { display: flex; gap: 10px; z-index: 15; flex-direction: column; align-items: center; }
+        .wheel-text {
+            color: #fff; font-family: 'Outfit'; font-weight: 800; 
+            font-size: clamp(0.8rem, 2vmin, 1.2rem); 
+            text-transform: uppercase; white-space: nowrap;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
 
+        /* Center Hub */
+        .wheel-hub {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 22%; height: 22%; border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #e2e8f0, #94a3b8);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+            border: 4px solid #1e293b;
+        }
+        
+        /* Spin Button inside Hub */
+        .btn-spin {
+            width: 100%; height: 100%; border-radius: 50%; border: none; background: transparent;
+            color: #0f172a; font-family: 'Outfit'; font-weight: 900; font-size: clamp(0.8rem, 1.5vmin, 1.2rem);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-spin:active { transform: scale(0.95); }
+        .btn-spin:disabled { opacity: 0.5; cursor: default; }
+
+        /* The Flapper/Pointer */
+        .wheel-pointer {
+            position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+            z-index: 20;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+        }
+        .pointer-body {
+            width: 40px; height: 50px;
+            background: linear-gradient(to bottom, var(--neon-pink), #be123c);
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 50% 85%, 0% 100%);
+            border-top: 2px solid rgba(255,255,255,0.5);
+        }
+
+        .control-group { margin-top: 10px; display: flex; flex-direction: column; align-items: center; }
         .manual-btn {
             background: transparent; color: var(--neon-cyan); border: 1px solid var(--neon-cyan);
-            padding: 8px 16px; border-radius: 50px; font-family: 'Outfit'; font-size: 0.9rem; cursor: pointer;
-            transition: all 0.2s; margin-top: 10px;
+            padding: 8px 20px; border-radius: 50px; font-family: 'Outfit'; font-size: 0.9rem; cursor: pointer;
+            transition: all 0.2s;
         }
-        .manual-btn:hover { background: rgba(34, 211, 238, 0.1); }
+        .manual-btn:hover { background: rgba(34, 211, 238, 0.1); transform: translateY(-2px); }
 
-        /* --- RIGHT: QUESTION CARD --- */
+        /* --- CARD AREA --- */
         .card-area {
-            flex: 1.3; perspective: 1000px;
+            flex: 1.2; perspective: 1000px; width: 100%; max-width: 600px;
         }
         
-        .card {
+        .game-card {
             background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(16px);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 24px;
-            padding: 3rem;
+            padding: clamp(1.5rem, 3vw, 3rem);
             min-height: 400px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
             text-align: center;
-            position: relative;
-            overflow: hidden;
+            position: relative; overflow: hidden;
+            transition: transform 0.3s;
         }
-        .card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+        .game-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
             background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-pink));
         }
 
         /* Views */
-        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; display: none; }
+        .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; width: 100%; display: none; }
         .cat-btn {
-            padding: 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; color: #fff; font-family: 'Outfit'; font-size: 1.2rem; cursor: pointer;
+            padding: 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; color: #fff; font-family: 'Outfit'; font-size: 1rem; cursor: pointer;
             transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px;
         }
-        .cat-btn:hover { background: rgba(34, 211, 238, 0.2); border-color: var(--neon-cyan); transform: translateY(-3px); }
+        .cat-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--neon-cyan); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .cat-btn i { font-size: 1.8rem; color: var(--neon-cyan); }
 
         .q-display { display: none; width: 100%; flex-direction: column; align-items: center; gap: 1.5rem; }
-        .badge {
-            padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-            display: inline-block; margin-bottom: 10px;
-        }
-        .badge-rookie { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
-        .badge-pro { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
-        .badge-boss { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
-
-        .question-text { font-size: 1.5rem; line-height: 1.4; margin-bottom: 1rem; }
-        .answer-text { 
-            font-size: 1.3rem; color: var(--neon-cyan); font-weight: 600; 
-            min-height: 60px; display: flex; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s;
-        }
-        .answer-text.visible { opacity: 1; }
-
-        .controls { display: flex; gap: 1rem; margin-top: 1rem; width: 100%; justify-content: center; }
-        .btn {
-            padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; font-family: 'Outfit'; cursor: pointer;
-            transition: all 0.2s; color: #fff;
-        }
-        .btn-reveal { background: #475569; width: 100%; max-width: 300px; }
-        .btn-reveal:hover { background: #64748b; }
         
-        .btn-correct { background: var(--neon-green); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); }
-        .btn-wrong { background: var(--neon-pink); box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4); }
-        .btn-action { display: none; min-width: 120px; }
+        .badge { padding: 6px 16px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-bottom: 5px; }
+        .badge-rookie { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-pro { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-boss { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
 
-        /* Manual Pick Modal */
+        .question-text { font-size: clamp(1.1rem, 2.5vw, 1.6rem); line-height: 1.4; margin-bottom: 0.5rem; font-weight: 500; }
+        .answer-box { 
+            background: rgba(0,0,0,0.2); border-radius: 12px; padding: 1.5rem; width: 100%;
+            min-height: 80px; display: flex; align-items: center; justify-content: center;
+            margin: 1rem 0; border: 1px dashed rgba(255,255,255,0.1);
+        }
+        .answer-text { 
+            font-size: clamp(1rem, 2vw, 1.3rem); color: var(--neon-cyan); font-weight: 700; 
+            opacity: 0; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .answer-text.visible { opacity: 1; transform: translateY(0); }
+
+        .controls { display: flex; gap: 0.8rem; width: 100%; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; font-family: 'Outfit'; cursor: pointer; transition: all 0.2s; color: #fff; font-size: 1rem; }
+        
+        .btn-reveal { background: #334155; width: 100%; max-width: 250px; }
+        .btn-reveal:hover { background: #475569; }
+        
+        .btn-correct { background: var(--neon-green); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); flex: 1; max-width: 150px; }
+        .btn-wrong { background: var(--neon-pink); box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3); flex: 1; max-width: 150px; }
+        .btn-action { display: none; }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        /* --- MODALS --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.9); display: none; align-items: center; justify-content: center; z-index: 100;
-            backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s;
+            background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; z-index: 200;
+            opacity: 0; transition: opacity 0.3s;
         }
         .modal-overlay.active { opacity: 1; }
-
-        .modal-card {
-            background: #1e293b; padding: 2.5rem; border-radius: 20px; text-align: center; 
-            border: 1px solid rgba(255,255,255,0.1); width: 90%; max-width: 500px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s;
+        .modal-card-manual {
+            background: #1e293b; padding: 2rem; border-radius: 20px; width: 90%; max-width: 450px;
+            border: 1px solid rgba(255,255,255,0.1); text-align: center;
+            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .modal-overlay.active .modal-card { transform: translateY(0); }
+        .modal-overlay.active .modal-card-manual { transform: scale(1); }
         
-        .student-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;
-            margin-top: 20px;
-        }
+        .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 20px; max-height: 50vh; overflow-y: auto; }
         .student-btn {
             background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);
-            color: white; padding: 12px; border-radius: 8px; cursor: pointer;
-            font-family: 'Outfit'; transition: all 0.2s;
+            color: white; padding: 12px; border-radius: 8px; cursor: pointer; font-family: 'Outfit'; transition: all 0.2s;
         }
         .student-btn:hover { background: var(--neon-blue); color: #020617; }
-        .close-modal {
-            margin-top: 20px; background: transparent; border: none; color: #94a3b8; cursor: pointer; text-decoration: underline;
+
+        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300; }
+
+        /* --- RESPONSIVE BREAKPOINTS --- */
+        @media (max-width: 900px) {
+            body { flex-direction: column; overflow-y: auto; }
+            .app-container { flex-direction: column; height: auto; min-height: 100vh; }
+            
+            .sidebar { 
+                width: 100%; height: auto; flex-direction: row; align-items: center; 
+                border-right: none; border-bottom: 1px solid var(--glass-border);
+                padding: 1rem; overflow-x: auto; flex-wrap: wrap; justify-content: space-between;
+                background: rgba(15, 23, 42, 0.95);
+            }
+            .brand { font-size: 1.2rem; }
+            .stat-card { padding: 0.8rem; min-width: 140px; }
+            .stat-value { font-size: 1.5rem; }
+            
+            /* Hide pool on mobile top bar to save space */
+            .sidebar .stat-card:last-child { display: none; }
+            /* Hide lifelines on mobile top bar, maybe move to bottom? kept simplified */
+            
+            .content-split { flex-direction: column; gap: 2rem; padding: 1rem; margin-top: 1rem; }
+            .wheel-area { width: 100%; }
+            .card-area { width: 100%; padding-bottom: 2rem; }
+            
+            .lobby-input-grid { grid-template-columns: 1fr; }
         }
 
-        /* Confetti */
-        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 200; }
-
+        @media (max-width: 480px) {
+            .turn-display { margin-bottom: 1rem; font-size: 1.8rem; }
+            .sidebar { gap: 10px; }
+            .stat-card { flex: 1; }
+            .btn { width: 100%; max-width: none; }
+            .controls { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
@@ -315,30 +400,41 @@
     <div class="stars"></div>
     <canvas id="confetti"></canvas>
 
-    <div class="app-container">
+    <!-- SETUP LOBBY -->
+    <div id="lobby" class="lobby-overlay">
+        <div class="lobby-card">
+            <h1 class="lobby-title">Class Setup</h1>
+            <p style="color:var(--text-secondary);">Verify players for today's session.</p>
+            
+            <div class="lobby-input-grid" id="lobby-grid">
+                <!-- JS Injects Inputs -->
+            </div>
+            
+            <button class="btn-start" onclick="game.startGame()">ENTER CLASS</button>
+        </div>
+    </div>
+
+    <div class="app-container" id="app" style="opacity: 0; transition: opacity 1s;">
         <!-- SIDEBAR -->
         <nav class="sidebar">
             <div class="brand">Year 8<br><span>Wheel of Memory</span></div>
             
             <!-- SCORE -->
             <div class="stat-card">
-                <div class="stat-title">Class Score</div>
+                <div class="stat-title">Class Performance</div>
                 <div class="stat-value" id="score-percent">0%</div>
                 <div class="stat-sub"><span id="score-correct">0</span> / <span id="score-total">0</span> Correct</div>
                 
-                <div style="position: relative; height: 12px; margin-top: 15px;">
+                <div style="position: relative; height: auto;">
                     <div class="progress-bar-bg">
                         <div class="progress-bar-fill" id="progress-fill"></div>
                     </div>
-                    <!-- 60% Marker -->
-                    <div class="goal-marker" title="60% Goal"></div>
                 </div>
-                <div class="stat-title" style="margin-top:5px; text-align: right;">Goal: 60%</div>
             </div>
 
             <!-- LIFELINES -->
-            <div class="stat-card">
-                <div class="stat-title">Class Lifelines</div>
+            <div class="stat-card" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+                <div class="stat-title">Lifelines</div>
                 <div class="lifeline-grid">
                     <button class="lifeline-btn" id="life-notes" onclick="game.useLifeline('notes')">
                         <div style="display:flex; align-items:center;">
@@ -359,27 +455,27 @@
                     <button class="lifeline-btn" id="life-bowen" onclick="game.useLifeline('bowen')">
                         <div style="display:flex; align-items:center;">
                             <div class="lifeline-icon"><i class="fas fa-user-tie"></i></div>
-                            <span class="lifeline-text">Ask Mr. Bowen</span>
+                            <span class="lifeline-text">Ask Teacher</span>
                         </div>
                         <span class="lifeline-count" id="count-bowen">1</span>
                     </button>
                 </div>
             </div>
 
-            <!-- POOL -->
-            <div class="stat-card" style="margin-top: auto;">
-                <div class="stat-title">Students Remaining</div>
-                <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                    <div class="stat-value" style="font-size: 1.5rem;" id="students-left-count">9</div>
-                    <button class="btn btn-reveal" onclick="game.resetStudents()" style="width:auto; padding: 6px 12px; font-size: 0.7rem; background:#334155;">Reset</button>
+            <!-- POOL STATS -->
+            <div class="stat-card">
+                <div class="stat-title">Pool</div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="stat-sub">Remaining</div>
+                    <div class="stat-value" style="font-size: 1.5rem;" id="students-left-count">0</div>
                 </div>
+                <button onclick="game.resetStudents()" style="width:100%; margin-top:10px; padding:8px; background:rgba(255,255,255,0.1); border:none; color:#94a3b8; border-radius:6px; cursor:pointer; font-size:0.8rem;">Reset Pool</button>
             </div>
         </nav>
 
         <!-- MAIN GAME -->
         <main class="arena">
             
-            <!-- HEADER -->
             <div class="turn-display" id="turn-display">
                 <span id="turn-text">Spin the Wheel!</span>
             </div>
@@ -388,15 +484,19 @@
                 
                 <!-- WHEEL AREA -->
                 <div class="wheel-area">
-                    <div class="wheel-pointer"></div>
-                    <div class="wheel-container" id="wheel-container">
-                        <div class="wheel" id="wheel-graphic">
-                            <!-- JS generates segments -->
+                    <div class="wheel-pointer">
+                        <div class="pointer-body"></div>
+                    </div>
+                    
+                    <div class="wheel-wrapper">
+                        <div class="wheel-overlay"></div>
+                        <div class="wheel" id="wheel-graphic"></div>
+                        <div class="wheel-text-layer" id="wheel-names"></div>
+                        
+                        <!-- HUB -->
+                        <div class="wheel-hub">
+                            <button class="btn-spin" id="spin-btn" onclick="game.spinWheel()">SPIN</button>
                         </div>
-                        <div class="wheel-names" id="wheel-names">
-                            <!-- JS generates names -->
-                        </div>
-                        <button class="spin-btn" id="spin-btn" onclick="game.spinWheel()">SPIN</button>
                     </div>
                     
                     <div class="control-group">
@@ -406,12 +506,12 @@
 
                 <!-- CARD AREA -->
                 <div class="card-area">
-                    <div class="card">
+                    <div class="game-card">
                         
                         <!-- State 0: Intro -->
                         <div id="view-intro">
-                            <h2 style="font-family:'Outfit'; font-size:2rem; margin-bottom:1rem; color:var(--neon-cyan);">Ready?</h2>
-                            <p style="color:#cbd5e1; font-size:1.2rem;">Select a student to begin.</p>
+                            <h2 style="font-family:'Outfit'; font-size:2rem; margin-bottom:1rem; color:var(--neon-cyan);">Ready Player?</h2>
+                            <p style="color:#cbd5e1; font-size:1.1rem; line-height:1.6;">Use the wheel to select the next student.<br>Questions vary in difficulty.</p>
                         </div>
 
                         <!-- State 1: Category Select -->
@@ -422,10 +522,13 @@
                         <!-- State 2: Question -->
                         <div id="view-question" class="q-display">
                             <div id="q-badge" class="badge">Rookie</div>
-                            <div id="q-topic" style="color:var(--text-secondary); font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">Topic</div>
+                            <div id="q-topic" style="color:var(--text-secondary); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem;">Topic</div>
+                            
                             <div id="q-text" class="question-text">Question goes here...</div>
                             
-                            <div id="a-text" class="answer-text">Answer Hidden</div>
+                            <div class="answer-box">
+                                <div id="a-text" class="answer-text">Answer Hidden</div>
+                            </div>
 
                             <div class="controls">
                                 <button id="btn-reveal" class="btn btn-reveal" onclick="game.revealAnswer()">Reveal Answer</button>
@@ -436,8 +539,9 @@
 
                         <!-- State 3: Empty Categories -->
                         <div id="view-empty" style="display:none; flex-direction:column; align-items:center;">
-                            <h2 style="font-family:'Outfit'; color:var(--neon-pink); margin-bottom: 1rem;">Category Completed!</h2>
-                            <p style="margin-bottom: 1rem;">All questions in this category have been asked.</p>
+                            <div style="font-size:3rem; margin-bottom:1rem;">🎉</div>
+                            <h2 style="font-family:'Outfit'; color:var(--neon-pink); margin-bottom: 1rem;">Category Complete!</h2>
+                            <p style="margin-bottom: 2rem; color: var(--text-secondary);">All questions in this topic have been answered.</p>
                             <button class="btn btn-reveal" style="width: auto;" onclick="game.showCategories()">Pick Another</button>
                         </div>
 
@@ -450,27 +554,26 @@
 
     <!-- MANUAL PICK MODAL -->
     <div class="modal-overlay" id="manual-modal">
-        <div class="modal-card">
-            <h2 style="font-family:'Outfit'; color:#fff; margin-bottom: 10px;">Manual Selection</h2>
+        <div class="modal-card-manual">
+            <h2 style="font-family:'Outfit'; color:#fff; margin-bottom: 5px;">Manual Selection</h2>
             <p style="color:#94a3b8; font-size: 0.9rem; margin-bottom: 20px;">Choose a student from the active pool.</p>
             
             <div class="student-grid" id="manual-list">
                 <!-- JS Injects Buttons Here -->
             </div>
 
-            <button class="close-modal" onclick="document.getElementById('manual-modal').classList.remove('active'); setTimeout(() => document.getElementById('manual-modal').style.display='none', 300);">Cancel</button>
+            <button style="margin-top:20px; background:transparent; border:none; color:#cbd5e1; text-decoration:underline; cursor:pointer;" onclick="game.closeManualModal()">Cancel</button>
         </div>
     </div>
 
     <script>
         /**
-         * CAMBRIDGE TRIVIA ENGINE
-         * Updated with Manual Pick & Lifelines
+         * ENGINE: Year 8 Wheel of Memory v2.0
+         * Features: Responsive Wheel Physics, Lobby System, Deep Cosmic Theme
          */
 
         // --- DATA ---
-        // Vy removed
-        const ALL_STUDENTS = ["Meelo", "Bao", "Chris", "Khoi", "Angelo", "Jackson", "Kun", "Kim Long"];
+        const DEFAULT_ROSTER = ["Meelo", "Bao", "Chris", "Khoi", "Angelo", "Jackson", "Kun", "Kim Long", "Vy", "Minh VU"];
         
         const CATEGORIES = {
             "Light & Color": [
@@ -519,88 +622,126 @@
             ]
         };
 
-        // --- GAME LOGIC ---
+        // --- GAME STATE ---
         const game = {
-            students: [...ALL_STUDENTS],
+            activeStudents: [],
+            initialStudents: [],
             stats: { total: 0, correct: 0 },
             lifelines: { notes: 3, friend: 2, bowen: 1 },
             indexes: { "Light & Color": 0, "Space & Universe": 0, "Refraction": 0, "Mathematics": 0 },
-            currentPlayer: null,
-            currentQ: null,
-            currentCategory: null, // NEW: Track category key internally
+            currentRotation: 0,
             isSpinning: false,
+            
+            // State tracking
+            currentPlayer: null,
+            currentCategory: null,
+            currentQ: null,
 
-            // UI Elements
+            // UI Cache
             ui: {
-                wheel: document.getElementById('wheel-container'),
-                wheelGraphic: document.getElementById('wheel-graphic'),
+                wheel: document.getElementById('wheel-graphic'),
                 wheelNames: document.getElementById('wheel-names'),
                 spinBtn: document.getElementById('spin-btn'),
                 turnDisplay: document.getElementById('turn-display'),
                 turnText: document.getElementById('turn-text'),
+                app: document.getElementById('app'),
+                lobby: document.getElementById('lobby'),
+                lobbyGrid: document.getElementById('lobby-grid'),
                 
                 // Views
-                viewIntro: document.getElementById('view-intro'),
-                viewCats: document.getElementById('view-categories'),
-                viewQ: document.getElementById('view-question'),
-                viewEmpty: document.getElementById('view-empty'),
-                
-                // Q Elements
-                badge: document.getElementById('q-badge'),
-                topic: document.getElementById('q-topic'),
-                qText: document.getElementById('q-text'),
-                aText: document.getElementById('a-text'),
-                btnReveal: document.getElementById('btn-reveal'),
-                btnCorrect: document.getElementById('btn-correct'),
-                btnWrong: document.getElementById('btn-wrong'),
-
-                // Modals
-                manualModal: document.getElementById('manual-modal'),
-                manualList: document.getElementById('manual-list')
+                intro: document.getElementById('view-intro'),
+                cats: document.getElementById('view-categories'),
+                question: document.getElementById('view-question'),
+                empty: document.getElementById('view-empty'),
             },
 
-            init() {
-                this.renderWheel();
-                this.updateStats();
-                this.renderCategories();
-                this.updateLifelinesUI();
-                confettiEffects.init();
-            },
-
-            renderWheel() {
-                const count = this.students.length;
-                const degPerSlice = 360 / count;
-                this.ui.wheelNames.innerHTML = '';
-                
-                // --- Dynamic Gradient Construction ---
-                const wheelColors = ['#22d3ee', '#c084fc', '#f43f5e'];
-                let gradientStr = 'conic-gradient(';
-
-                this.students.forEach((name, i) => {
-                    // 1. Setup Background Slice
-                    const color = wheelColors[i % 3];
-                    const startDeg = i * degPerSlice;
-                    const endDeg = (i + 1) * degPerSlice;
-                    
-                    gradientStr += `${color} ${startDeg}deg ${endDeg}deg,`;
-
-                    // 2. Setup Name Text
-                    const nameEl = document.createElement('div');
-                    nameEl.className = 'wheel-name';
-                    nameEl.innerText = name;
-                    const rotateDeg = startDeg + (degPerSlice / 2);
-                    nameEl.style.transform = `rotate(${rotateDeg}deg)`;
-                    this.ui.wheelNames.appendChild(nameEl);
+            // --- LOBBY PHASE ---
+            initLobby() {
+                // Populate grid with default inputs
+                this.ui.lobbyGrid.innerHTML = '';
+                DEFAULT_ROSTER.forEach(name => {
+                    const input = document.createElement('input');
+                    input.className = 'student-input';
+                    input.value = name;
+                    input.placeholder = "Player Name";
+                    this.ui.lobbyGrid.appendChild(input);
                 });
                 
+                // Add a few empty slots for flexibility
+                for(let i=0; i<2; i++){
+                    const input = document.createElement('input');
+                    input.className = 'student-input';
+                    input.placeholder = "Empty Slot";
+                    this.ui.lobbyGrid.appendChild(input);
+                }
+            },
+
+            startGame() {
+                // Gather names
+                const inputs = Array.from(this.ui.lobbyGrid.querySelectorAll('input'));
+                const names = inputs.map(i => i.value.trim()).filter(n => n.length > 0);
+                
+                if (names.length < 2) {
+                    alert("Please enter at least 2 players.");
+                    return;
+                }
+
+                this.initialStudents = [...names];
+                this.activeStudents = [...names];
+                
+                // Transition
+                this.ui.lobby.style.opacity = '0';
+                setTimeout(() => {
+                    this.ui.lobby.style.display = 'none';
+                    this.ui.app.style.opacity = '1';
+                    this.renderWheel();
+                    this.updateStats();
+                    this.renderCategories();
+                    confettiEffects.init();
+                }, 500);
+            },
+
+            // --- WHEEL LOGIC ---
+            renderWheel() {
+                const count = this.activeStudents.length;
+                const sliceAngle = 360 / count;
+                this.ui.wheelNames.innerHTML = '';
+                
+                // 1. Generate Gradient
+                // We use 3 main neon colors cycling
+                const colors = ['#22d3ee', '#c084fc', '#f43f5e', '#22c55e', '#f59e0b', '#3b82f6'];
+                let gradientStr = 'conic-gradient(';
+                
+                this.activeStudents.forEach((name, i) => {
+                    const color = colors[i % colors.length];
+                    const start = i * sliceAngle;
+                    const end = (i + 1) * sliceAngle;
+                    gradientStr += `${color} ${start}deg ${end}deg,`;
+
+                    // 2. Generate Text Segment
+                    // To center text in slice, we rotate it to start + half_slice
+                    const textRotation = start + (sliceAngle / 2);
+                    
+                    const seg = document.createElement('div');
+                    seg.className = 'wheel-name-segment';
+                    // Rotate the container to the middle of the slice
+                    seg.style.transform = `rotate(${textRotation}deg)`;
+                    
+                    const text = document.createElement('span');
+                    text.className = 'wheel-text';
+                    text.innerText = name;
+                    
+                    seg.appendChild(text);
+                    this.ui.wheelNames.appendChild(seg);
+                });
+
                 gradientStr = gradientStr.slice(0, -1) + ')';
-                this.ui.wheelGraphic.style.background = gradientStr;
+                this.ui.wheel.style.background = gradientStr;
             },
 
             spinWheel() {
                 if (this.isSpinning) return;
-                if (this.students.length === 0) {
-                    alert("All students have been called! Refilling pool...");
+                if (this.activeStudents.length === 0) {
                     this.resetStudents();
                     return;
                 }
@@ -609,169 +750,194 @@
                 this.ui.spinBtn.disabled = true;
                 this.ui.turnDisplay.classList.remove('active');
 
-                // Logic: Random winner
-                const winnerIndex = Math.floor(Math.random() * this.students.length);
-                const winnerName = this.students[winnerIndex];
+                // 1. Pick Winner
+                const winnerIndex = Math.floor(Math.random() * this.activeStudents.length);
+                const winnerName = this.activeStudents[winnerIndex];
+
+                // 2. Calculate Math
+                // Pointer is at Top (0deg in CSS transform terms if we treat 12 o'clock as start)
+                // However, CSS rotation naturally moves 12 o'clock CW.
+                // Our conic gradient starts at 12 o'clock (0deg).
+                // Segment i is at [i*slice, (i+1)*slice]. Center is i*slice + slice/2.
+                // To bring that center to 0deg (Top), we need to rotate NEGATIVE (counter-clockwise).
+                // Target Rotation = - (CenterAngle).
+                // To spin forward, we add full rotations (360 * 5) and ensure we end up at a value congruent to Target.
                 
-                // Visuals: Spin
-                const sliceAngle = 360 / this.students.length;
-                const targetCenterAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
-                const spins = 1800; // 5 full spins (360 * 5)
-                const rotateAmount = spins + (360 - targetCenterAngle);
+                const sliceAngle = 360 / this.activeStudents.length;
+                const centerAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
+                
+                // Add 5 full spins + distance to target
+                // We want to INCREASE currentRotation to simulate forward spin (CW).
+                // Actually, if we rotate container CW, the segment moves CW away from top.
+                // We want the segment to align with Top.
+                // Distance to move = 360 - centerAngle (this brings it around to top).
+                // Wait, easier logic:
+                // We are at 0. We want CenterAngle to be at 0 (Top).
+                // That means we rotate the board by (360 - CenterAngle).
+                // e.g. if Center is at 90 (3 oclock), we rotate 270 deg to bring it to 12 oclock.
+                
+                let targetRotation = 360 - centerAngle; 
+                
+                // Add randomness to land slightly off-center (but within slice)
+                const fuzz = (Math.random() * (sliceAngle * 0.4)) - (sliceAngle * 0.2);
+                targetRotation += fuzz;
 
-                this.ui.wheel.style.transform = `rotate(${rotateAmount}deg)`;
+                // Ensure we always spin forward by at least 5 turns
+                const minSpins = 5;
+                const fullSpins = 360 * minSpins;
+                
+                // Adjust current rotation to be the base
+                // We need next rotation > currentRotation
+                // Find next multiple of 360 + target
+                let nextRotation = this.currentRotation + fullSpins;
+                const remainder = nextRotation % 360;
+                const adjustment = targetRotation - remainder;
+                
+                // Final value
+                this.currentRotation = nextRotation + adjustment;
+                
+                // Apply
+                const wheelContainer = document.querySelector('.wheel-wrapper'); // Rotate wrapper or contents?
+                // Rotating the inner graphics
+                this.ui.wheel.style.transform = `rotate(${this.currentRotation}deg)`;
+                this.ui.wheelNames.style.transform = `rotate(${this.currentRotation}deg)`;
 
+                // 3. Finish
                 setTimeout(() => {
                     this.startTurn(winnerName, winnerIndex);
-                    // Reset Wheel CSS for next spin
-                    setTimeout(() => {
-                        this.ui.wheel.style.transition = 'none';
-                        this.ui.wheel.style.transform = 'rotate(0deg)';
-                        void this.ui.wheel.offsetWidth; // Force Reflow
-                        this.ui.wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.9, 0.2, 1)';
-                    }, 500);
                 }, 4000);
-            },
-
-            openManualPick() {
-                if (this.students.length === 0) {
-                    alert("No students left to pick! Resetting pool...");
-                    this.resetStudents();
-                    return;
-                }
-
-                this.ui.manualList.innerHTML = '';
-                this.students.forEach((name, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'student-btn';
-                    btn.innerText = name;
-                    btn.onclick = () => {
-                        this.closeManualModal();
-                        this.startTurn(name, idx);
-                    };
-                    this.ui.manualList.appendChild(btn);
-                });
-
-                this.ui.manualModal.style.display = 'flex';
-                setTimeout(() => this.ui.manualModal.classList.add('active'), 10);
-            },
-
-            closeManualModal() {
-                this.ui.manualModal.classList.remove('active');
-                setTimeout(() => this.ui.manualModal.style.display = 'none', 300);
             },
 
             startTurn(name, index) {
                 this.isSpinning = false;
                 this.currentPlayer = name;
                 
-                // Remove from pool
-                this.students.splice(index, 1);
-                this.renderWheel();
-                this.updateStats();
-
-                // UI Updates
+                // Remove from pool logic
+                this.activeStudents.splice(index, 1);
+                
+                // Visual delay then re-render
                 this.ui.spinBtn.disabled = false;
                 this.ui.turnText.innerHTML = `<span class="student-name">${name}</span> is up!`;
                 this.ui.turnDisplay.classList.add('active');
+                
+                // NOTE: We do NOT re-render the wheel immediately because it would snap the rotation.
+                // We wait until the next spin starts or "Manual Reset" to re-render the slices.
+                // Ideally, to show they are gone, we should gray them out or re-render.
+                // Re-rendering changes the slice sizes.
+                // Strategy: Re-render immediately but reset rotation to 0 visually? No, that jumps.
+                // Better Strategy: Keep wheel as is, just mark name, then on next "Spin" click, we re-render quickly before spinning?
+                // SIMPLEST: Re-render now, reset rotation to 0 (no transition).
+                
+                this.ui.wheel.style.transition = 'none';
+                this.ui.wheelNames.style.transition = 'none';
+                
+                this.renderWheel();
+                
+                // Reset rotation tracker to 0 since we rebuilt the wheel
+                this.currentRotation = 0;
+                this.ui.wheel.style.transform = 'rotate(0deg)';
+                this.ui.wheelNames.style.transform = 'rotate(0deg)';
+                
+                // Force reflow
+                void this.ui.wheel.offsetWidth;
+                
+                // Restore transition
+                this.ui.wheel.style.transition = 'transform 4s cubic-bezier(0.15, 0.85, 0.35, 1)';
+                this.ui.wheelNames.style.transition = 'transform 4s cubic-bezier(0.15, 0.85, 0.35, 1)';
+
+                this.updateStats();
                 this.showCategories();
             },
 
+            // --- VIEW MANAGEMENT ---
             showCategories() {
-                this.ui.viewIntro.style.display = 'none';
-                this.ui.viewQ.style.display = 'none';
-                this.ui.viewEmpty.style.display = 'none';
-                this.ui.viewCats.style.display = 'grid';
+                this.ui.intro.style.display = 'none';
+                this.ui.question.style.display = 'none';
+                this.ui.empty.style.display = 'none';
+                this.ui.cats.style.display = 'grid';
             },
 
             selectCategory(catName) {
-                // NEW: Save the precise category key to state
                 this.currentCategory = catName;
-
                 const idx = this.indexes[catName];
                 const list = CATEGORIES[catName];
                 
                 if (idx >= list.length) {
-                    this.ui.viewCats.style.display = 'none';
-                    this.ui.viewEmpty.style.display = 'flex';
+                    this.ui.cats.style.display = 'none';
+                    this.ui.empty.style.display = 'flex';
                     return;
                 }
 
                 this.currentQ = list[idx];
-                
-                // Render Question
-                this.ui.badge.innerText = this.currentQ.type;
-                this.ui.badge.className = `badge badge-${this.currentQ.type.toLowerCase()}`;
-                this.ui.topic.innerText = catName;
-                this.ui.qText.innerText = this.currentQ.q;
-                this.ui.aText.innerText = this.currentQ.a;
-                this.ui.aText.classList.remove('visible');
-                
-                // Reset Buttons
-                this.ui.btnReveal.style.display = 'block';
-                this.ui.btnCorrect.style.display = 'none';
-                this.ui.btnWrong.style.display = 'none';
+                this.renderQuestion();
+            },
 
-                // Switch View
-                this.ui.viewCats.style.display = 'none';
-                this.ui.viewQ.style.display = 'flex';
+            renderQuestion() {
+                // DOM Elements
+                const els = {
+                    badge: document.getElementById('q-badge'),
+                    topic: document.getElementById('q-topic'),
+                    text: document.getElementById('q-text'),
+                    answer: document.getElementById('a-text'),
+                    reveal: document.getElementById('btn-reveal'),
+                    correct: document.getElementById('btn-correct'),
+                    wrong: document.getElementById('btn-wrong'),
+                };
+
+                // Set Data
+                els.badge.innerText = this.currentQ.type;
+                els.badge.className = `badge badge-${this.currentQ.type.toLowerCase()}`;
+                els.topic.innerText = this.currentCategory;
+                els.text.innerText = this.currentQ.q;
+                els.answer.innerText = this.currentQ.a;
+                els.answer.classList.remove('visible');
+
+                // Button State
+                els.reveal.style.display = 'block';
+                els.correct.style.display = 'none';
+                els.wrong.style.display = 'none';
+
+                // View Switch
+                this.ui.cats.style.display = 'none';
+                this.ui.question.style.display = 'flex';
             },
 
             revealAnswer() {
-                this.ui.aText.classList.add('visible');
-                this.ui.btnReveal.style.display = 'none';
-                this.ui.btnCorrect.style.display = 'block';
-                this.ui.btnWrong.style.display = 'block';
+                document.getElementById('a-text').classList.add('visible');
+                document.getElementById('btn-reveal').style.display = 'none';
+                document.getElementById('btn-correct').style.display = 'block';
+                document.getElementById('btn-wrong').style.display = 'block';
             },
 
             handleResult(isCorrect) {
                 this.stats.total++;
                 if (isCorrect) {
                     this.stats.correct++;
-                    confettiEffects.fire(); 
+                    confettiEffects.fire();
                 }
-                
-                // BUG FIX: Use stored key instead of innerText
-                const catName = this.currentCategory;
-                
-                if (this.indexes[catName] !== undefined) {
-                    this.indexes[catName]++;
-                }
+
+                // Increment index
+                this.indexes[this.currentCategory]++;
                 
                 this.updateStats();
 
-                // Return to start
-                this.ui.viewQ.style.display = 'none';
-                this.ui.viewIntro.style.display = 'block';
+                // Reset UI
+                this.ui.question.style.display = 'none';
+                this.ui.intro.style.display = 'block';
                 this.ui.turnDisplay.classList.remove('active');
-                
-                // Reset text
                 this.ui.turnText.innerText = "Spin the Wheel!";
                 setTimeout(() => this.ui.turnDisplay.classList.add('active'), 100);
             },
 
-            useLifeline(type) {
-                if (this.lifelines[type] > 0) {
-                    this.lifelines[type]--;
-                    this.updateLifelinesUI();
+            // --- UTILS ---
+            resetStudents() {
+                if(confirm("Reset the student pool?")) {
+                    this.activeStudents = [...this.initialStudents];
+                    this.renderWheel();
+                    this.updateStats();
                 }
             },
-
-            updateLifelinesUI() {
-                ['notes', 'friend', 'bowen'].forEach(type => {
-                    const btn = document.getElementById(`life-${type}`);
-                    const countEl = document.getElementById(`count-${type}`);
-                    const count = this.lifelines[type];
-                    
-                    countEl.innerText = count;
-                    if (count === 0) {
-                        btn.disabled = true;
-                    } else {
-                        btn.disabled = false;
-                    }
-                });
-            },
-
+            
             updateStats() {
                 const percent = this.stats.total === 0 ? 0 : Math.round((this.stats.correct / this.stats.total) * 100);
                 
@@ -779,22 +945,16 @@
                 document.getElementById('score-correct').innerText = this.stats.correct;
                 document.getElementById('score-total').innerText = this.stats.total;
                 document.getElementById('progress-fill').style.width = percent + "%";
-                document.getElementById('students-left-count').innerText = this.students.length;
+                document.getElementById('students-left-count').innerText = this.activeStudents.length;
 
+                // Color coding
                 const pEl = document.getElementById('score-percent');
                 if (percent >= 60) pEl.style.color = "var(--neon-green)";
                 else if (percent > 0) pEl.style.color = "var(--neon-pink)";
-                else pEl.style.color = "#fff";
-            },
-
-            resetStudents() {
-                this.students = [...ALL_STUDENTS];
-                this.renderWheel();
-                this.updateStats();
             },
 
             renderCategories() {
-                this.ui.viewCats.innerHTML = '';
+                this.ui.cats.innerHTML = '';
                 Object.keys(CATEGORIES).forEach(cat => {
                     const btn = document.createElement('div');
                     btn.className = 'cat-btn';
@@ -805,14 +965,49 @@
                     if(cat.includes('Refraction')) icon = 'fa-glasses';
                     if(cat.includes('Math')) icon = 'fa-calculator';
 
-                    btn.innerHTML = `<i class="fas ${icon}" style="font-size: 2rem; color:var(--neon-cyan); margin-bottom: 5px;"></i> <span>${cat}</span>`;
+                    btn.innerHTML = `<i class="fas ${icon}"></i> <span>${cat}</span>`;
                     btn.onclick = () => this.selectCategory(cat);
-                    this.ui.viewCats.appendChild(btn);
+                    this.ui.cats.appendChild(btn);
                 });
+            },
+
+            useLifeline(type) {
+                if (this.lifelines[type] > 0) {
+                    this.lifelines[type]--;
+                    document.getElementById(`count-${type}`).innerText = this.lifelines[type];
+                    if(this.lifelines[type] === 0) {
+                        document.getElementById(`life-${type}`).disabled = true;
+                    }
+                }
+            },
+
+            openManualPick() {
+                const list = document.getElementById('manual-list');
+                list.innerHTML = '';
+                this.activeStudents.forEach((name, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'student-btn';
+                    btn.innerText = name;
+                    btn.onclick = () => {
+                        this.closeManualModal();
+                        this.startTurn(name, idx);
+                    };
+                    list.appendChild(btn);
+                });
+                
+                const modal = document.getElementById('manual-modal');
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('active'), 10);
+            },
+
+            closeManualModal() {
+                const modal = document.getElementById('manual-modal');
+                modal.classList.remove('active');
+                setTimeout(() => modal.style.display = 'none', 300);
             }
         };
 
-        // --- VISUALS ---
+        // --- VISUAL EFFECTS ---
         const confettiEffects = {
             canvas: null,
             ctx: null,
@@ -833,15 +1028,16 @@
 
             fire() {
                 const colors = ['#22d3ee', '#f43f5e', '#c084fc', '#f59e0b', '#22c55e'];
-                for(let i=0; i<100; i++) {
+                for(let i=0; i<150; i++) {
                     this.particles.push({
                         x: window.innerWidth / 2,
                         y: window.innerHeight / 2,
-                        vx: (Math.random() - 0.5) * 20,
-                        vy: (Math.random() - 0.5) * 20,
-                        size: Math.random() * 5 + 2,
+                        vx: (Math.random() - 0.5) * 25,
+                        vy: (Math.random() - 0.5) * 25,
+                        size: Math.random() * 6 + 2,
                         color: colors[Math.floor(Math.random() * colors.length)],
-                        life: 1
+                        life: 1,
+                        decay: Math.random() * 0.015 + 0.005
                     });
                 }
             },
@@ -853,8 +1049,8 @@
                     const p = this.particles[i];
                     p.x += p.vx;
                     p.y += p.vy;
-                    p.vy += 0.5; // Gravity
-                    p.life -= 0.02;
+                    p.vy += 0.3; // Gravity
+                    p.life -= p.decay;
 
                     if(p.life <= 0) {
                         this.particles.splice(i, 1);
@@ -871,8 +1067,8 @@
             }
         };
 
-        // Start
-        game.init();
+        // BOOTSTRAP
+        game.initLobby();
 
     </script>
 </body>
