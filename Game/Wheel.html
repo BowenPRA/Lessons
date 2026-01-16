@@ -469,7 +469,8 @@
          */
 
         // --- DATA ---
-        const ALL_STUDENTS = ["Meelo", "Vy", "Bao", "Chris", "Khoi", "Angelo", "Jackson", "Kun", "Kim Long"];
+        // Vy removed
+        const ALL_STUDENTS = ["Meelo", "Bao", "Chris", "Khoi", "Angelo", "Jackson", "Kun", "Kim Long"];
         
         const CATEGORIES = {
             "Light & Color": [
@@ -526,6 +527,7 @@
             indexes: { "Light & Color": 0, "Space & Universe": 0, "Refraction": 0, "Mathematics": 0 },
             currentPlayer: null,
             currentQ: null,
+            currentCategory: null, // NEW: Track category key internally
             isSpinning: false,
 
             // UI Elements
@@ -571,13 +573,9 @@
                 this.ui.wheelNames.innerHTML = '';
                 
                 // --- Dynamic Gradient Construction ---
-                // We use 3 repeating colors: Cyan, Purple, Pink
                 const wheelColors = ['#22d3ee', '#c084fc', '#f43f5e'];
                 let gradientStr = 'conic-gradient(';
 
-                // Add pointer adjustment offset to start at top (optional, but 0deg is usually Top in conic)
-                // Actually conic 0deg is Top.
-                
                 this.students.forEach((name, i) => {
                     // 1. Setup Background Slice
                     const color = wheelColors[i % 3];
@@ -590,15 +588,11 @@
                     const nameEl = document.createElement('div');
                     nameEl.className = 'wheel-name';
                     nameEl.innerText = name;
-                    // Rotate to center of slice
                     const rotateDeg = startDeg + (degPerSlice / 2);
-                    // -90deg offset often needed because text flows horizontal, we want it radial
-                    // But here we want text radiating OUT from center.
                     nameEl.style.transform = `rotate(${rotateDeg}deg)`;
                     this.ui.wheelNames.appendChild(nameEl);
                 });
                 
-                // Clean up trailing comma and close
                 gradientStr = gradientStr.slice(0, -1) + ')';
                 this.ui.wheelGraphic.style.background = gradientStr;
             },
@@ -621,23 +615,8 @@
                 
                 // Visuals: Spin
                 const sliceAngle = 360 / this.students.length;
-                
-                // Target angle: Center of the winning slice
-                // Note: The pointer is at TOP (0 deg visually). 
-                // The gradient starts at 0deg (Top).
-                // So if Index 0 wins, it occupies 0 to X degrees. Center is X/2.
-                // To get X/2 to the Top, we need to rotate negative X/2.
-                
                 const targetCenterAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
-                
                 const spins = 1800; // 5 full spins (360 * 5)
-                
-                // Calculate rotation needed to bring target to top (0deg)
-                // We rotate the container clockwise.
-                // If Target is at 10deg. We need to rotate -10deg to bring it to 0.
-                // But we want to spin forward (positive).
-                // So we spin (360 - 10) = 350deg.
-                
                 const rotateAmount = spins + (360 - targetCenterAngle);
 
                 this.ui.wheel.style.transform = `rotate(${rotateAmount}deg)`;
@@ -674,7 +653,6 @@
                 });
 
                 this.ui.manualModal.style.display = 'flex';
-                // Trigger transition
                 setTimeout(() => this.ui.manualModal.classList.add('active'), 10);
             },
 
@@ -707,6 +685,9 @@
             },
 
             selectCategory(catName) {
+                // NEW: Save the precise category key to state
+                this.currentCategory = catName;
+
                 const idx = this.indexes[catName];
                 const list = CATEGORIES[catName];
                 
@@ -747,11 +728,16 @@
                 this.stats.total++;
                 if (isCorrect) {
                     this.stats.correct++;
-                    confettiEffects.fire(); // Small burst for correct answer
+                    confettiEffects.fire(); 
                 }
                 
-                const catName = this.ui.topic.innerText;
-                this.indexes[catName]++;
+                // BUG FIX: Use stored key instead of innerText
+                const catName = this.currentCategory;
+                
+                if (this.indexes[catName] !== undefined) {
+                    this.indexes[catName]++;
+                }
+                
                 this.updateStats();
 
                 // Return to start
