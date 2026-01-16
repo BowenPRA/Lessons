@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 8 Cosmic Trivia</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE: Deep Cosmic Theme --- */
+            --bg-deep: #020617;
+            --glass-panel: rgba(15, 23, 42, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+
+            /* UI Colors */
+            --neon-blue: #3b82f6;
+            --neon-cyan: #22d3ee;
+            --neon-pink: #f43f5e;
+            --neon-purple: #c084fc;
+            --neon-green: #22c55e;
+            --neon-orange: #f59e0b;
+
+            --sidebar-width: 300px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            background: radial-gradient(ellipse at bottom, #4c1d95 0%, #1e1b4b 40%, #020617 100%);
+            color: var(--text-primary);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* --- STARFIELD ANIMATION --- */
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(1.5px 1.5px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 50px 160px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 150px 200px, rgba(255,255,255,0.8), rgba(0,0,0,0));
+            background-size: 300px 300px;
+            animation: twinkle 120s linear infinite;
+            z-index: -1;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-300px); } }
+
+        /* --- LAYOUT --- */
+        .app-container {
+            display: flex; width: 100%; height: 100%; max-width: 1920px; margin: 0 auto;
+        }
+
+        /* --- SIDEBAR (STATS) --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--glass-panel);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; padding: 2rem; gap: 1.5rem;
+            z-index: 20;
+        }
+
+        .brand {
+            font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.75rem;
+            line-height: 1.1; color: #fff; text-shadow: 0 0 20px rgba(192, 132, 252, 0.4);
+        }
+        .brand span { color: var(--neon-cyan); }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 1.2rem; border-radius: 16px;
+        }
+        .stat-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .stat-value { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 700; color: #fff; }
+        .stat-sub { font-size: 0.9rem; color: var(--neon-cyan); }
+
+        .goal-container { margin-top: auto; }
+        .progress-bar-bg { background: rgba(255,255,255,0.1); height: 12px; border-radius: 6px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan)); width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .goal-marker { height: 16px; width: 2px; background: #fff; position: absolute; top: -2px; left: 60%; box-shadow: 0 0 10px white; }
+
+        /* --- MAIN ARENA --- */
+        .arena {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 2rem; position: relative;
+        }
+
+        /* --- TOP HEADER (Current Student) --- */
+        .turn-display {
+            font-family: 'Outfit'; font-size: 2.5rem; font-weight: 700;
+            margin-bottom: 2rem; text-align: center; height: 60px;
+            text-shadow: 0 0 25px rgba(34, 211, 238, 0.3);
+            opacity: 0; transform: translateY(-20px); transition: all 0.5s ease;
+        }
+        .turn-display.active { opacity: 1; transform: translateY(0); }
+        .student-name { color: var(--neon-pink); }
+
+        /* --- SPLIT CONTENT --- */
+        .content-split {
+            display: flex; width: 100%; max-width: 1400px; height: 600px; gap: 3rem; align-items: center;
+        }
+
+        /* --- LEFT: WHEEL --- */
+        .wheel-area {
+            flex: 1; display: flex; justify-content: center; align-items: center;
+            position: relative;
+        }
+        
+        .wheel-container {
+            width: 400px; height: 400px; position: relative;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.1);
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+            transition: transform 4s cubic-bezier(0.1, 0.9, 0.2, 1); /* Spin easing */
+            overflow: hidden;
+        }
+
+        .wheel {
+            width: 100%; height: 100%; border-radius: 50%;
+            background: conic-gradient(
+                from 0deg, 
+                var(--neon-purple) 0deg 40deg, 
+                #1e1b4b 40deg 80deg, 
+                var(--neon-blue) 80deg 120deg, 
+                #1e1b4b 120deg 160deg,
+                var(--neon-cyan) 160deg 200deg, 
+                #1e1b4b 200deg 240deg,
+                var(--neon-pink) 240deg 280deg, 
+                #1e1b4b 280deg 320deg,
+                var(--neon-purple) 320deg 360deg
+            );
+            position: relative;
+        }
+        
+        /* Wheel Names overlay */
+        .wheel-names { position: absolute; top:0; left:0; width:100%; height:100%; border-radius:50%; }
+        .wheel-name {
+            position: absolute; top: 50%; left: 50%;
+            transform-origin: 0 0;
+            width: 50%; height: 2px;
+            display: flex; align-items: center;
+            padding-left: 60px; /* Push text to edge */
+            font-family: 'Outfit'; font-weight: 700; font-size: 1rem; color: white;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .wheel-pointer {
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; 
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid var(--neon-orange);
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
+            z-index: 10;
+        }
+        
+        .spin-btn {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80px; height: 80px; border-radius: 50%;
+            background: #fff; border: none; cursor: pointer;
+            font-family: 'Outfit'; font-weight: 800; color: var(--bg-deep);
+            box-shadow: 0 0 20px rgba(255,255,255,0.5);
+            z-index: 15; transition: all 0.2s;
+        }
+        .spin-btn:hover { transform: translate(-50%, -50%) scale(1.1); }
+        .spin-btn:disabled { background: #334155; color: #64748b; cursor: default; transform: translate(-50%, -50%) scale(1); }
+
+        /* --- RIGHT: QUESTION CARD --- */
+        .card-area {
+            flex: 1.3; perspective: 1000px;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            min-height: 400px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Top border color for aesthetic */
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-pink));
+        }
+
+        /* State: Category Selection */
+        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; display: none; }
+        .cat-btn {
+            padding: 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; color: #fff; font-family: 'Outfit'; font-size: 1.2rem; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn:hover { background: rgba(34, 211, 238, 0.2); border-color: var(--neon-cyan); transform: translateY(-3px); }
+
+        /* State: Question Display */
+        .q-display { display: none; width: 100%; flex-direction: column; align-items: center; gap: 1.5rem; }
+        .badge {
+            padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            display: inline-block; margin-bottom: 10px;
+        }
+        .badge-rookie { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .badge-pro { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .badge-boss { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
+
+        .question-text { font-size: 1.5rem; line-height: 1.4; margin-bottom: 1rem; }
+        .answer-text { 
+            font-size: 1.3rem; color: var(--neon-cyan); font-weight: 600; 
+            min-height: 60px; display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .answer-text.visible { opacity: 1; }
+
+        .controls { display: flex; gap: 1rem; margin-top: 1rem; }
+        .btn {
+            padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; font-family: 'Outfit'; cursor: pointer;
+            transition: all 0.2s; color: #fff;
+        }
+        .btn-reveal { background: #475569; width: 100%; }
+        .btn-reveal:hover { background: #64748b; }
+        
+        .btn-correct { background: var(--neon-green); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); }
+        .btn-wrong { background: var(--neon-pink); box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4); }
+        .btn-action { display: none; } /* Hidden until reveal */
+        
+        /* Modal for Empty Students */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.9); display: none; align-items: center; justify-content: center; z-index: 50;
+        }
+        .modal-card {
+            background: #1e293b; padding: 2rem; border-radius: 20px; text-align: center; border: 1px solid var(--neon-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="brand">Year 8<br><span>Trivia Challenge</span></div>
+            
+            <div class="stat-card">
+                <div class="stat-title">Current Score</div>
+                <div class="stat-value" id="score-percent">0%</div>
+                <div class="stat-sub"><span id="score-correct">0</span> / <span id="score-total">0</span> Correct</div>
+            </div>
+
+            <div class="goal-container">
+                <div class="stat-title">Class Goal: 60%</div>
+                <div style="position: relative; height: 12px; margin-top: 8px;">
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="goal-marker" title="60% Goal"></div>
+                </div>
+            </div>
+
+            <div class="stat-card" style="margin-top: auto;">
+                <div class="stat-title">Students Remaining</div>
+                <div class="stat-value" style="font-size: 1.5rem;" id="students-left-count">9</div>
+            </div>
+            
+            <button class="btn btn-reveal" onclick="game.resetStudents()" style="margin-top: 10px; font-size: 0.8rem;">Refill Students</button>
+        </nav>
+
+        <main class="arena">
+            
+            <div class="turn-display" id="turn-display">
+                <span id="turn-text">Spin the Wheel!</span>
+            </div>
+
+            <div class="content-split">
+                
+                <div class="wheel-area">
+                    <div class="wheel-pointer"></div>
+                    <div class="wheel-container" id="wheel-container">
+                        <div class="wheel" id="wheel-graphic">
+                            </div>
+                        <div class="wheel-names" id="wheel-names">
+                            </div>
+                    </div>
+                    <button class="spin-btn" id="spin-btn" onclick="game.spinWheel()">SPIN</button>
+                </div>
+
+                <div class="card-area">
+                    <div class="card">
+                        
+                        <div id="view-intro">
+                            <h2 style="font-family:'Outfit'; font-size:2rem; margin-bottom:1rem; color:var(--neon-cyan);">Ready?</h2>
+                            <p style="color:#cbd5e1; font-size:1.2rem;">Spin the wheel to select a student.</p>
+                        </div>
+
+                        <div id="view-categories" class="cat-grid">
+                            </div>
+
+                        <div id="view-question" class="q-display">
+                            <div id="q-badge" class="badge">Rookie</div>
+                            <div id="q-topic" style="color:var(--text-secondary); font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">Topic</div>
+                            <div id="q-text" class="question-text">Question goes here...</div>
+                            
+                            <div id="a-text" class="answer-text">Answer Hidden</div>
+
+                            <div class="controls">
+                                <button id="btn-reveal" class="btn btn-reveal" onclick="game.revealAnswer()">Reveal Answer</button>
+                                <button id="btn-correct" class="btn btn-correct btn-action" onclick="game.handleResult(true)"><i class="fas fa-check"></i> Correct</button>
+                                <button id="btn-wrong" class="btn btn-wrong btn-action" onclick="game.handleResult(false)"><i class="fas fa-times"></i> Wrong</button>
+                            </div>
+                        </div>
+
+                        <div id="view-empty" style="display:none;">
+                            <h2 style="font-family:'Outfit'; color:var(--neon-pink);">Category Completed!</h2>
+                            <p>All questions in this category have been asked.</p>
+                            <button class="btn btn-reveal" style="margin-top:1rem;" onclick="game.showCategories()">Pick Another</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        /**
+         * CAMBRIDGE TRIVIA ENGINE
+         */
+
+        // --- DATA ---
+        const ALL_STUDENTS = ["Meelo", "Vy", "Bao", "Chris", "Khoi", "Angelo", "Jackson", "Kun", "Kim Long"];
+        
+        // Structured Data based on your Host Sheet
+        const CATEGORIES = {
+            "Light & Color": [
+                { id: 1, type: "Rookie", q: "In 1666, which famous scientist used a prism to split white light into a spectrum?", a: "Isaac Newton" },
+                { id: 2, type: "Rookie", q: "What is the scientific name for the process where white light splits into different colors inside a prism?", a: "Dispersion" },
+                { id: 3, type: "Rookie", q: "What are the three Primary Colors of light?", a: "Red, Green, and Blue" },
+                { id: 4, type: "Rookie", q: "True or False: A green filter blocks green light.", a: "False (It transmits green)" },
+                { id: 5, type: "Pro", q: "List the three Secondary Colors of light.", a: "Cyan, Magenta, and Yellow" },
+                { id: 6, type: "Pro", q: "If you mix Red light and Green light together, what color do you get?", a: "Yellow" },
+                { id: 7, type: "Pro", q: "If white light shines on a red shirt, what color does it appear, and why?", a: "Red (Reflects red, absorbs others)" },
+                { id: 8, type: "Pro", q: "An RGB code is (255, 0, 255). What color does this create?", a: "Magenta" },
+                { id: 9, type: "Boss", q: "Which color of light travels the slowest in glass and therefore bends the most?", a: "Violet" },
+                { id: 10, type: "Boss", q: "We don’t see a blue sky because of reflection. What is the process where blue light bounces off gas particles?", a: "Scattering (Rayleigh)" },
+                { id: 11, type: "Boss", q: "Explain why a Red shirt looks Black in a room lit only by Blue light.", a: "It absorbs the blue light, reflecting nothing." }
+            ],
+            "Space & Universe": [
+                { id: 12, type: "Rookie", q: "A galaxy is a huge group of stars, gas, and dust held together by what force?", a: "Gravity" },
+                { id: 13, type: "Rookie", q: "What is the name of our home galaxy?", a: "The Milky Way" },
+                { id: 14, type: "Rookie", q: "True or False: The Asteroid Belt is located between Earth and Mars.", a: "False (Between Mars & Jupiter)" },
+                { id: 15, type: "Pro", q: "Astronomers classify galaxies into three main shapes. Name two of them.", a: "Spiral, Elliptical, or Irregular" },
+                { id: 16, type: "Pro", q: "Ceres is spherical and in the asteroid belt. What is it classified as?", a: "A Dwarf Planet" },
+                { id: 17, type: "Pro", q: "Order from smallest to largest: Solar System, Universe, Galaxy.", a: "Solar System → Galaxy → Universe" },
+                { id: 18, type: "Boss", q: "Why do scientists sometimes call asteroids 'Space Potatoes'?", a: "They have irregular, lumpy shapes due to low gravity." },
+                { id: 19, type: "Boss", q: "Approximately how wide is the Milky Way galaxy?", a: "100,000 Light Years" },
+                { id: 20, type: "Boss", q: "Explain the difference between an Asteroid, a Comet, and a Meteor.", a: "Asteroid: Rock/Metal. Comet: Ice/Dust. Meteor: Entering Atmosphere." }
+            ],
+            "Refraction": [
+                { id: 21, type: "Rookie", q: "What is the definition of Refraction?", a: "Bending of light passing between mediums." },
+                { id: 22, type: "Rookie", q: "What is the approximate speed of light in air?", a: "300,000 km/s" },
+                { id: 23, type: "Pro", q: "Refraction happens because light changes its ________ when entering a new material.", a: "Speed" },
+                { id: 24, type: "Pro", q: "Light from Air (less dense) to Glass (denser): bends Towards or Away from normal?", a: "Towards the normal" },
+                { id: 25, type: "Pro", q: "Cameras use glass lenses. What part of the human body acts like a lens?", a: "The Eye" },
+                { id: 26, type: "Boss", q: "Why does a hidden coin in a cup become visible when you pour water in?", a: "Refraction bends light over the rim to your eye." },
+                { id: 27, type: "Boss", q: "If you look at a straw in a glass of water, it appears broken. Why?", a: "Refraction (Optical Illusion)" }
+            ],
+            "Mathematics": [
+                { id: 28, type: "Rookie", q: "Function: x → [×4] → [+7] → y. If x is 2, what is y?", a: "15" },
+                { id: 29, type: "Rookie", q: "Identify the y-intercept: y = 4x + 3", a: "3" },
+                { id: 30, type: "Rookie", q: "Calculate y for y = 10 - x when x = -3.", a: "13" },
+                { id: 31, type: "Pro", q: "If y = x + 8, what is the inverse function?", a: "y = x - 8" },
+                { id: 32, type: "Pro", q: "In y = mx + c, what does m represent?", a: "The Gradient (Steepness)" },
+                { id: 33, type: "Pro", q: "T/F: y = 3x + 4 is parallel to y = 3x - 10.", a: "True (Same gradient)" },
+                { id: 34, type: "Pro", q: "Which is Non-Linear? A) y=4x or B) y=x²?", a: "B) y = x²" },
+                { id: 35, type: "Boss", q: "Find the midpoint between (0,0) and (8,4).", a: "(4, 2)" },
+                { id: 36, type: "Boss", q: "Find intersection: y = x and y = 3.", a: "(3, 3)" }
+            ]
+        };
+
+        // --- GAME LOGIC ---
+        const game = {
+            students: [...ALL_STUDENTS], // Mutable copy
+            stats: { total: 0, correct: 0 },
+            indexes: { "Light & Color": 0, "Space & Universe": 0, "Refraction": 0, "Mathematics": 0 },
+            currentPlayer: null,
+            currentQ: null,
+            isSpinning: false,
+
+            // UI Elements
+            ui: {
+                wheel: document.getElementById('wheel-container'),
+                wheelGraphic: document.getElementById('wheel-graphic'),
+                wheelNames: document.getElementById('wheel-names'),
+                spinBtn: document.getElementById('spin-btn'),
+                turnDisplay: document.getElementById('turn-display'),
+                turnText: document.getElementById('turn-text'),
+                
+                // Views
+                viewIntro: document.getElementById('view-intro'),
+                viewCats: document.getElementById('view-categories'),
+                viewQ: document.getElementById('view-question'),
+                viewEmpty: document.getElementById('view-empty'),
+                
+                // Q Elements
+                badge: document.getElementById('q-badge'),
+                topic: document.getElementById('q-topic'),
+                qText: document.getElementById('q-text'),
+                aText: document.getElementById('a-text'),
+                btnReveal: document.getElementById('btn-reveal'),
+                btnCorrect: document.getElementById('btn-correct'),
+                btnWrong: document.getElementById('btn-wrong')
+            },
+
+            init() {
+                this.renderWheel();
+                this.updateStats();
+                this.renderCategories();
+            },
+
+            renderWheel() {
+                const count = this.students.length;
+                const degPerSlice = 360 / count;
+                
+                this.ui.wheelNames.innerHTML = '';
+                
+                // Generate Conic Gradient dynamically for the slices
+                let gradientStr = '';
+                const colors = ['#c084fc', '#3b82f6', '#22d3ee', '#f43f5e', '#22c55e']; // Purple, Blue, Cyan, Pink, Green
+                
+                this.students.forEach((name, i) => {
+                    // Gradient Slices
+                    const startDeg = i * degPerSlice;
+                    const endDeg = (i + 1) * degPerSlice;
+                    const color = colors[i % colors.length];
+                    // CSS Conic gradient syntax is tricky to build strictly via loop for n items,
+                    // so we use simple dividers or just CSS rotation for text.
+                    // Simplified approach: Render text at correct rotation.
+                    
+                    const nameEl = document.createElement('div');
+                    nameEl.className = 'wheel-name';
+                    nameEl.innerText = name;
+                    nameEl.style.transform = `rotate(${startDeg + (degPerSlice/2)}deg)`;
+                    this.ui.wheelNames.appendChild(nameEl);
+                });
+            },
+
+            spinWheel() {
+                if (this.isSpinning) return;
+                if (this.students.length === 0) {
+                    alert("All students have been called! Refilling pool...");
+                    this.resetStudents();
+                    return;
+                }
+
+                this.isSpinning = true;
+                this.ui.spinBtn.disabled = true;
+                this.ui.turnDisplay.classList.remove('active');
+
+                // Determine winner logic
+                const winnerIndex = Math.floor(Math.random() * this.students.length);
+                const winnerName = this.students[winnerIndex];
+                
+                // Calculate Rotation
+                // We need to land such that the winner slice is at TOP (270deg or -90deg in CSS space depends on setup)
+                // My pointer is at TOP. 
+                // Angle per slice = 360/count. 
+                // Center of winner slice = winnerIndex * angle + angle/2.
+                // To bring that to Top (0deg for calculation, usually -90 visual), we rotate negative.
+                
+                const sliceAngle = 360 / this.students.length;
+                const targetAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
+                
+                // Add lots of full spins (360 * 5) + offset to align with pointer (which is at top)
+                // If 0deg is right (standard css), top is 270.
+                // Let's just rotate large amount and calculate where it lands visually.
+                
+                const spins = 1800; // 5 spins
+                // Adjustment: To get index i to top. 
+                // Rotation = spins - targetAngle - 90 (to align with top pointer? Trial & error usually safest)
+                const rotateAmount = spins + (360 - targetAngle) - 90;
+
+                this.ui.wheel.style.transform = `rotate(${rotateAmount}deg)`;
+
+                setTimeout(() => {
+                    this.isSpinning = false;
+                    this.currentPlayer = winnerName;
+                    
+                    // Update UI
+                    this.ui.turnText.innerHTML = `<span class="student-name">${winnerName}</span> is up!`;
+                    this.ui.turnDisplay.classList.add('active');
+                    
+                    // Remove student from pool for next time
+                    this.students.splice(winnerIndex, 1);
+                    this.renderWheel(); // Re-render for next spin (visual snap back is hidden by flow usually, but here we reset transform)
+                    this.ui.wheel.style.transition = 'none';
+                    this.ui.wheel.style.transform = 'rotate(0deg)';
+                    // Force reflow
+                    void this.ui.wheel.offsetWidth;
+                    this.ui.wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.9, 0.2, 1)';
+                    
+                    // Show Categories
+                    this.showCategories();
+                    this.ui.spinBtn.disabled = false;
+                    this.updateStats(); // to update student count
+
+                }, 4000);
+            },
+
+            showCategories() {
+                this.ui.viewIntro.style.display = 'none';
+                this.ui.viewQ.style.display = 'none';
+                this.ui.viewEmpty.style.display = 'none';
+                this.ui.viewCats.style.display = 'grid';
+            },
+
+            selectCategory(catName) {
+                const idx = this.indexes[catName];
+                const list = CATEGORIES[catName];
+                
+                if (idx >= list.length) {
+                    this.ui.viewCats.style.display = 'none';
+                    this.ui.viewEmpty.style.display = 'flex';
+                    return;
+                }
+
+                this.currentQ = list[idx];
+                
+                // Render Question
+                this.ui.badge.innerText = this.currentQ.type;
+                this.ui.badge.className = `badge badge-${this.currentQ.type.toLowerCase()}`;
+                this.ui.topic.innerText = catName;
+                this.ui.qText.innerText = this.currentQ.q;
+                this.ui.aText.innerText = this.currentQ.a;
+                this.ui.aText.classList.remove('visible');
+                
+                // Reset Buttons
+                this.ui.btnReveal.style.display = 'block';
+                this.ui.btnCorrect.style.display = 'none';
+                this.ui.btnWrong.style.display = 'none';
+
+                // Switch View
+                this.ui.viewCats.style.display = 'none';
+                this.ui.viewQ.style.display = 'flex';
+            },
+
+            revealAnswer() {
+                this.ui.aText.classList.add('visible');
+                this.ui.btnReveal.style.display = 'none';
+                this.ui.btnCorrect.style.display = 'block';
+                this.ui.btnWrong.style.display = 'block';
+            },
+
+            handleResult(isCorrect) {
+                // Update Logic
+                this.stats.total++;
+                if (isCorrect) this.stats.correct++;
+                
+                // Increment category index
+                const catName = this.ui.topic.innerText;
+                this.indexes[catName]++;
+
+                this.updateStats();
+
+                // Return to start
+                this.ui.viewQ.style.display = 'none';
+                this.ui.viewIntro.style.display = 'block';
+                this.ui.turnDisplay.classList.remove('active');
+                
+                // Reset for next spin
+                this.ui.turnText.innerText = "Spin the Wheel!";
+                setTimeout(() => this.ui.turnDisplay.classList.add('active'), 100);
+            },
+
+            updateStats() {
+                const percent = this.stats.total === 0 ? 0 : Math.round((this.stats.correct / this.stats.total) * 100);
+                
+                document.getElementById('score-percent').innerText = percent + "%";
+                document.getElementById('score-correct').innerText = this.stats.correct;
+                document.getElementById('score-total').innerText = this.stats.total;
+                document.getElementById('progress-fill').style.width = percent + "%";
+                document.getElementById('students-left-count').innerText = this.students.length;
+
+                // Color code the percent
+                const pEl = document.getElementById('score-percent');
+                if (percent >= 60) pEl.style.color = "var(--neon-green)";
+                else if (percent > 0) pEl.style.color = "var(--neon-pink)";
+                else pEl.style.color = "#fff";
+            },
+
+            resetStudents() {
+                this.students = [...ALL_STUDENTS];
+                this.renderWheel();
+                this.updateStats();
+            },
+
+            renderCategories() {
+                this.ui.viewCats.innerHTML = '';
+                Object.keys(CATEGORIES).forEach(cat => {
+                    const btn = document.createElement('div');
+                    btn.className = 'cat-btn';
+                    
+                    // Add icon based on category
+                    let icon = 'fa-star';
+                    if(cat.includes('Light')) icon = 'fa-lightbulb';
+                    if(cat.includes('Space')) icon = 'fa-rocket';
+                    if(cat.includes('Refraction')) icon = 'fa-glasses';
+                    if(cat.includes('Math')) icon = 'fa-calculator';
+
+                    btn.innerHTML = `<i class="fas ${icon}" style="margin-right:10px; color:var(--neon-cyan);"></i> ${cat}`;
+                    btn.onclick = () => this.selectCategory(cat);
+                    this.ui.viewCats.appendChild(btn);
+                });
+            }
+        };
+
+        // Start
+        game.init();
+
+    </script>
+</body>
+</html>
