@@ -193,15 +193,22 @@
                 0 20px 50px rgba(0,0,0,0.6);
             margin-bottom: 2rem;
             z-index: 5;
+            /* Container clip for clean edges */
+            overflow: visible;
         }
 
-        .wheel {
-            width: 100%; height: 100%; border-radius: 50%;
+        /* The Rotator - Single source of truth for rotation */
+        .wheel-rotator {
+            width: 100%; height: 100%;
+            border-radius: 50%;
             position: relative;
             overflow: hidden;
-            /* Rotation Logic */
-            transition: transform 4s cubic-bezier(0.15, 0.85, 0.35, 1); 
-            /* Gradient injected by JS */
+            transition: transform 4s cubic-bezier(0.15, 0.85, 0.35, 1);
+        }
+
+        .wheel-background {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            border-radius: 50%;
         }
         
         /* Inner shadow for depth */
@@ -250,7 +257,7 @@
             cursor: pointer; transition: all 0.2s;
         }
         .btn-spin:active { transform: scale(0.95); }
-        .btn-spin:disabled { opacity: 0.5; cursor: default; }
+        .btn-spin:disabled { opacity: 0.5; cursor: not-allowed; color: #475569; }
 
         /* The Flapper/Pointer */
         .wheel-pointer {
@@ -299,12 +306,34 @@
         /* Views */
         .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; width: 100%; display: none; }
         .cat-btn {
-            padding: 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
             border-radius: 16px; color: #fff; font-family: 'Outfit'; font-size: 1rem; cursor: pointer;
-            transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px;
+            transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 6px;
+            position: relative; overflow: hidden;
         }
         .cat-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--neon-cyan); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        .cat-btn i { font-size: 1.8rem; color: var(--neon-cyan); }
+        .cat-btn.disabled { opacity: 0.5; cursor: default; border-color: transparent; }
+        .cat-btn.disabled:hover { transform: none; background: rgba(255,255,255,0.03); }
+
+        .cat-icon-box { margin-bottom: 5px; }
+        .cat-icon-box i { font-size: 1.6rem; color: var(--neon-cyan); }
+        
+        /* Stats inside Category Button */
+        .cat-meta {
+            display: flex; gap: 8px; font-size: 0.75rem; margin-top: 5px; width: 100%; justify-content: center;
+        }
+        .cat-badge {
+            padding: 2px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .cat-count {
+            background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; color: #94a3b8;
+        }
+
+        /* Difficulty Colors */
+        .diff-rookie { color: #4ade80; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); }
+        .diff-pro { color: #60a5fa; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .diff-boss { color: #fb7185; background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); }
+        .diff-done { color: #94a3b8; background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.2); }
 
         .q-display { display: none; width: 100%; flex-direction: column; align-items: center; gap: 1.5rem; }
         
@@ -489,9 +518,12 @@
                     </div>
                     
                     <div class="wheel-wrapper">
+                        <!-- Single Rotator Container containing both background and text to prevent drift -->
+                        <div class="wheel-rotator" id="wheel-rotator">
+                            <div class="wheel-background" id="wheel-background"></div>
+                            <div class="wheel-text-layer" id="wheel-names"></div>
+                        </div>
                         <div class="wheel-overlay"></div>
-                        <div class="wheel" id="wheel-graphic"></div>
-                        <div class="wheel-text-layer" id="wheel-names"></div>
                         
                         <!-- HUB -->
                         <div class="wheel-hub">
@@ -630,16 +662,18 @@
             lifelines: { notes: 3, friend: 2, bowen: 1 },
             indexes: { "Light & Color": 0, "Space & Universe": 0, "Refraction": 0, "Mathematics": 0 },
             currentRotation: 0,
-            isSpinning: false,
             
             // State tracking
+            isSpinning: false,
+            turnActive: false, // Locks wheel until turn is done
             currentPlayer: null,
             currentCategory: null,
             currentQ: null,
 
             // UI Cache
             ui: {
-                wheel: document.getElementById('wheel-graphic'),
+                wheelRotator: document.getElementById('wheel-rotator'),
+                wheelBackground: document.getElementById('wheel-background'),
                 wheelNames: document.getElementById('wheel-names'),
                 spinBtn: document.getElementById('spin-btn'),
                 turnDisplay: document.getElementById('turn-display'),
@@ -708,7 +742,6 @@
                 this.ui.wheelNames.innerHTML = '';
                 
                 // 1. Generate Gradient
-                // We use 3 main neon colors cycling
                 const colors = ['#22d3ee', '#c084fc', '#f43f5e', '#22c55e', '#f59e0b', '#3b82f6'];
                 let gradientStr = 'conic-gradient(';
                 
@@ -736,17 +769,25 @@
                 });
 
                 gradientStr = gradientStr.slice(0, -1) + ')';
-                this.ui.wheel.style.background = gradientStr;
+                this.ui.wheelBackground.style.background = gradientStr;
             },
 
             spinWheel() {
                 if (this.isSpinning) return;
+                
+                // Prevent spin if previous turn isn't done (unless it's the very first spin)
+                if (this.turnActive) {
+                    alert("Please finish the current turn before spinning again!");
+                    return;
+                }
+
                 if (this.activeStudents.length === 0) {
                     this.resetStudents();
                     return;
                 }
 
                 this.isSpinning = true;
+                this.turnActive = true; // Lock the turn
                 this.ui.spinBtn.disabled = true;
                 this.ui.turnDisplay.classList.remove('active');
 
@@ -755,52 +796,55 @@
                 const winnerName = this.activeStudents[winnerIndex];
 
                 // 2. Calculate Math
-                // Pointer is at Top (0deg in CSS transform terms if we treat 12 o'clock as start)
-                // However, CSS rotation naturally moves 12 o'clock CW.
-                // Our conic gradient starts at 12 o'clock (0deg).
-                // Segment i is at [i*slice, (i+1)*slice]. Center is i*slice + slice/2.
-                // To bring that center to 0deg (Top), we need to rotate NEGATIVE (counter-clockwise).
-                // Target Rotation = - (CenterAngle).
-                // To spin forward, we add full rotations (360 * 5) and ensure we end up at a value congruent to Target.
-                
                 const sliceAngle = 360 / this.activeStudents.length;
+                
+                // Center of the winner slice relative to wheel start (0deg)
                 const centerAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
                 
-                // Add 5 full spins + distance to target
-                // We want to INCREASE currentRotation to simulate forward spin (CW).
-                // Actually, if we rotate container CW, the segment moves CW away from top.
-                // We want the segment to align with Top.
-                // Distance to move = 360 - centerAngle (this brings it around to top).
-                // Wait, easier logic:
-                // We are at 0. We want CenterAngle to be at 0 (Top).
-                // That means we rotate the board by (360 - CenterAngle).
-                // e.g. if Center is at 90 (3 oclock), we rotate 270 deg to bring it to 12 oclock.
+                // We want the wheel's rotation to end such that this centerAngle matches the top (0deg/360deg)
+                // If wheel is at rotation R, the visual angle of center is (centerAngle + R).
+                // We want (centerAngle + R) % 360 == 0.
+                // So R should be -centerAngle (or 360 - centerAngle).
                 
-                let targetRotation = 360 - centerAngle; 
+                // Target is how much we need to rotate FROM ZERO to align center with top
+                let targetFromZero = 360 - centerAngle; 
                 
-                // Add randomness to land slightly off-center (but within slice)
+                // Add fuzz
                 const fuzz = (Math.random() * (sliceAngle * 0.4)) - (sliceAngle * 0.2);
-                targetRotation += fuzz;
+                targetFromZero += fuzz;
 
-                // Ensure we always spin forward by at least 5 turns
+                // 3. Find next rotation value that matches targetFromZero
+                // We want to spin forward at least 5 times (1800deg)
                 const minSpins = 5;
                 const fullSpins = 360 * minSpins;
                 
-                // Adjust current rotation to be the base
-                // We need next rotation > currentRotation
-                // Find next multiple of 360 + target
-                let nextRotation = this.currentRotation + fullSpins;
-                const remainder = nextRotation % 360;
-                const adjustment = targetRotation - remainder;
+                // Current visual rotation
+                const current = this.currentRotation;
                 
-                // Final value
-                this.currentRotation = nextRotation + adjustment;
+                // We want to reach a value R_new such that R_new > current + fullSpins
+                // AND R_new % 360 is roughly targetFromZero.
                 
-                // Apply
-                const wheelContainer = document.querySelector('.wheel-wrapper'); // Rotate wrapper or contents?
-                // Rotating the inner graphics
-                this.ui.wheel.style.transform = `rotate(${this.currentRotation}deg)`;
-                this.ui.wheelNames.style.transform = `rotate(${this.currentRotation}deg)`;
+                // Let's normalize current to find where we are in the 0-360 cycle
+                // Actually, simpler:
+                // targetFromZero is a value between 0 and 360.
+                // We can calculate the total degrees we want to add.
+                
+                // Calculate remainder of current rotation
+                const currentMod = current % 360;
+                
+                // Distance to next aligned position
+                let distance = targetFromZero - currentMod;
+                if (distance < 0) {
+                    distance += 360; // Wrap around to ensure positive forward motion
+                }
+                
+                // Add minimum spins
+                const finalRotation = current + distance + fullSpins;
+                
+                this.currentRotation = finalRotation;
+                
+                // Apply rotation to the wrapper that holds both bg and text
+                this.ui.wheelRotator.style.transform = `rotate(${this.currentRotation}deg)`;
 
                 // 3. Finish
                 setTimeout(() => {
@@ -816,35 +860,27 @@
                 this.activeStudents.splice(index, 1);
                 
                 // Visual delay then re-render
-                this.ui.spinBtn.disabled = false;
+                this.ui.spinBtn.disabled = true; // Still disabled until question answered
                 this.ui.turnText.innerHTML = `<span class="student-name">${name}</span> is up!`;
                 this.ui.turnDisplay.classList.add('active');
                 
-                // NOTE: We do NOT re-render the wheel immediately because it would snap the rotation.
-                // We wait until the next spin starts or "Manual Reset" to re-render the slices.
-                // Ideally, to show they are gone, we should gray them out or re-render.
-                // Re-rendering changes the slice sizes.
-                // Strategy: Re-render immediately but reset rotation to 0 visually? No, that jumps.
-                // Better Strategy: Keep wheel as is, just mark name, then on next "Spin" click, we re-render quickly before spinning?
-                // SIMPLEST: Re-render now, reset rotation to 0 (no transition).
+                // DO NOT reset rotation here. Leave the wheel rotated to the winner.
+                // Re-render only to update colors/names for NEXT spin, but we need to be careful
+                // If we re-render now with fewer slices, the alignment breaks for the current view.
+                // SOLUTION: Don't re-render the wheel graphic yet. Wait until the next spin STARTS or reset?
+                // Actually, if we don't re-render, the slices are correct for the visual.
+                // We will re-render the wheel graphic at the START of the next spin? 
+                // No, the array has changed.
+                // Let's re-render the wheel immediately but keep the rotation.
+                // Since the number of slices changes, the angles change. 
+                // If we have 10 slices, center is 18deg. 
+                // If we go to 9 slices, center is 20deg.
+                // If we re-render now, the wheel underneath the pointer will shift visually because the slice width grows.
+                // This is unavoidable if we remove the slice immediately.
+                // Better UX: Keep the wheel as-is for now. Re-render it at the *very start* of the next spin or when reset is pressed.
+                // But we need to remove the student from the array so they can't be picked again. Done.
+                // We will mark the wheel as "dirty" and re-render it before the next spin animation starts.
                 
-                this.ui.wheel.style.transition = 'none';
-                this.ui.wheelNames.style.transition = 'none';
-                
-                this.renderWheel();
-                
-                // Reset rotation tracker to 0 since we rebuilt the wheel
-                this.currentRotation = 0;
-                this.ui.wheel.style.transform = 'rotate(0deg)';
-                this.ui.wheelNames.style.transform = 'rotate(0deg)';
-                
-                // Force reflow
-                void this.ui.wheel.offsetWidth;
-                
-                // Restore transition
-                this.ui.wheel.style.transition = 'transform 4s cubic-bezier(0.15, 0.85, 0.35, 1)';
-                this.ui.wheelNames.style.transition = 'transform 4s cubic-bezier(0.15, 0.85, 0.35, 1)';
-
                 this.updateStats();
                 this.showCategories();
             },
@@ -855,6 +891,7 @@
                 this.ui.question.style.display = 'none';
                 this.ui.empty.style.display = 'none';
                 this.ui.cats.style.display = 'grid';
+                this.renderCategories(); // Re-render to show difficulty badges
             },
 
             selectCategory(catName) {
@@ -863,13 +900,54 @@
                 const list = CATEGORIES[catName];
                 
                 if (idx >= list.length) {
-                    this.ui.cats.style.display = 'none';
-                    this.ui.empty.style.display = 'flex';
-                    return;
+                    return; // Should be disabled anyway
                 }
 
                 this.currentQ = list[idx];
                 this.renderQuestion();
+            },
+
+            renderCategories() {
+                this.ui.cats.innerHTML = '';
+                Object.keys(CATEGORIES).forEach(cat => {
+                    const idx = this.indexes[cat];
+                    const list = CATEGORIES[cat];
+                    const remaining = list.length - idx;
+                    const isDone = remaining === 0;
+                    
+                    const btn = document.createElement('div');
+                    btn.className = `cat-btn ${isDone ? 'disabled' : ''}`;
+                    
+                    let icon = 'fa-star';
+                    if(cat.includes('Light')) icon = 'fa-lightbulb';
+                    if(cat.includes('Space')) icon = 'fa-rocket';
+                    if(cat.includes('Refraction')) icon = 'fa-glasses';
+                    if(cat.includes('Math')) icon = 'fa-calculator';
+
+                    // Determine badge
+                    let badgeHtml = '';
+                    if (!isDone) {
+                        const nextQ = list[idx];
+                        const diffClass = `diff-${nextQ.type.toLowerCase()}`;
+                        badgeHtml = `<span class="cat-badge ${diffClass}">${nextQ.type}</span>`;
+                    } else {
+                        badgeHtml = `<span class="cat-badge diff-done">Done</span>`;
+                    }
+
+                    btn.innerHTML = `
+                        <div class="cat-icon-box"><i class="fas ${icon}"></i></div>
+                        <span style="font-weight:700;">${cat}</span>
+                        <div class="cat-meta">
+                            ${badgeHtml}
+                            <span class="cat-count">${remaining} left</span>
+                        </div>
+                    `;
+                    
+                    if(!isDone) {
+                        btn.onclick = () => this.selectCategory(cat);
+                    }
+                    this.ui.cats.appendChild(btn);
+                });
             },
 
             renderQuestion() {
@@ -921,6 +999,16 @@
                 
                 this.updateStats();
 
+                // Unlock Turn
+                this.turnActive = false;
+                this.ui.spinBtn.disabled = false;
+                
+                // If the array size changed in startTurn, we need to redraw the wheel now
+                // so it's ready for the next spin.
+                // Note: This will visually shift the wheel segments.
+                // To minimize jarring, we re-render.
+                this.renderWheel();
+
                 // Reset UI
                 this.ui.question.style.display = 'none';
                 this.ui.intro.style.display = 'block';
@@ -953,24 +1041,6 @@
                 else if (percent > 0) pEl.style.color = "var(--neon-pink)";
             },
 
-            renderCategories() {
-                this.ui.cats.innerHTML = '';
-                Object.keys(CATEGORIES).forEach(cat => {
-                    const btn = document.createElement('div');
-                    btn.className = 'cat-btn';
-                    
-                    let icon = 'fa-star';
-                    if(cat.includes('Light')) icon = 'fa-lightbulb';
-                    if(cat.includes('Space')) icon = 'fa-rocket';
-                    if(cat.includes('Refraction')) icon = 'fa-glasses';
-                    if(cat.includes('Math')) icon = 'fa-calculator';
-
-                    btn.innerHTML = `<i class="fas ${icon}"></i> <span>${cat}</span>`;
-                    btn.onclick = () => this.selectCategory(cat);
-                    this.ui.cats.appendChild(btn);
-                });
-            },
-
             useLifeline(type) {
                 if (this.lifelines[type] > 0) {
                     this.lifelines[type]--;
@@ -990,6 +1060,8 @@
                     btn.innerText = name;
                     btn.onclick = () => {
                         this.closeManualModal();
+                        // Manually triggering turn also locks spin
+                        this.turnActive = true;
                         this.startTurn(name, idx);
                     };
                     list.appendChild(btn);
