@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11.1 Graphs</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --bg-deep: #0f0518;         
+            --bg-card: #1e1b2e;         
+            
+            --primary: #8b5cf6;   /* Violet */
+            --primary-light: #a78bfa;
+            --secondary: #f43f5e; /* Rose - OUTPUTS */
+            --accent: #06b6d4;    /* Cyan - INPUTS */
+            --blue-bright: #38bdf8; /* Bright Blue for Date */
+            --success: #10b981;   /* Emerald */
+            --warning: #f59e0b;   /* Amber */
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.3rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; user-select: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(139, 92, 246, 0.15), transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(244, 63, 94, 0.1), transparent 40%);
+            color: #ffffff;
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 5, 24, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .header-date {
+            color: var(--blue-bright);
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            padding-bottom: 2rem; /* Space for scroll */
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1200px; /* Constrained for better readability */
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 5, 24, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 30px rgba(139, 92, 246, 0.3); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; }
+        
+        .text-accent { color: var(--accent); }
+        .text-secondary { color: var(--secondary); }
+        .text-primary { color: var(--primary); }
+        .text-success { color: var(--success); }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: white;
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:hover { background: #7c3aed; transform: translateY(-2px); }
+
+        /* --- PEDAGOGICAL BADGES --- */
+        .copy-zone {
+            position: relative;
+            border: 2px dashed rgba(139, 92, 246, 0.4);
+            border-radius: var(--border-radius);
+            padding: 2.5rem 2rem 2rem;
+            background: rgba(30, 27, 46, 0.4);
+            margin-bottom: 2rem;
+        }
+        
+        .copy-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-deep);
+            border: 2px solid var(--primary);
+            color: var(--primary-light);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            animation: badge-pulse 3s infinite;
+            z-index: 5;
+        }
+        
+        @keyframes badge-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(139, 92, 246, 0); }
+        }
+
+        /* --- CARDS & GRIDS --- */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; align-items: start; }
+        
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* --- FLIP CARDS --- */
+        .flip-container {
+            background-color: transparent;
+            perspective: 1000px;
+            height: 260px; 
+            cursor: pointer;
+        }
+        .flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius);
+        }
+        .flip-container.flipped .flip-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--bg-card);
+        }
+        .flip-back {
+            background: #2e2a45;
+            transform: rotateY(180deg);
+            border: 2px solid var(--primary);
+        }
+
+        /* --- SVG GRAPH ENGINE --- */
+        .graph-wrapper {
+            background: #13111c;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Reusable Grid Classes */
+        .grid-major { stroke: rgba(255,255,255,0.15); stroke-width: 1.5; shape-rendering: crispEdges; }
+        .grid-minor { stroke: rgba(255,255,255,0.05); stroke-width: 0.5; shape-rendering: crispEdges; }
+        .axis-line { stroke: white; stroke-width: 2; marker-end: url(#arrow); }
+        .axis-label { fill: var(--text-muted); font-family: 'JetBrains Mono'; font-size: 12px; text-anchor: middle; }
+        
+        /* Interactive Points */
+        .point-target { 
+            fill: transparent; 
+            cursor: pointer; 
+            pointer-events: all;
+            /* Make touch target large */
+            stroke: transparent;
+            stroke-width: 30px; 
+        }
+        .point-visible { 
+            fill: var(--primary); 
+            r: 0; 
+            transition: r 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); 
+        }
+        .point-visible.show { r: 7; }
+        
+        .graph-line {
+            fill: none;
+            stroke: var(--success);
+            stroke-width: 3;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            transition: stroke-dashoffset 2s ease-in-out;
+            vector-effect: non-scaling-stroke;
+        }
+        .graph-line.draw { stroke-dashoffset: 0; }
+
+        /* --- BRIDGE ANIMATION --- */
+        .bridge-row {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.5s ease;
+            align-items: center;
+        }
+        .bridge-row.transformed {
+            display: flex;
+            justify-content: center;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 8px;
+            gap: 0.2rem;
+            border-bottom: none;
+        }
+        .bridge-part { transition: all 0.4s; }
+        .b-paren { opacity: 0; transform: scale(0); width: 0; display: inline-block; }
+        .transformed .b-paren { opacity: 1; transform: scale(1); width: auto; color: white; font-weight: bold; font-family: 'JetBrains Mono'; }
+        .transformed .b-hide { opacity: 0; width: 0; margin: 0; font-size: 0; }
+
+        /* --- ANIMATIONS & UTILS --- */
+        .slide-up { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+        .fade-in { animation: fadeIn 0.8s ease-out; }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .input-field {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono';
+            font-size: 1.2rem;
+            width: 80px;
+            text-align: center;
+        }
+        
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--blue-bright);
+            transition: width 0.4s ease;
+        }
+        
+        .spoiler { opacity: 0; transform: translateY(10px); transition: all 0.5s; pointer-events: none; }
+        .spoiler.revealed { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+    </style>
+</head>
+<body>
+
+<!-- GLOBAL SVG DEFS (Hidden) -->
+<svg width="0" height="0" style="position: absolute;">
+    <defs>
+        <!-- Arrowhead -->
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#fff" />
+        </marker>
+        
+        <!-- Grid Pattern (Standard 20px/100px) -->
+        <pattern id="gridPattern" width="100" height="100" patternUnits="userSpaceOnUse">
+            <!-- Minor Lines -->
+            <path d="M 20 0 L 20 100 M 40 0 L 40 100 M 60 0 L 60 100 M 80 0 L 80 100" class="grid-minor" fill="none"/>
+            <path d="M 0 20 L 100 20 M 0 40 L 100 40 M 0 60 L 100 60 M 0 80 L 100 80" class="grid-minor" fill="none"/>
+            <!-- Major Lines -->
+            <path d="M 100 0 L 0 0 0 100" class="grid-major" fill="none"/>
+        </pattern>
+    </defs>
+</svg>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 8 Math</div>
+            <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: white;">
+                11.1 Graphs
+            </div>
+        </div>
+        <div class="header-date">
+            Monday 19 January 2026
+        </div>
+    </header>
+
+    <main class="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slides Injected Here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    // --- STATE MANAGEMENT ---
+    const state = {
+        currentSlide: 0,
+        fitnessPoints: 0,
+        taxiPoints: 0
+    };
+
+    // --- SLIDE CONTENT ---
+    const slides = [
+        // Slide 0: Title
+        {
+            render: () => `
+                <div class="text-center fade-in">
+                    <div style="font-size: 6rem; margin-bottom: 1rem; color: var(--primary); animation: float 6s ease-in-out infinite;">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h1 style="margin-bottom: 0.5rem;">Graphs</h1>
+                    <p style="font-size: 1.5rem; color: var(--blue-bright); margin-bottom: 3rem;">Connecting Rules to Lines</p>
+                    
+                    <div class="card slide-up" style="max-width: 600px; margin: 0 auto; text-align: left;">
+                        <h3 style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">Today's Goals:</h3>
+                        <ul style="list-style: none; display: grid; gap: 1.5rem;">
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <span style="font-size: 1.5rem;">🔑</span>
+                                <span><strong>Define</strong> Input (x) and Output (y).</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <span style="font-size: 1.5rem;">📍</span>
+                                <span><strong>Plot</strong> coordinates on a grid.</span>
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 1rem;">
+                                <span style="font-size: 1.5rem;">📈</span>
+                                <span><strong>Graph</strong> real-life linear rules.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <style>@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }</style>
+            `
+        },
+
+        // Slide 1: Definitions
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Key Definitions</h2>
+                    <p style="margin-bottom: 2rem;">Tap the cards to reveal meanings.</p>
+
+                    <div class="copy-zone">
+                        <div class="copy-badge"><i class="fa-solid fa-pen"></i> Copy to Notebook</div>
+                        
+                        <div class="grid-2">
+                            <!-- Input Card -->
+                            <div class="flip-container" onclick="this.classList.toggle('flipped')">
+                                <div class="flip-inner">
+                                    <div class="flip-front">
+                                        <div style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"><i class="fa-solid fa-right-to-bracket"></i></div>
+                                        <h3 class="text-accent">Input (x)</h3>
+                                        <p class="text-muted">Tap to Reveal</p>
+                                    </div>
+                                    <div class="flip-back">
+                                        <h3 class="text-accent" style="margin-bottom: 1rem;">Input (x)</h3>
+                                        <p>The number you start with.</p>
+                                        <p style="font-size: 0.9rem; margin-top: 1rem; color: #cbd5e1;">(Independent Variable)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Output Card -->
+                            <div class="flip-container" onclick="this.classList.toggle('flipped')">
+                                <div class="flip-inner">
+                                    <div class="flip-front">
+                                        <div style="font-size: 3rem; color: var(--secondary); margin-bottom: 1rem;"><i class="fa-solid fa-right-from-bracket"></i></div>
+                                        <h3 class="text-secondary">Output (y)</h3>
+                                        <p class="text-muted">Tap to Reveal</p>
+                                    </div>
+                                    <div class="flip-back">
+                                        <h3 class="text-secondary" style="margin-bottom: 1rem;">Output (y)</h3>
+                                        <p>The result after using the rule.</p>
+                                        <p style="font-size: 0.9rem; margin-top: 1rem; color: #cbd5e1;">(Dependent Variable)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 2: The Connection
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>The Connection</h2>
+                    
+                    <div class="copy-zone slide-up" style="max-width: 800px; margin: 2rem auto;">
+                        <div class="copy-badge"><i class="fa-solid fa-pen"></i> Copy Diagram</div>
+                        
+                        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem;">
+                            
+                            <!-- Input -->
+                            <div style="text-align: center;">
+                                <div style="font-weight: bold; color: var(--accent); margin-bottom: 0.5rem;">INPUT</div>
+                                <div style="width: 60px; height: 60px; background: rgba(6,182,212,0.2); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">x</div>
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right" style="color: white; opacity: 0.5;"></i>
+
+                            <!-- Machine -->
+                            <div style="padding: 1rem; border: 2px solid var(--primary); border-radius: 12px; background: rgba(139, 92, 246, 0.1);">
+                                <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Function Rule</div>
+                                <div style="font-weight: bold; font-size: 1.2rem; color: var(--primary-light);">multiply, add...</div>
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right" style="color: white; opacity: 0.5;"></i>
+
+                            <!-- Output -->
+                            <div style="text-align: center;">
+                                <div style="font-weight: bold; color: var(--secondary); margin-bottom: 0.5rem;">OUTPUT</div>
+                                <div style="width: 60px; height: 60px; background: rgba(244, 63, 94, 0.2); border: 2px solid var(--secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">y</div>
+                            </div>
+
+                            <div style="font-size: 2rem; margin: 0 1rem;">=</div>
+
+                            <!-- Coordinate -->
+                            <div style="text-align: center;">
+                                <div style="font-weight: bold; color: white; margin-bottom: 0.5rem;">COORDINATE</div>
+                                <div style="padding: 1rem 1.5rem; border: 2px solid white; border-radius: 12px; font-family: 'JetBrains Mono'; font-size: 1.8rem;">
+                                    (<span class="text-accent">x</span>, <span class="text-secondary">y</span>)
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 3: Table to Coordinates
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>From Table to Points</h2>
+                    <p>Rule: <strong class="text-primary" style="font-size: 1.3rem;">y = 2x + 1</strong></p>
+
+                    <div class="copy-zone slide-up" style="max-width: 700px; margin: 2rem auto; padding: 1.5rem;">
+                        <div class="copy-badge"><i class="fa-solid fa-pen"></i> Copy & Solve</div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem; font-weight: bold;">
+                            <div class="text-accent">Input (x)</div>
+                            <div class="text-primary">Rule</div>
+                            <div class="text-secondary">Output (y)</div>
+                        </div>
+
+                        <!-- Rows -->
+                        <div id="bridge-container" style="background: rgba(0,0,0,0.2); border-radius: 8px;">
+                            ${[0, 1, 2, 3].map(x => `
+                                <div class="bridge-row" id="brow-${x}">
+                                    <div class="bridge-part text-accent" style="font-size:1.2rem;">${x}</div>
+                                    <div class="bridge-part b-hide text-muted" style="font-size:0.9rem;">2(${x})+1</div>
+                                    <div class="bridge-part text-secondary" style="font-size:1.2rem;">${2*x+1}</div>
+                                    
+                                    <!-- Hidden parts for animation -->
+                                    <span class="b-paren">(</span>
+                                    <span class="b-paren">,</span>
+                                    <span class="b-paren">)</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <button class="btn btn-reveal" onclick="animateBridge()" id="bridge-btn">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Transform to Coordinates
+                    </button>
+                    
+                    <p id="bridge-msg" class="spoiler" style="margin-top: 1rem; color: var(--success); font-weight: bold;">
+                        Great! Now we have (x, y) points to plot.
+                    </p>
+                </div>
+            `
+        },
+
+        // Slide 4: Coordinate Plane Intro
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>The Coordinate Plane</h2>
+                    <p>We plotted the points from <span class="text-primary">y = 2x + 1</span>.</p>
+                    
+                    <div class="grid-2 slide-up" style="margin-top: 2rem;">
+                        <!-- Graph -->
+                        <div class="graph-wrapper">
+                            <svg viewBox="0 0 300 300">
+                                <rect width="100%" height="100%" fill="url(#gridPattern)" />
+                                <!-- Axes (Origin at 30, 270) -->
+                                <line x1="30" y1="270" x2="290" y2="270" class="axis-line" />
+                                <line x1="30" y1="270" x2="30" y2="10" class="axis-line" />
+                                
+                                <!-- Labels -->
+                                <text x="290" y="290" fill="white">x</text>
+                                <text x="15" y="20" fill="white">y</text>
+                                
+                                <text x="30" y="290" class="axis-label">0</text>
+                                <text x="80" y="290" class="axis-label">1</text>
+                                <text x="130" y="290" class="axis-label">2</text>
+                                <text x="180" y="290" class="axis-label">3</text>
+                                
+                                <text x="15" y="275" class="axis-label">0</text>
+                                <text x="15" y="225" class="axis-label">2</text>
+                                <text x="15" y="175" class="axis-label">4</text>
+                                <text x="15" y="125" class="axis-label">6</text>
+                                <text x="15" y="75" class="axis-label">8</text>
+
+                                <!-- Points: (0,1), (1,3), (2,5), (3,7) -->
+                                <!-- Scale: X: 50px=1 unit. Y: 25px=1 unit? 
+                                     Let's map: 
+                                     (0,1) -> x=30, y=270 - (1*25) = 245
+                                     (1,3) -> x=80, y=270 - (3*25) = 195
+                                     (2,5) -> x=130, y=270 - (5*25) = 145
+                                     (3,7) -> x=180, y=270 - (7*25) = 95
+                                -->
+                                <g id="intro-points" style="opacity: 0; transition: opacity 1s;">
+                                    <circle cx="30" cy="245" r="5" fill="var(--primary)" />
+                                    <text x="40" y="245" fill="white" font-size="12">(0,1)</text>
+
+                                    <circle cx="80" cy="195" r="5" fill="var(--primary)" />
+                                    <text x="90" y="195" fill="white" font-size="12">(1,3)</text>
+
+                                    <circle cx="130" cy="145" r="5" fill="var(--primary)" />
+                                    <text x="140" y="145" fill="white" font-size="12">(2,5)</text>
+
+                                    <circle cx="180" cy="95" r="5" fill="var(--primary)" />
+                                    <text x="190" y="95" fill="white" font-size="12">(3,7)</text>
+                                    
+                                    <line x1="30" y1="245" x2="180" y2="95" stroke="var(--success)" stroke-width="2" />
+                                </g>
+                            </svg>
+                        </div>
+
+                        <!-- Context -->
+                        <div class="card" style="text-align: left;">
+                            <h3>Notice:</h3>
+                            <ul style="display: grid; gap: 1rem;">
+                                <li>👉 The <span class="text-accent">x-value</span> is distance Right.</li>
+                                <li>👉 The <span class="text-secondary">y-value</span> is distance Up.</li>
+                                <li>👉 The points form a <strong>straight line</strong>.</li>
+                            </ul>
+                            <button class="btn btn-reveal" onclick="document.getElementById('intro-points').style.opacity = 1">
+                                Show Points
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 5: Real Life (Fitness)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--success);">Real Life Math</span>
+                    <h2 style="margin-top: 1rem;">The Fitness Club</h2>
+
+                    <div class="copy-zone slide-up" style="max-width: 700px; margin: 1rem auto;">
+                        <div class="copy-badge"><i class="fa-solid fa-pen"></i> Copy Problem</div>
+                        
+                        <div style="display: flex; gap: 2rem; align-items: center; justify-content: center; text-align: left; margin-bottom: 2rem;">
+                            <i class="fa-solid fa-dumbbell" style="font-size: 4rem; color: var(--accent);"></i>
+                            <div style="font-size: 1.2rem;">
+                                <p><strong>Join Fee:</strong> $20 (Start)</p>
+                                <p><strong>Weekly:</strong> $15 / week</p>
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                            <p style="margin-bottom: 0.5rem;">Calculate cost for <strong>4 weeks</strong>:</p>
+                            <div style="font-family: 'JetBrains Mono'; font-size: 1.2rem;">
+                                Cost = (15 × 4) + 20 = <input id="fit-ans" class="input-field" type="number" placeholder="?">
+                            </div>
+                            <button class="btn btn-nav btn-sm" onclick="checkFitness()" style="margin-top: 1rem;">Check</button>
+                            <p id="fit-fb" style="height: 1.5rem; color: var(--success); font-weight: bold; margin-top: 0.5rem;"></p>
+                        </div>
+                    </div>
+
+                    <div id="fit-rule" class="spoiler card" style="max-width: 700px; margin: 0 auto; background: var(--bg-card);">
+                        <h3>Function Rule</h3>
+                        <p style="font-family: 'JetBrains Mono'; font-size: 1.5rem;">
+                            <span class="text-secondary">C</span> = 15<span class="text-accent">w</span> + 20
+                        </p>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Cost = 15 × weeks + 20</p>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 6: Fitness Graph
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Graph the Costs</h2>
+                    <p>1. Tap the grid to plot these 3 points.</p>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: center; margin: 1rem 0;">
+                        <div class="btn btn-nav" style="width: auto; padding: 0 1rem; cursor: default;" id="pt0">(0, 20)</div>
+                        <div class="btn btn-nav" style="width: auto; padding: 0 1rem; cursor: default;" id="pt1">(1, 35)</div>
+                        <div class="btn btn-nav" style="width: auto; padding: 0 1rem; cursor: default;" id="pt2">(2, 50)</div>
+                    </div>
+
+                    <div class="card slide-up" style="max-width: 600px; margin: 0 auto; padding: 1rem;">
+                        <div class="graph-wrapper">
+                            <svg viewBox="0 0 300 300">
+                                <rect width="100%" height="100%" fill="url(#gridPattern)" />
+                                <!-- Axes (Origin 30, 270) -->
+                                <line x1="30" y1="270" x2="290" y2="270" class="axis-line" />
+                                <line x1="30" y1="270" x2="30" y2="10" class="axis-line" />
+                                
+                                <text x="150" y="295" fill="white">Weeks (x)</text>
+                                <text x="15" y="20" fill="white">Cost</text>
+
+                                <!-- X Labels (0, 1, 2, 3) -->
+                                <!-- Scale X: 60px per unit. 0=30, 1=90, 2=150 -->
+                                <text x="30" y="285" class="axis-label">0</text>
+                                <text x="90" y="285" class="axis-label">1</text>
+                                <text x="150" y="285" class="axis-label">2</text>
+                                <text x="210" y="285" class="axis-label">3</text>
+
+                                <!-- Y Labels (0 to 100) -->
+                                <!-- Scale Y: 250px = 100 units -> 2.5px per unit -->
+                                <text x="15" y="270" class="axis-label">0</text>
+                                <text x="15" y="220" class="axis-label">20</text>
+                                <text x="15" y="170" class="axis-label">40</text>
+                                <text x="15" y="120" class="axis-label">60</text>
+                                <text x="15" y="70" class="axis-label">80</text>
+
+                                <!-- The Line -->
+                                <line x1="30" y1="220" x2="150" y2="145" id="fit-line" class="graph-line" />
+
+                                <!-- Interactive Points -->
+                                <!-- (0, 20) -> x=30, y=270 - (20*2.5)=220 -->
+                                <g onclick="plotFit(0)">
+                                    <circle cx="30" cy="220" r="15" class="point-target" />
+                                    <circle cx="30" cy="220" id="fdot-0" class="point-visible" />
+                                </g>
+
+                                <!-- (1, 35) -> x=90, y=270 - (35*2.5)=182.5 -->
+                                <g onclick="plotFit(1)">
+                                    <circle cx="90" cy="182.5" r="15" class="point-target" />
+                                    <circle cx="90" cy="182.5" id="fdot-1" class="point-visible" />
+                                </g>
+
+                                <!-- (2, 50) -> x=150, y=270 - (50*2.5)=145 -->
+                                <g onclick="plotFit(2)">
+                                    <circle cx="150" cy="145" r="15" class="point-target" />
+                                    <circle cx="150" cy="145" id="fdot-2" class="point-visible" />
+                                </g>
+
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 7: Taxi Problem
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--primary);">Your Turn</span>
+                    <h2 style="margin-top: 1rem;">Taxi Fare</h2>
+                    <p style="margin-bottom: 2rem;">Start: <strong>$5.00</strong>. Each km: <strong>$2.00</strong>.</p>
+                    
+                    <div class="grid-2 slide-up">
+                        <div class="card">
+                            <h3>1. Write Rule</h3>
+                            <div style="font-family: 'JetBrains Mono'; font-size: 1.4rem; margin: 2rem 0;">
+                                y = <input id="tax-m" class="input-field" style="width:60px" placeholder="?">x + <input id="tax-c" class="input-field" style="width:60px" placeholder="?">
+                            </div>
+                            <button class="btn btn-nav btn-sm" onclick="checkTaxiRule()">Check</button>
+                            <p id="tax-fb" style="margin-top:1rem; min-height:1.5rem; font-weight:bold;"></p>
+                        </div>
+
+                        <div class="card">
+                            <h3>2. Plot Points</h3>
+                            <div style="font-size: 0.9rem; margin-bottom: 1rem;">Plot for x = 0, 1, 2</div>
+                            <div class="graph-wrapper">
+                                <svg viewBox="0 0 300 200">
+                                    <rect width="100%" height="100%" fill="url(#gridPattern)" />
+                                    <line x1="30" y1="170" x2="290" y2="170" class="axis-line" />
+                                    <line x1="30" y1="170" x2="30" y2="10" class="axis-line" />
+                                    
+                                    <text x="150" y="190" fill="white" font-size="12">km (x)</text>
+                                    <text x="15" y="20" fill="white" font-size="12">$</text>
+
+                                    <!-- Scale X: 60px/unit. Scale Y: 10px/$1. Origin (30, 170) -->
+                                    <text x="30" y="185" class="axis-label">0</text>
+                                    <text x="90" y="185" class="axis-label">1</text>
+                                    <text x="150" y="185" class="axis-label">2</text>
+                                    
+                                    <text x="15" y="170" class="axis-label">0</text>
+                                    <text x="15" y="120" class="axis-label">5</text>
+                                    <text x="15" y="70" class="axis-label">10</text>
+
+                                    <line x1="30" y1="120" x2="150" y2="80" id="tax-line" class="graph-line" />
+
+                                    <!-- (0, 5) -> y=170 - 50 = 120 -->
+                                    <g onclick="plotTaxi(0)">
+                                        <circle cx="30" cy="120" r="15" class="point-target" />
+                                        <circle cx="30" cy="120" id="tdot-0" class="point-visible" />
+                                    </g>
+                                    <!-- (1, 7) -> y=170 - 70 = 100 -->
+                                    <g onclick="plotTaxi(1)">
+                                        <circle cx="90" cy="100" r="15" class="point-target" />
+                                        <circle cx="90" cy="100" id="tdot-1" class="point-visible" />
+                                    </g>
+                                    <!-- (2, 9) -> y=170 - 90 = 80 -->
+                                    <g onclick="plotTaxi(2)">
+                                        <circle cx="150" cy="80" r="15" class="point-target" />
+                                        <circle cx="150" cy="80" id="tdot-2" class="point-visible" />
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 8: Decreasing
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--warning);">Challenge</span>
+                    <h2 style="margin-top: 1rem;">Going Down?</h2>
+                    <p>Rule: <strong class="text-warning" style="font-size: 1.4rem;">y = 20 - x</strong></p>
+                    
+                    <div class="grid-2 slide-up" style="margin-top: 2rem;">
+                        <div class="card">
+                            <h3>Complete Table</h3>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 1rem;">
+                                <div class="text-accent">x</div>
+                                <div class="input-field" style="width:100%">0</div>
+                                <div class="input-field" style="width:100%">10</div>
+                                <div class="input-field" style="width:100%">20</div>
+                                
+                                <div class="text-secondary">y</div>
+                                <button class="btn btn-nav btn-sm" onclick="this.innerText='20'; checkDec()">?</button>
+                                <button class="btn btn-nav btn-sm" onclick="this.innerText='10'; checkDec()">?</button>
+                                <button class="btn btn-nav btn-sm" onclick="this.innerText='0'; checkDec()">?</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card spoiler" id="dec-graph">
+                            <h3>Graph</h3>
+                            <div class="graph-wrapper">
+                                <svg viewBox="0 0 200 200">
+                                    <rect width="100%" height="100%" fill="url(#gridPattern)" />
+                                    <line x1="20" y1="180" x2="180" y2="180" class="axis-line" />
+                                    <line x1="20" y1="180" x2="20" y2="20" class="axis-line" />
+                                    
+                                    <line x1="20" y1="20" x2="180" y2="180" stroke="#f59e0b" stroke-width="3" />
+                                    
+                                    <circle cx="20" cy="20" r="4" fill="white"/>
+                                    <circle cx="180" cy="180" r="4" fill="white"/>
+                                </svg>
+                            </div>
+                            <p style="margin-top:0.5rem; color: var(--warning); font-weight:bold;">Line goes DOWN!</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 9: Assessment
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--primary);">Assessment</span>
+                    <h2 style="margin-top: 1rem;">Is it on the line?</h2>
+                    
+                    <div class="copy-zone slide-up" style="max-width: 600px; margin: 2rem auto;">
+                        <div class="copy-badge"><i class="fa-solid fa-question"></i> Solve</div>
+                        <p style="font-size: 1.2rem; margin-bottom: 1rem;">Line Equation: <strong class="text-primary">y = 3x + 2</strong></p>
+                        <p style="font-size: 1.1rem; margin-bottom: 2rem;">Is the point <strong class="text-accent">(5, 17)</strong> on this line?</p>
+                        
+                        <div style="display: flex; gap: 1rem; justify-content: center;">
+                            <button class="btn btn-nav" style="width: 100px; border-radius: 12px;" onclick="assess(true)">YES</button>
+                            <button class="btn btn-nav" style="width: 100px; border-radius: 12px;" onclick="assess(false)">NO</button>
+                        </div>
+                        
+                        <div id="assess-fb" class="spoiler" style="margin-top: 1.5rem; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;"></div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 10: Summary
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>📝 Summary</h2>
+                    <div class="card slide-up" style="max-width: 600px; margin: 2rem auto; text-align: left;">
+                        <ul style="list-style: none; font-size: 1.2rem; display: grid; gap: 1.5rem;">
+                            <li style="display: flex; gap: 1rem; align-items: start;">
+                                <i class="fa-solid fa-check" style="color: var(--success); margin-top: 5px;"></i>
+                                <span><strong>Inputs (x)</strong> go across. <strong>Outputs (y)</strong> go up/down.</span>
+                            </li>
+                            <li style="display: flex; gap: 1rem; align-items: start;">
+                                <i class="fa-solid fa-check" style="color: var(--success); margin-top: 5px;"></i>
+                                <span>Linear rules make <strong>straight lines</strong>.</span>
+                            </li>
+                            <li style="display: flex; gap: 1rem; align-items: start;">
+                                <i class="fa-solid fa-check" style="color: var(--success); margin-top: 5px;"></i>
+                                <span>Check points by putting x into the rule.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: 3rem;">
+                        <h3 class="text-accent">Homework</h3>
+                        <p>Exercise 11.1: Questions 1 - 5</p>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- LOGIC FUNCTIONS ---
+
+    function render() {
+        const app = document.getElementById('slide-container');
+        app.innerHTML = slides[state.currentSlide].render();
+        
+        // Update Progress
+        const pct = ((state.currentSlide + 1) / slides.length) * 100;
+        document.getElementById('progress-bar').style.width = `${pct}%`;
+        
+        // Nav Buttons
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === slides.length - 1;
+
+        // Reset Slide Specifics
+        if (state.currentSlide === 6) state.fitnessPoints = 0;
+        if (state.currentSlide === 7) state.taxiPoints = 0;
+    }
+
+    function changeSlide(dir) {
+        if (state.currentSlide + dir >= 0 && state.currentSlide + dir < slides.length) {
+            state.currentSlide += dir;
+            render();
+        }
+    }
+
+    // Slide 3 Animation
+    function animateBridge() {
+        document.getElementById('bridge-btn').style.display = 'none';
+        
+        [0, 1, 2, 3].forEach((i, idx) => {
+            setTimeout(() => {
+                const row = document.getElementById(`brow-${i}`);
+                row.classList.add('transformed');
+                
+                // Remove the middle calculation part visually
+                const middle = row.children[1];
+                middle.classList.add('b-hide');
+                
+                // Rearrange visually using flex order if needed, but flex naturally handles left-to-right
+                // The structure is already: x, rule, y. 
+                // We want: ( x , y )
+                // The hidden spans 'b-paren' become visible
+                
+                // Re-structure DOM slightly for the parenthesis effect? 
+                // CSS handles visibility, but let's ensure order is: ( x , y )
+                // Current order: x, rule, y, (, ,, )
+                // Flex order: 
+                row.children[3].style.order = "1"; // (
+                row.children[0].style.order = "2"; // x
+                row.children[4].style.order = "3"; // ,
+                row.children[2].style.order = "4"; // y
+                row.children[5].style.order = "5"; // )
+                row.children[1].style.display = "none"; // Hide rule
+
+            }, idx * 600);
+        });
+
+        setTimeout(() => {
+            document.getElementById('bridge-msg').classList.add('revealed');
+        }, 2500);
+    }
+
+    // Slide 5 Logic
+    function checkFitness() {
+        const ans = document.getElementById('fit-ans').value;
+        const fb = document.getElementById('fit-fb');
+        if (ans == 80) {
+            fb.innerText = "Correct! $80";
+            document.getElementById('fit-rule').classList.add('revealed');
+        } else {
+            fb.innerText = "Try again. 15 * 4 = 60, plus 20...";
+            fb.style.color = "var(--secondary)";
+            setTimeout(() => { fb.style.color = "var(--success)"; fb.innerText = ""; }, 2000);
+        }
+    }
+
+    // Slide 6 Graphing
+    function plotFit(idx) {
+        const dot = document.getElementById(`fdot-${idx}`);
+        const btn = document.getElementById(`pt${idx}`);
+        
+        if (!dot.classList.contains('show')) {
+            dot.classList.add('show');
+            btn.style.background = 'var(--success)';
+            btn.style.borderColor = 'var(--success)';
+            state.fitnessPoints++;
+            
+            if (state.fitnessPoints === 3) {
+                document.getElementById('fit-line').classList.add('draw');
+            }
+        }
+    }
+
+    // Slide 7 Logic
+    function checkTaxiRule() {
+        const m = document.getElementById('tax-m').value;
+        const c = document.getElementById('tax-c').value;
+        const fb = document.getElementById('tax-fb');
+        
+        if (m == 2 && c == 5) {
+            fb.innerText = "Correct! y = 2x + 5";
+            fb.style.color = "var(--success)";
+        } else {
+            fb.innerText = "Not quite. Rate is $2, Start is $5.";
+            fb.style.color = "var(--secondary)";
+        }
+    }
+
+    function plotTaxi(idx) {
+        const dot = document.getElementById(`tdot-${idx}`);
+        if (!dot.classList.contains('show')) {
+            dot.classList.add('show');
+            state.taxiPoints++;
+            if (state.taxiPoints === 3) {
+                document.getElementById('tax-line').classList.add('draw');
+            }
+        }
+    }
+
+    // Slide 8 Logic
+    let decCount = 0;
+    function checkDec() {
+        decCount++;
+        if (decCount >= 3) {
+            document.getElementById('dec-graph').classList.add('revealed');
+        }
+    }
+
+    // Slide 9 Assessment
+    function assess(choice) {
+        const fb = document.getElementById('assess-fb');
+        fb.classList.add('revealed');
+        if (choice === true) {
+            fb.innerHTML = `<h3 class="text-success">Correct!</h3><p>y = 3(5) + 2 = 15 + 2 = 17.</p><p>Left side = Right side. It works!</p>`;
+        } else {
+            fb.innerHTML = `<h3 class="text-secondary">Incorrect</h3><p>Let's check: 3(5) + 2 = 17.</p><p>Since 17 matches the y-value, it IS on the line.</p>`;
+        }
+    }
+
+    // Event Listeners
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Init
+    render();
+
+</script>
+</body>
+</html>
