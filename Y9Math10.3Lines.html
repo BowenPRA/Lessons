@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10.3 Linear Functions</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --bg-deep: #0f0518;         
+            --bg-card: #1e1b2e;         
+            
+            --primary: #8b5cf6;   /* Violet */
+            --secondary: #f43f5e; /* Rose - OUTPUTS */
+            --accent: #06b6d4;    /* Cyan - INPUTS */
+            --blue-bright: #38bdf8; /* Bright Blue for Date */
+            --success: #10b981;   /* Emerald */
+            --warning: #f59e0b;   /* Amber */
+            --danger: #ef4444;    /* Red for mistakes */
+
+            --text-main: #ffffff;        
+            --text-muted: #e2e8f0;     
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(139, 92, 246, 0.15), transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(244, 63, 94, 0.1), transparent 40%),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 5, 24, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 5, 24, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:hover { background: #7c3aed; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(139, 92, 246, 0.4); }
+        
+        /* Pedagogical Pills */
+        .num-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            padding: 0 1rem;
+            margin: 0 0.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .pill-input { background: rgba(6, 182, 212, 0.25); color: var(--accent); border-color: var(--accent); }
+        .pill-output { background: rgba(244, 63, 94, 0.25); color: var(--secondary); border-color: var(--secondary); }
+        .pill-neutral { background: #334155; color: white; }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            transition: width 0.4s ease;
+        }
+
+        /* Typography & Layout */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; }
+        strong { color: white; font-weight: 800; }
+        
+        .text-accent { color: var(--accent); }
+        .text-secondary { color: var(--secondary); }
+        .text-primary { color: var(--primary); }
+        .text-warning { color: var(--warning); }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 3rem; align-items: start; }
+        
+        /* NOTEBOOK VISUAL CUE */
+        .notebook-hint {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(139, 92, 246, 0.2); 
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1rem;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+            animation: pulse-border 3s infinite;
+            z-index: 5;
+            backdrop-filter: blur(4px);
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- SVG STYLES --- */
+        .graph-svg {
+            width: 100%;
+            height: auto;
+            max-height: 450px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            user-select: none;
+        }
+        .axis { stroke: rgba(255,255,255,0.5); stroke-width: 2; }
+        .grid-line { stroke: rgba(255,255,255,0.1); stroke-width: 1; }
+        .graph-label { fill: var(--text-muted); font-size: 12px; font-family: 'JetBrains Mono'; text-anchor: middle; alignment-baseline: middle; }
+        
+        .point-target { fill: transparent; cursor: pointer; }
+        .point-target:hover { fill: rgba(255, 255, 255, 0.15); stroke: rgba(255,255,255,0.3); stroke-width: 1; }
+        
+        .point-actual { 
+            fill: var(--primary); 
+            r: 0; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .point-actual.visible { r: 6; }
+        
+        .graph-line { 
+            fill: none; 
+            stroke: var(--success); 
+            stroke-width: 3; 
+            stroke-dasharray: 1000; 
+            stroke-dashoffset: 1000; 
+            transition: stroke-dashoffset 2s ease;
+        }
+        .graph-line.draw { stroke-dashoffset: 0; }
+
+        /* --- SPOILER & ANIMATIONS --- */
+        .spoiler-content {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+            pointer-events: none;
+            visibility: hidden;
+        }
+        .spoiler-content.revealed {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+            visibility: visible;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Inputs */
+        .input-field {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            padding: 0.8rem;
+            color: white;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            width: 100%;
+            text-align: center;
+            font-family: 'JetBrains Mono';
+            transition: border-color 0.2s;
+        }
+        .input-field:focus { border-color: var(--primary); }
+        .input-field.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.2); }
+        .input-field.wrong { border-color: var(--secondary); animation: shake 0.4s; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Math Table Styles */
+        .math-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0.5rem;
+        }
+        .math-table th { padding: 1rem; font-size: 1.2rem; }
+        .math-table td { padding: 0.5rem; }
+        
+        .axis-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'JetBrains Mono';
+        }
+        .axis-btn:hover { background: rgba(255,255,255,0.2); }
+        .axis-btn.active { background: var(--primary); border-color: var(--primary); }
+        
+        /* Number Line Visuals */
+        .number-line-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 1rem;
+            padding-top: 10px;
+            border-top: 2px solid rgba(255,255,255,0.3);
+        }
+        .tick-mark {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            font-family: 'JetBrains Mono';
+        }
+        .tick-mark::before {
+            content: '';
+            width: 2px;
+            height: 10px;
+            background: rgba(255,255,255,0.5);
+            margin-bottom: 5px;
+            margin-top: -12px;
+        }
+        
+        .visual-gap-container {
+            display: flex; 
+            border-bottom: 2px solid white; 
+            align-items: flex-end; 
+            height: 40px; 
+            width: 100%;
+            margin-top: 1rem;
+            font-family: 'JetBrains Mono';
+            position: relative;
+        }
+        .visual-tick {
+            height: 10px;
+            border-right: 2px solid white;
+            position: relative;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+        }
+        .visual-tick span {
+            position: absolute;
+            bottom: -25px;
+            right: -10px;
+        }
+        .bad-gap {
+            background: rgba(239, 68, 68, 0.2);
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red {
+            0% { background: rgba(239, 68, 68, 0.1); }
+            50% { background: rgba(239, 68, 68, 0.3); }
+            100% { background: rgba(239, 68, 68, 0.1); }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 9 Math</div>
+            <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: white;">
+                10.3 Linear Functions
+            </div>
+        </div>
+        
+        <div style="font-size: 1.1rem; color: var(--blue-bright); font-weight: 800; font-family: 'Outfit', sans-serif;">
+            Thursday 22 January 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slides render here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    // --- UTILS ---
+    const createSVGGrid = (id, minX, maxX, minY, maxY, showGrid=true) => {
+        const width = 340, height = 340;
+        const xRange = maxX - minX;
+        const yRange = maxY - minY;
+        
+        // Axis positions
+        const yAxisX = ((-minX) / xRange) * width;
+        const xAxisY = height - ((-minY) / yRange) * height;
+
+        // Dynamic Grid Generation
+        let gridLines = '';
+        let labels = '';
+
+        if(showGrid) {
+            // Vertical Lines & X Labels
+            for(let i=Math.ceil(minX); i<=Math.floor(maxX); i++) {
+                if(i===0) continue; 
+                const xPos = ((i - minX) / xRange) * width;
+                gridLines += `<line x1="${xPos}" y1="0" x2="${xPos}" y2="${height}" class="grid-line" />`;
+                // Add Label
+                labels += `<text x="${xPos}" y="${xAxisY + 20}" class="graph-label">${i}</text>`;
+            }
+            // Horizontal Lines & Y Labels
+            for(let i=Math.ceil(minY); i<=Math.floor(maxY); i++) {
+                if(i===0) continue;
+                const yPos = height - ((i - minY) / yRange) * height;
+                gridLines += `<line x1="0" y1="${yPos}" x2="${width}" y2="${yPos}" class="grid-line" />`;
+                // Add Label
+                labels += `<text x="${yAxisX - 15}" y="${yPos + 5}" class="graph-label" style="text-anchor:end;">${i}</text>`;
+            }
+        }
+
+        return `
+            <svg class="graph-svg" id="svg-${id}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
+                ${gridLines}
+                <!-- Axes -->
+                <line x1="0" y1="${xAxisY}" x2="${width}" y2="${xAxisY}" class="axis" />
+                <line x1="${yAxisX}" y1="0" x2="${yAxisX}" y2="${height}" class="axis" />
+                
+                <!-- Axis Names -->
+                <text x="${width-10}" y="${xAxisY-10}" fill="white">x</text>
+                <text x="${yAxisX+10}" y="15" fill="white">y</text>
+                
+                ${labels}
+
+                <!-- Group for interaction -->
+                <g id="plot-area-${id}"></g>
+            </svg>
+        `;
+    };
+
+    // Global State
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        plotPoints: [],
+        graphCorrect: false,
+        titleInterval: null
+    };
+
+    // --- SLIDE CONTENT ---
+    state.slides = [
+        // Slide 0: Title (Animated Straight Line)
+        {
+            render: () => `
+                <div class="text-center fade-in">
+                    
+                    <!-- New SVG Line Graph Illustration -->
+                    <div style="margin-bottom: 2rem;">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <defs>
+                                <filter id="glow">
+                                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                                <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:var(--accent);stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:var(--primary);stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            
+                            <!-- Simple Axis -->
+                            <line x1="10" y1="190" x2="190" y2="190" stroke="white" stroke-width="2" />
+                            <line x1="10" y1="190" x2="10" y2="10" stroke="white" stroke-width="2" />
+                            
+                            <!-- Animated Straight Line (Controlled by JS) -->
+                            <path id="title-line" d="M 10 150 L 190 20" fill="none" stroke="url(#lineGrad)" stroke-width="6" stroke-linecap="round" filter="url(#glow)">
+                            </path>
+
+                            <!-- Points -->
+                            <circle id="title-p1" cx="10" cy="150" r="6" fill="white"></circle>
+                            <circle id="title-p2" cx="190" cy="20" r="6" fill="white"></circle>
+                        </svg>
+                    </div>
+
+                    <h1 style="font-size: 4.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 0.5rem;">
+                        Linear Functions
+                    </h1>
+                    <p style="font-size: 1.8rem; color: var(--secondary); font-weight: 600; margin-bottom: 3rem;">
+                        From Rules to Lines
+                    </p>
+                    <div class="card slide-up" style="max-width: 800px; margin: 0 auto; text-align: left;">
+                        <h3 class="text-accent">Lesson Objectives</h3>
+                        <ul style="list-style: none; display: grid; gap: 1rem;">
+                            <li style="display:flex; gap:1rem; align-items:center;">
+                                <i class="fa-solid fa-check text-success"></i> Generate coordinates from a function rule.
+                            </li>
+                            <li style="display:flex; gap:1rem; align-items:center;">
+                                <i class="fa-solid fa-check text-success"></i> Plot linear graphs on a coordinate plane.
+                            </li>
+                            <li style="display:flex; gap:1rem; align-items:center;">
+                                <i class="fa-solid fa-check text-success"></i> Choose appropriate scales for axes.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 1: The Process (Detailed Steps)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <div class="notebook-hint"><i class="fa-solid fa-pen"></i> Write the 3 steps</div>
+                    <h2>How to Graph a Linear Function</h2>
+                    <p>Follow this exact recipe every time.</p>
+
+                    <div class="grid-2 slide-up" style="margin-top: 3rem; gap: 2rem;">
+                        
+                        <div class="card" style="border-top: 5px solid var(--accent); text-align: left;">
+                            <h3 class="text-accent">1. CREATE A TABLE</h3>
+                            <p style="margin-top:0.5rem;">Draw a table with 3 columns: <br><strong>x</strong>, <strong>Rule</strong>, <strong>y</strong>.</p>
+                            <p style="margin-top:1rem; font-size:0.95rem; color:var(--text-muted);"><i class="fa-solid fa-lightbulb"></i> Tip: Choose simple x-values like <strong>0, 1, 2</strong>.</p>
+                        </div>
+
+                        <div class="card" style="border-top: 5px solid var(--primary); text-align: left;">
+                            <h3 class="text-primary">2. CALCULATE Y</h3>
+                            <p style="margin-top:0.5rem;">Substitute your x-values into the equation to find y.</p>
+                            <div style="background:rgba(255,255,255,0.05); padding:0.5rem; border-radius:8px; margin-top:0.5rem; font-family:'JetBrains Mono'; text-align:center;">
+                                y = 2(1) + 1 = 3
+                            </div>
+                        </div>
+
+                        <div class="card" style="border-top: 5px solid var(--secondary); text-align: left;">
+                            <h3 class="text-secondary">3. PLOT & CONNECT</h3>
+                            <p style="margin-top:0.5rem;">Write your pairs as <strong>(x, y)</strong> coordinates.</p>
+                            <p style="margin-top:0.5rem;">Mark them on the grid and join them with a straight line (use a ruler!).</p>
+                        </div>
+                        
+                         <div class="card" style="border-top: 5px solid var(--success); text-align: left;">
+                            <h3 class="text-success">Why 3 Points?</h3>
+                            <p style="margin-top:0.5rem;">Two points make a line.</p>
+                            <p style="margin-top:0.5rem;"><strong>Three points catch a mistake.</strong> If they don't line up, check your math!</p>
+                        </div>
+
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 2: Guided Example 1 (Table)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <div class="notebook-hint"><i class="fa-solid fa-table"></i> Copy Table</div>
+                    <h2>Example 1: The Table</h2>
+                    <p>Function Rule: <strong class="text-primary" style="font-size:1.5rem;">y = 2x + 1</strong></p>
+                    
+                    <div class="card slide-up" style="max-width: 800px; margin: 2rem auto;">
+                        <p style="text-align:left; margin-bottom:1rem; color:var(--text-muted);">
+                            <i class="fa-solid fa-lightbulb text-warning"></i> 
+                            Step 1: We chose x = 0, 1, 2. Now calculate y.
+                        </p>
+
+                        <table class="math-table">
+                            <tr style="background: rgba(6, 182, 212, 0.1);">
+                                <th class="text-accent">x (Input)</th>
+                                <td>0</td>
+                                <td>1</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted" style="font-size:1rem;">Work</th>
+                                <td class="text-muted">2(0)+1</td>
+                                <td class="text-muted">2(1)+1</td>
+                                <td class="text-muted">2(2)+1</td>
+                            </tr>
+                            <tr style="background: rgba(244, 63, 94, 0.1);">
+                                <th class="text-secondary">y (Output)</th>
+                                <td><input type="number" class="input-field" data-ans="1" oninput="checkTable(this)"></td>
+                                <td><input type="number" class="input-field" data-ans="3" oninput="checkTable(this)"></td>
+                                <td><input type="number" class="input-field" data-ans="5" oninput="checkTable(this)"></td>
+                            </tr>
+                            <tr>
+                                <th class="text-primary">Point</th>
+                                <td id="coord-0" style="opacity:0.3">(0, ?)</td>
+                                <td id="coord-1" style="opacity:0.3">(1, ?)</td>
+                                <td id="coord-2" style="opacity:0.3">(2, ?)</td>
+                            </tr>
+                        </table>
+                        <div id="table-feedback" style="height:20px; color:var(--success); margin-top:1rem; font-weight:bold;"></div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 3: Guided Example 1 (Graph)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <div class="notebook-hint"><i class="fa-solid fa-pencil"></i> Draw Graph</div>
+                    <h2>Example 1: The Plot</h2>
+                    <p>Plot the points: <strong class="text-accent">(0,1)</strong>, <strong class="text-accent">(1,3)</strong>, <strong class="text-accent">(2,5)</strong></p>
+                    
+                    <div class="grid-2 slide-up" style="gap:2rem;">
+                        <div class="card" style="position:relative;">
+                            ${createSVGGrid('ex1', -1, 4, -1, 7)}
+                            <!-- Removed overlay to fix clicking -->
+                        </div>
+                        
+                        <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+                            <div id="plot-instructions">
+                                <h3 class="text-accent">Click the grid</h3>
+                                <p>Click where <strong class="text-primary">x=0</strong> and <strong class="text-secondary">y=1</strong> intersect.</p>
+                            </div>
+                            <div id="ex1-status" style="margin-top:2rem;">
+                                <div class="num-pill pill-neutral" id="status-p1">(0,1)</div>
+                                <div class="num-pill pill-neutral" id="status-p2">(1,3)</div>
+                                <div class="num-pill pill-neutral" id="status-p3">(2,5)</div>
+                            </div>
+                            <button class="btn btn-reveal" id="btn-connect-ex1" style="display:none;" onclick="drawEx1Line()">Connect the Dots!</button>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 4: Anatomy of the Line
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Anatomy of y = 2x + 1</h2>
+                    <div class="grid-2 slide-up" style="margin-top:2rem;">
+                        <div class="card">
+                            <h3 class="text-warning">The Intercept (+1)</h3>
+                            <p>Look at the graph where x = 0.</p>
+                            <p>The line crosses the y-axis at <strong>1</strong>.</p>
+                            <div style="background:rgba(255,255,255,0.05); padding:1rem; margin-top:1rem; border-radius:8px;">
+                                This is the "Start Value" or <br><strong>y-intercept</strong>.
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3 class="text-primary">The Gradient (2x)</h3>
+                            <p>Look at the "steps" between points.</p>
+                            <p>For every <strong>1 step right</strong>, we go <strong>2 steps up</strong>.</p>
+                            <div style="background:rgba(255,255,255,0.05); padding:1rem; margin-top:1rem; border-radius:8px;">
+                                This is the "Steepness" or <br><strong>Gradient</strong>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 5: The 2 Golden Rules of Axes (IMPROVED)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background:var(--danger);">Crucial Step</span>
+                    <h2>The 2 Golden Rules of Axes</h2>
+                    <p>Before you draw your axis lines, you must check your table values!</p>
+                    
+                    <div class="grid-2 slide-up" style="margin-top:2rem; align-items:stretch;">
+                        
+                        <!-- Rule 1 -->
+                        <div class="card">
+                            <h3>1. Consistent Spacing</h3>
+                            <p class="text-muted">Numbers must go up by the same amount.</p>
+                            
+                            <div style="margin-top:1.5rem;">
+                                <div style="color:var(--danger); font-weight:bold; margin-bottom:0.5rem;"><i class="fa-solid fa-xmark"></i> BAD: Skipping Numbers</div>
+                                <div class="number-line-container">
+                                    <div class="tick-mark">0</div>
+                                    <div class="tick-mark">1</div>
+                                    <div class="tick-mark">2</div>
+                                    <div class="tick-mark text-danger" style="font-weight:bold;">10</div>
+                                    <div class="tick-mark text-danger" style="font-weight:bold;">50</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top:1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top:1rem;">
+                                <div style="color:var(--danger); font-weight:bold; margin-bottom:0.5rem;"><i class="fa-solid fa-xmark"></i> BAD: Uneven Distances</div>
+                                <p style="font-size:0.9rem; margin-bottom:0.5rem;">Even if numbers are correct, the <strong>gap size</strong> must match.</p>
+                                
+                                <div class="visual-gap-container">
+                                    <div class="visual-tick" style="width:15%"><span>0</span></div>
+                                    <div class="visual-tick" style="width:15%"><span>10</span></div>
+                                    <div class="visual-tick bad-gap" style="width:40%"><span>20</span></div>
+                                    <div class="visual-tick" style="width:15%"><span>30</span></div>
+                                    <div class="visual-tick" style="width:15%"><span>40</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rule 2 -->
+                        <div class="card">
+                            <h3>2. Cover the Range</h3>
+                            <p class="text-muted">Your axis must be long enough to include your highest number.</p>
+                            
+                            <div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:8px; margin-top:1rem;">
+                                <p style="margin-bottom:0.5rem;">If your table says <strong>y = 50</strong>...</p>
+                                <p>You cannot stop your axis at <strong>y = 10</strong>!</p>
+                            </div>
+                            
+                            <div style="margin-top:1.5rem; text-align:center;">
+                                <i class="fa-solid fa-ruler-combined" style="font-size:3rem; color:var(--warning);"></i>
+                                <p style="margin-top:1rem;">Check your <strong>Biggest Number</strong> first!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 6: The Graphing Dilemma (Axes)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background:var(--warning);">Critical Thinking</span>
+                    <h2>The Graphing Dilemma</h2>
+                    <p>Function: <strong class="text-primary" style="font-size:1.5rem;">y = 50x</strong></p>
+                    <p>If x = 1, y = 50. If x = 2, y = 100.</p>
+                    
+                    <div class="card slide-up" style="margin-top:2rem;">
+                        <p style="margin-bottom:1rem;">Which Y-axis scale should we use?</p>
+                        <div style="display:flex; justify-content:center; gap:1rem; margin-bottom:2rem;">
+                            <button class="axis-btn" onclick="updateScaleDemo(1)">Count by 1s</button>
+                            <button class="axis-btn" onclick="updateScaleDemo(10)">Count by 10s</button>
+                            <button class="axis-btn" onclick="updateScaleDemo(50)">Count by 50s</button>
+                        </div>
+
+                        <div style="height: 300px; position: relative; border-left: 2px solid white; border-bottom: 2px solid white; margin: 0 auto; width: 80%;">
+                            <div id="scale-bars" style="position: absolute; bottom: 0; left: 0; width: 100%; display: flex; align-items: flex-end; height: 100%;">
+                                <!-- Bars injected here -->
+                            </div>
+                            <!-- Y labels -->
+                            <div id="scale-labels" style="position: absolute; left: -40px; top: 0; height: 100%; display: flex; flex-direction: column-reverse; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted);">
+                            </div>
+                        </div>
+                        <p id="scale-feedback" style="margin-top:1rem; font-weight:bold; min-height:1.5rem;"></p>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 7: Negative Gradient (Improved Grid)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <div class="notebook-hint"><i class="fa-solid fa-bolt"></i> Your Turn</div>
+                    <h2>Negative Gradient</h2>
+                    <p>Function: <strong class="text-secondary" style="font-size:1.5rem;">y = -x + 4</strong></p>
+                    <p>Watch out for the negative sign!</p>
+
+                    <div class="grid-2 slide-up" style="margin-top:2rem;">
+                        <div class="card">
+                            <h3>1. Complete Table</h3>
+                            <table class="math-table">
+                                <tr>
+                                    <th>x</th>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>4</td>
+                                </tr>
+                                <tr>
+                                    <th>y</th>
+                                    <td><input type="number" class="input-field" data-ans="4" oninput="checkNegTable(this)"></td>
+                                    <td><input type="number" class="input-field" data-ans="2" oninput="checkNegTable(this)"></td>
+                                    <td><input type="number" class="input-field" data-ans="0" oninput="checkNegTable(this)"></td>
+                                </tr>
+                            </table>
+                            <div id="neg-feedback" style="color:var(--success); font-weight:bold; margin-top:1rem;"></div>
+                        </div>
+                        <div class="card spoiler-content" id="neg-graph-card">
+                            <h3>2. The Shape</h3>
+                            <p>What direction does the line go?</p>
+                            
+                            <!-- Updated SVG using the Grid Engine -->
+                            <div style="margin-top:1rem; position:relative;">
+                                ${createSVGGrid('neg', -1, 5, -1, 5)}
+                            </div>
+
+                            <p class="text-warning" style="margin-top:1rem;">It goes DOWN because x is negative.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 8: Smart Points (Intro)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background:var(--primary);">Pro Tip</span>
+                    <h2>Smart Point Selection</h2>
+                    <p>Function: <strong class="text-accent" style="font-size:1.5rem;">y = 0.5x + 2</strong></p>
+                    
+                    <div class="card slide-up" style="max-width: 800px; margin: 2rem auto;">
+                        <p>If we pick x = 1, then y = 0.5(1) + 2 = <strong>2.5</strong>. (Hard to plot accurately)</p>
+                        <p style="margin-top:1rem;">What x values should we pick to get <strong class="text-success">whole numbers</strong>?</p>
+                        
+                        <div style="display:flex; gap:1rem; justify-content:center; margin-top:2rem;">
+                            <button class="btn btn-nav" style="width:auto; padding:0 2rem;" onclick="checkSmart(1, this)">Odd Numbers (1, 3, 5)</button>
+                            <button class="btn btn-nav" style="width:auto; padding:0 2rem;" onclick="checkSmart(2, this)">Even Numbers (0, 2, 4)</button>
+                        </div>
+                        <p id="smart-feedback" style="margin-top:1rem; font-weight:bold; min-height:1.5rem;"></p>
+                        
+                        <div id="smart-reveal" class="spoiler-content" style="text-align:left; background:rgba(0,0,0,0.2); padding:1rem; border-radius:8px; margin-top:1rem;">
+                            <p><strong>Correct!</strong> Since we are multiplying by 0.5 (or 1/2), we need even numbers to make it a whole.</p>
+                            <ul style="margin-top:0.5rem; margin-left:1.5rem;">
+                                <li>x=0 → y=2</li>
+                                <li>x=2 → y=3</li>
+                                <li>x=4 → y=4</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 9: Graph of y = 1/2x + 2
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <div class="notebook-hint"><i class="fa-solid fa-pencil"></i> Draw Graph</div>
+                    <h2>The Result: y = <span style="font-family:'Times New Roman', serif;"><sup>1</sup>&frasl;<sub>2</sub></span>x + 2</h2>
+                    <p>We used our smart points: <strong>(0,2)</strong>, <strong>(2,3)</strong>, <strong>(4,4)</strong>.</p>
+                    
+                    <div class="card slide-up" style="max-width: 600px; margin: 2rem auto; position:relative;">
+                         ${createSVGGrid('half', -1, 5, -1, 6)}
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 10: Rise over Run
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background:var(--secondary);">Core Concept</span>
+                    <h2>Understanding Gradient</h2>
+                    <p>Gradient = <span class="text-secondary">Rise</span> over <span class="text-accent">Run</span></p>
+                    
+                    <div class="card slide-up" style="max-width: 600px; margin: 2rem auto; position:relative;">
+                         ${createSVGGrid('gradient', -1, 5, -1, 6)}
+                         
+                         <div style="margin-top:1rem; display:flex; justify-content:center; gap:2rem; font-size:1.2rem;">
+                            <div><strong class="text-secondary">Rise:</strong> 1 Step Up</div>
+                            <div><strong class="text-accent">Run:</strong> 2 Steps Right</div>
+                         </div>
+                         <div style="margin-top:1rem; font-family:'JetBrains Mono'; font-size:1.5rem;">
+                            m = <span class="text-secondary">1</span> / <span class="text-accent">2</span>
+                         </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 11: Challenge Activity
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <div class="notebook-hint"><i class="fa-solid fa-bolt"></i> Challenge</div>
+                    <h2>Your Turn!</h2>
+                    <p>Function: <strong class="text-warning" style="font-size:1.5rem;">y = <span style="font-family:'Times New Roman', serif;"><sup>2</sup>&frasl;<sub>3</sub></span>x - 2</strong></p>
+                    <p>Think: What multiples of 3 should I pick for x?</p>
+                    
+                    <div class="grid-2 slide-up" style="margin-top:2rem;">
+                        <div class="card">
+                            <h3>1. Complete Table</h3>
+                            <table class="math-table">
+                                <tr>
+                                    <th>x</th>
+                                    <td>0</td>
+                                    <td>3</td>
+                                    <td>6</td>
+                                </tr>
+                                <tr>
+                                    <th>y</th>
+                                    <td><input type="number" class="input-field" data-ans="-2" oninput="checkChalTable(this)"></td>
+                                    <td><input type="number" class="input-field" data-ans="0" oninput="checkChalTable(this)"></td>
+                                    <td><input type="number" class="input-field" data-ans="2" oninput="checkChalTable(this)"></td>
+                                </tr>
+                            </table>
+                            <div id="chal-feedback" style="color:var(--success); font-weight:bold; margin-top:1rem;"></div>
+                        </div>
+                        <div class="card spoiler-content" id="chal-graph-card">
+                            <h3>2. The Graph</h3>
+                            ${createSVGGrid('chal', -1, 7, -3, 4)}
+                            <p style="margin-top:1rem;">Rise 2, Run 3</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 12: Positive vs Negative Gradient (NEW)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Positive vs. Negative Gradient</h2>
+                    <p>Let's compare two lines on the same graph.</p>
+                    
+                    <div class="grid-2 slide-up" style="margin-top:2rem;">
+                        <!-- Tables Side -->
+                        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                            
+                            <!-- Positive Table -->
+                            <div class="card" style="padding:1.5rem;">
+                                <h3 class="text-success" style="font-size:1.3rem;">Line A: y = 2x - 1</h3>
+                                <table class="math-table">
+                                    <tr>
+                                        <th>x</th>
+                                        <td>0</td>
+                                        <td>2</td>
+                                    </tr>
+                                    <tr>
+                                        <th>y</th>
+                                        <td><input type="number" class="input-field" data-ans="-1" oninput="checkDualTable()"></td>
+                                        <td><input type="number" class="input-field" data-ans="3" oninput="checkDualTable()"></td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- Negative Table -->
+                            <div class="card" style="padding:1.5rem;">
+                                <h3 class="text-warning" style="font-size:1.3rem;">Line B: y = -0.5x + 4</h3>
+                                <table class="math-table">
+                                    <tr>
+                                        <th>x</th>
+                                        <td>0</td>
+                                        <td>2</td>
+                                    </tr>
+                                    <tr>
+                                        <th>y</th>
+                                        <td><input type="number" class="input-field" data-ans="4" oninput="checkDualTable()"></td>
+                                        <td><input type="number" class="input-field" data-ans="3" oninput="checkDualTable()"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                            <div id="dual-feedback" style="color:var(--success); font-weight:bold; min-height:1.5rem;"></div>
+                            <button class="btn btn-reveal" id="btn-dual-reveal" style="opacity:0; pointer-events:none;" onclick="drawDualGraph()">Reveal Graphs</button>
+                        </div>
+
+                        <!-- Graph Side -->
+                        <div class="card" style="position:relative;">
+                            ${createSVGGrid('dual', -1, 5, -2, 6)}
+                            <div id="dual-graph-text" class="spoiler-content" style="margin-top:1rem;">
+                                <p><strong class="text-success">Positive</strong> goes UP (Taking off) ✈️</p>
+                                <p><strong class="text-warning">Negative</strong> goes DOWN (Landing) 🛬</p>
+                                <p style="margin-top:0.5rem; font-size:0.9rem;">Intersection at <strong>(2, 3)</strong>: The Simultaneous Solution!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 13: Summary & Challenge (REPLACED HOMEWORK)
+        {
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Summary & Challenge</h2>
+                    
+                    <div class="grid-2 slide-up" style="margin-top:2rem;">
+                        <div class="card" style="text-align:left;">
+                            <h3 class="text-primary" style="border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.5rem; margin-bottom:1rem;">Summary</h3>
+                            
+                            <div style="margin-bottom:1.5rem;">
+                                <strong class="text-accent">1. How do I get coordinates?</strong>
+                                <p style="font-size:1.1rem; margin-top:0.3rem;">Make a <strong>Table</strong>! Pick simple x numbers like 0, 1, 2.</p>
+                            </div>
+                            
+                            <div style="margin-bottom:1.5rem;">
+                                <strong class="text-secondary">2. How do I plot them?</strong>
+                                <p style="font-size:1.1rem; margin-top:0.3rem;">x is across (horizontal), y is up/down (vertical). Connect with a ruler.</p>
+                            </div>
+
+                            <div>
+                                <strong class="text-warning">3. How do I choose a scale?</strong>
+                                <p style="font-size:1.1rem; margin-top:0.3rem;">Check your biggest y-value. Space numbers <strong>evenly</strong>.</p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="text-align:left; border: 2px solid var(--success);">
+                            <h3 class="text-success" style="border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.5rem; margin-bottom:1rem;"><i class="fa-solid fa-trophy"></i> Final Challenge</h3>
+                            <p style="font-size:1.3rem; margin-bottom:1rem;">Graph the function:</p>
+                            <div style="background:rgba(255,255,255,0.1); padding:1rem; border-radius:8px; text-align:center; font-size:2rem; font-weight:bold; font-family:'JetBrains Mono'; margin-bottom:1.5rem;">
+                                y = 3x - 5
+                            </div>
+                            
+                            <p><strong>Steps:</strong></p>
+                            <ul style="margin-left:1.5rem; margin-top:0.5rem; line-height:1.8;">
+                                <li>Create a table (x = 0, 1, 2)</li>
+                                <li>Draw axes that go down to -5</li>
+                                <li>Plot the 3 points</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 14: Desmos Integration
+        {
+            render: () => `
+                <div class="fade-in text-center" style="height:100%; display:flex; flex-direction:column;">
+                    <h2 style="margin-bottom:1rem;">Desmos Graphing Calculator</h2>
+                    <div class="card slide-up" style="flex-grow:1; padding:0; overflow:hidden; border:none;">
+                        <iframe src="https://www.desmos.com/calculator?embed" width="100%" height="100%" style="border:0" frameborder=0></iframe>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- INTERACTIVE LOGIC ---
+    
+    // Slide 0: Title Animation
+    function startTitleAnimation() {
+        if(state.titleInterval) clearInterval(state.titleInterval);
+        
+        // Initial drawing
+        randomizeTitleLine();
+
+        state.titleInterval = setInterval(() => {
+            randomizeTitleLine();
+        }, 5000);
+    }
+    
+    function stopTitleAnimation() {
+        if(state.titleInterval) {
+            clearInterval(state.titleInterval);
+            state.titleInterval = null;
+        }
+    }
+    
+    function randomizeTitleLine() {
+        const path = document.getElementById('title-line');
+        const p1 = document.getElementById('title-p1');
+        const p2 = document.getElementById('title-p2');
+        
+        if(!path) return;
+        
+        // Generate random Y coordinates within the box (200x200)
+        const y1 = Math.floor(Math.random() * 160) + 20; 
+        const y2 = Math.floor(Math.random() * 160) + 20;
+        
+        // 1. Reset: Hide the line immediately
+        path.style.transition = 'none'; // Disable transition to hide instantly
+        path.style.strokeDasharray = "300"; // Ensure dasharray is set
+        path.style.strokeDashoffset = "300"; // Hide line
+        
+        // 2. Move points (instant)
+        p1.setAttribute('cy', y1);
+        p2.setAttribute('cy', y2);
+        
+        // 3. Update Path geometry
+        path.setAttribute('d', `M 10 ${y1} L 190 ${y2}`);
+        
+        // 4. Force Reflow so browser accepts the "hidden" state
+        path.getBoundingClientRect(); 
+        
+        // 5. Animate: Show line
+        path.style.transition = "stroke-dashoffset 2s ease-in-out";
+        path.style.strokeDashoffset = "0";
+    }
+
+
+    // Slide 2: Table Check
+    function checkTable(input) {
+        const correct = input.getAttribute('data-ans');
+        const val = input.value;
+        const index = Array.from(input.parentNode.parentNode.children).indexOf(input.parentNode) - 1; // 0, 1, 2
+
+        if(val === correct) {
+            input.classList.add('correct');
+            input.classList.remove('wrong');
+            // Update the point display below
+            const xVal = index; 
+            document.getElementById(`coord-${index}`).innerText = `(${xVal}, ${val})`;
+            document.getElementById(`coord-${index}`).style.opacity = '1';
+            document.getElementById(`coord-${index}`).style.color = 'var(--primary)';
+        } else {
+            input.classList.remove('correct');
+            if(val.length > 0) input.classList.add('wrong');
+        }
+
+        // Check all
+        const allInputs = document.querySelectorAll('#slide-container input');
+        const allCorrect = Array.from(allInputs).every(i => i.classList.contains('correct'));
+        if(allCorrect) {
+            document.getElementById('table-feedback').innerText = "Perfect! Now we have our coordinates.";
+        }
+    }
+
+    // Slide 3: Graph Logic
+    function initEx1Graph() {
+        const svg = document.getElementById('svg-ex1');
+        const width = 340, height = 340;
+        const minX = -1, maxX = 4, minY = -1, maxY = 7;
+        const xRange = maxX - minX;
+        const yRange = maxY - minY;
+
+        // Correct points: (0,1), (1,3), (2,5)
+        const targets = [
+            {x: 0, y: 1, id: 'p1'},
+            {x: 1, y: 3, id: 'p2'},
+            {x: 2, y: 5, id: 'p3'}
+        ];
+
+        const group = document.getElementById('plot-area-ex1');
+        group.innerHTML = ''; // clear
+
+        // Generate click targets for ALL integer points to allow "wrong" clicks
+        for(let ix = 0; ix <= 3; ix++) {
+            for(let iy = 0; iy <= 6; iy++) {
+                const cx = ((ix - minX) / xRange) * width;
+                const cy = height - ((iy - minY) / yRange) * height;
+                
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", cx);
+                circle.setAttribute("cy", cy);
+                circle.setAttribute("r", "15"); // large hit area
+                circle.setAttribute("fill", "transparent");
+                circle.style.cursor = "pointer";
+                
+                circle.onclick = () => handleEx1Click(ix, iy, cx, cy, targets);
+                group.appendChild(circle);
+            }
+        }
+    }
+
+    let ex1PointsFound = 0;
+    function handleEx1Click(x, y, cx, cy, targets) {
+        const match = targets.find(t => t.x === x && t.y === y);
+        const group = document.getElementById('plot-area-ex1');
+
+        if (match) {
+            // Draw visible point
+            const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            dot.setAttribute("cx", cx);
+            dot.setAttribute("cy", cy);
+            dot.setAttribute("r", "0");
+            dot.setAttribute("class", "point-actual visible");
+            group.appendChild(dot);
+            
+            // UI Update
+            const badge = document.getElementById(`status-${match.id}`);
+            if(badge && !badge.classList.contains('pill-output')) {
+                badge.classList.remove('pill-neutral');
+                badge.classList.add('pill-output');
+                ex1PointsFound++;
+            }
+
+            if(ex1PointsFound === 3) {
+                document.getElementById('btn-connect-ex1').style.display = 'inline-flex';
+            }
+        } else {
+            // Wrong point feedback
+            const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            dot.setAttribute("cx", cx);
+            dot.setAttribute("cy", cy);
+            dot.setAttribute("r", "4");
+            dot.setAttribute("fill", "var(--secondary)");
+            dot.setAttribute("opacity", "0.5");
+            group.appendChild(dot);
+            setTimeout(() => dot.remove(), 1000);
+        }
+    }
+
+    function drawEx1Line() {
+        const svg = document.getElementById('svg-ex1');
+        const width = 340, height = 340;
+        const minX = -1, maxX = 4, minY = -1, maxY = 7;
+        
+        // Extended line: from x=-0.5 to x=3 (just for visual)
+        // y = 2x + 1
+        const x1 = -0.5, y1 = 0;
+        const x2 = 3, y2 = 7;
+
+        const cx1 = ((x1 - minX) / (maxX - minX)) * width;
+        const cy1 = height - ((y1 - minY) / (maxY - minY)) * height;
+        const cx2 = ((x2 - minX) / (maxX - minX)) * width;
+        const cy2 = height - ((y2 - minY) / (maxY - minY)) * height;
+
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", cx1);
+        line.setAttribute("y1", cy1);
+        line.setAttribute("x2", cx2);
+        line.setAttribute("y2", cy2);
+        line.setAttribute("class", "graph-line");
+        
+        // Insert before points so points are on top
+        const group = document.getElementById('plot-area-ex1');
+        svg.insertBefore(line, group);
+
+        setTimeout(() => line.classList.add('draw'), 10);
+    }
+
+    // Slide 6: Scale Demo
+    function updateScaleDemo(scale) {
+        const container = document.getElementById('scale-bars');
+        const labels = document.getElementById('scale-labels');
+        const feedback = document.getElementById('scale-feedback');
+        
+        container.innerHTML = '';
+        labels.innerHTML = '';
+        
+        // Buttons active state
+        document.querySelectorAll('.axis-btn').forEach(b => b.classList.remove('active'));
+        
+        // Fix: Select button manually to avoid event errors on auto-load
+        const buttons = document.querySelectorAll('.axis-btn');
+        let activeBtn = null;
+        if (scale === 1) activeBtn = buttons[0];
+        else if (scale === 10) activeBtn = buttons[1];
+        else if (scale === 50) activeBtn = buttons[2];
+        
+        if (activeBtn) activeBtn.classList.add('active');
+
+        // Data: y = 50x for x=1, 2, 3 -> y = 50, 100, 150
+        const values = [50, 100, 150];
+        
+        const visualMax = 200; 
+        
+        let maxDisplayed = 0;
+        let comment = "";
+        let barColor = "var(--accent)";
+
+        if (scale === 1) {
+            maxDisplayed = 20; // Only space for 20 lines
+            comment = "Using 1s: You need a piece of paper 3 meters tall! The points are way off screen.";
+            barColor = "var(--secondary)";
+        } else if (scale === 10) {
+            maxDisplayed = 100; // Shows up to 100
+            comment = "Using 10s: Better, but (3, 150) is still off the chart.";
+            barColor = "var(--warning)";
+        } else {
+            maxDisplayed = 200; // Shows up to 200
+            comment = "Using 50s: Perfect! All points fit nicely.";
+            barColor = "var(--success)";
+        }
+
+        feedback.innerText = comment;
+        feedback.style.color = barColor;
+
+        // Draw Axes Labels
+        for(let i=0; i<=5; i++) {
+            const val = i * (maxDisplayed/5); // simplified ticks
+            const div = document.createElement('div');
+            div.innerText = Math.round(val);
+            labels.appendChild(div);
+        }
+
+        // Draw Bars/Points
+        values.forEach((v, i) => {
+            if (v > maxDisplayed) {
+                // Draw an arrow pointing up indicating off screen
+                const bar = document.createElement('div');
+                bar.style.height = "100%";
+                bar.style.width = "40px";
+                bar.style.background = `repeating-linear-gradient(45deg, ${barColor}, ${barColor} 10px, transparent 10px, transparent 20px)`;
+                bar.style.position = "absolute";
+                bar.style.left = `${(i+1)*20}%`;
+                bar.style.opacity = "0.5";
+                bar.innerText = "OFF SCREEN";
+                bar.style.writingMode = "vertical-rl";
+                bar.style.display = "flex";
+                bar.style.alignItems = "center";
+                bar.style.color = "white";
+                container.appendChild(bar);
+            } else {
+                const h = (v / maxDisplayed) * 100;
+                const bar = document.createElement('div');
+                bar.style.height = `${h}%`;
+                bar.style.width = "20px";
+                bar.style.background = barColor;
+                bar.style.position = "absolute";
+                bar.style.left = `${(i+1)*20}%`; // x=1 at 20%, x=2 at 40%
+                bar.style.transition = "height 0.5s ease";
+                container.appendChild(bar);
+            }
+        });
+    }
+
+    // Slide 7: Negative Table and Graph Plot
+    function checkNegTable(input) {
+        const correct = input.getAttribute('data-ans');
+        if(input.value === correct) {
+            input.classList.add('correct');
+        } else {
+            input.classList.remove('correct');
+        }
+        
+        const all = document.querySelectorAll('#slide-container input.correct');
+        if(all.length === 3) {
+            document.getElementById('neg-feedback').innerText = "Correct! (0,4), (2,2), (4,0)";
+            document.getElementById('neg-graph-card').classList.add('revealed');
+            
+            // Plot points and line on the improved grid
+            setTimeout(drawNegGraph, 500);
+        }
+    }
+
+    function drawNegGraph() {
+        const svg = document.getElementById('svg-neg');
+        const width = 340, height = 340;
+        const minX = -1, maxX = 5, minY = -1, maxY = 5;
+        const xRange = maxX - minX;
+        const yRange = maxY - minY;
+
+        const group = document.getElementById('plot-area-neg');
+        group.innerHTML = '';
+
+        // Points (0,4) and (4,0)
+        const points = [{x:0, y:4}, {x:2, y:2}, {x:4, y:0}];
+        
+        // Draw Line
+        const x1 = -0.5, y1 = 4.5; // extended slightly
+        const x2 = 4.5, y2 = -0.5;
+
+        const cx1 = ((x1 - minX) / xRange) * width;
+        const cy1 = height - ((y1 - minY) / yRange) * height;
+        const cx2 = ((x2 - minX) / xRange) * width;
+        const cy2 = height - ((y2 - minY) / yRange) * height;
+
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", cx1);
+        line.setAttribute("y1", cy1);
+        line.setAttribute("x2", cx2);
+        line.setAttribute("y2", cy2);
+        line.setAttribute("class", "graph-line");
+        group.appendChild(line);
+
+        // Draw Points
+        points.forEach(p => {
+            const cx = ((p.x - minX) / xRange) * width;
+            const cy = height - ((p.y - minY) / yRange) * height;
+            
+            const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            dot.setAttribute("cx", cx);
+            dot.setAttribute("cy", cy);
+            dot.setAttribute("r", "5");
+            dot.setAttribute("fill", "white");
+            group.appendChild(dot);
+            
+            // Text label
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", cx + 10);
+            text.setAttribute("y", cy - 10);
+            text.setAttribute("fill", "white");
+            text.setAttribute("font-size", "12");
+            text.textContent = `(${p.x},${p.y})`;
+            group.appendChild(text);
+        });
+        
+        setTimeout(() => line.classList.add('draw'), 100);
+    }
+
+
+    // Slide 8: Smart Points
+    function checkSmart(choice, btn) {
+        if(choice === 2) {
+            btn.style.background = "var(--success)";
+            btn.style.borderColor = "var(--success)";
+            document.getElementById('smart-feedback').innerText = "Smart choice! Even numbers cancel out the 0.5.";
+            document.getElementById('smart-feedback').style.color = "var(--success)";
+            document.getElementById('smart-reveal').classList.add('revealed');
+        } else {
+            btn.style.background = "var(--secondary)";
+            btn.style.borderColor = "var(--secondary)";
+            document.getElementById('smart-feedback').innerText = "Try again. 0.5 * 1 = 0.5 (Decimal). We want whole numbers.";
+            document.getElementById('smart-feedback').style.color = "var(--secondary)";
+        }
+    }
+
+    // Slide 9: Draw Simple Graph
+    function drawHalfGraph() {
+        // Logic for y = 0.5x + 2
+        // Points (0,2), (2,3), (4,4)
+        const svg = document.getElementById('svg-half');
+        const width = 340, height = 340;
+        const minX = -1, maxX = 5, minY = -1, maxY = 6;
+        const xRange = maxX - minX;
+        const yRange = maxY - minY;
+        const group = document.getElementById('plot-area-half');
+        
+        group.innerHTML = '';
+        
+        // Line
+        const x1 = -1, y1 = 1.5; 
+        const x2 = 5, y2 = 4.5;
+        
+        const cx1 = ((x1 - minX) / xRange) * width;
+        const cy1 = height - ((y1 - minY) / yRange) * height;
+        const cx2 = ((x2 - minX) / xRange) * width;
+        const cy2 = height - ((y2 - minY) / yRange) * height;
+        
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", cx1);
+        line.setAttribute("y1", cy1);
+        line.setAttribute("x2", cx2);
+        line.setAttribute("y2", cy2);
+        line.setAttribute("class", "graph-line");
+        group.appendChild(line);
+        
+        // Points
+        [{x:0, y:2}, {x:2, y:3}, {x:4, y:4}].forEach(p => {
+             const cx = ((p.x - minX) / xRange) * width;
+             const cy = height - ((p.y - minY) / yRange) * height;
+             const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+             dot.setAttribute("cx", cx);
+             dot.setAttribute("cy", cy);
+             dot.setAttribute("r", "5");
+             dot.setAttribute("fill", "var(--primary)");
+             group.appendChild(dot);
+        });
+
+        setTimeout(() => line.classList.add('draw'), 100);
+    }
+    
+    // Slide 10: Gradient Animation
+    function drawGradientGraph() {
+        const svg = document.getElementById('svg-gradient');
+        const width = 340, height = 340;
+        const minX = -1, maxX = 5, minY = -1, maxY = 6;
+        const xRange = maxX - minX;
+        const yRange = maxY - minY;
+        const group = document.getElementById('plot-area-gradient');
+        
+        group.innerHTML = '';
+        
+        // Base Line (re-draw)
+        const x1 = -1, y1 = 1.5; 
+        const x2 = 5, y2 = 4.5;
+        const cx1 = ((x1 - minX) / xRange) * width;
+        const cy1 = height - ((y1 - minY) / yRange) * height;
+        const cx2 = ((x2 - minX) / xRange) * width;
+        const cy2 = height - ((y2 - minY) / yRange) * height;
+        
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", cx1);
+        line.setAttribute("y1", cy1);
+        line.setAttribute("x2", cx2);
+        line.setAttribute("y2", cy2);
+        line.setAttribute("class", "graph-line draw"); // instant draw
+        group.appendChild(line);
+        
+        // Points (0,2) and (2,3)
+        const p1 = {x:0, y:2};
+        const p2 = {x:2, y:3};
+        
+        const c1x = ((p1.x - minX) / xRange) * width;
+        const c1y = height - ((p1.y - minY) / yRange) * height;
+        const c2x = ((p2.x - minX) / xRange) * width;
+        const c2y = height - ((p2.y - minY) / yRange) * height;
+        
+        // Draw Points
+        [p1, p2].forEach(p => {
+             const cx = ((p.x - minX) / xRange) * width;
+             const cy = height - ((p.y - minY) / yRange) * height;
+             const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+             dot.setAttribute("cx", cx);
+             dot.setAttribute("cy", cy);
+             dot.setAttribute("r", "5");
+             dot.setAttribute("fill", "white");
+             group.appendChild(dot);
+        });
+
+        // Rise/Run Triangle
+        // Run: (0,2) to (2,2)
+        const runLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        runLine.setAttribute("x1", c1x);
+        runLine.setAttribute("y1", c1y);
+        runLine.setAttribute("x2", c2x);
+        runLine.setAttribute("y2", c1y); // stay at y=2
+        runLine.setAttribute("stroke", "var(--accent)");
+        runLine.setAttribute("stroke-width", "3");
+        runLine.setAttribute("stroke-dasharray", "5,5");
+        group.appendChild(runLine);
+        
+        // Rise: (2,2) to (2,3)
+        const riseLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        riseLine.setAttribute("x1", c2x);
+        riseLine.setAttribute("y1", c1y); // start at y=2
+        riseLine.setAttribute("x2", c2x);
+        riseLine.setAttribute("y2", c2y); // go to y=3
+        riseLine.setAttribute("stroke", "var(--secondary)");
+        riseLine.setAttribute("stroke-width", "3");
+        riseLine.setAttribute("stroke-dasharray", "5,5");
+        group.appendChild(riseLine);
+
+        // Arrows (Simple triangles)
+        // Arrow for Run (pointing right)
+        const arrowRun = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        arrowRun.setAttribute("d", `M ${c2x-5} ${c1y-5} L ${c2x} ${c1y} L ${c2x-5} ${c1y+5}`);
+        arrowRun.setAttribute("fill", "var(--accent)");
+        group.appendChild(arrowRun);
+        
+        // Arrow for Rise (pointing up)
+        const arrowRise = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        arrowRise.setAttribute("d", `M ${c2x-5} ${c2y+5} L ${c2x} ${c2y} L ${c2x+5} ${c2y+5}`);
+        arrowRise.setAttribute("fill", "var(--secondary)");
+        group.appendChild(arrowRise);
+    }
+    
+    // Slide 11: Challenge
+    function checkChalTable(input) {
+        const correct = input.getAttribute('data-ans');
+        if(input.value === correct) {
+            input.classList.add('correct');
+        } else {
+            input.classList.remove('correct');
+        }
+        
+        const all = document.querySelectorAll('#slide-container input.correct');
+        if(all.length === 3) {
+            document.getElementById('chal-feedback').innerText = "Correct! (0,-2), (3,0), (6,2)";
+            document.getElementById('chal-graph-card').classList.add('revealed');
+            setTimeout(drawChalGraph, 500);
+        }
+    }
+    
+    function drawChalGraph() {
+        const svg = document.getElementById('svg-chal');
+        const width = 340, height = 340;
+        const minX = -1, maxX = 7, minY = -3, maxY = 4;
+        const xRange = maxX - minX;
+        const yRange = maxY - minY;
+        const group = document.getElementById('plot-area-chal');
+        
+        group.innerHTML = '';
+        
+        // y = 2/3x - 2
+        // Line x=-1 -> y = -2.66, x=7 -> y = 2.66
+        const x1 = -1, y1 = -2.66;
+        const x2 = 7, y2 = 2.66;
+        
+        const cx1 = ((x1 - minX) / xRange) * width;
+        const cy1 = height - ((y1 - minY) / yRange) * height;
+        const cx2 = ((x2 - minX) / xRange) * width;
+        const cy2 = height - ((y2 - minY) / yRange) * height;
+        
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", cx1);
+        line.setAttribute("y1", cy1);
+        line.setAttribute("x2", cx2);
+        line.setAttribute("y2", cy2);
+        line.setAttribute("class", "graph-line");
+        group.appendChild(line);
+        
+        // Points
+        [{x:0, y:-2}, {x:3, y:0}, {x:6, y:2}].forEach(p => {
+             const cx = ((p.x - minX) / xRange) * width;
+             const cy = height - ((p.y - minY) / yRange) * height;
+             const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+             dot.setAttribute("cx", cx);
+             dot.setAttribute("cy", cy);
+             dot.setAttribute("r", "5");
+             dot.setAttribute("fill", "white");
+             group.appendChild(dot);
+        });
+
+        setTimeout(() => line.classList.add('draw'), 100);
+    }
+
+    // Slide 12: Dual Graph
+    function checkDualTable() {
+        const inputs = document.querySelectorAll('#slide-container input.input-field');
+        let allGood = true;
+        inputs.forEach(inp => {
+            const correct = inp.getAttribute('data-ans');
+            if (inp.value === correct) {
+                inp.classList.add('correct');
+                inp.classList.remove('wrong');
+            } else {
+                if (inp.value !== '') inp.classList.add('wrong');
+                allGood = false;
+            }
+        });
+
+        if(allGood) {
+            document.getElementById('dual-feedback').innerText = "All calculations correct!";
+            const btn = document.getElementById('btn-dual-reveal');
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'all';
+        }
+    }
+
+    function drawDualGraph() {
+        const svg = document.getElementById('svg-dual');
+        const width = 340, height = 340;
+        const minX = -1, maxX = 5, minY = -2, maxY = 6;
+        const xRange = maxX - minX;
+        const yRange = maxY - minY;
+        const group = document.getElementById('plot-area-dual');
+        group.innerHTML = '';
+
+        // Line A: y = 2x - 1 (Green)
+        // x=-1 -> y=-3, x=4 -> y=7
+        const a1x = -1, a1y = -3;
+        const a2x = 4, a2y = 7;
+        
+        const ca1x = ((a1x - minX) / xRange) * width;
+        const ca1y = height - ((a1y - minY) / yRange) * height;
+        const ca2x = ((a2x - minX) / xRange) * width;
+        const ca2y = height - ((a2y - minY) / yRange) * height;
+
+        const lineA = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        lineA.setAttribute("x1", ca1x);
+        lineA.setAttribute("y1", ca1y);
+        lineA.setAttribute("x2", ca2x);
+        lineA.setAttribute("y2", ca2y);
+        lineA.setAttribute("class", "graph-line");
+        lineA.setAttribute("stroke", "var(--success)");
+        group.appendChild(lineA);
+
+        // Line B: y = -0.5x + 4 (Orange)
+        // x=-1 -> y=4.5, x=5 -> y=1.5
+        const b1x = -1, b1y = 4.5;
+        const b2x = 5, b2y = 1.5;
+        
+        const cb1x = ((b1x - minX) / xRange) * width;
+        const cb1y = height - ((b1y - minY) / yRange) * height;
+        const cb2x = ((b2x - minX) / xRange) * width;
+        const cb2y = height - ((b2y - minY) / yRange) * height;
+
+        const lineB = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        lineB.setAttribute("x1", cb1x);
+        lineB.setAttribute("y1", cb1y);
+        lineB.setAttribute("x2", cb2x);
+        lineB.setAttribute("y2", cb2y);
+        lineB.setAttribute("class", "graph-line");
+        lineB.setAttribute("stroke", "var(--warning)");
+        group.appendChild(lineB);
+
+        // Intersection (2, 3)
+        const intX = ((2 - minX) / xRange) * width;
+        const intY = height - ((3 - minY) / yRange) * height;
+        
+        // Point
+        const intDot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        intDot.setAttribute("cx", intX);
+        intDot.setAttribute("cy", intY);
+        intDot.setAttribute("r", "6");
+        intDot.setAttribute("fill", "white");
+        intDot.setAttribute("stroke", "var(--primary)");
+        intDot.setAttribute("stroke-width", "3");
+        group.appendChild(intDot);
+        
+        // Label
+        const intLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        intLabel.setAttribute("x", intX + 15);
+        intLabel.setAttribute("y", intY);
+        intLabel.setAttribute("fill", "white");
+        intLabel.setAttribute("font-size", "14");
+        intLabel.setAttribute("font-weight", "bold");
+        intLabel.textContent = "(2, 3)";
+        group.appendChild(intLabel);
+
+        // Animate
+        setTimeout(() => {
+            lineA.classList.add('draw');
+            lineB.classList.add('draw');
+            document.getElementById('dual-graph-text').classList.add('revealed');
+        }, 100);
+    }
+
+    // --- CORE RENDER ENGINE ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        
+        // Progress
+        const percent = ((state.currentSlide + 1) / state.slides.length) * 100;
+        document.getElementById('progress-bar').style.width = `${percent}%`;
+        
+        // Nav state
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+
+        // Slide specific inits
+        if (state.currentSlide === 0) {
+            startTitleAnimation();
+        } else {
+            stopTitleAnimation();
+        }
+
+        if(state.currentSlide === 3) {
+            ex1PointsFound = 0; // reset
+            setTimeout(initEx1Graph, 100);
+        }
+        if(state.currentSlide === 6) { 
+            setTimeout(() => updateScaleDemo(10), 100); 
+        }
+        if(state.currentSlide === 9) { // New slide 9
+            setTimeout(drawHalfGraph, 100);
+        }
+        if(state.currentSlide === 10) { // New slide 10
+            setTimeout(drawGradientGraph, 100);
+        }
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // Bind Events
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Init
+    render();
+
+</script>
+</body>
+</html>
