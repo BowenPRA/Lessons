@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Year 4-5 Wheel of Wonder</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE: Galactic Playground Theme --- */
+            --bg-deep: #0f172a;
+            --glass-panel: rgba(30, 41, 59, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+
+            /* Vibrant Accents for Younger Eyes */
+            --neon-blue: #3b82f6;
+            --neon-cyan: #22d3ee;
+            --neon-pink: #f472b6;
+            --neon-purple: #c084fc;
+            --neon-green: #4ade80;
+            --neon-orange: #fbbf24;
+            
+            /* Dimensions */
+            --sidebar-width: 300px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            background: radial-gradient(circle at 50% 100%, #312e81 0%, #0f172a 60%);
+            color: var(--text-primary);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+        }
+
+        /* --- STARFIELD ANIMATION --- */
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #fff, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 150px 200px, rgba(255,255,255,0.8), rgba(0,0,0,0));
+            background-size: 400px 400px;
+            animation: twinkle 80s linear infinite;
+            z-index: -1;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-400px); } }
+
+        /* --- LOBBY (SETUP SCREEN) --- */
+        .lobby-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .lobby-card {
+            background: #1e293b; border: 2px solid var(--glass-border);
+            padding: 2.5rem; border-radius: 32px; width: 90%; max-width: 550px;
+            text-align: center; box-shadow: 0 0 60px rgba(59, 130, 246, 0.3);
+        }
+        .lobby-title { font-family: 'Outfit'; font-size: 2.5rem; margin-bottom: 0.5rem; color: #fff; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .lobby-subtitle { color: var(--neon-cyan); font-size: 1.1rem; margin-bottom: 2rem; font-weight: 600; }
+        
+        .lobby-input-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0;
+            max-height: 40vh; overflow-y: auto; padding: 10px;
+        }
+        .student-input {
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+            color: #fff; padding: 12px; border-radius: 12px; font-family: 'Outfit'; font-size: 1rem;
+            text-align: center; outline: none; transition: all 0.2s;
+        }
+        .student-input:focus { border-color: var(--neon-cyan); background: rgba(34, 211, 238, 0.15); transform: scale(1.02); }
+        
+        .btn-start {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: white; border: none; padding: 1rem 3.5rem; border-radius: 50px;
+            font-family: 'Outfit'; font-weight: 800; font-size: 1.3rem; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            transition: all 0.2s; margin-top: 1.5rem;
+        }
+        .btn-start:hover { transform: scale(1.05) translateY(-2px); box-shadow: 0 15px 35px rgba(168, 85, 247, 0.6); }
+
+        /* --- LAYOUT --- */
+        .app-container {
+            display: flex; width: 100%; height: 100%; max-width: 1920px; margin: 0 auto;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--glass-panel);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; padding: 1.5rem; gap: 1.5rem;
+            z-index: 50; overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.8rem;
+            line-height: 1.1; color: #fff; text-shadow: 0 0 20px rgba(192, 132, 252, 0.4);
+        }
+        .brand span { color: var(--neon-cyan); }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.1);
+            padding: 1.2rem; border-radius: 20px;
+        }
+        .stat-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 700; }
+        .stat-value { font-family: 'Outfit'; font-size: 2.2rem; font-weight: 700; color: #fff; }
+        .stat-sub { font-size: 0.9rem; color: var(--neon-cyan); font-weight: 600; }
+
+        /* Progress Bar */
+        .progress-bar-bg { background: rgba(255,255,255,0.1); height: 10px; border-radius: 5px; overflow: hidden; position: relative; margin-top: 12px; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan)); width: 0%; transition: width 0.5s ease; }
+        .goal-marker { height: 14px; width: 2px; background: #fff; position: absolute; top: -2px; left: 60%; box-shadow: 0 0 8px white; z-index: 5; }
+
+        /* Lifelines */
+        .lifeline-grid { display: flex; flex-direction: column; gap: 10px; }
+        .lifeline-btn {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 14px; border-radius: 16px; color: #fff; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .lifeline-btn:hover:not(:disabled) { background: rgba(255,255,255,0.15); border-color: var(--neon-purple); transform: translateX(5px); }
+        .lifeline-btn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
+        .lifeline-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; margin-right: 12px; color: var(--neon-cyan); font-size: 0.9rem; }
+        .lifeline-text { flex: 1; font-family: 'Outfit'; font-weight: 600; font-size: 0.9rem; text-align: left; }
+        .lifeline-count { font-weight: 800; color: var(--neon-pink); background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 6px; font-size: 0.85rem; }
+
+        /* --- MAIN ARENA --- */
+        .arena {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 2rem; position: relative;
+            overflow: hidden;
+        }
+
+        /* --- TURN HEADER --- */
+        .turn-display {
+            font-family: 'Outfit'; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800;
+            margin-bottom: 2rem; text-align: center; min-height: 70px;
+            text-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
+            opacity: 0; transform: translateY(-20px); transition: all 0.5s ease;
+            z-index: 10;
+        }
+        .turn-display.active { opacity: 1; transform: translateY(0); }
+        .student-name { color: var(--neon-pink); }
+
+        /* --- SPLIT CONTENT --- */
+        .content-split {
+            display: flex; width: 100%; max-width: 1400px; 
+            flex: 1; gap: 4rem; align-items: center; justify-content: center;
+        }
+
+        /* --- WHEEL COMPONENT --- */
+        .wheel-area {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            position: relative; min-width: 300px;
+        }
+
+        /* The physical container */
+        .wheel-wrapper {
+            /* Fluid sizing */
+            width: clamp(300px, 50vmin, 550px);
+            aspect-ratio: 1 / 1;
+            position: relative;
+            border-radius: 50%;
+            /* Thick, friendly bezel */
+            box-shadow: 
+                0 0 0 12px #1e293b,
+                0 0 0 16px #334155,
+                0 0 0 18px rgba(34, 211, 238, 0.6), /* Neon ring */
+                0 30px 60px rgba(0,0,0,0.7);
+            margin-bottom: 2rem;
+            z-index: 5;
+            overflow: visible;
+        }
+
+        /* The Rotator */
+        .wheel-rotator {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.15, 0.85, 0.35, 1);
+        }
+
+        .wheel-background {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            border-radius: 50%;
+        }
+        
+        /* Inner shadow */
+        .wheel-overlay {
+            position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+            border: 6px solid rgba(255,255,255,0.1);
+            z-index: 2;
+        }
+
+        .wheel-text-layer {
+            position: absolute; inset: 0; border-radius: 50%;
+            pointer-events: none; z-index: 3;
+        }
+        
+        .wheel-name-segment {
+            position: absolute; top: 50%; left: 50%;
+            width: 50%; height: 0px;
+            transform-origin: 0 0;
+            display: flex; align-items: center; justify-content: flex-end;
+            padding-right: 45px;
+        }
+        
+        .wheel-text {
+            color: #fff; font-family: 'Outfit'; font-weight: 800; 
+            font-size: clamp(0.9rem, 2.2vmin, 1.4rem); 
+            text-transform: uppercase; white-space: nowrap;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        /* Center Hub */
+        .wheel-hub {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 24%; height: 24%; border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #f8fafc, #94a3b8);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+            border: 6px solid #1e293b;
+        }
+        
+        .btn-spin {
+            width: 100%; height: 100%; border-radius: 50%; border: none; background: transparent;
+            color: #0f172a; font-family: 'Outfit'; font-weight: 900; font-size: clamp(1rem, 1.8vmin, 1.4rem);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-spin:active { transform: scale(0.95); }
+        .btn-spin:disabled { opacity: 0.5; cursor: not-allowed; color: #475569; }
+
+        /* The Pointer */
+        .wheel-pointer {
+            position: absolute; 
+            top: 50%; 
+            right: -35px; 
+            left: auto;
+            transform: translateY(-50%) rotate(90deg); 
+            z-index: 20;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+        }
+        .pointer-body {
+            width: 50px; height: 60px;
+            background: linear-gradient(to bottom, var(--neon-pink), #be123c);
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 50% 85%, 0% 100%);
+            border-top: 3px solid rgba(255,255,255,0.6);
+        }
+
+        .control-group { margin-top: 15px; display: flex; flex-direction: column; align-items: center; }
+        .manual-btn {
+            background: transparent; color: var(--neon-cyan); border: 2px solid var(--neon-cyan);
+            padding: 10px 24px; border-radius: 50px; font-family: 'Outfit'; font-size: 1rem; cursor: pointer;
+            transition: all 0.2s; font-weight: 700;
+        }
+        .manual-btn:hover { background: rgba(34, 211, 238, 0.15); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(34, 211, 238, 0.2); }
+
+        /* --- CARD AREA --- */
+        .card-area {
+            flex: 1.3; perspective: 1000px; width: 100%; max-width: 650px;
+        }
+        
+        .game-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 32px;
+            padding: clamp(2rem, 4vw, 3.5rem);
+            min-height: 450px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: 0 30px 60px -10px rgba(0,0,0,0.6);
+            text-align: center;
+            position: relative; overflow: hidden;
+            transition: transform 0.3s;
+        }
+        .game-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-pink));
+        }
+
+        /* Views */
+        .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.2rem; width: 100%; display: none; }
+        .cat-btn {
+            padding: 1.5rem; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.08);
+            border-radius: 20px; color: #fff; font-family: 'Outfit'; font-size: 1.1rem; cursor: pointer;
+            transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px;
+            position: relative; overflow: hidden;
+        }
+        .cat-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--neon-cyan); transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.25); }
+        .cat-btn.disabled { opacity: 0.4; cursor: default; border-color: transparent; filter: grayscale(1); }
+        .cat-btn.disabled:hover { transform: none; background: rgba(255,255,255,0.05); }
+
+        .cat-icon-box { margin-bottom: 5px; }
+        .cat-icon-box i { font-size: 2rem; color: var(--neon-cyan); text-shadow: 0 0 15px rgba(34, 211, 238, 0.5); }
+        
+        /* Stats inside Category Button */
+        .cat-meta {
+            display: flex; gap: 8px; font-size: 0.8rem; margin-top: 5px; width: 100%; justify-content: center;
+        }
+        .cat-badge {
+            padding: 4px 10px; border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .cat-count {
+            background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 6px; color: #cbd5e1; font-weight: 600;
+        }
+
+        /* Difficulty Colors */
+        .diff-rookie { color: #86efac; background: rgba(34, 197, 94, 0.2); border: 1px solid rgba(34, 197, 94, 0.4); }
+        .diff-pro { color: #93c5fd; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); }
+        .diff-boss { color: #fda4af; background: rgba(244, 63, 94, 0.2); border: 1px solid rgba(244, 63, 94, 0.4); }
+        .diff-done { color: #94a3b8; background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.2); }
+
+        .q-display { display: none; width: 100%; flex-direction: column; align-items: center; gap: 1.5rem; }
+        
+        .badge { padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; display: inline-block; margin-bottom: 10px; }
+        .badge-rookie { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .badge-pro { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .badge-boss { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
+
+        .question-text { font-size: clamp(1.3rem, 2.8vw, 1.8rem); line-height: 1.4; margin-bottom: 1rem; font-weight: 600; color: #fff; }
+        
+        .answer-box { 
+            background: rgba(0,0,0,0.3); border-radius: 16px; padding: 2rem; width: 100%;
+            min-height: 100px; display: flex; align-items: center; justify-content: center;
+            margin: 1rem 0; border: 2px dashed rgba(255,255,255,0.15);
+        }
+        .answer-text { 
+            font-size: clamp(1.2rem, 2.2vw, 1.5rem); color: var(--neon-cyan); font-weight: 700; 
+            opacity: 0; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .answer-text.visible { opacity: 1; transform: translateY(0); }
+
+        .controls { display: flex; gap: 1rem; width: 100%; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+        .btn { padding: 14px 28px; border-radius: 12px; border: none; font-weight: 700; font-family: 'Outfit'; cursor: pointer; transition: all 0.2s; color: #fff; font-size: 1.1rem; }
+        
+        .btn-reveal { background: #334155; width: 100%; max-width: 280px; box-shadow: 0 4px 0 #1e293b; }
+        .btn-reveal:hover { background: #475569; transform: translateY(-2px); box-shadow: 0 6px 0 #1e293b; }
+        .btn-reveal:active { transform: translateY(2px); box-shadow: none; }
+        
+        .btn-correct { background: var(--neon-green); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); flex: 1; max-width: 160px; }
+        .btn-wrong { background: var(--neon-pink); box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4); flex: 1; max-width: 160px; }
+        .btn-action { display: none; }
+        .btn-action:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; z-index: 200;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; }
+        .modal-card-manual {
+            background: #1e293b; padding: 2.5rem; border-radius: 24px; width: 90%; max-width: 500px;
+            border: 1px solid rgba(255,255,255,0.1); text-align: center;
+            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+        .modal-overlay.active .modal-card-manual { transform: scale(1); }
+        
+        .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-top: 25px; max-height: 50vh; overflow-y: auto; }
+        .student-btn {
+            background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3);
+            color: white; padding: 14px; border-radius: 12px; cursor: pointer; font-family: 'Outfit'; transition: all 0.2s; font-weight: 600;
+        }
+        .student-btn:hover { background: var(--neon-blue); color: #020617; transform: scale(1.05); }
+
+        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300; }
+
+        /* --- RESPONSIVE BREAKPOINTS --- */
+        @media (max-width: 900px) {
+            body { flex-direction: column; overflow-y: auto; }
+            .app-container { flex-direction: column; height: auto; min-height: 100vh; }
+            
+            .sidebar { 
+                width: 100%; height: auto; flex-direction: row; align-items: center; 
+                border-right: none; border-bottom: 1px solid var(--glass-border);
+                padding: 1rem; overflow-x: auto; flex-wrap: wrap; justify-content: space-between;
+                background: rgba(15, 23, 42, 0.98);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            }
+            .brand { font-size: 1.4rem; }
+            .stat-card { padding: 0.8rem; min-width: 140px; }
+            .stat-value { font-size: 1.5rem; }
+            
+            .sidebar .stat-card:last-child { display: none; }
+            
+            .content-split { flex-direction: column; gap: 2rem; padding: 1.5rem; margin-top: 0; }
+            .wheel-area { width: 100%; margin-bottom: 1rem; }
+            .card-area { width: 100%; padding-bottom: 3rem; }
+            
+            .lobby-input-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .turn-display { margin-bottom: 1rem; font-size: 2rem; }
+            .sidebar { gap: 10px; padding: 10px; }
+            .stat-card { flex: 1; padding: 10px; }
+            .brand { font-size: 1.2rem; }
+            .btn { width: 100%; max-width: none; }
+            .controls { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+    <canvas id="confetti"></canvas>
+
+    <!-- SETUP LOBBY -->
+    <div id="lobby" class="lobby-overlay">
+        <div class="lobby-card">
+            <h1 class="lobby-title">Class Setup</h1>
+            <p class="lobby-subtitle">Year 4-5 Wheel of Wonder</p>
+            <p style="color:var(--text-secondary); font-size: 0.95rem;">Enter the names of your students:</p>
+            
+            <div class="lobby-input-grid" id="lobby-grid">
+                <!-- JS Injects Inputs -->
+            </div>
+            
+            <button class="btn-start" onclick="game.startGame()">START GAME</button>
+        </div>
+    </div>
+
+    <div class="app-container" id="app" style="opacity: 0; transition: opacity 1s;">
+        <!-- SIDEBAR -->
+        <nav class="sidebar">
+            <div class="brand">Year 4-5<br><span>Wonder Wheel</span></div>
+            
+            <!-- SCORE -->
+            <div class="stat-card">
+                <div class="stat-title">Class Score</div>
+                <div class="stat-value" id="score-percent">0%</div>
+                <div class="stat-sub"><span id="score-correct">0</span> / <span id="score-total">0</span> Correct</div>
+                
+                <div style="position: relative; height: auto;">
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LIFELINES -->
+            <div class="stat-card" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+                <div class="stat-title">Lifelines</div>
+                <div class="lifeline-grid">
+                    <button class="lifeline-btn" id="life-notes" onclick="game.useLifeline('notes')" disabled>
+                        <div style="display:flex; align-items:center;">
+                            <div class="lifeline-icon"><i class="fas fa-book-open"></i></div>
+                            <span class="lifeline-text">Use Notes</span>
+                        </div>
+                        <span class="lifeline-count" id="count-notes">0</span>
+                    </button>
+                    
+                    <button class="lifeline-btn" id="life-friend" onclick="game.useLifeline('friend')">
+                        <div style="display:flex; align-items:center;">
+                            <div class="lifeline-icon"><i class="fas fa-user-friends"></i></div>
+                            <span class="lifeline-text">Ask a Friend</span>
+                        </div>
+                        <span class="lifeline-count" id="count-friend">3</span>
+                    </button>
+
+                    <button class="lifeline-btn" id="life-bowen" onclick="game.useLifeline('bowen')">
+                        <div style="display:flex; align-items:center;">
+                            <div class="lifeline-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                            <span class="lifeline-text">Ask Teacher</span>
+                        </div>
+                        <span class="lifeline-count" id="count-bowen">2</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- POOL STATS -->
+            <div class="stat-card">
+                <div class="stat-title">Student Pool</div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="stat-sub">Remaining</div>
+                    <div class="stat-value" style="font-size: 1.8rem;" id="students-left-count">0</div>
+                </div>
+                <button onclick="game.resetStudents()" style="width:100%; margin-top:10px; padding:10px; background:rgba(255,255,255,0.1); border:none; color:#94a3b8; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight: 600; transition: 0.2s;">Reset Pool</button>
+            </div>
+        </nav>
+
+        <!-- MAIN GAME -->
+        <main class="arena">
+            
+            <div class="turn-display" id="turn-display">
+                <span id="turn-text">Spin the Wheel!</span>
+            </div>
+
+            <div class="content-split">
+                
+                <!-- WHEEL AREA -->
+                <div class="wheel-area">
+                    <div class="wheel-pointer">
+                        <div class="pointer-body"></div>
+                    </div>
+                    
+                    <div class="wheel-wrapper">
+                        <!-- Single Rotator Container containing both background and text to prevent drift -->
+                        <div class="wheel-rotator" id="wheel-rotator">
+                            <div class="wheel-background" id="wheel-background"></div>
+                            <div class="wheel-text-layer" id="wheel-names"></div>
+                        </div>
+                        <div class="wheel-overlay"></div>
+                        
+                        <!-- HUB -->
+                        <div class="wheel-hub">
+                            <button class="btn-spin" id="spin-btn" onclick="game.spinWheel()">SPIN</button>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <button class="manual-btn" onclick="game.openManualPick()"><i class="fas fa-hand-pointer"></i> Manual Pick</button>
+                    </div>
+                </div>
+
+                <!-- CARD AREA -->
+                <div class="card-area">
+                    <div class="game-card">
+                        
+                        <!-- State 0: Intro -->
+                        <div id="view-intro">
+                            <h2 style="font-family:'Outfit'; font-size:2.5rem; margin-bottom:1rem; color:var(--neon-cyan);">Ready?</h2>
+                            <p style="color:#cbd5e1; font-size:1.2rem; line-height:1.6;">Use the wheel to pick a student.<br>Choose a category to reveal a question.</p>
+                        </div>
+
+                        <!-- State 1: Category Select -->
+                        <div id="view-categories" class="cat-grid">
+                            <!-- Injected by JS -->
+                        </div>
+
+                        <!-- State 2: Question -->
+                        <div id="view-question" class="q-display">
+                            <div id="q-badge" class="badge">Rookie</div>
+                            <div id="q-topic" style="color:var(--text-secondary); font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem; font-weight:700;">Topic</div>
+                            
+                            <div id="q-text" class="question-text">Question goes here...</div>
+                            
+                            <div class="answer-box">
+                                <div id="a-text" class="answer-text">Answer Hidden</div>
+                            </div>
+
+                            <div class="controls">
+                                <button id="btn-reveal" class="btn btn-reveal" onclick="game.revealAnswer()">Reveal Answer</button>
+                                <button id="btn-correct" class="btn btn-correct btn-action" onclick="game.handleResult(true)"><i class="fas fa-check"></i> Correct</button>
+                                <button id="btn-wrong" class="btn btn-wrong btn-action" onclick="game.handleResult(false)"><i class="fas fa-times"></i> Wrong</button>
+                            </div>
+                        </div>
+
+                        <!-- State 3: Empty Categories -->
+                        <div id="view-empty" style="display:none; flex-direction:column; align-items:center;">
+                            <div style="font-size:4rem; margin-bottom:1rem;">🎉</div>
+                            <h2 style="font-family:'Outfit'; color:var(--neon-green); margin-bottom: 1rem; font-size: 2rem;">Category Complete!</h2>
+                            <p style="margin-bottom: 2rem; color: var(--text-secondary); font-size: 1.2rem;">All questions in this topic have been answered.</p>
+                            <button class="btn btn-reveal" style="width: auto;" onclick="game.showCategories()">Pick Another</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MANUAL PICK MODAL -->
+    <div class="modal-overlay" id="manual-modal">
+        <div class="modal-card-manual">
+            <h2 style="font-family:'Outfit'; color:#fff; margin-bottom: 5px; font-size: 1.8rem;">Manual Selection</h2>
+            <p style="color:#94a3b8; font-size: 1rem; margin-bottom: 20px;">Choose a student from the active pool.</p>
+            
+            <div class="student-grid" id="manual-list">
+                <!-- JS Injects Buttons Here -->
+            </div>
+
+            <button style="margin-top:25px; background:transparent; border:none; color:#cbd5e1; text-decoration:underline; cursor:pointer; font-size: 1rem;" onclick="game.closeManualModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * ENGINE: Year 4-5 Wheel of Wonder
+         * Target: Primary Students (Ages 8-10)
+         * Features: Responsive Wheel Physics, Lobby System, Deep Cosmic Theme
+         */
+
+        // --- DATA ---
+        const DEFAULT_ROSTER = ["Bơ", "Marceau", "Bo", "Selena", "Margot", "Goku", "Tôm"];
+        
+        const CATEGORIES = {
+            "Amazing Animals": [
+                { id: 1, type: "Rookie", q: "What do fish use to breathe underwater?", a: "Gills" },
+                { id: 2, type: "Rookie", q: "Which animal group has feathers and lays eggs?", a: "Birds" },
+                { id: 3, type: "Rookie", q: "What do you call an animal that only eats plants?", a: "Herbivore" },
+                { id: 4, type: "Pro", q: "Frogs start their life as tadpoles. What class of animal are they?", a: "Amphibians" },
+                { id: 5, type: "Pro", q: "Are mammals warm-blooded or cold-blooded?", a: "Warm-blooded" },
+                { id: 6, type: "Pro", q: "What is the hard shell on the outside of a beetle's body called?", a: "Exoskeleton" },
+                { id: 7, type: "Boss", q: "What is the process called when a caterpillar turns into a butterfly?", a: "Metamorphosis" },
+                { id: 8, type: "Boss", q: "Which organ acts as the control center for the human body?", a: "The Brain" }
+            ],
+            "Maths Magic": [
+                { id: 9, type: "Rookie", q: "What is 6 multiplied by 6?", a: "36" },
+                { id: 10, type: "Rookie", q: "How many sides does a pentagon have?", a: "5" },
+                { id: 11, type: "Rookie", q: "What is double 15?", a: "30" },
+                { id: 12, type: "Pro", q: "What is 1/4 written as a decimal?", a: "0.25" },
+                { id: 13, type: "Pro", q: "If a rectangle is 5cm long and 3cm wide, what is its area?", a: "15 cm²" },
+                { id: 14, type: "Pro", q: "What is the next prime number after 5?", a: "7" },
+                { id: 15, type: "Boss", q: "What do we call an angle that is larger than 90 degrees but smaller than 180?", a: "Obtuse" },
+                { id: 16, type: "Boss", q: "Calculate 12 squared (12 x 12).", a: "144" }
+            ],
+            "Fun Trivia": [
+                { id: 17, type: "Rookie", q: "What is the name of the planet we live on?", a: "Earth" },
+                { id: 18, type: "Rookie", q: "Which colour is at the top of a rainbow?", a: "Red" },
+                { id: 19, type: "Rookie", q: "How many seconds are in one minute?", a: "60" },
+                { id: 20, type: "Pro", q: "Which famous river flows through Egypt?", a: "The Nile" },
+                { id: 21, type: "Pro", q: "Who wrote the Harry Potter books?", a: "J.K. Rowling" },
+                { id: 22, type: "Pro", q: "In which country would you find the Eiffel Tower?", a: "France" },
+                { id: 23, type: "Boss", q: "What is the hardest natural substance on Earth?", a: "Diamond" },
+                { id: 24, type: "Boss", q: "Which continent is the largest by land area?", a: "Asia" }
+            ]
+        };
+
+        // --- GAME STATE ---
+        const game = {
+            activeStudents: [],
+            initialStudents: [],
+            stats: { total: 0, correct: 0 },
+            lifelines: { notes: 0, friend: 3, bowen: 2 },
+            indexes: { "Amazing Animals": 0, "Maths Magic": 0, "Fun Trivia": 0 },
+            currentRotation: 0,
+            
+            // State tracking
+            isSpinning: false,
+            turnActive: false, // Locks wheel until turn is done
+            currentPlayer: null,
+            currentCategory: null,
+            currentQ: null,
+
+            // UI Cache
+            ui: {
+                wheelRotator: document.getElementById('wheel-rotator'),
+                wheelBackground: document.getElementById('wheel-background'),
+                wheelNames: document.getElementById('wheel-names'),
+                spinBtn: document.getElementById('spin-btn'),
+                turnDisplay: document.getElementById('turn-display'),
+                turnText: document.getElementById('turn-text'),
+                app: document.getElementById('app'),
+                lobby: document.getElementById('lobby'),
+                lobbyGrid: document.getElementById('lobby-grid'),
+                
+                // Views
+                intro: document.getElementById('view-intro'),
+                cats: document.getElementById('view-categories'),
+                question: document.getElementById('view-question'),
+                empty: document.getElementById('view-empty'),
+            },
+
+            // --- LOBBY PHASE ---
+            initLobby() {
+                // Populate grid with default inputs
+                this.ui.lobbyGrid.innerHTML = '';
+                DEFAULT_ROSTER.forEach(name => {
+                    const input = document.createElement('input');
+                    input.className = 'student-input';
+                    input.value = name;
+                    input.placeholder = "Name";
+                    this.ui.lobbyGrid.appendChild(input);
+                });
+                
+                // Add a few empty slots for flexibility
+                for(let i=0; i<2; i++){
+                    const input = document.createElement('input');
+                    input.className = 'student-input';
+                    input.placeholder = "Name";
+                    this.ui.lobbyGrid.appendChild(input);
+                }
+            },
+
+            startGame() {
+                // Gather names
+                const inputs = Array.from(this.ui.lobbyGrid.querySelectorAll('input'));
+                const names = inputs.map(i => i.value.trim()).filter(n => n.length > 0);
+                
+                if (names.length < 2) {
+                    alert("Please enter at least 2 players.");
+                    return;
+                }
+
+                this.initialStudents = [...names];
+                this.activeStudents = [...names];
+                
+                // Transition
+                this.ui.lobby.style.opacity = '0';
+                setTimeout(() => {
+                    this.ui.lobby.style.display = 'none';
+                    this.ui.app.style.opacity = '1';
+                    this.renderWheel();
+                    this.updateStats();
+                    this.renderCategories();
+                    confettiEffects.init();
+                }, 500);
+            },
+
+            // --- WHEEL LOGIC ---
+            renderWheel() {
+                const count = this.activeStudents.length;
+                const sliceAngle = 360 / count;
+                this.ui.wheelNames.innerHTML = '';
+                
+                // 1. Generate Gradient
+                const colors = ['#22d3ee', '#c084fc', '#f43f5e', '#4ade80', '#fbbf24', '#3b82f6'];
+                let gradientStr = 'conic-gradient(';
+                
+                this.activeStudents.forEach((name, i) => {
+                    const color = colors[i % colors.length];
+                    const start = i * sliceAngle;
+                    const end = (i + 1) * sliceAngle;
+                    gradientStr += `${color} ${start}deg ${end}deg,`;
+
+                    // 2. Generate Text Segment
+                    // To center text in slice, we rotate it to start + half_slice
+                    // KEY FIX: Offset by -90deg because HTML elements at 0deg are Horizontal (3 o'clock)
+                    // but CSS Gradients at 0deg are Vertical (12 o'clock).
+                    const textRotation = start + (sliceAngle / 2) - 90;
+                    
+                    const seg = document.createElement('div');
+                    seg.className = 'wheel-name-segment';
+                    // Rotate the container to the middle of the slice
+                    seg.style.transform = `rotate(${textRotation}deg)`;
+                    
+                    const text = document.createElement('span');
+                    text.className = 'wheel-text';
+                    text.innerText = name;
+                    
+                    seg.appendChild(text);
+                    this.ui.wheelNames.appendChild(seg);
+                });
+
+                gradientStr = gradientStr.slice(0, -1) + ')';
+                this.ui.wheelBackground.style.background = gradientStr;
+            },
+
+            spinWheel() {
+                if (this.isSpinning) return;
+                
+                // Prevent spin if previous turn isn't done
+                if (this.turnActive) {
+                    alert("Please finish the current turn before spinning again!");
+                    return;
+                }
+
+                if (this.activeStudents.length === 0) {
+                    this.resetStudents();
+                    return;
+                }
+
+                this.isSpinning = true;
+                this.turnActive = true; // Lock the turn
+                this.ui.spinBtn.disabled = true;
+                this.ui.turnDisplay.classList.remove('active');
+
+                // 1. Pick Winner
+                const winnerIndex = Math.floor(Math.random() * this.activeStudents.length);
+                const winnerName = this.activeStudents[winnerIndex];
+
+                // 2. Calculate Math
+                const sliceAngle = 360 / this.activeStudents.length;
+                
+                // Center of the winner slice relative to wheel start (0deg)
+                const centerAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
+                
+                // We want the wheel's rotation to end such that this centerAngle matches the POINTER location
+                // POINTER IS AT RIGHT (90deg).
+                // So R should be 90 - centerAngle.
+                
+                let targetFromZero = 90 - centerAngle; 
+                
+                // Add fuzz
+                const fuzz = (Math.random() * (sliceAngle * 0.4)) - (sliceAngle * 0.2);
+                targetFromZero += fuzz;
+
+                // 3. Find next rotation value that matches targetFromZero
+                // We want to spin forward at least 5 times (1800deg)
+                const minSpins = 5;
+                const fullSpins = 360 * minSpins;
+                
+                // Current visual rotation
+                const current = this.currentRotation;
+                
+                // Calculate remainder of current rotation
+                const currentMod = current % 360;
+                
+                // Distance to next aligned position
+                let distance = targetFromZero - currentMod;
+                if (distance < 0) {
+                    distance += 360; // Wrap around to ensure positive forward motion
+                }
+                
+                // Add minimum spins
+                const finalRotation = current + distance + fullSpins;
+                
+                this.currentRotation = finalRotation;
+                
+                // Apply rotation to the wrapper that holds both bg and text
+                this.ui.wheelRotator.style.transform = `rotate(${this.currentRotation}deg)`;
+
+                // 3. Finish
+                setTimeout(() => {
+                    this.startTurn(winnerName, winnerIndex);
+                }, 4000);
+            },
+
+            startTurn(name, index) {
+                this.isSpinning = false;
+                this.currentPlayer = name;
+                
+                // Remove from pool logic
+                this.activeStudents.splice(index, 1);
+                
+                // Visual delay then re-render
+                this.ui.spinBtn.disabled = true; // Still disabled until question answered
+                this.ui.turnText.innerHTML = `<span class="student-name">${name}</span> is up!`;
+                this.ui.turnDisplay.classList.add('active');
+                
+                this.updateStats();
+                this.showCategories();
+            },
+
+            // --- VIEW MANAGEMENT ---
+            showCategories() {
+                this.ui.intro.style.display = 'none';
+                this.ui.question.style.display = 'none';
+                this.ui.empty.style.display = 'none';
+                this.ui.cats.style.display = 'grid';
+                this.renderCategories(); // Re-render to show difficulty badges
+            },
+
+            selectCategory(catName) {
+                this.currentCategory = catName;
+                const idx = this.indexes[catName];
+                const list = CATEGORIES[catName];
+                
+                if (idx >= list.length) {
+                    return; // Should be disabled anyway
+                }
+
+                this.currentQ = list[idx];
+                this.renderQuestion();
+            },
+
+            renderCategories() {
+                this.ui.cats.innerHTML = '';
+                Object.keys(CATEGORIES).forEach(cat => {
+                    const idx = this.indexes[cat];
+                    const list = CATEGORIES[cat];
+                    const remaining = list.length - idx;
+                    const isDone = remaining === 0;
+                    
+                    const btn = document.createElement('div');
+                    btn.className = `cat-btn ${isDone ? 'disabled' : ''}`;
+                    
+                    let icon = 'fa-star';
+                    if(cat.includes('Animals')) icon = 'fa-paw';
+                    if(cat.includes('Maths')) icon = 'fa-calculator';
+                    if(cat.includes('Trivia')) icon = 'fa-globe';
+
+                    // Determine badge
+                    let badgeHtml = '';
+                    if (!isDone) {
+                        const nextQ = list[idx];
+                        const diffClass = `diff-${nextQ.type.toLowerCase()}`;
+                        badgeHtml = `<span class="cat-badge ${diffClass}">${nextQ.type}</span>`;
+                    } else {
+                        badgeHtml = `<span class="cat-badge diff-done">Done</span>`;
+                    }
+
+                    btn.innerHTML = `
+                        <div class="cat-icon-box"><i class="fas ${icon}"></i></div>
+                        <span style="font-weight:700;">${cat}</span>
+                        <div class="cat-meta">
+                            ${badgeHtml}
+                            <span class="cat-count">${remaining} left</span>
+                        </div>
+                    `;
+                    
+                    if(!isDone) {
+                        btn.onclick = () => this.selectCategory(cat);
+                    }
+                    this.ui.cats.appendChild(btn);
+                });
+            },
+
+            renderQuestion() {
+                // DOM Elements
+                const els = {
+                    badge: document.getElementById('q-badge'),
+                    topic: document.getElementById('q-topic'),
+                    text: document.getElementById('q-text'),
+                    answer: document.getElementById('a-text'),
+                    reveal: document.getElementById('btn-reveal'),
+                    correct: document.getElementById('btn-correct'),
+                    wrong: document.getElementById('btn-wrong'),
+                };
+
+                // Set Data
+                els.badge.innerText = this.currentQ.type;
+                els.badge.className = `badge badge-${this.currentQ.type.toLowerCase()}`;
+                els.topic.innerText = this.currentCategory;
+                els.text.innerText = this.currentQ.q;
+                els.answer.innerText = this.currentQ.a;
+                els.answer.classList.remove('visible');
+
+                // Button State
+                els.reveal.style.display = 'block';
+                els.correct.style.display = 'none';
+                els.wrong.style.display = 'none';
+
+                // View Switch
+                this.ui.cats.style.display = 'none';
+                this.ui.question.style.display = 'flex';
+            },
+
+            revealAnswer() {
+                document.getElementById('a-text').classList.add('visible');
+                document.getElementById('btn-reveal').style.display = 'none';
+                document.getElementById('btn-correct').style.display = 'block';
+                document.getElementById('btn-wrong').style.display = 'block';
+            },
+
+            handleResult(isCorrect) {
+                this.stats.total++;
+                if (isCorrect) {
+                    this.stats.correct++;
+                    confettiEffects.fire();
+                }
+
+                // Increment index
+                this.indexes[this.currentCategory]++;
+                
+                this.updateStats();
+
+                // Unlock Turn
+                this.turnActive = false;
+                this.ui.spinBtn.disabled = false;
+                
+                // Visually shift the wheel
+                this.renderWheel();
+
+                // Reset UI
+                this.ui.question.style.display = 'none';
+                this.ui.intro.style.display = 'block';
+                this.ui.turnDisplay.classList.remove('active');
+                this.ui.turnText.innerText = "Spin the Wheel!";
+                setTimeout(() => this.ui.turnDisplay.classList.add('active'), 100);
+            },
+
+            // --- UTILS ---
+            resetStudents() {
+                if(confirm("Reset the student pool?")) {
+                    this.activeStudents = [...this.initialStudents];
+                    this.renderWheel();
+                    this.updateStats();
+                }
+            },
+            
+            updateStats() {
+                const percent = this.stats.total === 0 ? 0 : Math.round((this.stats.correct / this.stats.total) * 100);
+                
+                document.getElementById('score-percent').innerText = percent + "%";
+                document.getElementById('score-correct').innerText = this.stats.correct;
+                document.getElementById('score-total').innerText = this.stats.total;
+                document.getElementById('progress-fill').style.width = percent + "%";
+                document.getElementById('students-left-count').innerText = this.activeStudents.length;
+
+                // Color coding
+                const pEl = document.getElementById('score-percent');
+                if (percent >= 60) pEl.style.color = "var(--neon-green)";
+                else if (percent > 0) pEl.style.color = "var(--neon-pink)";
+            },
+
+            useLifeline(type) {
+                if (this.lifelines[type] > 0) {
+                    this.lifelines[type]--;
+                    document.getElementById(`count-${type}`).innerText = this.lifelines[type];
+                    if(this.lifelines[type] === 0) {
+                        document.getElementById(`life-${type}`).disabled = true;
+                    }
+                }
+            },
+
+            openManualPick() {
+                const list = document.getElementById('manual-list');
+                list.innerHTML = '';
+                this.activeStudents.forEach((name, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'student-btn';
+                    btn.innerText = name;
+                    btn.onclick = () => {
+                        this.closeManualModal();
+                        // Manually triggering turn also locks spin
+                        this.turnActive = true;
+                        this.startTurn(name, idx);
+                    };
+                    list.appendChild(btn);
+                });
+                
+                const modal = document.getElementById('manual-modal');
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('active'), 10);
+            },
+
+            closeManualModal() {
+                const modal = document.getElementById('manual-modal');
+                modal.classList.remove('active');
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
+        };
+
+        // --- VISUAL EFFECTS ---
+        const confettiEffects = {
+            canvas: null,
+            ctx: null,
+            particles: [],
+            
+            init() {
+                this.canvas = document.getElementById('confetti');
+                this.ctx = this.canvas.getContext('2d');
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                this.animate();
+            },
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            },
+
+            fire() {
+                const colors = ['#22d3ee', '#f43f5e', '#c084fc', '#f59e0b', '#22c55e'];
+                for(let i=0; i<150; i++) {
+                    this.particles.push({
+                        x: window.innerWidth / 2,
+                        y: window.innerHeight / 2,
+                        vx: (Math.random() - 0.5) * 25,
+                        vy: (Math.random() - 0.5) * 25,
+                        size: Math.random() * 6 + 2,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 1,
+                        decay: Math.random() * 0.015 + 0.005
+                    });
+                }
+            },
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                for(let i = this.particles.length - 1; i >= 0; i--) {
+                    const p = this.particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.3; // Gravity
+                    p.life -= p.decay;
+
+                    if(p.life <= 0) {
+                        this.particles.splice(i, 1);
+                    } else {
+                        this.ctx.globalAlpha = p.life;
+                        this.ctx.fillStyle = p.color;
+                        this.ctx.beginPath();
+                        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        this.ctx.fill();
+                        this.ctx.globalAlpha = 1;
+                    }
+                }
+                requestAnimationFrame(() => this.animate());
+            }
+        };
+
+        // BOOTSTRAP
+        game.initLobby();
+
+    </script>
+</body>
+</html>
