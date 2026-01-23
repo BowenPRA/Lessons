@@ -261,7 +261,11 @@
 
         /* The Flapper/Pointer */
         .wheel-pointer {
-            position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+            position: absolute; 
+            top: 50%; 
+            right: -30px; 
+            left: auto; /* Reset left */
+            transform: translateY(-50%) rotate(90deg); /* Rotate to point Left */
             z-index: 20;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
         }
@@ -753,7 +757,9 @@
 
                     // 2. Generate Text Segment
                     // To center text in slice, we rotate it to start + half_slice
-                    const textRotation = start + (sliceAngle / 2);
+                    // KEY FIX: Offset by -90deg because HTML elements at 0deg are Horizontal (3 o'clock)
+                    // but CSS Gradients at 0deg are Vertical (12 o'clock).
+                    const textRotation = start + (sliceAngle / 2) - 90;
                     
                     const seg = document.createElement('div');
                     seg.className = 'wheel-name-segment';
@@ -801,13 +807,13 @@
                 // Center of the winner slice relative to wheel start (0deg)
                 const centerAngle = (winnerIndex * sliceAngle) + (sliceAngle / 2);
                 
-                // We want the wheel's rotation to end such that this centerAngle matches the top (0deg/360deg)
+                // We want the wheel's rotation to end such that this centerAngle matches the POINTER location
+                // POINTER IS AT RIGHT (90deg).
                 // If wheel is at rotation R, the visual angle of center is (centerAngle + R).
-                // We want (centerAngle + R) % 360 == 0.
-                // So R should be -centerAngle (or 360 - centerAngle).
+                // We want (centerAngle + R) % 360 == 90.
+                // So R should be 90 - centerAngle.
                 
-                // Target is how much we need to rotate FROM ZERO to align center with top
-                let targetFromZero = 360 - centerAngle; 
+                let targetFromZero = 90 - centerAngle; 
                 
                 // Add fuzz
                 const fuzz = (Math.random() * (sliceAngle * 0.4)) - (sliceAngle * 0.2);
@@ -820,14 +826,6 @@
                 
                 // Current visual rotation
                 const current = this.currentRotation;
-                
-                // We want to reach a value R_new such that R_new > current + fullSpins
-                // AND R_new % 360 is roughly targetFromZero.
-                
-                // Let's normalize current to find where we are in the 0-360 cycle
-                // Actually, simpler:
-                // targetFromZero is a value between 0 and 360.
-                // We can calculate the total degrees we want to add.
                 
                 // Calculate remainder of current rotation
                 const currentMod = current % 360;
@@ -865,21 +863,6 @@
                 this.ui.turnDisplay.classList.add('active');
                 
                 // DO NOT reset rotation here. Leave the wheel rotated to the winner.
-                // Re-render only to update colors/names for NEXT spin, but we need to be careful
-                // If we re-render now with fewer slices, the alignment breaks for the current view.
-                // SOLUTION: Don't re-render the wheel graphic yet. Wait until the next spin STARTS or reset?
-                // Actually, if we don't re-render, the slices are correct for the visual.
-                // We will re-render the wheel graphic at the START of the next spin? 
-                // No, the array has changed.
-                // Let's re-render the wheel immediately but keep the rotation.
-                // Since the number of slices changes, the angles change. 
-                // If we have 10 slices, center is 18deg. 
-                // If we go to 9 slices, center is 20deg.
-                // If we re-render now, the wheel underneath the pointer will shift visually because the slice width grows.
-                // This is unavoidable if we remove the slice immediately.
-                // Better UX: Keep the wheel as-is for now. Re-render it at the *very start* of the next spin or when reset is pressed.
-                // But we need to remove the student from the array so they can't be picked again. Done.
-                // We will mark the wheel as "dirty" and re-render it before the next spin animation starts.
                 
                 this.updateStats();
                 this.showCategories();
