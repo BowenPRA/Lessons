@@ -322,39 +322,83 @@
             transition: max-height 0.8s ease, opacity 0.5s ease, margin 0.5s;
         }
         .visual-wrapper.active {
-            max-height: 500px; /* Increased for vertical steps */
-            opacity: 1; margin-bottom: 20px; padding: 20px;
+            padding: 2rem;
+            height: auto;
+            min-height: 300px;
+            opacity: 1; margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
         }
         
         #solution-steps {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
             width: 100%;
+            gap: 12px;
         }
         
-        .solution-step {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #fff;
+        .step-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 20px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
             opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.5s ease;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
         }
-        
-        .solution-step.visible {
+
+        .step-card.visible {
             opacity: 1;
             transform: translateY(0);
         }
-        
-        .solution-arrow {
+
+        .step-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
             color: var(--text-secondary);
-            font-size: 1.2rem;
-            margin: 5px 0;
-            opacity: 0.5;
+            width: 130px; 
+            text-align: right;
+            margin-right: 20px;
+            border-right: 2px solid var(--glass-border);
+            padding-right: 15px;
+        }
+
+        .step-math {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        /* Style Variants */
+        .step-card.substitution {
+            background: rgba(34, 211, 238, 0.1);
+            border-color: rgba(34, 211, 238, 0.3);
+        }
+
+        .step-card.answer {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.4);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
+        }
+
+        .step-card.answer .step-math {
+            font-size: 2rem;
+            color: var(--neon-green);
         }
 
         /* Next Button */
@@ -405,6 +449,9 @@
             .arena { padding: 1rem; }
             .game-board-wrapper { max-width: 100%; }
             .math-display { font-size: 2rem; }
+            
+            .step-label { width: 90px; font-size: 0.65rem; }
+            .step-math { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -495,32 +542,33 @@
          */
 
         // --- DATASET: 20 Questions Per Level ---
+        // solveSteps format: Array of Objects { label: "EXPRESSION", math: "x + 4" }
         const LEVELS_DB = [
             {
                 name: "Level 1",
                 desc: "The Direct Swap",
                 color: "var(--neon-cyan)",
                 problems: [
-                    { q: "If x = 5, calculate x + 4", a: 9, solveSteps: ["x + 4", "<span class='txt-pos'>5</span> + 4", "9"], arrows: [5, 4] },
-                    { q: "If x = 10, calculate x - 3", a: 7, solveSteps: ["x - 3", "<span class='txt-pos'>10</span> - 3", "7"], arrows: [10, -3] },
-                    { q: "If y = 7, calculate 10 + y", a: 17, solveSteps: ["10 + y", "10 + <span class='txt-pos'>7</span>", "17"], arrows: [10, 7] },
-                    { q: "If a = 8, calculate 20 - a", a: 12, solveSteps: ["20 - a", "20 - <span class='txt-pos'>8</span>", "12"], arrows: [20, -8] },
-                    { q: "If k = 0, calculate k + 15", a: 15, solveSteps: ["k + 15", "<span class='txt-pos'>0</span> + 15", "15"], arrows: [0, 15] },
-                    { q: "If m = 6, calculate 2m", a: 12, solveSteps: ["2m", "2(<span class='txt-pos'>6</span>)", "12"] },
-                    { q: "If n = 4, calculate 5n", a: 20, solveSteps: ["5n", "5(<span class='txt-pos'>4</span>)", "20"] },
-                    { q: "If p = 10, calculate 3p", a: 30, solveSteps: ["3p", "3(<span class='txt-pos'>10</span>)", "30"] },
-                    { q: "If x = 12, calculate x/2", a: 6, solveSteps: ["x / 2", "<span class='txt-pos'>12</span> / 2", "6"] },
-                    { q: "If x = 20, calculate x/4", a: 5, solveSteps: ["x / 4", "<span class='txt-pos'>20</span> / 4", "5"] },
-                    { q: "If b = 100, calculate b - 1", a: 99, solveSteps: ["b - 1", "<span class='txt-pos'>100</span> - 1", "99"], arrows: [100, -1] },
-                    { q: "If c = 1, calculate 10c", a: 10, solveSteps: ["10c", "10(<span class='txt-pos'>1</span>)", "10"] },
-                    { q: "If x = 9, calculate x + x", a: 18, solveSteps: ["x + x", "<span class='txt-pos'>9</span> + <span class='txt-pos'>9</span>", "18"], arrows: [9, 9] },
-                    { q: "If y = 50, calculate y/10", a: 5, solveSteps: ["y / 10", "<span class='txt-pos'>50</span> / 10", "5"] },
-                    { q: "If z = 3, calculate 12 - z", a: 9, solveSteps: ["12 - z", "12 - <span class='txt-pos'>3</span>", "9"], arrows: [12, -3] },
-                    { q: "If a = 11, calculate 2a", a: 22, solveSteps: ["2a", "2(<span class='txt-pos'>11</span>)", "22"] },
-                    { q: "If x = 7, calculate 7x", a: 49, solveSteps: ["7x", "7(<span class='txt-pos'>7</span>)", "49"] },
-                    { q: "If w = 15, calculate w - 15", a: 0, solveSteps: ["w - 15", "<span class='txt-pos'>15</span> - 15", "0"], arrows: [15, -15] },
-                    { q: "If q = 8, calculate 16/q", a: 2, solveSteps: ["16 / q", "16 / <span class='txt-pos'>8</span>", "2"] },
-                    { q: "If x = 1, calculate 100x", a: 100, solveSteps: ["100x", "100(<span class='txt-pos'>1</span>)", "100"] }
+                    { q: "If x = 5, calculate x + 4", a: 9, solveSteps: [{l:"EXPRESSION", m:"x + 4"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>5</span> + 4"}, {l:"ADD", m:"9"}] },
+                    { q: "If x = 10, calculate x - 3", a: 7, solveSteps: [{l:"EXPRESSION", m:"x - 3"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>10</span> - 3"}, {l:"SUBTRACT", m:"7"}] },
+                    { q: "If y = 7, calculate 10 + y", a: 17, solveSteps: [{l:"EXPRESSION", m:"10 + y"}, {l:"SUBSTITUTE", m:"10 + <span class='txt-pos'>7</span>"}, {l:"ADD", m:"17"}] },
+                    { q: "If a = 8, calculate 20 - a", a: 12, solveSteps: [{l:"EXPRESSION", m:"20 - a"}, {l:"SUBSTITUTE", m:"20 - <span class='txt-pos'>8</span>"}, {l:"SUBTRACT", m:"12"}] },
+                    { q: "If k = 0, calculate k + 15", a: 15, solveSteps: [{l:"EXPRESSION", m:"k + 15"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>0</span> + 15"}, {l:"ADD", m:"15"}] },
+                    { q: "If m = 6, calculate 2m", a: 12, solveSteps: [{l:"EXPRESSION", m:"2m"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>6</span>)"}, {l:"MULTIPLY", m:"12"}] },
+                    { q: "If n = 4, calculate 5n", a: 20, solveSteps: [{l:"EXPRESSION", m:"5n"}, {l:"SUBSTITUTE", m:"5(<span class='txt-pos'>4</span>)"}, {l:"MULTIPLY", m:"20"}] },
+                    { q: "If p = 10, calculate 3p", a: 30, solveSteps: [{l:"EXPRESSION", m:"3p"}, {l:"SUBSTITUTE", m:"3(<span class='txt-pos'>10</span>)"}, {l:"MULTIPLY", m:"30"}] },
+                    { q: "If x = 12, calculate x/2", a: 6, solveSteps: [{l:"EXPRESSION", m:"x / 2"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>12</span> / 2"}, {l:"DIVIDE", m:"6"}] },
+                    { q: "If x = 20, calculate x/4", a: 5, solveSteps: [{l:"EXPRESSION", m:"x / 4"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>20</span> / 4"}, {l:"DIVIDE", m:"5"}] },
+                    { q: "If b = 100, calculate b - 1", a: 99, solveSteps: [{l:"EXPRESSION", m:"b - 1"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>100</span> - 1"}, {l:"SUBTRACT", m:"99"}] },
+                    { q: "If c = 1, calculate 10c", a: 10, solveSteps: [{l:"EXPRESSION", m:"10c"}, {l:"SUBSTITUTE", m:"10(<span class='txt-pos'>1</span>)"}, {l:"MULTIPLY", m:"10"}] },
+                    { q: "If x = 9, calculate x + x", a: 18, solveSteps: [{l:"EXPRESSION", m:"x + x"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>9</span> + <span class='txt-pos'>9</span>"}, {l:"ADD", m:"18"}] },
+                    { q: "If y = 50, calculate y/10", a: 5, solveSteps: [{l:"EXPRESSION", m:"y / 10"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>50</span> / 10"}, {l:"DIVIDE", m:"5"}] },
+                    { q: "If z = 3, calculate 12 - z", a: 9, solveSteps: [{l:"EXPRESSION", m:"12 - z"}, {l:"SUBSTITUTE", m:"12 - <span class='txt-pos'>3</span>"}, {l:"SUBTRACT", m:"9"}] },
+                    { q: "If a = 11, calculate 2a", a: 22, solveSteps: [{l:"EXPRESSION", m:"2a"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>11</span>)"}, {l:"MULTIPLY", m:"22"}] },
+                    { q: "If x = 7, calculate 7x", a: 49, solveSteps: [{l:"EXPRESSION", m:"7x"}, {l:"SUBSTITUTE", m:"7(<span class='txt-pos'>7</span>)"}, {l:"MULTIPLY", m:"49"}] },
+                    { q: "If w = 15, calculate w - 15", a: 0, solveSteps: [{l:"EXPRESSION", m:"w - 15"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>15</span> - 15"}, {l:"SUBTRACT", m:"0"}] },
+                    { q: "If q = 8, calculate 16/q", a: 2, solveSteps: [{l:"EXPRESSION", m:"16 / q"}, {l:"SUBSTITUTE", m:"16 / <span class='txt-pos'>8</span>"}, {l:"DIVIDE", m:"2"}] },
+                    { q: "If x = 1, calculate 100x", a: 100, solveSteps: [{l:"EXPRESSION", m:"100x"}, {l:"SUBSTITUTE", m:"100(<span class='txt-pos'>1</span>)"}, {l:"MULTIPLY", m:"100"}] }
                 ]
             },
             {
@@ -528,26 +576,26 @@
                 desc: "Two-Step Rhythm",
                 color: "var(--neon-green)",
                 problems: [
-                    { q: "If x = 3, calculate 2x + 1", a: 7, solveSteps: ["2x + 1", "2(<span class='txt-pos'>3</span>) + 1", "6 + 1", "7"], arrows: [6, 1] },
-                    { q: "If x = 5, calculate 3x - 2", a: 13, solveSteps: ["3x - 2", "3(<span class='txt-pos'>5</span>) - 2", "15 - 2", "13"], arrows: [15, -2] },
-                    { q: "If a = 4, calculate 5a + 3", a: 23, solveSteps: ["5a + 3", "5(<span class='txt-pos'>4</span>) + 3", "20 + 3", "23"], arrows: [20, 3] },
-                    { q: "If y = 10, calculate 2y - 10", a: 10, solveSteps: ["2y - 10", "2(<span class='txt-pos'>10</span>) - 10", "20 - 10", "10"], arrows: [20, -10] },
-                    { q: "If m = 2, calculate 10m + 5", a: 25, solveSteps: ["10m + 5", "10(<span class='txt-pos'>2</span>) + 5", "20 + 5", "25"], arrows: [20, 5] },
-                    { q: "If k = 6, calculate 4k - 1", a: 23, solveSteps: ["4k - 1", "4(<span class='txt-pos'>6</span>) - 1", "24 - 1", "23"], arrows: [24, -1] },
-                    { q: "If x = 8, calculate x/2 + 1", a: 5, solveSteps: ["x/2 + 1", "<span class='txt-pos'>8</span>/2 + 1", "4 + 1", "5"], arrows: [4, 1] },
-                    { q: "If x = 12, calculate x/4 - 2", a: 1, solveSteps: ["x/4 - 2", "<span class='txt-pos'>12</span>/4 - 2", "3 - 2", "1"], arrows: [3, -2] },
-                    { q: "If p = 5, calculate 20 - 2p", a: 10, solveSteps: ["20 - 2p", "20 - 2(<span class='txt-pos'>5</span>)", "20 - 10", "10"], arrows: [20, -10] },
-                    { q: "If w = 10, calculate 50 - 3w", a: 20, solveSteps: ["50 - 3w", "50 - 3(<span class='txt-pos'>10</span>)", "50 - 30", "20"], arrows: [50, -30] },
-                    { q: "If n = 3, calculate 1 + 4n", a: 13, solveSteps: ["1 + 4n", "1 + 4(<span class='txt-pos'>3</span>)", "1 + 12", "13"], arrows: [1, 12] },
-                    { q: "If b = 7, calculate 2b + b", a: 21, solveSteps: ["2b + b", "2(<span class='txt-pos'>7</span>) + <span class='txt-pos'>7</span>", "14 + 7", "21"], arrows: [14, 7] },
-                    { q: "If x = 0, calculate 5x + 8", a: 8, solveSteps: ["5x + 8", "5(<span class='txt-pos'>0</span>) + 8", "0 + 8", "8"], arrows: [0, 8] },
-                    { q: "If x = 1, calculate 10x - 9", a: 1, solveSteps: ["10x - 9", "10(<span class='txt-pos'>1</span>) - 9", "10 - 9", "1"], arrows: [10, -9] },
-                    { q: "If a = 20, calculate a/5 + 6", a: 10, solveSteps: ["a/5 + 6", "<span class='txt-pos'>20</span>/5 + 6", "4 + 6", "10"], arrows: [4, 6] },
-                    { q: "If y = 4, calculate 10 + y/2", a: 12, solveSteps: ["10 + y/2", "10 + <span class='txt-pos'>4</span>/2", "10 + 2", "12"], arrows: [10, 2] },
-                    { q: "If c = 9, calculate 2c - 18", a: 0, solveSteps: ["2c - 18", "2(<span class='txt-pos'>9</span>) - 18", "18 - 18", "0"], arrows: [18, -18] },
-                    { q: "If x = 5, calculate 100 - 10x", a: 50, solveSteps: ["100 - 10x", "100 - 10(<span class='txt-pos'>5</span>)", "100 - 50", "50"], arrows: [100, -50] },
-                    { q: "If z = 2, calculate 3z + 4z", a: 14, solveSteps: ["3z + 4z", "3(<span class='txt-pos'>2</span>) + 4(<span class='txt-pos'>2</span>)", "6 + 8", "14"], arrows: [6, 8] },
-                    { q: "If x = 6, calculate x/3 + x", a: 8, solveSteps: ["x/3 + x", "<span class='txt-pos'>6</span>/3 + <span class='txt-pos'>6</span>", "2 + 6", "8"], arrows: [2, 6] }
+                    { q: "If x = 3, calculate 2x + 1", a: 7, solveSteps: [{l:"EXPRESSION", m:"2x + 1"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>3</span>) + 1"}, {l:"MULTIPLY", m:"6 + 1"}, {l:"ADD", m:"7"}] },
+                    { q: "If x = 5, calculate 3x - 2", a: 13, solveSteps: [{l:"EXPRESSION", m:"3x - 2"}, {l:"SUBSTITUTE", m:"3(<span class='txt-pos'>5</span>) - 2"}, {l:"MULTIPLY", m:"15 - 2"}, {l:"SUBTRACT", m:"13"}] },
+                    { q: "If a = 4, calculate 5a + 3", a: 23, solveSteps: [{l:"EXPRESSION", m:"5a + 3"}, {l:"SUBSTITUTE", m:"5(<span class='txt-pos'>4</span>) + 3"}, {l:"MULTIPLY", m:"20 + 3"}, {l:"ADD", m:"23"}] },
+                    { q: "If y = 10, calculate 2y - 10", a: 10, solveSteps: [{l:"EXPRESSION", m:"2y - 10"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>10</span>) - 10"}, {l:"MULTIPLY", m:"20 - 10"}, {l:"SUBTRACT", m:"10"}] },
+                    { q: "If m = 2, calculate 10m + 5", a: 25, solveSteps: [{l:"EXPRESSION", m:"10m + 5"}, {l:"SUBSTITUTE", m:"10(<span class='txt-pos'>2</span>) + 5"}, {l:"MULTIPLY", m:"20 + 5"}, {l:"ADD", m:"25"}] },
+                    { q: "If k = 6, calculate 4k - 1", a: 23, solveSteps: [{l:"EXPRESSION", m:"4k - 1"}, {l:"SUBSTITUTE", m:"4(<span class='txt-pos'>6</span>) - 1"}, {l:"MULTIPLY", m:"24 - 1"}, {l:"SUBTRACT", m:"23"}] },
+                    { q: "If x = 8, calculate x/2 + 1", a: 5, solveSteps: [{l:"EXPRESSION", m:"x/2 + 1"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>8</span>/2 + 1"}, {l:"DIVIDE", m:"4 + 1"}, {l:"ADD", m:"5"}] },
+                    { q: "If x = 12, calculate x/4 - 2", a: 1, solveSteps: [{l:"EXPRESSION", m:"x/4 - 2"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>12</span>/4 - 2"}, {l:"DIVIDE", m:"3 - 2"}, {l:"SUBTRACT", m:"1"}] },
+                    { q: "If p = 5, calculate 20 - 2p", a: 10, solveSteps: [{l:"EXPRESSION", m:"20 - 2p"}, {l:"SUBSTITUTE", m:"20 - 2(<span class='txt-pos'>5</span>)"}, {l:"MULTIPLY", m:"20 - 10"}, {l:"SUBTRACT", m:"10"}] },
+                    { q: "If w = 10, calculate 50 - 3w", a: 20, solveSteps: [{l:"EXPRESSION", m:"50 - 3w"}, {l:"SUBSTITUTE", m:"50 - 3(<span class='txt-pos'>10</span>)"}, {l:"MULTIPLY", m:"50 - 30"}, {l:"SUBTRACT", m:"20"}] },
+                    { q: "If n = 3, calculate 1 + 4n", a: 13, solveSteps: [{l:"EXPRESSION", m:"1 + 4n"}, {l:"SUBSTITUTE", m:"1 + 4(<span class='txt-pos'>3</span>)"}, {l:"MULTIPLY", m:"1 + 12"}, {l:"ADD", m:"13"}] },
+                    { q: "If b = 7, calculate 2b + b", a: 21, solveSteps: [{l:"EXPRESSION", m:"2b + b"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>7</span>) + <span class='txt-pos'>7</span>"}, {l:"MULTIPLY", m:"14 + 7"}, {l:"ADD", m:"21"}] },
+                    { q: "If x = 0, calculate 5x + 8", a: 8, solveSteps: [{l:"EXPRESSION", m:"5x + 8"}, {l:"SUBSTITUTE", m:"5(<span class='txt-pos'>0</span>) + 8"}, {l:"MULTIPLY", m:"0 + 8"}, {l:"ADD", m:"8"}] },
+                    { q: "If x = 1, calculate 10x - 9", a: 1, solveSteps: [{l:"EXPRESSION", m:"10x - 9"}, {l:"SUBSTITUTE", m:"10(<span class='txt-pos'>1</span>) - 9"}, {l:"MULTIPLY", m:"10 - 9"}, {l:"SUBTRACT", m:"1"}] },
+                    { q: "If a = 20, calculate a/5 + 6", a: 10, solveSteps: [{l:"EXPRESSION", m:"a/5 + 6"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>20</span>/5 + 6"}, {l:"DIVIDE", m:"4 + 6"}, {l:"ADD", m:"10"}] },
+                    { q: "If y = 4, calculate 10 + y/2", a: 12, solveSteps: [{l:"EXPRESSION", m:"10 + y/2"}, {l:"SUBSTITUTE", m:"10 + <span class='txt-pos'>4</span>/2"}, {l:"DIVIDE", m:"10 + 2"}, {l:"ADD", m:"12"}] },
+                    { q: "If c = 9, calculate 2c - 18", a: 0, solveSteps: [{l:"EXPRESSION", m:"2c - 18"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>9</span>) - 18"}, {l:"MULTIPLY", m:"18 - 18"}, {l:"SUBTRACT", m:"0"}] },
+                    { q: "If x = 5, calculate 100 - 10x", a: 50, solveSteps: [{l:"EXPRESSION", m:"100 - 10x"}, {l:"SUBSTITUTE", m:"100 - 10(<span class='txt-pos'>5</span>)"}, {l:"MULTIPLY", m:"100 - 50"}, {l:"SUBTRACT", m:"50"}] },
+                    { q: "If z = 2, calculate 3z + 4z", a: 14, solveSteps: [{l:"EXPRESSION", m:"3z + 4z"}, {l:"SUBSTITUTE", m:"3(<span class='txt-pos'>2</span>) + 4(<span class='txt-pos'>2</span>)"}, {l:"MULTIPLY", m:"6 + 8"}, {l:"ADD", m:"14"}] },
+                    { q: "If x = 6, calculate x/3 + x", a: 8, solveSteps: [{l:"EXPRESSION", m:"x/3 + x"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>6</span>/3 + <span class='txt-pos'>6</span>"}, {l:"DIVIDE", m:"2 + 6"}, {l:"ADD", m:"8"}] }
                 ]
             },
             {
@@ -555,26 +603,26 @@
                 desc: "The Bubble Wrap",
                 color: "var(--neon-amber)",
                 problems: [
-                    { q: "If x = -2, calculate x + 5", a: 3, solveSteps: ["x + 5", "<span class='txt-neg'>(-2)</span> + 5", "3"], arrows: [-2, 5] },
-                    { q: "If x = -4, calculate x + 4", a: 0, solveSteps: ["x + 4", "<span class='txt-neg'>(-4)</span> + 4", "0"], arrows: [-4, 4] },
-                    { q: "If y = -3, calculate 10 + y", a: 7, solveSteps: ["10 + y", "10 + <span class='txt-neg'>(-3)</span>", "7"], arrows: [10, -3] },
-                    { q: "If a = -5, calculate a - 2", a: -7, solveSteps: ["a - 2", "<span class='txt-neg'>(-5)</span> - 2", "-7"], arrows: [-5, -2] },
-                    { q: "If k = -1, calculate k - 9", a: -10, solveSteps: ["k - 9", "<span class='txt-neg'>(-1)</span> - 9", "-10"], arrows: [-1, -9] },
-                    { q: "If x = -3, calculate 2x", a: -6, solveSteps: ["2x", "2<span class='txt-neg'>(-3)</span>", "-6"] },
-                    { q: "If x = -5, calculate 3x", a: -15, solveSteps: ["3x", "3<span class='txt-neg'>(-5)</span>", "-15"] },
-                    { q: "If m = -10, calculate m/2", a: -5, solveSteps: ["m / 2", "<span class='txt-neg'>(-10)</span> / 2", "-5"] },
-                    { q: "If x = -2, calculate 2x + 5", a: 1, solveSteps: ["2x + 5", "2<span class='txt-neg'>(-2)</span> + 5", "-4 + 5", "1"], arrows: [-4, 5] },
-                    { q: "If x = -3, calculate 3x - 1", a: -10, solveSteps: ["3x - 1", "3<span class='txt-neg'>(-3)</span> - 1", "-9 - 1", "-10"], arrows: [-9, -1] },
-                    { q: "If p = -4, calculate 10p", a: -40, solveSteps: ["10p", "10<span class='txt-neg'>(-4)</span>", "-40"] },
-                    { q: "If a = -6, calculate a/3 + 2", a: 0, solveSteps: ["a/3 + 2", "<span class='txt-neg'>(-6)</span>/3 + 2", "-2 + 2", "0"], arrows: [-2, 2] },
-                    { q: "If x = -1, calculate 1 - x", a: 2, solveSteps: ["1 - x", "1 - <span class='txt-neg'>(-1)</span>", "1 + 1", "2"], arrows: [1, 1] },
-                    { q: "If y = -5, calculate 10 - y", a: 15, solveSteps: ["10 - y", "10 - <span class='txt-neg'>(-5)</span>", "10 + 5", "15"], arrows: [10, 5] },
-                    { q: "If x = -2, calculate 5 - x", a: 7, solveSteps: ["5 - x", "5 - <span class='txt-neg'>(-2)</span>", "5 + 2", "7"], arrows: [5, 2] },
-                    { q: "If w = -3, calculate -2w", a: 6, solveSteps: ["-2w", "-2<span class='txt-neg'>(-3)</span>", "6"] },
-                    { q: "If k = -5, calculate -4k", a: 20, solveSteps: ["-4k", "-4<span class='txt-neg'>(-5)</span>", "20"] },
-                    { q: "If x = -1, calculate 5x + 5", a: 0, solveSteps: ["5x + 5", "5<span class='txt-neg'>(-1)</span> + 5", "-5 + 5", "0"], arrows: [-5, 5] },
-                    { q: "If a = -10, calculate 20 + a", a: 10, solveSteps: ["20 + a", "20 + <span class='txt-neg'>(-10)</span>", "10"], arrows: [20, -10] },
-                    { q: "If x = -4, calculate 0 - x", a: 4, solveSteps: ["0 - x", "0 - <span class='txt-neg'>(-4)</span>", "0 + 4", "4"], arrows: [0, 4] }
+                    { q: "If x = -2, calculate x + 5", a: 3, solveSteps: [{l:"EXPRESSION", m:"x + 5"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-2)</span> + 5"}, {l:"ADD", m:"3"}] },
+                    { q: "If x = -4, calculate x + 4", a: 0, solveSteps: [{l:"EXPRESSION", m:"x + 4"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-4)</span> + 4"}, {l:"ADD", m:"0"}] },
+                    { q: "If y = -3, calculate 10 + y", a: 7, solveSteps: [{l:"EXPRESSION", m:"10 + y"}, {l:"SUBSTITUTE", m:"10 + <span class='txt-neg'>(-3)</span>"}, {l:"ADD", m:"7"}] },
+                    { q: "If a = -5, calculate a - 2", a: -7, solveSteps: [{l:"EXPRESSION", m:"a - 2"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-5)</span> - 2"}, {l:"SUBTRACT", m:"-7"}] },
+                    { q: "If k = -1, calculate k - 9", a: -10, solveSteps: [{l:"EXPRESSION", m:"k - 9"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-1)</span> - 9"}, {l:"SUBTRACT", m:"-10"}] },
+                    { q: "If x = -3, calculate 2x", a: -6, solveSteps: [{l:"EXPRESSION", m:"2x"}, {l:"SUBSTITUTE", m:"2<span class='txt-neg'>(-3)</span>"}, {l:"MULTIPLY", m:"-6"}] },
+                    { q: "If x = -5, calculate 3x", a: -15, solveSteps: [{l:"EXPRESSION", m:"3x"}, {l:"SUBSTITUTE", m:"3<span class='txt-neg'>(-5)</span>"}, {l:"MULTIPLY", m:"-15"}] },
+                    { q: "If m = -10, calculate m/2", a: -5, solveSteps: [{l:"EXPRESSION", m:"m / 2"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-10)</span> / 2"}, {l:"DIVIDE", m:"-5"}] },
+                    { q: "If x = -2, calculate 2x + 5", a: 1, solveSteps: [{l:"EXPRESSION", m:"2x + 5"}, {l:"SUBSTITUTE", m:"2<span class='txt-neg'>(-2)</span> + 5"}, {l:"MULTIPLY", m:"-4 + 5"}, {l:"ADD", m:"1"}] },
+                    { q: "If x = -3, calculate 3x - 1", a: -10, solveSteps: [{l:"EXPRESSION", m:"3x - 1"}, {l:"SUBSTITUTE", m:"3<span class='txt-neg'>(-3)</span> - 1"}, {l:"MULTIPLY", m:"-9 - 1"}, {l:"SUBTRACT", m:"-10"}] },
+                    { q: "If p = -4, calculate 10p", a: -40, solveSteps: [{l:"EXPRESSION", m:"10p"}, {l:"SUBSTITUTE", m:"10<span class='txt-neg'>(-4)</span>"}, {l:"MULTIPLY", m:"-40"}] },
+                    { q: "If a = -6, calculate a/3 + 2", a: 0, solveSteps: [{l:"EXPRESSION", m:"a/3 + 2"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-6)</span>/3 + 2"}, {l:"DIVIDE", m:"-2 + 2"}, {l:"ADD", m:"0"}] },
+                    { q: "If x = -1, calculate 1 - x", a: 2, solveSteps: [{l:"EXPRESSION", m:"1 - x"}, {l:"SUBSTITUTE", m:"1 - <span class='txt-neg'>(-1)</span>"}, {l:"SUBTRACT", m:"2"}] },
+                    { q: "If y = -5, calculate 10 - y", a: 15, solveSteps: [{l:"EXPRESSION", m:"10 - y"}, {l:"SUBSTITUTE", m:"10 - <span class='txt-neg'>(-5)</span>"}, {l:"SUBTRACT", m:"15"}] },
+                    { q: "If x = -2, calculate 5 - x", a: 7, solveSteps: [{l:"EXPRESSION", m:"5 - x"}, {l:"SUBSTITUTE", m:"5 - <span class='txt-neg'>(-2)</span>"}, {l:"SUBTRACT", m:"7"}] },
+                    { q: "If w = -3, calculate -2w", a: 6, solveSteps: [{l:"EXPRESSION", m:"-2w"}, {l:"SUBSTITUTE", m:"-2<span class='txt-neg'>(-3)</span>"}, {l:"MULTIPLY", m:"6"}] },
+                    { q: "If k = -5, calculate -4k", a: 20, solveSteps: [{l:"EXPRESSION", m:"-4k"}, {l:"SUBSTITUTE", m:"-4<span class='txt-neg'>(-5)</span>"}, {l:"MULTIPLY", m:"20"}] },
+                    { q: "If x = -1, calculate 5x + 5", a: 0, solveSteps: [{l:"EXPRESSION", m:"5x + 5"}, {l:"SUBSTITUTE", m:"5<span class='txt-neg'>(-1)</span> + 5"}, {l:"MULTIPLY", m:"-5 + 5"}, {l:"ADD", m:"0"}] },
+                    { q: "If a = -10, calculate 20 + a", a: 10, solveSteps: [{l:"EXPRESSION", m:"20 + a"}, {l:"SUBSTITUTE", m:"20 + <span class='txt-neg'>(-10)</span>"}, {l:"ADD", m:"10"}] },
+                    { q: "If x = -4, calculate 0 - x", a: 4, solveSteps: [{l:"EXPRESSION", m:"0 - x"}, {l:"SUBSTITUTE", m:"0 - <span class='txt-neg'>(-4)</span>"}, {l:"SUBTRACT", m:"4"}] }
                 ]
             },
             {
@@ -582,26 +630,26 @@
                 desc: "Double Trouble",
                 color: "var(--neon-pink)",
                 problems: [
-                    { q: "If x = 3 and y = 2, calculate x + y", a: 5, solveSteps: ["x + y", "<span class='txt-pos'>3</span> + <span class='txt-pos'>2</span>", "5"], arrows: [3, 2] },
-                    { q: "If x = 5 and y = 3, calculate x - y", a: 2, solveSteps: ["x - y", "<span class='txt-pos'>5</span> - <span class='txt-pos'>3</span>", "2"], arrows: [5, -3] },
-                    { q: "If a = 4 and b = 5, calculate ab", a: 20, solveSteps: ["ab", "(<span class='txt-pos'>4</span>)(<span class='txt-pos'>5</span>)", "20"] },
-                    { q: "If x = 2 and y = -3, calculate xy", a: -6, solveSteps: ["xy", "(<span class='txt-pos'>2</span>)<span class='txt-neg'>(-3)</span>", "-6"] },
-                    { q: "If m = 10, calculate 2(m + 1)", a: 22, solveSteps: ["2(m + 1)", "2(<span class='txt-pos'>10</span> + 1)", "2(11)", "22"] },
-                    { q: "If n = 5, calculate 3(n - 2)", a: 9, solveSteps: ["3(n - 2)", "3(<span class='txt-pos'>5</span> - 2)", "3(3)", "9"] },
-                    { q: "If x = 4, calculate 5(10 - x)", a: 30, solveSteps: ["5(10 - x)", "5(10 - <span class='txt-pos'>4</span>)", "5(6)", "30"] },
-                    { q: "If a = 3, calculate a(a + 2)", a: 15, solveSteps: ["a(a + 2)", "<span class='txt-pos'>3</span>(<span class='txt-pos'>3</span> + 2)", "3(5)", "15"] },
-                    { q: "If x = 2 and y = 5, calculate 2x + y", a: 9, solveSteps: ["2x + y", "2(<span class='txt-pos'>2</span>) + <span class='txt-pos'>5</span>", "4 + 5", "9"], arrows: [4, 5] },
-                    { q: "If a = 3 and b = 4, calculate 3a - 2b", a: 1, solveSteps: ["3a - 2b", "3(<span class='txt-pos'>3</span>) - 2(<span class='txt-pos'>4</span>)", "9 - 8", "1"], arrows: [9, -8] },
-                    { q: "If x = 6, calculate (x + 4)/2", a: 5, solveSteps: ["(x + 4) / 2", "(<span class='txt-pos'>6</span> + 4) / 2", "10 / 2", "5"] },
-                    { q: "If x = 10, calculate (20 - x)/5", a: 2, solveSteps: ["(20 - x) / 5", "(20 - <span class='txt-pos'>10</span>) / 5", "10 / 5", "2"] },
-                    { q: "If x = -2, calculate 3(x + 5)", a: 9, solveSteps: ["3(x + 5)", "3(<span class='txt-neg'>(-2)</span> + 5)", "3(3)", "9"] },
-                    { q: "If y = -4, calculate 2(y - 1)", a: -10, solveSteps: ["2(y - 1)", "2(<span class='txt-neg'>(-4)</span> - 1)", "2(-5)", "-10"] },
-                    { q: "If x = 3 and y = -2, calculate x + 2y", a: -1, solveSteps: ["x + 2y", "<span class='txt-pos'>3</span> + 2<span class='txt-neg'>(-2)</span>", "3 + (-4)", "-1"], arrows: [3, -4] },
-                    { q: "If a = 5, calculate 2(a + a)", a: 20, solveSteps: ["2(a + a)", "2(<span class='txt-pos'>5</span> + <span class='txt-pos'>5</span>)", "2(10)", "20"] },
-                    { q: "If x = -3, calculate x(x + 1)", a: 6, solveSteps: ["x(x + 1)", "<span class='txt-neg'>(-3)</span>(<span class='txt-neg'>(-3)</span> + 1)", "-3(-2)", "6"] },
-                    { q: "If p = 4 and q = 2, calculate p/q", a: 2, solveSteps: ["p / q", "<span class='txt-pos'>4</span> / <span class='txt-pos'>2</span>", "2"] },
-                    { q: "If x = 5, calculate 10(x - 5)", a: 0, solveSteps: ["10(x - 5)", "10(<span class='txt-pos'>5</span> - 5)", "10(0)", "0"] },
-                    { q: "If x = -1 and y = -1, calculate x + y", a: -2, solveSteps: ["x + y", "<span class='txt-neg'>(-1)</span> + <span class='txt-neg'>(-1)</span>", "-2"], arrows: [-1, -1] }
+                    { q: "If x = 3 and y = 2, calculate x + y", a: 5, solveSteps: [{l:"EXPRESSION", m:"x + y"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>3</span> + <span class='txt-pos'>2</span>"}, {l:"ADD", m:"5"}] },
+                    { q: "If x = 5 and y = 3, calculate x - y", a: 2, solveSteps: [{l:"EXPRESSION", m:"x - y"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>5</span> - <span class='txt-pos'>3</span>"}, {l:"SUBTRACT", m:"2"}] },
+                    { q: "If a = 4 and b = 5, calculate ab", a: 20, solveSteps: [{l:"EXPRESSION", m:"ab"}, {l:"SUBSTITUTE", m:"(<span class='txt-pos'>4</span>)(<span class='txt-pos'>5</span>)"}, {l:"MULTIPLY", m:"20"}] },
+                    { q: "If x = 2 and y = -3, calculate xy", a: -6, solveSteps: [{l:"EXPRESSION", m:"xy"}, {l:"SUBSTITUTE", m:"(<span class='txt-pos'>2</span>)<span class='txt-neg'>(-3)</span>"}, {l:"MULTIPLY", m:"-6"}] },
+                    { q: "If m = 10, calculate 2(m + 1)", a: 22, solveSteps: [{l:"EXPRESSION", m:"2(m + 1)"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>10</span> + 1)"}, {l:"PARENTHESES", m:"2(11)"}, {l:"MULTIPLY", m:"22"}] },
+                    { q: "If n = 5, calculate 3(n - 2)", a: 9, solveSteps: [{l:"EXPRESSION", m:"3(n - 2)"}, {l:"SUBSTITUTE", m:"3(<span class='txt-pos'>5</span> - 2)"}, {l:"PARENTHESES", m:"3(3)"}, {l:"MULTIPLY", m:"9"}] },
+                    { q: "If x = 4, calculate 5(10 - x)", a: 30, solveSteps: [{l:"EXPRESSION", m:"5(10 - x)"}, {l:"SUBSTITUTE", m:"5(10 - <span class='txt-pos'>4</span>)"}, {l:"PARENTHESES", m:"5(6)"}, {l:"MULTIPLY", m:"30"}] },
+                    { q: "If a = 3, calculate a(a + 2)", a: 15, solveSteps: [{l:"EXPRESSION", m:"a(a + 2)"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>3</span>(<span class='txt-pos'>3</span> + 2)"}, {l:"PARENTHESES", m:"3(5)"}, {l:"MULTIPLY", m:"15"}] },
+                    { q: "If x = 2 and y = 5, calculate 2x + y", a: 9, solveSteps: [{l:"EXPRESSION", m:"2x + y"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>2</span>) + <span class='txt-pos'>5</span>"}, {l:"MULTIPLY", m:"4 + 5"}, {l:"ADD", m:"9"}] },
+                    { q: "If a = 3 and b = 4, calculate 3a - 2b", a: 1, solveSteps: [{l:"EXPRESSION", m:"3a - 2b"}, {l:"SUBSTITUTE", m:"3(<span class='txt-pos'>3</span>) - 2(<span class='txt-pos'>4</span>)"}, {l:"MULTIPLY", m:"9 - 8"}, {l:"SUBTRACT", m:"1"}] },
+                    { q: "If x = 6, calculate (x + 4)/2", a: 5, solveSteps: [{l:"EXPRESSION", m:"(x + 4) / 2"}, {l:"SUBSTITUTE", m:"(<span class='txt-pos'>6</span> + 4) / 2"}, {l:"PARENTHESES", m:"10 / 2"}, {l:"DIVIDE", m:"5"}] },
+                    { q: "If x = 10, calculate (20 - x)/5", a: 2, solveSteps: [{l:"EXPRESSION", m:"(20 - x) / 5"}, {l:"SUBSTITUTE", m:"(20 - <span class='txt-pos'>10</span>) / 5"}, {l:"PARENTHESES", m:"10 / 5"}, {l:"DIVIDE", m:"2"}] },
+                    { q: "If x = -2, calculate 3(x + 5)", a: 9, solveSteps: [{l:"EXPRESSION", m:"3(x + 5)"}, {l:"SUBSTITUTE", m:"3(<span class='txt-neg'>(-2)</span> + 5)"}, {l:"PARENTHESES", m:"3(3)"}, {l:"MULTIPLY", m:"9"}] },
+                    { q: "If y = -4, calculate 2(y - 1)", a: -10, solveSteps: [{l:"EXPRESSION", m:"2(y - 1)"}, {l:"SUBSTITUTE", m:"2(<span class='txt-neg'>(-4)</span> - 1)"}, {l:"PARENTHESES", m:"2(-5)"}, {l:"MULTIPLY", m:"-10"}] },
+                    { q: "If x = 3 and y = -2, calculate x + 2y", a: -1, solveSteps: [{l:"EXPRESSION", m:"x + 2y"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>3</span> + 2<span class='txt-neg'>(-2)</span>"}, {l:"MULTIPLY", m:"3 + (-4)"}, {l:"ADD", m:"-1"}] },
+                    { q: "If a = 5, calculate 2(a + a)", a: 20, solveSteps: [{l:"EXPRESSION", m:"2(a + a)"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>5</span> + <span class='txt-pos'>5</span>)"}, {l:"PARENTHESES", m:"2(10)"}, {l:"MULTIPLY", m:"20"}] },
+                    { q: "If x = -3, calculate x(x + 1)", a: 6, solveSteps: [{l:"EXPRESSION", m:"x(x + 1)"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-3)</span>(<span class='txt-neg'>(-3)</span> + 1)"}, {l:"PARENTHESES", m:"-3(-2)"}, {l:"MULTIPLY", m:"6"}] },
+                    { q: "If p = 4 and q = 2, calculate p/q", a: 2, solveSteps: [{l:"EXPRESSION", m:"p / q"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>4</span> / <span class='txt-pos'>2</span>"}, {l:"DIVIDE", m:"2"}] },
+                    { q: "If x = 5, calculate 10(x - 5)", a: 0, solveSteps: [{l:"EXPRESSION", m:"10(x - 5)"}, {l:"SUBSTITUTE", m:"10(<span class='txt-pos'>5</span> - 5)"}, {l:"PARENTHESES", m:"10(0)"}, {l:"MULTIPLY", m:"0"}] },
+                    { q: "If x = -1 and y = -1, calculate x + y", a: -2, solveSteps: [{l:"EXPRESSION", m:"x + y"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-1)</span> + <span class='txt-neg'>(-1)</span>"}, {l:"ADD", m:"-2"}] }
                 ]
             },
             {
@@ -609,26 +657,53 @@
                 desc: "The Powerhouse",
                 color: "var(--neon-purple)",
                 problems: [
-                    { q: "If x = 3, calculate x^2", a: 9, solveSteps: ["x<sup>2</sup>", "(<span class='txt-pos'>3</span>)<sup>2</sup>", "9"] },
-                    { q: "If x = 5, calculate x^2 + 1", a: 26, solveSteps: ["x<sup>2</sup> + 1", "(<span class='txt-pos'>5</span>)<sup>2</sup> + 1", "25 + 1", "26"] },
-                    { q: "If x = 2, calculate 3x^2", a: 12, solveSteps: ["3x<sup>2</sup>", "3(<span class='txt-pos'>2</span>)<sup>2</sup>", "3(4)", "12"] },
-                    { q: "If x = -2, calculate x^2", a: 4, solveSteps: ["x<sup>2</sup>", "<span class='txt-neg'>(-2)</span><sup>2</sup>", "4"] },
-                    { q: "If x = -4, calculate x^2", a: 16, solveSteps: ["x<sup>2</sup>", "<span class='txt-neg'>(-4)</span><sup>2</sup>", "16"] },
-                    { q: "If x = -1, calculate x^2 + 5", a: 6, solveSteps: ["x<sup>2</sup> + 5", "<span class='txt-neg'>(-1)</span><sup>2</sup> + 5", "1 + 5", "6"], arrows: [1, 5] },
-                    { q: "If x = -3, calculate 2x^2", a: 18, solveSteps: ["2x<sup>2</sup>", "2<span class='txt-neg'>(-3)</span><sup>2</sup>", "2(9)", "18"] },
-                    { q: "If x = 4, calculate x^2 - x", a: 12, solveSteps: ["x<sup>2</sup> - x", "(<span class='txt-pos'>4</span>)<sup>2</sup> - <span class='txt-pos'>4</span>", "16 - 4", "12"], arrows: [16, -4] },
-                    { q: "If x = -2, calculate x^2 + x", a: 2, solveSteps: ["x<sup>2</sup> + x", "<span class='txt-neg'>(-2)</span><sup>2</sup> + <span class='txt-neg'>(-2)</span>", "4 - 2", "2"], arrows: [4, -2] },
-                    { q: "If y = 3, calculate 2y^2 - 10", a: 8, solveSteps: ["2y<sup>2</sup> - 10", "2(<span class='txt-pos'>3</span>)<sup>2</sup> - 10", "2(9) - 10", "18 - 10", "8"], arrows: [18, -10] },
-                    { q: "If x = 5, calculate sqrt(x + 4)", a: 3, solveSteps: ["√x + 4", "√<span class='txt-pos'>5</span> + 4", "√9", "3"] },
-                    { q: "If x = 10, calculate sqrt(10x)", a: 10, solveSteps: ["√10x", "√10(<span class='txt-pos'>10</span>)", "√100", "10"] },
-                    { q: "If x = -5, calculate 100 - x^2", a: 75, solveSteps: ["100 - x<sup>2</sup>", "100 - <span class='txt-neg'>(-5)</span><sup>2</sup>", "100 - 25", "75"], arrows: [100, -25] },
-                    { q: "If a = 3, calculate a^3", a: 27, solveSteps: ["a<sup>3</sup>", "(<span class='txt-pos'>3</span>)<sup>3</sup>", "27"] },
-                    { q: "If x = 2, calculate (x + 3)^2", a: 25, solveSteps: ["(x + 3)<sup>2</sup>", "(<span class='txt-pos'>2</span> + 3)<sup>2</sup>", "(5)<sup>2</sup>", "25"] },
-                    { q: "If x = 3 and y = 4, calculate x^2 + y^2", a: 25, solveSteps: ["x<sup>2</sup> + y<sup>2</sup>", "(<span class='txt-pos'>3</span>)<sup>2</sup> + (<span class='txt-pos'>4</span>)<sup>2</sup>", "9 + 16", "25"], arrows: [9, 16] },
-                    { q: "If x = -2, calculate x^3", a: -8, solveSteps: ["x<sup>3</sup>", "<span class='txt-neg'>(-2)</span><sup>3</sup>", "-8"] },
-                    { q: "If x = 5, calculate 2(x - 2)^2", a: 18, solveSteps: ["2(x - 2)<sup>2</sup>", "2(<span class='txt-pos'>5</span> - 2)<sup>2</sup>", "2(3)<sup>2</sup>", "2(9)", "18"] },
-                    { q: "If x = -1, calculate 1 - x^2", a: 0, solveSteps: ["1 - x<sup>2</sup>", "1 - <span class='txt-neg'>(-1)</span><sup>2</sup>", "1 - 1", "0"], arrows: [1, -1] },
-                    { q: "If x = 3, calculate 2x^2 + 3x - 5", a: 22, solveSteps: ["2x<sup>2</sup> + 3x - 5", "2(<span class='txt-pos'>3</span>)<sup>2</sup> + 3(<span class='txt-pos'>3</span>) - 5", "2(9) + 9 - 5", "18 + 9 - 5", "27 - 5", "22"] }
+                    { q: "If x = 3, calculate x^2", a: 9, solveSteps: [{l:"EXPRESSION", m:"x<sup>2</sup>"}, {l:"SUBSTITUTE", m:"(<span class='txt-pos'>3</span>)<sup>2</sup>"}, {l:"EXPONENT", m:"9"}] },
+                    { q: "If x = 5, calculate x^2 + 1", a: 26, solveSteps: [{l:"EXPRESSION", m:"x<sup>2</sup> + 1"}, {l:"SUBSTITUTE", m:"(<span class='txt-pos'>5</span>)<sup>2</sup> + 1"}, {l:"EXPONENT", m:"25 + 1"}, {l:"ADD", m:"26"}] },
+                    { q: "If x = 2, calculate 3x^2", a: 12, solveSteps: [{l:"EXPRESSION", m:"3x<sup>2</sup>"}, {l:"SUBSTITUTE", m:"3(<span class='txt-pos'>2</span>)<sup>2</sup>"}, {l:"EXPONENT", m:"3(4)"}, {l:"MULTIPLY", m:"12"}] },
+                    { q: "If x = -2, calculate x^2", a: 4, solveSteps: [{l:"EXPRESSION", m:"x<sup>2</sup>"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-2)</span><sup>2</sup>"}, {l:"EXPONENT", m:"4"}] },
+                    { q: "If x = -4, calculate x^2", a: 16, solveSteps: [{l:"EXPRESSION", m:"x<sup>2</sup>"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-4)</span><sup>2</sup>"}, {l:"EXPONENT", m:"16"}] },
+                    { q: "If x = -1, calculate x^2 + 5", a: 6, solveSteps: [{l:"EXPRESSION", m:"x<sup>2</sup> + 5"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-1)</span><sup>2</sup> + 5"}, {l:"EXPONENT", m:"1 + 5"}, {l:"ADD", m:"6"}] },
+                    { q: "If x = -3, calculate 2x^2", a: 18, solveSteps: [{l:"EXPRESSION", m:"2x<sup>2</sup>"}, {l:"SUBSTITUTE", m:"2<span class='txt-neg'>(-3)</span><sup>2</sup>"}, {l:"EXPONENT", m:"2(9)"}, {l:"MULTIPLY", m:"18"}] },
+                    { q: "If x = 4, calculate x^2 - x", a: 12, solveSteps: [{l:"EXPRESSION", m:"x<sup>2</sup> - x"}, {l:"SUBSTITUTE", m:"(<span class='txt-pos'>4</span>)<sup>2</sup> - <span class='txt-pos'>4</span>"}, {l:"EXPONENT", m:"16 - 4"}, {l:"SUBTRACT", m:"12"}] },
+                    { q: "If x = -2, calculate x^2 + x", a: 2, solveSteps: [{l:"EXPRESSION", m:"x<sup>2</sup> + x"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-2)</span><sup>2</sup> + <span class='txt-neg'>(-2)</span>"}, {l:"EXPONENT", m:"4 - 2"}, {l:"SUBTRACT", m:"2"}] },
+                    { q: "If y = 3, calculate 2y^2 - 10", a: 8, solveSteps: [{l:"EXPRESSION", m:"2y<sup>2</sup> - 10"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>3</span>)<sup>2</sup> - 10"}, {l:"EXPONENT", m:"2(9) - 10"}, {l:"MULTIPLY", m:"18 - 10"}, {l:"SUBTRACT", m:"8"}] },
+                    { q: "If x = 5, calculate sqrt(x + 4)", a: 3, solveSteps: [{l:"EXPRESSION", m:"√x + 4"}, {l:"SUBSTITUTE", m:"√<span class='txt-pos'>5</span> + 4"}, {l:"ADD", m:"√9"}, {l:"SQRT", m:"3"}] },
+                    { q: "If x = 10, calculate sqrt(10x)", a: 10, solveSteps: [{l:"EXPRESSION", m:"√10x"}, {l:"SUBSTITUTE", m:"√10(<span class='txt-pos'>10</span>)"}, {l:"MULTIPLY", m:"√100"}, {l:"SQRT", m:"10"}] },
+                    { q: "If x = -5, calculate 100 - x^2", a: 75, solveSteps: [{l:"EXPRESSION", m:"100 - x<sup>2</sup>"}, {l:"SUBSTITUTE", m:"100 - <span class='txt-neg'>(-5)</span><sup>2</sup>"}, {l:"EXPONENT", m:"100 - 25"}, {l:"SUBTRACT", m:"75"}] },
+                    { q: "If a = 3, calculate a^3", a: 27, solveSteps: [{l:"EXPRESSION", m:"a<sup>3</sup>"}, {l:"SUBSTITUTE", m:"(<span class='txt-pos'>3</span>)<sup>3</sup>"}, {l:"EXPONENT", m:"27"}] },
+                    { q: "If x = 2, calculate (x + 3)^2", a: 25, solveSteps: [{l:"EXPRESSION", m:"(x + 3)<sup>2</sup>"}, {l:"SUBSTITUTE", m:"(<span class='txt-pos'>2</span> + 3)<sup>2</sup>"}, {l:"PARENTHESES", m:"(5)<sup>2</sup>"}, {l:"EXPONENT", m:"25"}] },
+                    { q: "If x = 3 and y = 4, calculate x^2 + y^2", a: 25, solveSteps: [{l:"EXPRESSION", m:"x<sup>2</sup> + y<sup>2</sup>"}, {l:"SUBSTITUTE", m:"(<span class='txt-pos'>3</span>)<sup>2</sup> + (<span class='txt-pos'>4</span>)<sup>2</sup>"}, {l:"EXPONENT", m:"9 + 16"}, {l:"ADD", m:"25"}] },
+                    { q: "If x = -2, calculate x^3", a: -8, solveSteps: [{l:"EXPRESSION", m:"x<sup>3</sup>"}, {l:"SUBSTITUTE", m:"<span class='txt-neg'>(-2)</span><sup>3</sup>"}, {l:"EXPONENT", m:"-8"}] },
+                    { q: "If x = 5, calculate 2(x - 2)^2", a: 18, solveSteps: [{l:"EXPRESSION", m:"2(x - 2)<sup>2</sup>"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>5</span> - 2)<sup>2</sup>"}, {l:"PARENTHESES", m:"2(3)<sup>2</sup>"}, {l:"EXPONENT", m:"2(9)"}, {l:"MULTIPLY", m:"18"}] },
+                    { q: "If x = -1, calculate 1 - x^2", a: 0, solveSteps: [{l:"EXPRESSION", m:"1 - x<sup>2</sup>"}, {l:"SUBSTITUTE", m:"1 - <span class='txt-neg'>(-1)</span><sup>2</sup>"}, {l:"EXPONENT", m:"1 - 1"}, {l:"SUBTRACT", m:"0"}] },
+                    { q: "If x = 3, calculate 2x^2 + 3x - 5", a: 22, solveSteps: [{l:"EXPRESSION", m:"2x<sup>2</sup> + 3x - 5"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>3</span>)<sup>2</sup> + 3(<span class='txt-pos'>3</span>) - 5"}, {l:"EXPONENT", m:"2(9) + 9 - 5"}, {l:"MULTIPLY", m:"18 + 9 - 5"}, {l:"ADD", m:"27 - 5"}, {l:"SUBTRACT", m:"22"}] }
+                ]
+            },
+            {
+                name: "Level 6",
+                desc: "Word Problems & Formulas",
+                color: "var(--neon-red)",
+                problems: [
+                    { q: "A rectangle has length l = 12 and width w = 5. Calculate the Perimeter P = 2(l + w).", a: 34, solveSteps: [{l:"FORMULA", m:"P = 2(l + w)"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>12</span> + <span class='txt-pos'>5</span>)"}, {l:"PARENTHESES", m:"2(17)"}, {l:"MULTIPLY", m:"34"}] },
+                    { q: "A rectangle has length l = 20 and width w = 10. Calculate the Area A = l w.", a: 200, solveSteps: [{l:"FORMULA", m:"A = lw"}, {l:"SUBSTITUTE", m:"(<span class='txt-pos'>20</span>)(<span class='txt-pos'>10</span>)"}, {l:"MULTIPLY", m:"200"}] },
+                    { q: "Mr. Bowen is 12 years old. Mr. Seth is '5 years older than twice Mr. Bowen's age'. Calculate Mr. Seth's age (2b + 5).", a: 29, solveSteps: [{l:"EXPRESSION", m:"2b + 5"}, {l:"SUBSTITUTE", m:"2(<span class='txt-pos'>12</span>) + 5"}, {l:"MULTIPLY", m:"24 + 5"}, {l:"ADD", m:"29"}] },
+                    { q: "The profit of a lemonade stand is P = 5n - 20, where n is cups sold. Calculate profit if n = 10.", a: 30, solveSteps: [{l:"FORMULA", m:"P = 5n - 20"}, {l:"SUBSTITUTE", m:"5(<span class='txt-pos'>10</span>) - 20"}, {l:"MULTIPLY", m:"50 - 20"}, {l:"SUBTRACT", m:"30"}] },
+                    { q: "Taxi: Base 5 plus 2 per km. If k = 15, calculate Cost (5 + 2k).", a: 35, solveSteps: [{l:"EXPRESSION", m:"5 + 2k"}, {l:"SUBSTITUTE", m:"5 + 2(<span class='txt-pos'>15</span>)"}, {l:"MULTIPLY", m:"5 + 30"}, {l:"ADD", m:"35"}] },
+                    { q: "Mr. Bowen is b = 15. Mr. Seth is '3 times the value of 2 years less than Mr. Bowen'. Calculate age (3(b - 2)).", a: 39, solveSteps: [{l:"EXPRESSION", m:"3(b - 2)"}, {l:"SUBSTITUTE", m:"3(<span class='txt-pos'>15</span> - 2)"}, {l:"PARENTHESES", m:"3(13)"}, {l:"MULTIPLY", m:"39"}] },
+                    { q: "Physics: v = u + at. If u = 10, a = 5, t = 4, calculate v.", a: 30, solveSteps: [{l:"FORMULA", m:"u + at"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>10</span> + <span class='txt-pos'>5</span>(<span class='txt-pos'>4</span>)"}, {l:"MULTIPLY", m:"10 + 20"}, {l:"ADD", m:"30"}] },
+                    { q: "Triangle: b = 8, h = 5. Calculate Area A = 1/2bh.", a: 20, solveSteps: [{l:"FORMULA", m:"\\frac{1}{2}bh"}, {l:"SUBSTITUTE", m:"0.5(<span class='txt-pos'>8</span>)(<span class='txt-pos'>5</span>)"}, {l:"MULTIPLY", m:"4(5)"}, {l:"MULTIPLY", m:"20"}] },
+                    { q: "Mr. Bowen is b = 20. Mr. Seth is 'square of (Bowen minus 14)'. Calculate age ((b - 14)^2).", a: 36, solveSteps: [{l:"EXPRESSION", m:"(b - 14)^2"}, {l:"SUBSTITUTE", m:"(<span class='txt-pos'>20</span> - 14)<sup>2</sup>"}, {l:"PARENTHESES", m:"(6)<sup>2</sup>"}, {l:"EXPONENT", m:"36"}] },
+                    { q: "Phone plan: C = 30 + 2(d - 5). If d = 8, calculate cost.", a: 36, solveSteps: [{l:"FORMULA", m:"30 + 2(d - 5)"}, {l:"SUBSTITUTE", m:"30 + 2(<span class='txt-pos'>8</span> - 5)"}, {l:"PARENTHESES", m:"30 + 2(3)"}, {l:"MULTIPLY", m:"30 + 6"}, {l:"ADD", m:"36"}] },
+                    { q: "Height falling object: h = 100 - 5t^2. If t = 4, calculate h.", a: 20, solveSteps: [{l:"FORMULA", m:"100 - 5t^2"}, {l:"SUBSTITUTE", m:"100 - 5(<span class='txt-pos'>4</span>)<sup>2</sup>"}, {l:"EXPONENT", m:"100 - 5(16)"}, {l:"MULTIPLY", m:"100 - 80"}, {l:"SUBTRACT", m:"20"}] },
+                    { q: "Mr. Bowen is b = 18. Seth is 'half Bowen squared, plus 10'. Calculate age (b^2/2 + 10).", a: 172, solveSteps: [{l:"EXPRESSION", m:"\\frac{b^2}{2} + 10"}, {l:"SUBSTITUTE", m:"\\frac{<span class='txt-pos'>18</span>^2}{2} + 10"}, {l:"EXPONENT", m:"\\frac{324}{2} + 10"}, {l:"DIVIDE", m:"162 + 10"}, {l:"ADD", m:"172"}] },
+                    { q: "Buy x = 3 books ($12) and y = 2 pens ($4). Total 12x + 4y.", a: 44, solveSteps: [{l:"EXPRESSION", m:"12x + 4y"}, {l:"SUBSTITUTE", m:"12(<span class='txt-pos'>3</span>) + 4(<span class='txt-pos'>2</span>)"}, {l:"MULTIPLY", m:"36 + 8"}, {l:"ADD", m:"44"}] },
+                    { q: "Temp: F = 1.8C + 32. If C = 20, calculate F.", a: 68, solveSteps: [{l:"FORMULA", m:"1.8C + 32"}, {l:"SUBSTITUTE", m:"1.8(<span class='txt-pos'>20</span>) + 32"}, {l:"MULTIPLY", m:"36 + 32"}, {l:"ADD", m:"68"}] },
+                    { q: "Box Surface Area: l=5, w=4, h=3. SA = 2(lw + lh + wh).", a: 94, solveSteps: [{l:"FORMULA", m:"2(lw + lh + wh)"}, {l:"SUBSTITUTE", m:"2(5·4 + 5·3 + 4·3)"}, {l:"MULTIPLY", m:"2(20 + 15 + 12)"}, {l:"ADD", m:"2(47)"}, {l:"MULTIPLY", m:"94"}] },
+                    { q: "Mr. Bowen is b = 50. Seth is '100 minus half Bowen'. Calculate age (100 - b/2).", a: 75, solveSteps: [{l:"EXPRESSION", m:"100 - \\frac{b}{2}"}, {l:"SUBSTITUTE", m:"100 - \\frac{<span class='txt-pos'>50</span>}{2}"}, {l:"DIVIDE", m:"100 - 25"}, {l:"SUBTRACT", m:"75"}] },
+                    { q: "Kinetic Energy E = 1/2mv^2. If m = 10, v = 6, calculate E.", a: 180, solveSteps: [{l:"FORMULA", m:"0.5mv^2"}, {l:"SUBSTITUTE", m:"0.5(<span class='txt-pos'>10</span>)(<span class='txt-pos'>6</span>)<sup>2</sup>"}, {l:"EXPONENT", m:"0.5(10)(36)"}, {l:"MULTIPLY", m:"5(36)"}, {l:"MULTIPLY", m:"180"}] },
+                    { q: "Sequence T = n(n + 1). Calculate 10th term (n = 10).", a: 110, solveSteps: [{l:"FORMULA", m:"n(n + 1)"}, {l:"SUBSTITUTE", m:"<span class='txt-pos'>10</span>(<span class='txt-pos'>10</span> + 1)"}, {l:"PARENTHESES", m:"10(11)"}, {l:"MULTIPLY", m:"110"}] },
+                    { q: "Mr. Bowen is b = 16. Seth is '3 times sqrt(Bowen), plus 40'. (3√b + 40).", a: 52, solveSteps: [{l:"EXPRESSION", m:"3√b + 40"}, {l:"SUBSTITUTE", m:"3√<span class='txt-pos'>16</span> + 40"}, {l:"SQRT", m:"3(4) + 40"}, {l:"MULTIPLY", m:"12 + 40"}, {l:"ADD", m:"52"}] },
+                    { q: "Cone Volume V = 1/3 π r^2 h. π ≈ 3, r = 4, h = 5.", a: 80, solveSteps: [{l:"FORMULA", m:"\\frac{1}{3} \\pi r^2 h"}, {l:"SUBSTITUTE", m:"\\frac{1}{3}(3)(<span class='txt-pos'>4</span>)<sup>2</sup>(5)"}, {l:"EXPONENT", m:"\\frac{1}{3}(3)(16)(5)"}, {l:"MULTIPLY", m:"1(16)(5)"}, {l:"MULTIPLY", m:"80"}] }
                 ]
             }
         ];
@@ -701,6 +776,7 @@
                 if(idx===2) iconClass = 'fa-rocket';
                 if(idx===3) iconClass = 'fa-user-astronaut';
                 if(idx===4) iconClass = 'fa-infinity';
+                if(idx===5) iconClass = 'fa-crown';
 
                 const icon = isLocked ? '<i class="fa-solid fa-lock"></i>' : `<i class="fa-solid ${iconClass}" style="color:${lvl.color}"></i>`;
                 
@@ -734,7 +810,7 @@
             // Check if pool is empty
             if(currentProgress.pool.length === 0) {
                  // Level Complete!
-                 if(gameState.level < 4 && gameState.level === gameState.maxLevelUnlocked) {
+                 if(gameState.level < 5 && gameState.level === gameState.maxLevelUnlocked) {
                      showUnlockModal();
                  } else {
                      // Reset pool for practice
@@ -788,7 +864,21 @@
                 .replace(/sqrt\(([^)]+)\)/g, '√<span style="border-top:2px solid currentColor; padding-top:2px;">$1</span>'); // sqrt(x)
 
             // Highlighting Variables logic (for initial display)
-            formattedStr = formattedStr.replace(/\b([a-zA-Z])\b/g, '<span class="txt-var">$1</span>');
+            // Match single letter variables (a-z, A-Z) but avoid common words if possible.
+            // Given the dataset, single letters are almost always variables except 'a' in 'calculate'.
+            // Simple heuristic: match single letters surrounded by non-letters, except 'a' followed by space.
+            // Or just rely on context. For this specific dataset, we can be a bit aggressive or manual.
+            
+            // Let's just highlight specific known variables from our dataset to avoid highlighting words
+            const knownVars = ['x', 'y', 'z', 'a', 'b', 'c', 'k', 'm', 'n', 'p', 'q', 'w', 'd', 'l', 'h', 'r', 'v', 'u', 't', 'P', 'A', 'C', 'V', 'E', 'T', 'SA'];
+            
+            // Use a function to replace only if it's a known variable and a single word
+            formattedStr = formattedStr.replace(/\b([a-zA-Z])\b/g, function(match) {
+                if (knownVars.includes(match)) {
+                    return `<span class="txt-var">${match}</span>`;
+                }
+                return match;
+            });
 
             display.innerHTML = `<span style="font-size:0.8em; text-align:center; padding: 0 10px; line-height:1.5; display:inline-block; max-width:100%; word-wrap:break-word;">${formattedStr}</span>`;
             display.style.opacity = 1;
@@ -860,8 +950,10 @@
             document.getElementById('keypad').style.display = 'none';
             
             // Check Unlock Conditions BEFORE animation
-            const shouldUnlock = (currentProgress.streak >= 7 || currentProgress.pool.length === 0) 
-                                 && gameState.level < 4 
+            // Level 1 needs 3 streak, others need 7
+            const streakReq = (gameState.level === 0) ? 3 : 7;
+            const shouldUnlock = (currentProgress.streak >= streakReq || currentProgress.pool.length === 0) 
+                                 && gameState.level < 5 
                                  && gameState.level === gameState.maxLevelUnlocked;
 
             // Trigger Animation
@@ -914,44 +1006,44 @@
             
             container.innerHTML = ''; // Clear previous steps
 
-            // Append all steps hidden first
+            // Create steps first but keep hidden
             for (let i = 0; i < steps.length; i++) {
-                const div = document.createElement('div');
-                div.className = 'solution-step';
+                const stepCard = document.createElement('div');
+                let type = '';
                 
-                // Format text
-                let stepHTML = steps[i]
+                // Content comes from the new object structure {l: label, m: math}
+                const label = steps[i].l;
+                const mathContent = steps[i].m;
+
+                if (label === 'SUBSTITUTE') type = 'substitution';
+                if (label === 'ANSWER' || i === steps.length - 1) type = 'answer';
+
+                stepCard.className = `step-card ${type}`;
+                
+                // HTML Content construction
+                let stepHTML = mathContent
                     .replace(/\^(\d+)/g, '<sup>$1</sup>')
                     .replace(/sqrt\(([^)]+)\)/g, '√<span style="border-top:2px solid currentColor; padding-top:2px;">$1</span>');
                 
-                div.innerHTML = stepHTML;
-                container.appendChild(div);
+                stepCard.innerHTML = `
+                    <div class="step-label">${label}</div>
+                    <div class="step-math">${stepHTML}</div>
+                `;
                 
-                // Add Arrow between steps (except last)
-                if (i < steps.length - 1) {
-                    const arrow = document.createElement('div');
-                    arrow.className = 'solution-arrow';
-                    arrow.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
-                    arrow.style.opacity = 0; // Initially hidden
-                    container.appendChild(arrow);
-                }
+                container.appendChild(stepCard);
             }
 
             // Animate Reveal Loop
-            const stepElements = container.querySelectorAll('.solution-step');
-            const arrowElements = container.querySelectorAll('.solution-arrow');
+            const stepElements = container.querySelectorAll('.step-card');
 
             for (let i = 0; i < stepElements.length; i++) {
                 // Reveal step
+                await wait(100);
                 stepElements[i].classList.add('visible');
-                await wait(800); // Wait time for reading
-
-                // Reveal arrow if exists
-                if (i < arrowElements.length) {
-                    arrowElements[i].style.transition = 'opacity 0.5s';
-                    arrowElements[i].style.opacity = 1;
-                    await wait(300);
-                }
+                
+                // Add staggered delay for reading, longer for substitution step
+                if (i === 1) await wait(1200);
+                else await wait(800); 
             }
 
             // 3. Finish
@@ -967,6 +1059,8 @@
             if (p.q.includes("calculate -")) return "Check your negative signs carefully.";
             if (p.q.includes("^2")) return "A negative squared becomes positive!";
             if (p.q.includes("/")) return "Divide carefully!";
+            if (p.q.includes("perimeter")) return "Perimeter is the distance around the outside.";
+            if (p.q.includes("area")) return "Area is length times width.";
             return "Watch the order of operations!";
         }
 
@@ -979,7 +1073,10 @@
             if(currentStreak === 0) flame.style.opacity = 0.2;
             else flame.style.opacity = 1;
             
-            if(currentStreak >= 7) {
+            // Check Unlock Conditions for flame color
+            const streakReq = (gameState.level === 0) ? 3 : 7;
+            
+            if(currentStreak >= streakReq) {
                 flame.style.color = "#ef4444"; 
                 flame.style.filter = "drop-shadow(0 0 10px #ef4444)";
             } else {
