@@ -3,33 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Substitution Mastery: Refactored</title>
+    <title>Substitution Mastery: Cosmic Edition</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         :root {
-            /* --- THEME: NEBULA --- */
+            /* --- THEME: COSMIC NEBULA --- */
             --bg-deep: #020617;
-            --glass-panel: rgba(15, 23, 42, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.1);
             
-            /* Variable Colors */
-            --var-x: #22d3ee; /* Cyan */
-            --var-y: #f472b6; /* Pink */
-            --var-z: #4ade80; /* Green */
-            --var-other: #fbbf24; /* Amber */
-
-            /* UI Colors */
+            /* UI Elements */
+            --glass-panel: rgba(15, 23, 42, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.15);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --accent-success: #34d399;
-            --accent-danger: #ef4444;
+
+            /* Interactive Colors */
+            --tile-bg: rgba(30, 41, 59, 0.7);
+            --tile-border: rgba(255, 255, 255, 0.1);
+            --tile-hover: rgba(51, 65, 85, 0.9);
             
-            --sidebar-width: 260px;
+            /* Neon Syntax Highlighting */
+            --neon-cyan: #22d3ee;
+            --neon-pink: #f472b6;
+            --neon-green: #4ade80;
+            --neon-amber: #fbbf24;
+            --neon-purple: #c084fc;
+            --neon-danger: #ef4444;
+
+            /* Variables Specifics */
+            --var-x: var(--neon-cyan);
+            --var-y: var(--neon-pink);
+            --var-z: var(--neon-green);
+            --var-other: var(--neon-purple);
+
+            --sidebar-width: 280px;
+            --max-board-width: 800px;
         }
 
         /* --- RESET & BASE --- */
@@ -38,7 +50,7 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-deep);
-            background: radial-gradient(circle at top right, #312e81 0%, #0f172a 60%, #020617 100%);
+            background: radial-gradient(ellipse at top, #312e81 0%, #1e1b4b 40%, #020617 100%);
             color: var(--text-primary);
             height: 100vh;
             width: 100vw;
@@ -46,74 +58,85 @@
             display: flex;
         }
 
+        /* --- STARS ANIMATION --- */
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(1.5px 1.5px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 50px 160px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
+            background-size: 200px 200px;
+            animation: twinkle 60s linear infinite;
+            z-index: -1;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-500px); } }
+
         /* --- LAYOUT --- */
         .app-container {
             display: flex;
             width: 100%;
             height: 100%;
-            max-width: 1600px;
+            max-width: 2000px;
             margin: 0 auto;
         }
 
         /* --- SIDEBAR --- */
         .sidebar {
             width: var(--sidebar-width);
-            background: rgba(2, 6, 23, 0.5);
+            background: var(--glass-panel);
             backdrop-filter: blur(20px);
             border-right: 1px solid var(--glass-border);
             display: flex;
             flex-direction: column;
             padding: 1.5rem;
-            z-index: 10;
+            gap: 1.2rem;
+            z-index: 20;
+            overflow-y: auto;
+            flex-shrink: 0;
         }
 
         .brand {
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            font-size: 1.4rem;
-            margin-bottom: 2rem;
-            letter-spacing: -0.5px;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+            line-height: 1.1;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255,255,255,0.2);
+            margin-bottom: 0.5rem;
         }
+        .brand span { color: var(--neon-cyan); }
 
-        .level-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .level-list { display: flex; flex-direction: column; gap: 10px; }
 
         .level-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 16px;
             border-radius: 12px;
-            background: transparent;
-            border: 1px solid transparent;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
             color: var(--text-secondary);
             font-family: 'Outfit', sans-serif;
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: left;
+            font-size: 0.95rem;
+            width: 100%;
         }
 
+        .level-btn.locked { opacity: 0.4; cursor: not-allowed; }
+        .level-btn:not(.locked):hover { background: rgba(255,255,255,0.08); color: #fff; transform: translateX(4px); }
         .level-btn.active {
             background: rgba(34, 211, 238, 0.1);
-            border-color: rgba(34, 211, 238, 0.2);
+            border: 1px solid rgba(34, 211, 238, 0.3);
             color: #fff;
-        }
-        
-        .level-btn.locked {
-            opacity: 0.4;
-            cursor: not-allowed;
-            filter: grayscale(1);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
         }
 
-        /* --- GAME ARENA --- */
+        /* --- MAIN ARENA --- */
         .arena {
             flex: 1;
             display: flex;
@@ -124,32 +147,51 @@
             overflow-y: auto;
         }
 
-        .header-bar {
-            width: 100%;
-            max-width: 700px;
+        .game-header {
             display: flex;
+            flex-direction: row;
             justify-content: space-between;
             align-items: flex-end;
-            margin-bottom: 20px;
+            width: 100%;
+            max-width: var(--max-board-width);
+            margin-bottom: 24px;
         }
 
-        .level-title h2 { font-family: 'Outfit'; font-weight: 800; font-size: 2rem; line-height: 1; margin-bottom: 5px; }
-        .level-subtitle { font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        .game-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 5px;
+        }
 
-        .streak-pill {
-            background: rgba(15, 23, 42, 0.6);
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .streak-wrapper {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(15, 23, 42, 0.8); 
+            padding: 10px 24px;
+            border-radius: 40px;
             border: 1px solid var(--glass-border);
-            padding: 6px 16px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
+        .flame-icon { color: var(--neon-amber); font-size: 1.2rem; filter: drop-shadow(0 0 5px var(--neon-amber)); }
+        .streak-count { font-family: 'Outfit'; font-size: 1.5rem; font-weight: 800; color: #fff; }
 
-        /* --- MAIN CARD --- */
+        /* --- GAME CARD --- */
         .game-card {
             width: 100%;
-            max-width: 700px;
+            max-width: var(--max-board-width);
             background: var(--glass-panel);
             backdrop-filter: blur(24px);
             border: 1px solid var(--glass-border);
@@ -157,599 +199,730 @@
             padding: 3rem;
             text-align: center;
             box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5);
-            transition: transform 0.2s;
+            transition: transform 0.3s, border-color 0.3s;
+            margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
         }
-        
-        /* Dynamic Math Text */
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--neon-danger); }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+
+        /* Math Display */
         .math-display {
             font-family: 'Outfit', sans-serif;
-            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 700;
-            margin-bottom: 2rem;
+            margin: 1rem 0 2.5rem 0;
             min-height: 80px;
-            display: flex; justify-content: center; align-items: center;
+            display: flex; justify-content: center; align-items: center; gap: 4px;
+            flex-wrap: wrap;
+            line-height: 1.2;
         }
-        
-        .var-x { color: var(--var-x); text-shadow: 0 0 20px rgba(34, 211, 238, 0.3); }
-        .var-y { color: var(--var-y); text-shadow: 0 0 20px rgba(244, 114, 182, 0.3); }
-        .var-z { color: var(--var-z); text-shadow: 0 0 20px rgba(74, 222, 128, 0.3); }
-        .var-other { color: var(--var-other); }
-        .num-highlight { color: #fff; font-weight: 800; }
-        
-        /* Input Area */
-        .input-display {
+
+        /* Syntax Highlighting */
+        .var-x { color: var(--var-x); text-shadow: 0 0 25px rgba(34, 211, 238, 0.3); }
+        .var-y { color: var(--var-y); text-shadow: 0 0 25px rgba(244, 114, 182, 0.3); }
+        .var-z { color: var(--var-z); text-shadow: 0 0 25px rgba(74, 222, 128, 0.3); }
+        .var-other { color: var(--var-other); text-shadow: 0 0 25px rgba(192, 132, 252, 0.3); }
+        .operator { color: var(--text-secondary); margin: 0 5px; }
+
+        /* Input Box */
+        .input-box {
             background: rgba(0,0,0,0.3);
             border: 2px solid var(--glass-border);
             border-radius: 16px;
-            height: 70px; width: 240px;
-            margin: 0 auto 2rem;
+            height: 80px; width: 260px;
+            margin: 0 auto 1.5rem auto;
             display: flex; justify-content: center; align-items: center;
-            font-family: 'Outfit', sans-serif; font-size: 2.5rem; font-weight: 700;
+            font-family: 'Outfit', sans-serif; font-size: 3rem; font-weight: 700;
             color: #fff;
-            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
         }
-        
-        .input-display.success { border-color: var(--accent-success); color: var(--accent-success); box-shadow: 0 0 30px rgba(52, 211, 153, 0.2); }
-        .input-display.error { border-color: var(--accent-danger); animation: shake 0.4s ease-in-out; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .input-cursor::after { content: '|'; animation: blink 1s step-start infinite; color: var(--neon-cyan); height: 80%; }
+        @keyframes blink { 50% { opacity: 0; } }
 
         /* Keypad */
-        .keypad {
+        .keypad-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            max-width: 380px;
+            max-width: 420px;
             margin: 0 auto;
         }
-        
         .key {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
+            background: var(--tile-bg);
+            border: 1px solid var(--tile-border);
             border-radius: 12px;
-            height: 60px;
+            height: 68px;
             display: flex; justify-content: center; align-items: center;
-            font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 600;
+            font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 600;
             color: #e2e8f0; cursor: pointer;
             transition: all 0.1s;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
         }
-        .key:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
-        .key-submit { grid-column: span 3; background: var(--var-x); color: #0f172a; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; font-size: 1.1rem; }
-        .key-submit:hover { background: #67e8f9; box-shadow: 0 0 15px rgba(34, 211, 238, 0.4); }
+        .key:active { transform: translateY(4px); box-shadow: none; background: var(--tile-hover); }
+        .key:hover { background: var(--tile-hover); border-color: rgba(255,255,255,0.2); }
+        
+        .key-submit {
+            grid-column: span 3;
+            background: var(--neon-cyan);
+            border-color: var(--neon-cyan);
+            color: #0f172a;
+            letter-spacing: 1px; text-transform: uppercase; font-size: 1.2rem; font-weight: 800;
+            box-shadow: 0 4px 0 #0891b2;
+        }
+        .key-submit:hover { background: #67e8f9; }
+        .key-submit:active { box-shadow: none; transform: translateY(4px); }
+        .key-clear { color: var(--neon-danger); border-color: rgba(239, 68, 68, 0.2); }
 
-        /* --- SOLUTION VISUALIZATION --- */
-        .solution-area {
+        /* --- VISUALIZATION WRAPPER --- */
+        .visual-wrapper {
             width: 100%;
-            max-width: 700px;
-            margin-top: 20px;
+            max-width: var(--max-board-width);
+            margin: 0 auto;
             display: none;
+            flex-direction: column;
+            gap: 16px;
+            padding-bottom: 80px;
         }
-        .solution-area.active { display: block; animation: slideUp 0.5s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .visual-wrapper.active { display: flex; animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
-        .timeline-container {
-            position: relative;
-            padding-left: 20px;
+        .step-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
         }
+
+        .step-card.visible { opacity: 1; transform: translateX(0); }
+
+        .step-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            width: 130px; 
+            text-align: right;
+            margin-right: 28px;
+            padding-right: 20px;
+            border-right: 2px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
+        }
+
+        .step-math {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            text-align: left;
+        }
+
+        /* Specific Step Colors */
+        .step-card.substitute { border-left-color: var(--neon-cyan); }
+        .step-card.substitute .step-label { color: var(--neon-cyan); }
         
-        /* Vertical Line */
-        .timeline-container::before {
-            content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 2px;
-            background: linear-gradient(to bottom, var(--var-x), transparent);
-            border-radius: 2px;
-        }
+        .step-card.operation { border-left-color: var(--neon-amber); }
+        .step-card.operation .step-label { color: var(--neon-amber); }
 
-        .step-item {
-            display: flex; align-items: baseline; gap: 15px;
-            margin-bottom: 12px; opacity: 0; transform: translateX(-10px);
-            transition: all 0.4s ease;
+        .step-card.answer { 
+            background: rgba(34, 197, 94, 0.1); 
+            border-color: rgba(34, 197, 94, 0.3);
+            border-left-color: var(--neon-green);
         }
+        .step-card.answer .step-label { color: var(--neon-green); }
+        .step-card.answer .step-math { color: var(--neon-green); font-size: 2rem; }
         
-        .step-item.visible { opacity: 1; transform: translateX(0); }
-
-        .step-badge {
-            font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-            color: var(--text-secondary); min-width: 100px; text-align: right;
-        }
-        
-        .step-content {
-            font-family: 'Outfit'; font-size: 1.4rem; color: #fff; font-weight: 600;
+        /* Hint Text */
+        .hint-text {
+            color: var(--neon-amber); font-weight: 600; margin-bottom: 1rem; opacity: 0;
+            min-height: 24px; transition: opacity 0.3s;
         }
 
+        /* Next Button */
         .next-btn {
-            width: 100%; padding: 16px; margin-top: 20px;
-            background: var(--accent-success); color: #020617;
-            border: none; border-radius: 12px;
-            font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem;
-            cursor: pointer; text-transform: uppercase;
-            display: none; animation: popIn 0.3s ease;
+            width: 100%; max-width: 400px; margin: 30px auto 0;
+            background: var(--neon-green); color: #020617;
+            border: none; border-radius: 16px;
+            padding: 18px; font-weight: 800; font-family: 'Outfit';
+            text-transform: uppercase; cursor: pointer;
+            display: none; font-size: 1.1rem;
+            box-shadow: 0 4px 0 #15803d;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .next-btn:hover { background: #4ade80; transform: translateY(-2px); box-shadow: 0 6px 0 #15803d; }
+        .next-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #15803d; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
-        /* Confetti Canvas */
-        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(10px);
+            display: none; align-items: center; justify-content: center; z-index: 100;
+        }
+        .modal-card {
+            background: var(--glass-panel); border: 1px solid var(--glass-border);
+            padding: 3rem; border-radius: 32px; text-align: center; max-width: 500px; width: 90%;
+            animation: popIn 0.4s;
+            box-shadow: 0 0 60px rgba(34, 211, 238, 0.1);
+        }
+        .modal-btn {
+            padding: 18px 40px; border-radius: 50px; border: none;
+            background: var(--neon-cyan); color: #000; font-weight: 800; font-family: 'Outfit';
+            cursor: pointer; margin-top: 24px; font-size: 1.2rem;
+            transition: transform 0.2s;
+        }
+        .modal-btn:hover { transform: scale(1.05); }
 
-        @media (max-width: 800px) {
+        /* Canvas */
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+        @media (max-width: 900px) {
             .app-container { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; flex-direction: row; overflow-x: auto; align-items: center; border-bottom: 1px solid var(--glass-border); border-right: none; padding: 1rem; }
+            .sidebar { 
+                width: 100%; height: auto; padding: 1rem; border-right: none; border-bottom: 1px solid var(--glass-border);
+                flex-direction: row; align-items: center; overflow-x: auto; gap: 8px;
+            }
+            .level-list { flex-direction: row; width: max-content; }
+            .level-btn { width: auto; white-space: nowrap; padding: 8px 12px; font-size: 0.8rem; }
             .brand { display: none; }
-            .level-nav { flex-direction: row; }
-            .level-btn { white-space: nowrap; padding: 8px 12px; font-size: 0.8rem; }
-            .arena { padding: 1rem; }
-            .math-display { font-size: 2rem; }
+            .step-label { width: 90px; font-size: 0.65rem; margin-right: 15px; }
+            .step-math { font-size: 1.2rem; }
+            .step-card.answer .step-math { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <canvas id="confetti"></canvas>
+
+    <div class="stars"></div>
+    <canvas id="confetti-canvas"></canvas>
 
     <div class="app-container">
         <nav class="sidebar">
-            <div class="brand">Substitution Mastery</div>
-            <div class="level-nav" id="level-nav">
+            <div class="brand">Substitution<br><span>Mastery</span></div>
+            <div class="level-list" id="level-list-container">
                 </div>
         </nav>
 
         <main class="arena">
-            <div class="header-bar">
-                <div class="level-title">
-                    <h2 id="lvl-name">Novice</h2>
-                    <div class="level-subtitle" id="lvl-desc">Direct Swap</div>
+            <div class="game-header">
+                <div>
+                    <h1 class="game-title">Substitution Mastery</h1>
+                    <span class="difficulty-badge" id="difficulty-badge">Level 1: Novice</span>
                 </div>
-                <div class="streak-pill">
-                    <i class="fa-solid fa-fire" style="color: var(--var-other)"></i>
-                    <span id="streak-count" style="font-weight:700">0</span>
+                
+                <div class="streak-wrapper">
+                    <i class="fa-solid fa-fire flame-icon"></i>
+                    <span class="streak-count" id="streak-display">0</span>
                 </div>
             </div>
 
             <div class="game-card" id="game-card">
-                <div class="math-display" id="math-problem"></div>
-                <div class="input-display" id="user-input"></div>
-                
-                <div class="keypad" id="keypad">
-                    <div class="key" onclick="inputNum('7')">7</div>
-                    <div class="key" onclick="inputNum('8')">8</div>
-                    <div class="key" onclick="inputNum('9')">9</div>
-                    <div class="key" onclick="inputNum('4')">4</div>
-                    <div class="key" onclick="inputNum('5')">5</div>
-                    <div class="key" onclick="inputNum('6')">6</div>
-                    <div class="key" onclick="inputNum('1')">1</div>
-                    <div class="key" onclick="inputNum('2')">2</div>
-                    <div class="key" onclick="inputNum('3')">3</div>
-                    <div class="key" onclick="inputNum('-')">-</div>
-                    <div class="key" onclick="inputNum('0')">0</div>
-                    <div class="key" onclick="inputAction('BACK')"><i class="fa-solid fa-delete-left"></i></div>
-                    <div class="key key-submit" onclick="submitAnswer()">Submit</div>
-                </div>
+                <div class="math-display" id="math-problem">
+                    </div>
 
-                <div id="feedback-msg" style="margin-top:15px; height:20px; font-weight:600; color:var(--text-secondary)"></div>
-            </div>
+                <div class="input-box input-cursor" id="input-display"></div>
+                <div class="hint-text" id="hint-text"></div>
 
-            <div class="solution-area" id="solution-area">
-                <div class="game-card" style="text-align: left; padding: 2rem;">
-                    <div class="timeline-container" id="steps-container">
-                        </div>
-                    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question <i class="fa-solid fa-arrow-right"></i></button>
+                <div class="keypad-grid" id="keypad">
+                    <div class="key" onclick="handleInput('7')">7</div>
+                    <div class="key" onclick="handleInput('8')">8</div>
+                    <div class="key" onclick="handleInput('9')">9</div>
+                    <div class="key" onclick="handleInput('4')">4</div>
+                    <div class="key" onclick="handleInput('5')">5</div>
+                    <div class="key" onclick="handleInput('6')">6</div>
+                    <div class="key" onclick="handleInput('1')">1</div>
+                    <div class="key" onclick="handleInput('2')">2</div>
+                    <div class="key" onclick="handleInput('3')">3</div>
+                    <div class="key" onclick="handleInput('-')"><i class="fa-solid fa-minus"></i></div>
+                    <div class="key" onclick="handleInput('0')">0</div>
+                    <div class="key key-clear" onclick="handleInput('C')">C</div>
+                    <div class="key key-submit" id="submit-btn" onclick="checkAnswer()">SUBMIT</div>
                 </div>
             </div>
+
+            <div class="visual-wrapper" id="visual-wrapper">
+                </div>
+            
+            <button class="next-btn" id="next-btn" onclick="loadProblem()">
+                Next Question <i class="fa-solid fa-arrow-right" style="margin-left:8px"></i>
+            </button>
+
         </main>
+    </div>
+
+    <div class="modal-overlay" id="unlock-modal">
+        <div class="modal-card">
+            <i class="fa-solid fa-lock-open" style="font-size: 4rem; color: var(--neon-green); margin-bottom: 20px;"></i>
+            <div style="font-size: 2.5rem; font-family: 'Outfit'; margin-bottom: 0.5rem; color: #fff; font-weight:800">Level Complete!</div>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size:1.1rem">You've mastered this concept.</p>
+            <button class="modal-btn" onclick="nextLevel()">Start Next Level</button>
+        </div>
     </div>
 
     <script>
         /**
-         * REFACTORED DATABASE
-         * 80 Standard Questions sorted Easiest -> Hardest (New Levels 1-4)
-         * 20 Word Problems moved to Level 5.
+         * SUBSTITUTION MASTERY - DATASET
+         * solveSteps uses PEMDAS Labels: SUBSTITUTE, MULTIPLY, ADD, SUBTRACT, DIVIDE, EXPONENT, PARENTHESES
          */
-        const GAME_DATA = [
+        const LEVELS_DB = [
             {
-                id: 0, name: "Novice", desc: "Positive Integers & Basic Ops",
+                name: "Novice",
+                desc: "Positive Swap",
+                color: "var(--neon-green)",
                 problems: [
-                    // --- Tier 1: Direct Swap, Single Variable, Positives ---
-                    { q: "If x = 3, calculate 2x + 1", a: 7, steps: [{l:"Formula", m:"2x + 1"}, {l:"Sub", m:"2(3) + 1"}, {l:"Calc", m:"6 + 1"}, {l:"Ans", m:"7"}] },
-                    { q: "If a = 4, calculate 5a + 3", a: 23, steps: [{l:"Formula", m:"5a + 3"}, {l:"Sub", m:"5(4) + 3"}, {l:"Calc", m:"20 + 3"}, {l:"Ans", m:"23"}] },
-                    { q: "If m = 2, calculate 10m + 5", a: 25, steps: [{l:"Formula", m:"10m + 5"}, {l:"Sub", m:"10(2) + 5"}, {l:"Calc", m:"20 + 5"}, {l:"Ans", m:"25"}] },
-                    { q: "If x = 5, calculate 3x - 2", a: 13, steps: [{l:"Formula", m:"3x - 2"}, {l:"Sub", m:"3(5) - 2"}, {l:"Calc", m:"15 - 2"}, {l:"Ans", m:"13"}] },
-                    { q: "If k = 6, calculate 4k - 1", a: 23, steps: [{l:"Formula", m:"4k - 1"}, {l:"Sub", m:"4(6) - 1"}, {l:"Calc", m:"24 - 1"}, {l:"Ans", m:"23"}] },
-                    { q: "If y = 10, calculate 2y - 10", a: 10, steps: [{l:"Formula", m:"2y - 10"}, {l:"Sub", m:"2(10) - 10"}, {l:"Calc", m:"20 - 10"}, {l:"Ans", m:"10"}] },
-                    { q: "If x = 0, calculate 5x + 8", a: 8, steps: [{l:"Formula", m:"5x + 8"}, {l:"Sub", m:"5(0) + 8"}, {l:"Calc", m:"0 + 8"}, {l:"Ans", m:"8"}] },
-                    { q: "If b = 7, calculate 2b + b", a: 21, steps: [{l:"Formula", m:"2b + b"}, {l:"Sub", m:"2(7) + 7"}, {l:"Calc", m:"14 + 7"}, {l:"Ans", m:"21"}] },
-                    { q: "If n = 3, calculate 1 + 4n", a: 13, steps: [{l:"Formula", m:"1 + 4n"}, {l:"Sub", m:"1 + 4(3)"}, {l:"Calc", m:"1 + 12"}, {l:"Ans", m:"13"}] },
-                    { q: "If x = 1, calculate 10x - 9", a: 1, steps: [{l:"Formula", m:"10x - 9"}, {l:"Sub", m:"10(1) - 9"}, {l:"Calc", m:"10 - 9"}, {l:"Ans", m:"1"}] },
-                    { q: "If p = 5, calculate 20 - 2p", a: 10, steps: [{l:"Formula", m:"20 - 2p"}, {l:"Sub", m:"20 - 2(5)"}, {l:"Calc", m:"20 - 10"}, {l:"Ans", m:"10"}] },
-                    { q: "If w = 10, calculate 50 - 3w", a: 20, steps: [{l:"Formula", m:"50 - 3w"}, {l:"Sub", m:"50 - 3(10)"}, {l:"Calc", m:"50 - 30"}, {l:"Ans", m:"20"}] },
-                    { q: "If c = 9, calculate 2c - 18", a: 0, steps: [{l:"Formula", m:"2c - 18"}, {l:"Sub", m:"2(9) - 18"}, {l:"Calc", m:"18 - 18"}, {l:"Ans", m:"0"}] },
-                    { q: "If x = 5, calculate 100 - 10x", a: 50, steps: [{l:"Formula", m:"100 - 10x"}, {l:"Sub", m:"100 - 10(5)"}, {l:"Calc", m:"100 - 50"}, {l:"Ans", m:"50"}] },
-                    { q: "If z = 2, calculate 3z + 4z", a: 14, steps: [{l:"Formula", m:"3z + 4z"}, {l:"Sub", m:"3(2) + 4(2)"}, {l:"Calc", m:"6 + 8"}, {l:"Ans", m:"14"}] },
-                    { q: "If x = 8, calculate x/2 + 1", a: 5, steps: [{l:"Formula", m:"x/2 + 1"}, {l:"Sub", m:"8/2 + 1"}, {l:"Calc", m:"4 + 1"}, {l:"Ans", m:"5"}] },
-                    { q: "If x = 12, calculate x/4 - 2", a: 1, steps: [{l:"Formula", m:"x/4 - 2"}, {l:"Sub", m:"12/4 - 2"}, {l:"Calc", m:"3 - 2"}, {l:"Ans", m:"1"}] },
-                    { q: "If a = 20, calculate a/5 + 6", a: 10, steps: [{l:"Formula", m:"a/5 + 6"}, {l:"Sub", m:"20/5 + 6"}, {l:"Calc", m:"4 + 6"}, {l:"Ans", m:"10"}] },
-                    { q: "If y = 4, calculate 10 + y/2", a: 12, steps: [{l:"Formula", m:"10 + y/2"}, {l:"Sub", m:"10 + 4/2"}, {l:"Calc", m:"10 + 2"}, {l:"Ans", m:"12"}] },
-                    { q: "If x = 6, calculate x/3 + x", a: 8, steps: [{l:"Formula", m:"x/3 + x"}, {l:"Sub", m:"6/3 + 6"}, {l:"Calc", m:"2 + 6"}, {l:"Ans", m:"8"}] }
+                    { q: "If x = 3, calculate 2x + 1", a: 7, solveSteps: [{l:"EXPRESSION", m:"2x + 1"}, {l:"SUBSTITUTE", m:"2(3) + 1"}, {l:"MULTIPLY", m:"6 + 1"}, {l:"ADD", m:"7"}] },
+                    { q: "If a = 4, calculate 5a + 3", a: 23, solveSteps: [{l:"EXPRESSION", m:"5a + 3"}, {l:"SUBSTITUTE", m:"5(4) + 3"}, {l:"MULTIPLY", m:"20 + 3"}, {l:"ADD", m:"23"}] },
+                    { q: "If m = 2, calculate 10m + 5", a: 25, solveSteps: [{l:"EXPRESSION", m:"10m + 5"}, {l:"SUBSTITUTE", m:"10(2) + 5"}, {l:"MULTIPLY", m:"20 + 5"}, {l:"ADD", m:"25"}] },
+                    { q: "If x = 5, calculate 3x - 2", a: 13, solveSteps: [{l:"EXPRESSION", m:"3x - 2"}, {l:"SUBSTITUTE", m:"3(5) - 2"}, {l:"MULTIPLY", m:"15 - 2"}, {l:"SUBTRACT", m:"13"}] },
+                    { q: "If k = 6, calculate 4k - 1", a: 23, solveSteps: [{l:"EXPRESSION", m:"4k - 1"}, {l:"SUBSTITUTE", m:"4(6) - 1"}, {l:"MULTIPLY", m:"24 - 1"}, {l:"SUBTRACT", m:"23"}] },
+                    { q: "If y = 10, calculate 2y - 10", a: 10, solveSteps: [{l:"EXPRESSION", m:"2y - 10"}, {l:"SUBSTITUTE", m:"2(10) - 10"}, {l:"MULTIPLY", m:"20 - 10"}, {l:"SUBTRACT", m:"10"}] },
+                    { q: "If x = 0, calculate 5x + 8", a: 8, solveSteps: [{l:"EXPRESSION", m:"5x + 8"}, {l:"SUBSTITUTE", m:"5(0) + 8"}, {l:"MULTIPLY", m:"0 + 8"}, {l:"ADD", m:"8"}] },
+                    { q: "If b = 7, calculate 2b + b", a: 21, solveSteps: [{l:"EXPRESSION", m:"2b + b"}, {l:"SUBSTITUTE", m:"2(7) + 7"}, {l:"MULTIPLY", m:"14 + 7"}, {l:"ADD", m:"21"}] },
+                    { q: "If n = 3, calculate 1 + 4n", a: 13, solveSteps: [{l:"EXPRESSION", m:"1 + 4n"}, {l:"SUBSTITUTE", m:"1 + 4(3)"}, {l:"MULTIPLY", m:"1 + 12"}, {l:"ADD", m:"13"}] },
+                    { q: "If x = 1, calculate 10x - 9", a: 1, solveSteps: [{l:"EXPRESSION", m:"10x - 9"}, {l:"SUBSTITUTE", m:"10(1) - 9"}, {l:"MULTIPLY", m:"10 - 9"}, {l:"SUBTRACT", m:"1"}] },
+                    { q: "If p = 5, calculate 20 - 2p", a: 10, solveSteps: [{l:"EXPRESSION", m:"20 - 2p"}, {l:"SUBSTITUTE", m:"20 - 2(5)"}, {l:"MULTIPLY", m:"20 - 10"}, {l:"SUBTRACT", m:"10"}] },
+                    { q: "If w = 10, calculate 50 - 3w", a: 20, solveSteps: [{l:"EXPRESSION", m:"50 - 3w"}, {l:"SUBSTITUTE", m:"50 - 3(10)"}, {l:"MULTIPLY", m:"50 - 30"}, {l:"SUBTRACT", m:"20"}] },
+                    { q: "If c = 9, calculate 2c - 18", a: 0, solveSteps: [{l:"EXPRESSION", m:"2c - 18"}, {l:"SUBSTITUTE", m:"2(9) - 18"}, {l:"MULTIPLY", m:"18 - 18"}, {l:"SUBTRACT", m:"0"}] },
+                    { q: "If x = 5, calculate 100 - 10x", a: 50, solveSteps: [{l:"EXPRESSION", m:"100 - 10x"}, {l:"SUBSTITUTE", m:"100 - 10(5)"}, {l:"MULTIPLY", m:"100 - 50"}, {l:"SUBTRACT", m:"50"}] },
+                    { q: "If z = 2, calculate 3z + 4z", a: 14, solveSteps: [{l:"EXPRESSION", m:"3z + 4z"}, {l:"SUBSTITUTE", m:"3(2) + 4(2)"}, {l:"MULTIPLY", m:"6 + 8"}, {l:"ADD", m:"14"}] },
+                    { q: "If x = 8, calculate x/2 + 1", a: 5, solveSteps: [{l:"EXPRESSION", m:"x/2 + 1"}, {l:"SUBSTITUTE", m:"8/2 + 1"}, {l:"DIVIDE", m:"4 + 1"}, {l:"ADD", m:"5"}] },
+                    { q: "If x = 12, calculate x/4 - 2", a: 1, solveSteps: [{l:"EXPRESSION", m:"x/4 - 2"}, {l:"SUBSTITUTE", m:"12/4 - 2"}, {l:"DIVIDE", m:"3 - 2"}, {l:"SUBTRACT", m:"1"}] },
+                    { q: "If a = 20, calculate a/5 + 6", a: 10, solveSteps: [{l:"EXPRESSION", m:"a/5 + 6"}, {l:"SUBSTITUTE", m:"20/5 + 6"}, {l:"DIVIDE", m:"4 + 6"}, {l:"ADD", m:"10"}] },
+                    { q: "If y = 4, calculate 10 + y/2", a: 12, solveSteps: [{l:"EXPRESSION", m:"10 + y/2"}, {l:"SUBSTITUTE", m:"10 + 4/2"}, {l:"DIVIDE", m:"10 + 2"}, {l:"ADD", m:"12"}] },
+                    { q: "If x = 6, calculate x/3 + x", a: 8, solveSteps: [{l:"EXPRESSION", m:"x/3 + x"}, {l:"SUBSTITUTE", m:"6/3 + 6"}, {l:"DIVIDE", m:"2 + 6"}, {l:"ADD", m:"8"}] }
                 ]
             },
             {
-                id: 1, name: "Apprentice", desc: "Negative Numbers",
+                name: "Apprentice",
+                desc: "The Negative Zone",
+                color: "var(--neon-cyan)",
                 problems: [
-                    // --- Tier 2: Introducing Negatives ---
-                    { q: "If x = -2, calculate x + 5", a: 3, steps: [{l:"Formula", m:"x + 5"}, {l:"Sub", m:"(-2) + 5"}, {l:"Ans", m:"3"}] },
-                    { q: "If x = -4, calculate x + 4", a: 0, steps: [{l:"Formula", m:"x + 4"}, {l:"Sub", m:"(-4) + 4"}, {l:"Ans", m:"0"}] },
-                    { q: "If y = -3, calculate 10 + y", a: 7, steps: [{l:"Formula", m:"10 + y"}, {l:"Sub", m:"10 + (-3)"}, {l:"Ans", m:"7"}] },
-                    { q: "If a = -5, calculate a - 2", a: -7, steps: [{l:"Formula", m:"a - 2"}, {l:"Sub", m:"(-5) - 2"}, {l:"Ans", m:"-7"}] },
-                    { q: "If k = -1, calculate k - 9", a: -10, steps: [{l:"Formula", m:"k - 9"}, {l:"Sub", m:"(-1) - 9"}, {l:"Ans", m:"-10"}] },
-                    { q: "If x = -3, calculate 2x", a: -6, steps: [{l:"Formula", m:"2x"}, {l:"Sub", m:"2(-3)"}, {l:"Ans", m:"-6"}] },
-                    { q: "If x = -5, calculate 3x", a: -15, steps: [{l:"Formula", m:"3x"}, {l:"Sub", m:"3(-5)"}, {l:"Ans", m:"-15"}] },
-                    { q: "If m = -10, calculate m/2", a: -5, steps: [{l:"Formula", m:"m/2"}, {l:"Sub", m:"(-10)/2"}, {l:"Ans", m:"-5"}] },
-                    { q: "If w = -3, calculate -2w", a: 6, steps: [{l:"Formula", m:"-2w"}, {l:"Sub", m:"-2(-3)"}, {l:"Ans", m:"6"}] },
-                    { q: "If k = -5, calculate -4k", a: 20, steps: [{l:"Formula", m:"-4k"}, {l:"Sub", m:"-4(-5)"}, {l:"Ans", m:"20"}] },
-                    { q: "If x = -2, calculate 2x + 5", a: 1, steps: [{l:"Formula", m:"2x + 5"}, {l:"Sub", m:"2(-2) + 5"}, {l:"Calc", m:"-4 + 5"}, {l:"Ans", m:"1"}] },
-                    { q: "If x = -3, calculate 3x - 1", a: -10, steps: [{l:"Formula", m:"3x - 1"}, {l:"Sub", m:"3(-3) - 1"}, {l:"Calc", m:"-9 - 1"}, {l:"Ans", m:"-10"}] },
-                    { q: "If p = -4, calculate 10p", a: -40, steps: [{l:"Formula", m:"10p"}, {l:"Sub", m:"10(-4)"}, {l:"Ans", m:"-40"}] },
-                    { q: "If a = -6, calculate a/3 + 2", a: 0, steps: [{l:"Formula", m:"a/3 + 2"}, {l:"Sub", m:"(-6)/3 + 2"}, {l:"Calc", m:"-2 + 2"}, {l:"Ans", m:"0"}] },
-                    { q: "If x = -1, calculate 1 - x", a: 2, steps: [{l:"Formula", m:"1 - x"}, {l:"Sub", m:"1 - (-1)"}, {l:"Calc", m:"1 + 1"}, {l:"Ans", m:"2"}] },
-                    { q: "If y = -5, calculate 10 - y", a: 15, steps: [{l:"Formula", m:"10 - y"}, {l:"Sub", m:"10 - (-5)"}, {l:"Calc", m:"10 + 5"}, {l:"Ans", m:"15"}] },
-                    { q: "If x = -2, calculate 5 - x", a: 7, steps: [{l:"Formula", m:"5 - x"}, {l:"Sub", m:"5 - (-2)"}, {l:"Calc", m:"5 + 2"}, {l:"Ans", m:"7"}] },
-                    { q: "If x = -1, calculate 5x + 5", a: 0, steps: [{l:"Formula", m:"5x + 5"}, {l:"Sub", m:"5(-1) + 5"}, {l:"Calc", m:"-5 + 5"}, {l:"Ans", m:"0"}] },
-                    { q: "If a = -10, calculate 20 + a", a: 10, steps: [{l:"Formula", m:"20 + a"}, {l:"Sub", m:"20 + (-10)"}, {l:"Ans", m:"10"}] },
-                    { q: "If x = -4, calculate 0 - x", a: 4, steps: [{l:"Formula", m:"0 - x"}, {l:"Sub", m:"0 - (-4)"}, {l:"Calc", m:"0 + 4"}, {l:"Ans", m:"4"}] }
+                    { q: "If x = -2, calculate x + 5", a: 3, solveSteps: [{l:"EXPRESSION", m:"x + 5"}, {l:"SUBSTITUTE", m:"(-2) + 5"}, {l:"ADD", m:"3"}] },
+                    { q: "If x = -4, calculate x + 4", a: 0, solveSteps: [{l:"EXPRESSION", m:"x + 4"}, {l:"SUBSTITUTE", m:"(-4) + 4"}, {l:"ADD", m:"0"}] },
+                    { q: "If y = -3, calculate 10 + y", a: 7, solveSteps: [{l:"EXPRESSION", m:"10 + y"}, {l:"SUBSTITUTE", m:"10 + (-3)"}, {l:"ADD", m:"7"}] },
+                    { q: "If a = -5, calculate a - 2", a: -7, solveSteps: [{l:"EXPRESSION", m:"a - 2"}, {l:"SUBSTITUTE", m:"(-5) - 2"}, {l:"SUBTRACT", m:"-7"}] },
+                    { q: "If k = -1, calculate k - 9", a: -10, solveSteps: [{l:"EXPRESSION", m:"k - 9"}, {l:"SUBSTITUTE", m:"(-1) - 9"}, {l:"SUBTRACT", m:"-10"}] },
+                    { q: "If x = -3, calculate 2x", a: -6, solveSteps: [{l:"EXPRESSION", m:"2x"}, {l:"SUBSTITUTE", m:"2(-3)"}, {l:"MULTIPLY", m:"-6"}] },
+                    { q: "If x = -5, calculate 3x", a: -15, solveSteps: [{l:"EXPRESSION", m:"3x"}, {l:"SUBSTITUTE", m:"3(-5)"}, {l:"MULTIPLY", m:"-15"}] },
+                    { q: "If m = -10, calculate m/2", a: -5, solveSteps: [{l:"EXPRESSION", m:"m/2"}, {l:"SUBSTITUTE", m:"(-10)/2"}, {l:"DIVIDE", m:"-5"}] },
+                    { q: "If w = -3, calculate -2w", a: 6, solveSteps: [{l:"EXPRESSION", m:"-2w"}, {l:"SUBSTITUTE", m:"-2(-3)"}, {l:"MULTIPLY", m:"6"}] },
+                    { q: "If k = -5, calculate -4k", a: 20, solveSteps: [{l:"EXPRESSION", m:"-4k"}, {l:"SUBSTITUTE", m:"-4(-5)"}, {l:"MULTIPLY", m:"20"}] },
+                    { q: "If x = -2, calculate 2x + 5", a: 1, solveSteps: [{l:"EXPRESSION", m:"2x + 5"}, {l:"SUBSTITUTE", m:"2(-2) + 5"}, {l:"MULTIPLY", m:"-4 + 5"}, {l:"ADD", m:"1"}] },
+                    { q: "If x = -3, calculate 3x - 1", a: -10, solveSteps: [{l:"EXPRESSION", m:"3x - 1"}, {l:"SUBSTITUTE", m:"3(-3) - 1"}, {l:"MULTIPLY", m:"-9 - 1"}, {l:"SUBTRACT", m:"-10"}] },
+                    { q: "If p = -4, calculate 10p", a: -40, solveSteps: [{l:"EXPRESSION", m:"10p"}, {l:"SUBSTITUTE", m:"10(-4)"}, {l:"MULTIPLY", m:"-40"}] },
+                    { q: "If a = -6, calculate a/3 + 2", a: 0, solveSteps: [{l:"EXPRESSION", m:"a/3 + 2"}, {l:"SUBSTITUTE", m:"(-6)/3 + 2"}, {l:"DIVIDE", m:"-2 + 2"}, {l:"ADD", m:"0"}] },
+                    { q: "If x = -1, calculate 1 - x", a: 2, solveSteps: [{l:"EXPRESSION", m:"1 - x"}, {l:"SUBSTITUTE", m:"1 - (-1)"}, {l:"SUBTRACT", m:"1 + 1"}, {l:"ADD", m:"2"}] },
+                    { q: "If y = -5, calculate 10 - y", a: 15, solveSteps: [{l:"EXPRESSION", m:"10 - y"}, {l:"SUBSTITUTE", m:"10 - (-5)"}, {l:"SUBTRACT", m:"10 + 5"}, {l:"ADD", m:"15"}] },
+                    { q: "If x = -2, calculate 5 - x", a: 7, solveSteps: [{l:"EXPRESSION", m:"5 - x"}, {l:"SUBSTITUTE", m:"5 - (-2)"}, {l:"SUBTRACT", m:"5 + 2"}, {l:"ADD", m:"7"}] },
+                    { q: "If x = -1, calculate 5x + 5", a: 0, solveSteps: [{l:"EXPRESSION", m:"5x + 5"}, {l:"SUBSTITUTE", m:"5(-1) + 5"}, {l:"MULTIPLY", m:"-5 + 5"}, {l:"ADD", m:"0"}] },
+                    { q: "If a = -10, calculate 20 + a", a: 10, solveSteps: [{l:"EXPRESSION", m:"20 + a"}, {l:"SUBSTITUTE", m:"20 + (-10)"}, {l:"ADD", m:"10"}] },
+                    { q: "If x = -4, calculate 0 - x", a: 4, solveSteps: [{l:"EXPRESSION", m:"0 - x"}, {l:"SUBSTITUTE", m:"0 - (-4)"}, {l:"SUBTRACT", m:"0 + 4"}, {l:"ADD", m:"4"}] }
                 ]
             },
             {
-                id: 2, name: "Expert", desc: "Multi-Var & Distribution",
+                name: "Expert",
+                desc: "Multi-Var & Groups",
+                color: "var(--neon-pink)",
                 problems: [
-                    // --- Tier 3: Two Vars, Parentheses, Complex Negatives ---
-                    { q: "If x = 3 and y = 2, calculate x + y", a: 5, steps: [{l:"Formula", m:"x + y"}, {l:"Sub", m:"3 + 2"}, {l:"Ans", m:"5"}] },
-                    { q: "If x = 5 and y = 3, calculate x - y", a: 2, steps: [{l:"Formula", m:"x - y"}, {l:"Sub", m:"5 - 3"}, {l:"Ans", m:"2"}] },
-                    { q: "If a = 4 and b = 5, calculate ab", a: 20, steps: [{l:"Formula", m:"ab"}, {l:"Sub", m:"(4)(5)"}, {l:"Ans", m:"20"}] },
-                    { q: "If x = 2 and y = -3, calculate xy", a: -6, steps: [{l:"Formula", m:"xy"}, {l:"Sub", m:"(2)(-3)"}, {l:"Ans", m:"-6"}] },
-                    { q: "If m = 10, calculate 2(m + 1)", a: 22, steps: [{l:"Formula", m:"2(m + 1)"}, {l:"Sub", m:"2(10 + 1)"}, {l:"Calc", m:"2(11)"}, {l:"Ans", m:"22"}] },
-                    { q: "If n = 5, calculate 3(n - 2)", a: 9, steps: [{l:"Formula", m:"3(n - 2)"}, {l:"Sub", m:"3(5 - 2)"}, {l:"Calc", m:"3(3)"}, {l:"Ans", m:"9"}] },
-                    { q: "If x = 4, calculate 5(10 - x)", a: 30, steps: [{l:"Formula", m:"5(10 - x)"}, {l:"Sub", m:"5(10 - 4)"}, {l:"Calc", m:"5(6)"}, {l:"Ans", m:"30"}] },
-                    { q: "If a = 3, calculate a(a + 2)", a: 15, steps: [{l:"Formula", m:"a(a + 2)"}, {l:"Sub", m:"3(3 + 2)"}, {l:"Calc", m:"3(5)"}, {l:"Ans", m:"15"}] },
-                    { q: "If x = 2 and y = 5, calculate 2x + y", a: 9, steps: [{l:"Formula", m:"2x + y"}, {l:"Sub", m:"2(2) + 5"}, {l:"Calc", m:"4 + 5"}, {l:"Ans", m:"9"}] },
-                    { q: "If a = 3 and b = 4, calculate 3a - 2b", a: 1, steps: [{l:"Formula", m:"3a - 2b"}, {l:"Sub", m:"3(3) - 2(4)"}, {l:"Calc", m:"9 - 8"}, {l:"Ans", m:"1"}] },
-                    { q: "If x = 6, calculate (x + 4)/2", a: 5, steps: [{l:"Formula", m:"(x + 4)/2"}, {l:"Sub", m:"(6 + 4)/2"}, {l:"Calc", m:"10/2"}, {l:"Ans", m:"5"}] },
-                    { q: "If x = 10, calculate (20 - x)/5", a: 2, steps: [{l:"Formula", m:"(20 - x)/5"}, {l:"Sub", m:"(20 - 10)/5"}, {l:"Calc", m:"10/5"}, {l:"Ans", m:"2"}] },
-                    { q: "If x = -2, calculate 3(x + 5)", a: 9, steps: [{l:"Formula", m:"3(x + 5)"}, {l:"Sub", m:"3(-2 + 5)"}, {l:"Calc", m:"3(3)"}, {l:"Ans", m:"9"}] },
-                    { q: "If y = -4, calculate 2(y - 1)", a: -10, steps: [{l:"Formula", m:"2(y - 1)"}, {l:"Sub", m:"2(-4 - 1)"}, {l:"Calc", m:"2(-5)"}, {l:"Ans", m:"-10"}] },
-                    { q: "If x = 3 and y = -2, calculate x + 2y", a: -1, steps: [{l:"Formula", m:"x + 2y"}, {l:"Sub", m:"3 + 2(-2)"}, {l:"Calc", m:"3 - 4"}, {l:"Ans", m:"-1"}] },
-                    { q: "If a = 5, calculate 2(a + a)", a: 20, steps: [{l:"Formula", m:"2(a + a)"}, {l:"Sub", m:"2(5 + 5)"}, {l:"Calc", m:"2(10)"}, {l:"Ans", m:"20"}] },
-                    { q: "If x = -3, calculate x(x + 1)", a: 6, steps: [{l:"Formula", m:"x(x + 1)"}, {l:"Sub", m:"-3(-3 + 1)"}, {l:"Calc", m:"-3(-2)"}, {l:"Ans", m:"6"}] },
-                    { q: "If p = 4 and q = 2, calculate p/q", a: 2, steps: [{l:"Formula", m:"p/q"}, {l:"Sub", m:"4/2"}, {l:"Ans", m:"2"}] },
-                    { q: "If x = 5, calculate 10(x - 5)", a: 0, steps: [{l:"Formula", m:"10(x - 5)"}, {l:"Sub", m:"10(5 - 5)"}, {l:"Calc", m:"10(0)"}, {l:"Ans", m:"0"}] },
-                    { q: "If x = -1 and y = -1, calculate x + y", a: -2, steps: [{l:"Formula", m:"x + y"}, {l:"Sub", m:"(-1) + (-1)"}, {l:"Ans", m:"-2"}] }
+                    { q: "If x = 3 and y = 2, calculate x + y", a: 5, solveSteps: [{l:"EXPRESSION", m:"x + y"}, {l:"SUBSTITUTE", m:"3 + 2"}, {l:"ADD", m:"5"}] },
+                    { q: "If x = 5 and y = 3, calculate x - y", a: 2, solveSteps: [{l:"EXPRESSION", m:"x - y"}, {l:"SUBSTITUTE", m:"5 - 3"}, {l:"SUBTRACT", m:"2"}] },
+                    { q: "If a = 4 and b = 5, calculate ab", a: 20, solveSteps: [{l:"EXPRESSION", m:"ab"}, {l:"SUBSTITUTE", m:"(4)(5)"}, {l:"MULTIPLY", m:"20"}] },
+                    { q: "If x = 2 and y = -3, calculate xy", a: -6, solveSteps: [{l:"EXPRESSION", m:"xy"}, {l:"SUBSTITUTE", m:"(2)(-3)"}, {l:"MULTIPLY", m:"-6"}] },
+                    { q: "If m = 10, calculate 2(m + 1)", a: 22, solveSteps: [{l:"EXPRESSION", m:"2(m + 1)"}, {l:"SUBSTITUTE", m:"2(10 + 1)"}, {l:"PARENTHESES", m:"2(11)"}, {l:"MULTIPLY", m:"22"}] },
+                    { q: "If n = 5, calculate 3(n - 2)", a: 9, solveSteps: [{l:"EXPRESSION", m:"3(n - 2)"}, {l:"SUBSTITUTE", m:"3(5 - 2)"}, {l:"PARENTHESES", m:"3(3)"}, {l:"MULTIPLY", m:"9"}] },
+                    { q: "If x = 4, calculate 5(10 - x)", a: 30, solveSteps: [{l:"EXPRESSION", m:"5(10 - x)"}, {l:"SUBSTITUTE", m:"5(10 - 4)"}, {l:"PARENTHESES", m:"5(6)"}, {l:"MULTIPLY", m:"30"}] },
+                    { q: "If a = 3, calculate a(a + 2)", a: 15, solveSteps: [{l:"EXPRESSION", m:"a(a + 2)"}, {l:"SUBSTITUTE", m:"3(3 + 2)"}, {l:"PARENTHESES", m:"3(5)"}, {l:"MULTIPLY", m:"15"}] },
+                    { q: "If x = 2 and y = 5, calculate 2x + y", a: 9, solveSteps: [{l:"EXPRESSION", m:"2x + y"}, {l:"SUBSTITUTE", m:"2(2) + 5"}, {l:"MULTIPLY", m:"4 + 5"}, {l:"ADD", m:"9"}] },
+                    { q: "If a = 3 and b = 4, calculate 3a - 2b", a: 1, solveSteps: [{l:"EXPRESSION", m:"3a - 2b"}, {l:"SUBSTITUTE", m:"3(3) - 2(4)"}, {l:"MULTIPLY", m:"9 - 8"}, {l:"SUBTRACT", m:"1"}] },
+                    { q: "If x = 6, calculate (x + 4)/2", a: 5, solveSteps: [{l:"EXPRESSION", m:"(x + 4)/2"}, {l:"SUBSTITUTE", m:"(6 + 4)/2"}, {l:"PARENTHESES", m:"10/2"}, {l:"DIVIDE", m:"5"}] },
+                    { q: "If x = 10, calculate (20 - x)/5", a: 2, solveSteps: [{l:"EXPRESSION", m:"(20 - x)/5"}, {l:"SUBSTITUTE", m:"(20 - 10)/5"}, {l:"PARENTHESES", m:"10/5"}, {l:"DIVIDE", m:"2"}] },
+                    { q: "If x = -2, calculate 3(x + 5)", a: 9, solveSteps: [{l:"EXPRESSION", m:"3(x + 5)"}, {l:"SUBSTITUTE", m:"3(-2 + 5)"}, {l:"PARENTHESES", m:"3(3)"}, {l:"MULTIPLY", m:"9"}] },
+                    { q: "If y = -4, calculate 2(y - 1)", a: -10, solveSteps: [{l:"EXPRESSION", m:"2(y - 1)"}, {l:"SUBSTITUTE", m:"2(-4 - 1)"}, {l:"PARENTHESES", m:"2(-5)"}, {l:"MULTIPLY", m:"-10"}] },
+                    { q: "If x = 3 and y = -2, calculate x + 2y", a: -1, solveSteps: [{l:"EXPRESSION", m:"x + 2y"}, {l:"SUBSTITUTE", m:"3 + 2(-2)"}, {l:"MULTIPLY", m:"3 - 4"}, {l:"SUBTRACT", m:"-1"}] },
+                    { q: "If a = 5, calculate 2(a + a)", a: 20, solveSteps: [{l:"EXPRESSION", m:"2(a + a)"}, {l:"SUBSTITUTE", m:"2(5 + 5)"}, {l:"PARENTHESES", m:"2(10)"}, {l:"MULTIPLY", m:"20"}] },
+                    { q: "If x = -3, calculate x(x + 1)", a: 6, solveSteps: [{l:"EXPRESSION", m:"x(x + 1)"}, {l:"SUBSTITUTE", m:"-3(-3 + 1)"}, {l:"PARENTHESES", m:"-3(-2)"}, {l:"MULTIPLY", m:"6"}] },
+                    { q: "If p = 4 and q = 2, calculate p/q", a: 2, solveSteps: [{l:"EXPRESSION", m:"p/q"}, {l:"SUBSTITUTE", m:"4/2"}, {l:"DIVIDE", m:"2"}] },
+                    { q: "If x = 5, calculate 10(x - 5)", a: 0, solveSteps: [{l:"EXPRESSION", m:"10(x - 5)"}, {l:"SUBSTITUTE", m:"10(5 - 5)"}, {l:"PARENTHESES", m:"10(0)"}, {l:"MULTIPLY", m:"0"}] },
+                    { q: "If x = -1 and y = -1, calculate x + y", a: -2, solveSteps: [{l:"EXPRESSION", m:"x + y"}, {l:"SUBSTITUTE", m:"(-1) + (-1)"}, {l:"ADD", m:"-2"}] }
                 ]
             },
             {
-                id: 3, name: "Master", desc: "Exponents & Roots",
+                name: "Master",
+                desc: "Exponents & Roots",
+                color: "var(--neon-amber)",
                 problems: [
-                    // --- Tier 4: Exponents (From Old Level 5) ---
-                    { q: "If x = 3, calculate x^2", a: 9, steps: [{l:"Formula", m:"x^2"}, {l:"Sub", m:"(3)^2"}, {l:"Ans", m:"9"}] },
-                    { q: "If x = 5, calculate x^2 + 1", a: 26, steps: [{l:"Formula", m:"x^2 + 1"}, {l:"Sub", m:"(5)^2 + 1"}, {l:"Calc", m:"25 + 1"}, {l:"Ans", m:"26"}] },
-                    { q: "If x = 2, calculate 3x^2", a: 12, steps: [{l:"Formula", m:"3x^2"}, {l:"Sub", m:"3(2)^2"}, {l:"Calc", m:"3(4)"}, {l:"Ans", m:"12"}] },
-                    { q: "If x = -2, calculate x^2", a: 4, steps: [{l:"Formula", m:"x^2"}, {l:"Sub", m:"(-2)^2"}, {l:"Ans", m:"4"}] },
-                    { q: "If x = -4, calculate x^2", a: 16, steps: [{l:"Formula", m:"x^2"}, {l:"Sub", m:"(-4)^2"}, {l:"Ans", m:"16"}] },
-                    { q: "If x = -1, calculate x^2 + 5", a: 6, steps: [{l:"Formula", m:"x^2 + 5"}, {l:"Sub", m:"(-1)^2 + 5"}, {l:"Calc", m:"1 + 5"}, {l:"Ans", m:"6"}] },
-                    { q: "If x = -3, calculate 2x^2", a: 18, steps: [{l:"Formula", m:"2x^2"}, {l:"Sub", m:"2(-3)^2"}, {l:"Calc", m:"2(9)"}, {l:"Ans", m:"18"}] },
-                    { q: "If x = 4, calculate x^2 - x", a: 12, steps: [{l:"Formula", m:"x^2 - x"}, {l:"Sub", m:"4^2 - 4"}, {l:"Calc", m:"16 - 4"}, {l:"Ans", m:"12"}] },
-                    { q: "If x = -2, calculate x^2 + x", a: 2, steps: [{l:"Formula", m:"x^2 + x"}, {l:"Sub", m:"(-2)^2 + (-2)"}, {l:"Calc", m:"4 - 2"}, {l:"Ans", m:"2"}] },
-                    { q: "If y = 3, calculate 2y^2 - 10", a: 8, steps: [{l:"Formula", m:"2y^2 - 10"}, {l:"Sub", m:"2(3)^2 - 10"}, {l:"Calc", m:"18 - 10"}, {l:"Ans", m:"8"}] },
-                    { q: "If x = 5, calculate sqrt(x + 4)", a: 3, steps: [{l:"Formula", m:"√(x + 4)"}, {l:"Sub", m:"√(5 + 4)"}, {l:"Calc", m:"√9"}, {l:"Ans", m:"3"}] },
-                    { q: "If x = 10, calculate sqrt(10x)", a: 10, steps: [{l:"Formula", m:"√(10x)"}, {l:"Sub", m:"√(10·10)"}, {l:"Calc", m:"√100"}, {l:"Ans", m:"10"}] },
-                    { q: "If x = -5, calculate 100 - x^2", a: 75, steps: [{l:"Formula", m:"100 - x^2"}, {l:"Sub", m:"100 - (-5)^2"}, {l:"Calc", m:"100 - 25"}, {l:"Ans", m:"75"}] },
-                    { q: "If a = 3, calculate a^3", a: 27, steps: [{l:"Formula", m:"a^3"}, {l:"Sub", m:"3^3"}, {l:"Ans", m:"27"}] },
-                    { q: "If x = 2, calculate (x + 3)^2", a: 25, steps: [{l:"Formula", m:"(x + 3)^2"}, {l:"Sub", m:"(2 + 3)^2"}, {l:"Calc", m:"5^2"}, {l:"Ans", m:"25"}] },
-                    { q: "If x = 3 and y = 4, calculate x^2 + y^2", a: 25, steps: [{l:"Formula", m:"x^2 + y^2"}, {l:"Sub", m:"3^2 + 4^2"}, {l:"Calc", m:"9 + 16"}, {l:"Ans", m:"25"}] },
-                    { q: "If x = -2, calculate x^3", a: -8, steps: [{l:"Formula", m:"x^3"}, {l:"Sub", m:"(-2)^3"}, {l:"Ans", m:"-8"}] },
-                    { q: "If x = 5, calculate 2(x - 2)^2", a: 18, steps: [{l:"Formula", m:"2(x - 2)^2"}, {l:"Sub", m:"2(5 - 2)^2"}, {l:"Calc", m:"2(3)^2"}, {l:"Ans", m:"18"}] },
-                    { q: "If x = -1, calculate 1 - x^2", a: 0, steps: [{l:"Formula", m:"1 - x^2"}, {l:"Sub", m:"1 - (-1)^2"}, {l:"Calc", m:"1 - 1"}, {l:"Ans", m:"0"}] },
-                    { q: "If x = 3, calculate 2x^2 + 3x - 5", a: 22, steps: [{l:"Formula", m:"2x^2 + 3x - 5"}, {l:"Sub", m:"2(3)^2 + 3(3) - 5"}, {l:"Calc", m:"18 + 9 - 5"}, {l:"Ans", m:"22"}] }
+                    { q: "If x = 3, calculate x^2", a: 9, solveSteps: [{l:"EXPRESSION", m:"x^2"}, {l:"SUBSTITUTE", m:"(3)^2"}, {l:"EXPONENT", m:"9"}] },
+                    { q: "If x = 5, calculate x^2 + 1", a: 26, solveSteps: [{l:"EXPRESSION", m:"x^2 + 1"}, {l:"SUBSTITUTE", m:"(5)^2 + 1"}, {l:"EXPONENT", m:"25 + 1"}, {l:"ADD", m:"26"}] },
+                    { q: "If x = 2, calculate 3x^2", a: 12, solveSteps: [{l:"EXPRESSION", m:"3x^2"}, {l:"SUBSTITUTE", m:"3(2)^2"}, {l:"EXPONENT", m:"3(4)"}, {l:"MULTIPLY", m:"12"}] },
+                    { q: "If x = -2, calculate x^2", a: 4, solveSteps: [{l:"EXPRESSION", m:"x^2"}, {l:"SUBSTITUTE", m:"(-2)^2"}, {l:"EXPONENT", m:"4"}] },
+                    { q: "If x = -4, calculate x^2", a: 16, solveSteps: [{l:"EXPRESSION", m:"x^2"}, {l:"SUBSTITUTE", m:"(-4)^2"}, {l:"EXPONENT", m:"16"}] },
+                    { q: "If x = -1, calculate x^2 + 5", a: 6, solveSteps: [{l:"EXPRESSION", m:"x^2 + 5"}, {l:"SUBSTITUTE", m:"(-1)^2 + 5"}, {l:"EXPONENT", m:"1 + 5"}, {l:"ADD", m:"6"}] },
+                    { q: "If x = -3, calculate 2x^2", a: 18, solveSteps: [{l:"EXPRESSION", m:"2x^2"}, {l:"SUBSTITUTE", m:"2(-3)^2"}, {l:"EXPONENT", m:"2(9)"}, {l:"MULTIPLY", m:"18"}] },
+                    { q: "If x = 4, calculate x^2 - x", a: 12, solveSteps: [{l:"EXPRESSION", m:"x^2 - x"}, {l:"SUBSTITUTE", m:"4^2 - 4"}, {l:"EXPONENT", m:"16 - 4"}, {l:"SUBTRACT", m:"12"}] },
+                    { q: "If x = -2, calculate x^2 + x", a: 2, solveSteps: [{l:"EXPRESSION", m:"x^2 + x"}, {l:"SUBSTITUTE", m:"(-2)^2 + (-2)"}, {l:"EXPONENT", m:"4 - 2"}, {l:"SUBTRACT", m:"2"}] },
+                    { q: "If y = 3, calculate 2y^2 - 10", a: 8, solveSteps: [{l:"EXPRESSION", m:"2y^2 - 10"}, {l:"SUBSTITUTE", m:"2(3)^2 - 10"}, {l:"EXPONENT", m:"2(9) - 10"}, {l:"MULTIPLY", m:"18 - 10"}, {l:"SUBTRACT", m:"8"}] },
+                    { q: "If x = 5, calculate sqrt(x + 4)", a: 3, solveSteps: [{l:"EXPRESSION", m:"√(x + 4)"}, {l:"SUBSTITUTE", m:"√(5 + 4)"}, {l:"PARENTHESES", m:"√9"}, {l:"EXPONENT", m:"3"}] },
+                    { q: "If x = 10, calculate sqrt(10x)", a: 10, solveSteps: [{l:"EXPRESSION", m:"√(10x)"}, {l:"SUBSTITUTE", m:"√(10·10)"}, {l:"PARENTHESES", m:"√100"}, {l:"EXPONENT", m:"10"}] },
+                    { q: "If x = -5, calculate 100 - x^2", a: 75, solveSteps: [{l:"EXPRESSION", m:"100 - x^2"}, {l:"SUBSTITUTE", m:"100 - (-5)^2"}, {l:"EXPONENT", m:"100 - 25"}, {l:"SUBTRACT", m:"75"}] },
+                    { q: "If a = 3, calculate a^3", a: 27, solveSteps: [{l:"EXPRESSION", m:"a^3"}, {l:"SUBSTITUTE", m:"3^3"}, {l:"EXPONENT", m:"27"}] },
+                    { q: "If x = 2, calculate (x + 3)^2", a: 25, solveSteps: [{l:"EXPRESSION", m:"(x + 3)^2"}, {l:"SUBSTITUTE", m:"(2 + 3)^2"}, {l:"PARENTHESES", m:"5^2"}, {l:"EXPONENT", m:"25"}] },
+                    { q: "If x = 3 and y = 4, calculate x^2 + y^2", a: 25, solveSteps: [{l:"EXPRESSION", m:"x^2 + y^2"}, {l:"SUBSTITUTE", m:"3^2 + 4^2"}, {l:"EXPONENT", m:"9 + 16"}, {l:"ADD", m:"25"}] },
+                    { q: "If x = -2, calculate x^3", a: -8, solveSteps: [{l:"EXPRESSION", m:"x^3"}, {l:"SUBSTITUTE", m:"(-2)^3"}, {l:"EXPONENT", m:"-8"}] },
+                    { q: "If x = 5, calculate 2(x - 2)^2", a: 18, solveSteps: [{l:"EXPRESSION", m:"2(x - 2)^2"}, {l:"SUBSTITUTE", m:"2(5 - 2)^2"}, {l:"PARENTHESES", m:"2(3)^2"}, {l:"EXPONENT", m:"2(9)"}, {l:"MULTIPLY", m:"18"}] },
+                    { q: "If x = -1, calculate 1 - x^2", a: 0, solveSteps: [{l:"EXPRESSION", m:"1 - x^2"}, {l:"SUBSTITUTE", m:"1 - (-1)^2"}, {l:"EXPONENT", m:"1 - 1"}, {l:"SUBTRACT", m:"0"}] },
+                    { q: "If x = 3, calculate 2x^2 + 3x - 5", a: 22, solveSteps: [{l:"EXPRESSION", m:"2x^2 + 3x - 5"}, {l:"SUBSTITUTE", m:"2(3)^2 + 3(3) - 5"}, {l:"EXPONENT", m:"2(9) + 9 - 5"}, {l:"MULTIPLY", m:"18 + 9 - 5"}, {l:"ADD", m:"27 - 5"}, {l:"SUBTRACT", m:"22"}] }
                 ]
             },
             {
-                id: 4, name: "Grandmaster", desc: "Word Problems & Formulas",
+                name: "Grandmaster",
+                desc: "Word Problems",
+                color: "var(--neon-purple)",
                 problems: [
-                    // --- Tier 5: The original Level 4 moved here ---
-                    { q: "A rectangle has length l = 12 and width w = 5. Calculate the Perimeter (P = 2(l + w)).", a: 34, steps: [{l:"Formula", m:"P = 2(l + w)"}, {l:"Sub", m:"2(12 + 5)"}, {l:"Calc", m:"2(17)"}, {l:"Ans", m:"34"}] },
-                    { q: "A rectangle has length l = 20 and width w = 10. Calculate the Area (A = l × w).", a: 200, steps: [{l:"Formula", m:"A = lw"}, {l:"Sub", m:"(20)(10)"}, {l:"Ans", m:"200"}] },
-                    { q: "Mr. Bowen is 34 years old. Mr. Seth is \"5 years older than twice Mr. Bowen's age\". Calculate Mr. Seth's age (2b + 5).", a: 73, steps: [{l:"Formula", m:"2b + 5"}, {l:"Sub", m:"2(34) + 5"}, {l:"Calc", m:"68 + 5"}, {l:"Ans", m:"73"}] },
-                    { q: "The profit of a lemonade stand is P = 5n - 20, where n is the number of cups sold. Calculate the profit if n = 10 cups.", a: 30, steps: [{l:"Formula", m:"P = 5n - 20"}, {l:"Sub", m:"5(10) - 20"}, {l:"Calc", m:"50 - 20"}, {l:"Ans", m:"30"}] },
-                    { q: "A taxi charges a base fee of 5 dollars plus 2 dollars for every kilometer traveled. If k = 15 km, calculate the total Cost (5 + 2k).", a: 35, steps: [{l:"Formula", m:"5 + 2k"}, {l:"Sub", m:"5 + 2(15)"}, {l:"Calc", m:"5 + 30"}, {l:"Ans", m:"35"}] },
-                    { q: "Mr. Bowen is b = 15 years old. Mr. Seth is \"3 times the value of 2 years less than Mr. Bowen\". Calculate Mr. Seth's age (3(b - 2)).", a: 39, steps: [{l:"Formula", m:"3(b - 2)"}, {l:"Sub", m:"3(15 - 2)"}, {l:"Calc", m:"3(13)"}, {l:"Ans", m:"39"}] },
-                    { q: "In physics, final velocity is v = u + at. If initial velocity u = 10, acceleration a = 5, and time t = 4, calculate v.", a: 30, steps: [{l:"Formula", m:"v = u + at"}, {l:"Sub", m:"10 + 5(4)"}, {l:"Calc", m:"10 + 20"}, {l:"Ans", m:"30"}] },
-                    { q: "A triangle has a base b = 8 and height h = 5. Calculate the Area using the formula A = 1/2bh.", a: 20, steps: [{l:"Formula", m:"A = 0.5bh"}, {l:"Sub", m:"0.5(8)(5)"}, {l:"Calc", m:"4(5)"}, {l:"Ans", m:"20"}] },
-                    { q: "Mr. Bowen is b = 20 years old. Mr. Seth is \"the square of (Mr. Bowen minus 14)\". Calculate Mr. Seth's age ((b - 14)^2).", a: 36, steps: [{l:"Formula", m:"(b - 14)^2"}, {l:"Sub", m:"(20 - 14)^2"}, {l:"Calc", m:"(6)^2"}, {l:"Ans", m:"36"}] },
-                    { q: "A phone plan costs C = 30 + 2(d - 5) where d is data usage. If you use d = 8 GB, what is the cost?", a: 36, steps: [{l:"Formula", m:"30 + 2(d - 5)"}, {l:"Sub", m:"30 + 2(8 - 5)"}, {l:"Calc", m:"30 + 6"}, {l:"Ans", m:"36"}] },
-                    { q: "An object falls from a height. Its height after t seconds is h = 100 - 5t^2. Calculate the height after t = 4 seconds.", a: 20, steps: [{l:"Formula", m:"h = 100 - 5t^2"}, {l:"Sub", m:"100 - 5(4)^2"}, {l:"Calc", m:"100 - 80"}, {l:"Ans", m:"20"}] },
-                    { q: "Mr. Bowen is b = 18 years old. Mr. Seth is \"half of Mr. Bowen's age squared, plus 10\". Calculate Mr. Seth's age (b^2/2 + 10).", a: 172, steps: [{l:"Formula", m:"b^2/2 + 10"}, {l:"Sub", m:"18^2/2 + 10"}, {l:"Calc", m:"162 + 10"}, {l:"Ans", m:"172"}] },
-                    { q: "You buy x = 3 books costing 12 dollars each and y = 2 pens costing 4 dollars each. The total cost is 12x + 4y. Calculate the total.", a: 44, steps: [{l:"Formula", m:"12x + 4y"}, {l:"Sub", m:"12(3) + 4(2)"}, {l:"Calc", m:"36 + 8"}, {l:"Ans", m:"44"}] },
-                    { q: "To convert temperature from Celsius to Fahrenheit, use F = 1.8C + 32. If it is C = 20 degrees, what is the temperature in Fahrenheit?", a: 68, steps: [{l:"Formula", m:"F = 1.8C + 32"}, {l:"Sub", m:"1.8(20) + 32"}, {l:"Calc", m:"36 + 32"}, {l:"Ans", m:"68"}] },
-                    { q: "A box has length l=5, width w=4, and height h=3. The Surface Area is SA = 2(lw + lh + wh). Calculate the Surface Area.", a: 94, steps: [{l:"Formula", m:"SA = 2(lw+lh+wh)"}, {l:"Sub", m:"2(20 + 15 + 12)"}, {l:"Calc", m:"2(47)"}, {l:"Ans", m:"94"}] },
-                    { q: "Mr. Bowen is b = 50 years old. Mr. Seth is \"100 minus half of Mr. Bowen's age\". Calculate Mr. Seth's age (100 - b/2).", a: 75, steps: [{l:"Formula", m:"100 - b/2"}, {l:"Sub", m:"100 - 50/2"}, {l:"Calc", m:"100 - 25"}, {l:"Ans", m:"75"}] },
-                    { q: "Kinetic Energy is calculated by E = 1/2mv^2. If mass m = 10 and velocity v = 6, calculate the Energy.", a: 180, steps: [{l:"Formula", m:"E = 0.5mv^2"}, {l:"Sub", m:"0.5(10)(6)^2"}, {l:"Calc", m:"5(36)"}, {l:"Ans", m:"180"}] },
-                    { q: "A number sequence is given by the rule T = n(n + 1). Calculate the 10th term (where n = 10).", a: 110, steps: [{l:"Formula", m:"T = n(n + 1)"}, {l:"Sub", m:"10(10 + 1)"}, {l:"Calc", m:"10(11)"}, {l:"Ans", m:"110"}] },
-                    { q: "Mr. Bowen is b = 16 years old. Mr. Seth is \"3 times the square root of Mr. Bowen, plus 40\". Calculate Mr. Seth's age (3√b + 40).", a: 52, steps: [{l:"Formula", m:"3√b + 40"}, {l:"Sub", m:"3√16 + 40"}, {l:"Calc", m:"12 + 40"}, {l:"Ans", m:"52"}] },
-                    { q: "Challenge: The volume of a cone is V = 1/3 pi r^2 h. If we approximate pi = 3, radius r = 4, and height h = 5, calculate V.", a: 80, steps: [{l:"Formula", m:"V = 1/3(3)r^2h"}, {l:"Sub", m:"1(4)^2(5)"}, {l:"Calc", m:"16(5)"}, {l:"Ans", m:"80"}] }
+                    { q: "A rectangle has length l = 12 and width w = 5. Calculate the Perimeter (P = 2(l + w)).", a: 34, solveSteps: [{l:"FORMULA", m:"P = 2(l + w)"}, {l:"SUBSTITUTE", m:"2(12 + 5)"}, {l:"PARENTHESES", m:"2(17)"}, {l:"MULTIPLY", m:"34"}] },
+                    { q: "A rectangle has length l = 20 and width w = 10. Calculate the Area (A = l × w).", a: 200, solveSteps: [{l:"FORMULA", m:"A = lw"}, {l:"SUBSTITUTE", m:"(20)(10)"}, {l:"MULTIPLY", m:"200"}] },
+                    { q: "Mr. Bowen is 34 years old. Mr. Seth is \"5 years older than twice Mr. Bowen's age\". Calculate Mr. Seth's age (2b + 5).", a: 73, solveSteps: [{l:"EXPRESSION", m:"2b + 5"}, {l:"SUBSTITUTE", m:"2(34) + 5"}, {l:"MULTIPLY", m:"68 + 5"}, {l:"ADD", m:"73"}] },
+                    { q: "The profit of a lemonade stand is P = 5n - 20, where n is the number of cups sold. Calculate the profit if n = 10 cups.", a: 30, solveSteps: [{l:"FORMULA", m:"P = 5n - 20"}, {l:"SUBSTITUTE", m:"5(10) - 20"}, {l:"MULTIPLY", m:"50 - 20"}, {l:"SUBTRACT", m:"30"}] },
+                    { q: "A taxi charges a base fee of 5 dollars plus 2 dollars for every kilometer traveled. If k = 15 km, calculate the total Cost (5 + 2k).", a: 35, solveSteps: [{l:"EXPRESSION", m:"5 + 2k"}, {l:"SUBSTITUTE", m:"5 + 2(15)"}, {l:"MULTIPLY", m:"5 + 30"}, {l:"ADD", m:"35"}] },
+                    { q: "Mr. Bowen is b = 15 years old. Mr. Seth is \"3 times the value of 2 years less than Mr. Bowen\". Calculate Mr. Seth's age (3(b - 2)).", a: 39, solveSteps: [{l:"EXPRESSION", m:"3(b - 2)"}, {l:"SUBSTITUTE", m:"3(15 - 2)"}, {l:"PARENTHESES", m:"3(13)"}, {l:"MULTIPLY", m:"39"}] },
+                    { q: "In physics, final velocity is v = u + at. If initial velocity u = 10, acceleration a = 5, and time t = 4, calculate v.", a: 30, solveSteps: [{l:"FORMULA", m:"v = u + at"}, {l:"SUBSTITUTE", m:"10 + 5(4)"}, {l:"MULTIPLY", m:"10 + 20"}, {l:"ADD", m:"30"}] },
+                    { q: "A triangle has a base b = 8 and height h = 5. Calculate the Area using the formula A = 1/2bh.", a: 20, solveSteps: [{l:"FORMULA", m:"A = 0.5bh"}, {l:"SUBSTITUTE", m:"0.5(8)(5)"}, {l:"MULTIPLY", m:"4(5)"}, {l:"MULTIPLY", m:"20"}] },
+                    { q: "Mr. Bowen is b = 20 years old. Mr. Seth is \"the square of (Mr. Bowen minus 14)\". Calculate Mr. Seth's age ((b - 14)^2).", a: 36, solveSteps: [{l:"EXPRESSION", m:"(b - 14)^2"}, {l:"SUBSTITUTE", m:"(20 - 14)^2"}, {l:"PARENTHESES", m:"(6)^2"}, {l:"EXPONENT", m:"36"}] },
+                    { q: "A phone plan costs C = 30 + 2(d - 5) where d is data usage. If you use d = 8 GB, what is the cost?", a: 36, solveSteps: [{l:"FORMULA", m:"30 + 2(d - 5)"}, {l:"SUBSTITUTE", m:"30 + 2(8 - 5)"}, {l:"PARENTHESES", m:"30 + 6"}, {l:"ADD", m:"36"}] },
+                    { q: "An object falls from a height. Its height after t seconds is h = 100 - 5t^2. Calculate the height after t = 4 seconds.", a: 20, solveSteps: [{l:"FORMULA", m:"h = 100 - 5t^2"}, {l:"SUBSTITUTE", m:"100 - 5(4)^2"}, {l:"EXPONENT", m:"100 - 5(16)"}, {l:"MULTIPLY", m:"100 - 80"}, {l:"SUBTRACT", m:"20"}] },
+                    { q: "Mr. Bowen is b = 18 years old. Mr. Seth is \"half of Mr. Bowen's age squared, plus 10\". Calculate Mr. Seth's age (b^2/2 + 10).", a: 172, solveSteps: [{l:"EXPRESSION", m:"b^2/2 + 10"}, {l:"SUBSTITUTE", m:"18^2/2 + 10"}, {l:"EXPONENT", m:"324/2 + 10"}, {l:"DIVIDE", m:"162 + 10"}, {l:"ADD", m:"172"}] },
+                    { q: "You buy x = 3 books costing 12 dollars each and y = 2 pens costing 4 dollars each. The total cost is 12x + 4y. Calculate the total.", a: 44, solveSteps: [{l:"EXPRESSION", m:"12x + 4y"}, {l:"SUBSTITUTE", m:"12(3) + 4(2)"}, {l:"MULTIPLY", m:"36 + 8"}, {l:"ADD", m:"44"}] },
+                    { q: "To convert temperature from Celsius to Fahrenheit, use F = 1.8C + 32. If it is C = 20 degrees, what is the temperature in Fahrenheit?", a: 68, solveSteps: [{l:"FORMULA", m:"F = 1.8C + 32"}, {l:"SUBSTITUTE", m:"1.8(20) + 32"}, {l:"MULTIPLY", m:"36 + 32"}, {l:"ADD", m:"68"}] },
+                    { q: "A box has length l=5, width w=4, and height h=3. The Surface Area is SA = 2(lw + lh + wh). Calculate the Surface Area.", a: 94, solveSteps: [{l:"FORMULA", m:"SA = 2(lw+lh+wh)"}, {l:"SUBSTITUTE", m:"2(20 + 15 + 12)"}, {l:"PARENTHESES", m:"2(47)"}, {l:"MULTIPLY", m:"94"}] },
+                    { q: "Mr. Bowen is b = 50 years old. Mr. Seth is \"100 minus half of Mr. Bowen's age\". Calculate Mr. Seth's age (100 - b/2).", a: 75, solveSteps: [{l:"EXPRESSION", m:"100 - b/2"}, {l:"SUBSTITUTE", m:"100 - 50/2"}, {l:"DIVIDE", m:"100 - 25"}, {l:"SUBTRACT", m:"75"}] },
+                    { q: "Kinetic Energy is calculated by E = 1/2mv^2. If mass m = 10 and velocity v = 6, calculate the Energy.", a: 180, solveSteps: [{l:"FORMULA", m:"E = 0.5mv^2"}, {l:"SUBSTITUTE", m:"0.5(10)(6)^2"}, {l:"EXPONENT", m:"0.5(10)(36)"}, {l:"MULTIPLY", m:"5(36)"}, {l:"MULTIPLY", m:"180"}] },
+                    { q: "A number sequence is given by the rule T = n(n + 1). Calculate the 10th term (where n = 10).", a: 110, solveSteps: [{l:"FORMULA", m:"T = n(n + 1)"}, {l:"SUBSTITUTE", m:"10(10 + 1)"}, {l:"PARENTHESES", m:"10(11)"}, {l:"MULTIPLY", m:"110"}] },
+                    { q: "Mr. Bowen is b = 16 years old. Mr. Seth is \"3 times the square root of Mr. Bowen, plus 40\". Calculate Mr. Seth's age (3√b + 40).", a: 52, solveSteps: [{l:"EXPRESSION", m:"3√b + 40"}, {l:"SUBSTITUTE", m:"3√16 + 40"}, {l:"EXPONENT", m:"3(4) + 40"}, {l:"MULTIPLY", m:"12 + 40"}, {l:"ADD", m:"52"}] },
+                    { q: "Challenge: The volume of a cone is V = 1/3 pi r^2 h. If we approximate pi = 3, radius r = 4, and height h = 5, calculate V.", a: 80, solveSteps: [{l:"FORMULA", m:"V = 1/3(3)r^2h"}, {l:"SUBSTITUTE", m:"1(4)^2(5)"}, {l:"EXPONENT", m:"1(16)(5)"}, {l:"MULTIPLY", m:"80"}] }
                 ]
             }
         ];
 
         /* --- STATE MANAGEMENT --- */
         let state = {
-            currentLevel: 0,
-            maxLevel: 0,
+            level: 0,
+            pool: [],
             streak: 0,
-            currentProblemIndex: 0,
-            problemQueue: [],
-            currentInput: "",
-            isProcessing: false, // Prevents spamming
-            isSolved: false
+            currentProblem: null,
+            input: "",
+            processing: false
         };
 
-        // --- INIT ---
+        const UNLOCK_THRESHOLD = 7;
+
         window.onload = () => {
-            initLevel(0);
             renderSidebar();
+            initLevel(0);
             
-            // Keyboard Hooks
             document.addEventListener('keydown', (e) => {
-                if(state.isProcessing || state.isSolved) {
-                    if(e.key === 'Enter') nextQuestion();
-                    return;
-                }
-                
-                if(/[0-9]/.test(e.key)) inputNum(e.key);
-                if(e.key === '-') inputNum('-');
-                if(e.key === 'Backspace') inputAction('BACK');
-                if(e.key === 'Enter') submitAnswer();
+                if(state.processing) return;
+                if(/[0-9]/.test(e.key)) handleInput(e.key);
+                if(e.key === '-') handleInput('-');
+                if(e.key === 'Backspace') handleInput('C');
+                if(e.key === 'Enter') checkAnswer();
             });
         };
 
         function renderSidebar() {
-            const nav = document.getElementById('level-nav');
-            nav.innerHTML = '';
+            const container = document.getElementById('level-list-container');
+            container.innerHTML = '';
             
-            GAME_DATA.forEach((lvl, idx) => {
+            LEVELS_DB.forEach((lvl, idx) => {
                 const btn = document.createElement('button');
-                const isLocked = idx > state.maxLevel;
-                const isActive = idx === state.currentLevel;
+                const isLocked = idx > 0 && idx > state.level; 
                 
-                btn.className = `level-btn ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`;
+                btn.className = `level-btn ${idx === state.level ? 'active' : ''} ${isLocked ? 'locked' : ''}`;
                 
                 let icon = 'fa-star';
-                if(idx===1) icon = 'fa-bolt';
-                if(idx===2) icon = 'fa-brain';
-                if(idx===3) icon = 'fa-cube';
+                if(idx===1) icon = 'fa-meteor';
+                if(idx===2) icon = 'fa-rocket';
+                if(idx===3) icon = 'fa-user-astronaut';
                 if(idx===4) icon = 'fa-crown';
-
-                btn.innerHTML = `<i class="fa-solid ${isLocked ? 'fa-lock' : icon}"></i> <span>${lvl.name}</span>`;
                 
-                if(!isLocked) {
-                    btn.onclick = () => {
-                        if(state.isProcessing) return;
-                        initLevel(idx);
-                        renderSidebar();
-                    };
-                }
-                nav.appendChild(btn);
+                const iconHtml = isLocked ? '<i class="fa-solid fa-lock"></i>' : `<i class="fa-solid ${icon}" style="color:${lvl.color}"></i>`;
+                
+                btn.innerHTML = `${iconHtml} <span>${lvl.name}</span>`;
+                if(!isLocked) btn.onclick = () => initLevel(idx);
+                container.appendChild(btn);
             });
         }
 
-        function initLevel(lvlIdx) {
-            state.currentLevel = lvlIdx;
+        function initLevel(idx) {
+            state.level = idx;
+            // Deep copy and shuffle
+            state.pool = [...LEVELS_DB[idx].problems].sort(() => Math.random() - 0.5);
             state.streak = 0;
-            state.problemQueue = [...GAME_DATA[lvlIdx].problems].sort(() => Math.random() - 0.5);
+            updateStreakUI();
             
-            const levelData = GAME_DATA[lvlIdx];
-            document.getElementById('lvl-name').innerText = levelData.name;
-            document.getElementById('lvl-desc').innerText = levelData.desc;
-            document.getElementById('streak-count').innerText = 0;
+            renderSidebar(); // Update active state
             
-            loadNextProblem();
+            const lvl = LEVELS_DB[idx];
+            document.getElementById('difficulty-badge').innerText = `Level ${idx+1}: ${lvl.name}`;
+            document.getElementById('difficulty-badge').style.color = lvl.color;
+            document.getElementById('difficulty-badge').style.borderColor = lvl.color;
+            document.getElementById('difficulty-badge').style.boxShadow = `0 0 10px ${lvl.color}40`;
+            
+            loadProblem();
         }
 
-        function loadNextProblem() {
-            if(state.problemQueue.length === 0) {
-                // Check for level up
-                if(state.streak >= 5 && state.currentLevel < 4) {
-                    state.maxLevel = Math.max(state.maxLevel, state.currentLevel + 1);
-                    confettiBurst();
-                    setTimeout(() => {
-                        alert(`Level Complete! Unlocking ${GAME_DATA[state.currentLevel+1].name}`);
-                        initLevel(state.currentLevel + 1);
-                        renderSidebar();
-                    }, 1000);
-                    return;
-                }
-                // Reshuffle if not leveling up
-                state.problemQueue = [...GAME_DATA[state.currentLevel].problems].sort(() => Math.random() - 0.5);
+        function loadProblem() {
+            // Check if level complete based on pool size or threshold
+            // Logic: If pool is empty OR (Streak >= 7)
+            if(state.pool.length === 0) {
+                document.getElementById('unlock-modal').style.display = 'flex';
+                fireConfetti();
+                return;
             }
 
-            state.currentProblem = state.problemQueue.pop();
-            state.currentInput = "";
-            state.isSolved = false;
-            state.isProcessing = false;
+            state.currentProblem = state.pool.shift();
+            state.input = "";
+            state.processing = false;
 
             // UI Reset
-            document.getElementById('math-problem').innerHTML = formatMathExpression(state.currentProblem.q);
+            document.getElementById('input-display').innerText = "";
+            document.getElementById('input-display').classList.remove('success', 'error');
+            document.getElementById('input-display').classList.add('input-cursor');
+            document.getElementById('input-display').style.color = "#fff";
+            document.getElementById('input-display').style.borderColor = "var(--glass-border)";
             
-            const inp = document.getElementById('user-input');
-            inp.innerText = "";
-            inp.className = 'input-display'; // Remove success/error classes
+            document.getElementById('hint-text').style.opacity = '0';
             
-            document.getElementById('solution-area').classList.remove('active');
+            document.getElementById('visual-wrapper').classList.remove('active');
+            document.getElementById('visual-wrapper').innerHTML = '';
+            
             document.getElementById('keypad').style.display = 'grid';
-            document.getElementById('feedback-msg').innerText = "";
             document.getElementById('next-btn').style.display = 'none';
+
+            // Render Math with Colors
+            const mathEl = document.getElementById('math-problem');
+            mathEl.innerHTML = formatMath(state.currentProblem.q);
         }
 
         /**
-         * ENGINE: Variable Coloring
-         * Parses string, finds variables, wraps them in colored spans.
+         * MATH FORMATTER
+         * 1. Adds spaces around operators.
+         * 2. Detects variables and applies specific neon colors.
          */
-        function formatMathExpression(str) {
-            // 1. Handle Exponents (x^2 -> x<sup>2</sup>)
-            let formatted = str.replace(/\^(\d+)/g, '<sup>$1</sup>');
+        function formatMath(str) {
+            // Ensure spaces around operators (+, -, =)
+            let formatted = str.replace(/([+\-=])/g, " <span class='operator'>$1</span> ");
             
-            // 2. Handle Square Root (sqrt(x) -> √x)
-            formatted = formatted.replace(/sqrt\(([^)]+)\)/g, '√$1');
-
-            // 3. Variable Coloring
-            // Regex matches single letters surrounded by non-letters (word boundaries)
-            // But ignores common words like "If", "calculate", "and"
-            const blacklist = ['If', 'if', 'and', 'calculate', 'Calculate', 'the', 'is', 'a', 'A']; // 'a' is tricky (variable vs article), but in this dataset 'a' is usually a var if followed by operator.
+            // Fix formatting of superscript
+            formatted = formatted.replace(/\^(\d+)/g, '<sup>$1</sup>');
+            // Fix square root
+            formatted = formatted.replace(/sqrt\(([^)]+)\)/g, '√<span style="border-top:1px solid currentColor">$1</span>');
             
+            // Variable Coloring
             formatted = formatted.replace(/\b([a-zA-Z])\b/g, (match) => {
-                if(blacklist.includes(match) && match !== 'a') return match; 
-                // Special check for 'a': if it's "a rectangle", it's text. If "5a", it's math.
-                // For this specific dataset, 'a' is almost always a variable in the equation part.
-                
-                // Color Mapping
-                let cls = 'var-other';
-                if(['x', 'a', 'm', 'p', 'l', 'u'].includes(match)) cls = 'var-x'; // Cyan Group
-                else if(['y', 'b', 'n', 'q', 'w', 'v'].includes(match)) cls = 'var-y'; // Pink Group
-                else if(['z', 'c', 'k', 'h', 't'].includes(match)) cls = 'var-z'; // Green Group
-                
-                return `<span class="${cls}">${match}</span>`;
+                // Heuristic to detect variables in this specific dataset
+                if(['x','m','p','l','u'].includes(match)) return `<span class="var-x">${match}</span>`; // Cyan group
+                if(['y','n','q','w','v','b'].includes(match)) return `<span class="var-y">${match}</span>`; // Pink group
+                if(['z','k','t','h','r'].includes(match)) return `<span class="var-z">${match}</span>`; // Green group
+                if(['a','A','P','C','E','T','V','S'].includes(match)) {
+                     return `<span class="var-other">${match}</span>`; 
+                }
+                return match;
             });
-            
+
             return formatted;
         }
 
-        // --- INPUT HANDLING ---
-        function inputNum(val) {
-            if(state.isProcessing) return;
-            if(state.currentInput.length > 6) return;
-            state.currentInput += val;
-            updateInputUI();
-        }
-
-        function inputAction(action) {
-            if(state.isProcessing) return;
-            if(action === 'BACK') state.currentInput = state.currentInput.slice(0, -1);
-            updateInputUI();
-        }
-
-        function updateInputUI() {
-            document.getElementById('user-input').innerText = state.currentInput;
-        }
-
-        function submitAnswer() {
-            if(state.isProcessing || state.currentInput === "") return;
+        function handleInput(val) {
+            if(state.processing) return;
             
-            const userAns = parseInt(state.currentInput);
-            const correctAns = state.currentProblem.a;
-            
-            state.isProcessing = true; // Lock input
-
-            if(userAns === correctAns) {
-                handleSuccess();
+            if(val === 'C') {
+                state.input = "";
+            } else if (val === '-') {
+                if(!state.input.includes('-')) state.input = "-" + state.input;
             } else {
-                handleFail(userAns);
+                if(state.input.length < 6) state.input += val;
+            }
+            document.getElementById('input-display').innerText = state.input;
+        }
+
+        function checkAnswer() {
+            if(state.processing || state.input === "" || state.input === "-") return;
+            state.processing = true;
+
+            const userVal = parseInt(state.input);
+            const correctVal = state.currentProblem.a;
+
+            if(userVal === correctVal) {
+                handleCorrect();
+            } else {
+                handleWrong();
             }
         }
 
-        function handleSuccess() {
-            state.isSolved = true;
+        function handleCorrect() {
             state.streak++;
-            document.getElementById('streak-count').innerText = state.streak;
+            updateStreakUI();
             
-            // Visuals
-            const inp = document.getElementById('user-input');
-            inp.classList.add('success');
-            document.getElementById('feedback-msg').innerText = "Correct! Analysis loaded below.";
-            document.getElementById('feedback-msg').style.color = "var(--accent-success)";
+            // Input Style
+            const inp = document.getElementById('input-display');
+            inp.style.color = "var(--neon-green)";
+            inp.style.borderColor = "var(--neon-green)";
+            inp.classList.remove('input-cursor');
             
-            if(state.streak % 5 === 0) confettiBurst();
+            // Hint
+            const hint = document.getElementById('hint-text');
+            hint.innerHTML = "Correct! <span style='color:#fff; font-weight:400'>Analyzing steps...</span>";
+            hint.style.color = "var(--neon-green)";
+            hint.style.opacity = 1;
 
-            showSolution();
+            if(state.streak > 0 && state.streak % 5 === 0) fireConfetti();
+
+            setTimeout(() => revealSolution(true), 800);
         }
 
-        function handleFail(val) {
-            state.isSolved = true;
+        function handleWrong() {
             state.streak = 0;
-            document.getElementById('streak-count').innerText = 0;
+            updateStreakUI();
             
-            const inp = document.getElementById('user-input');
-            inp.classList.add('error');
-            document.getElementById('feedback-msg').innerText = `Not quite. The answer is ${state.currentProblem.a}.`;
-            document.getElementById('feedback-msg').style.color = "var(--accent-danger)";
-            
-            showSolution();
+            const card = document.getElementById('game-card');
+            card.classList.remove('shake');
+            void card.offsetWidth;
+            card.classList.add('shake');
+
+            // Push problem back to pool to retry later
+            state.pool.push(state.currentProblem);
+
+            const hint = document.getElementById('hint-text');
+            hint.innerHTML = `Not quite. The answer is <b>${state.currentProblem.a}</b>.`;
+            hint.style.color = "var(--neon-danger)";
+            hint.style.opacity = 1;
+
+            setTimeout(() => revealSolution(false), 1200);
         }
 
-        function showSolution() {
+        function updateStreakUI() {
+            const el = document.getElementById('streak-display');
+            el.innerText = state.streak;
+            const icon = document.querySelector('.flame-icon');
+            
+            // Progress Bar Effect on Border
+            const percent = Math.min(state.streak / UNLOCK_THRESHOLD, 1) * 100;
+            const wrapper = document.querySelector('.streak-wrapper');
+            wrapper.style.background = `linear-gradient(90deg, rgba(34, 211, 238, 0.2) ${percent}%, rgba(15, 23, 42, 0.8) ${percent}%)`;
+
+            if(state.streak >= 4) {
+                icon.style.color = "var(--neon-red)";
+                icon.style.filter = "drop-shadow(0 0 10px var(--neon-red))";
+            } else {
+                icon.style.color = "var(--neon-amber)";
+                icon.style.filter = "drop-shadow(0 0 5px var(--neon-amber))";
+            }
+        }
+
+        async function revealSolution(isCorrect) {
             document.getElementById('keypad').style.display = 'none';
-            document.getElementById('solution-area').classList.add('active');
+            const wrapper = document.getElementById('visual-wrapper');
+            wrapper.classList.add('active');
             
-            const container = document.getElementById('steps-container');
-            container.innerHTML = '';
-            
-            const steps = state.currentProblem.steps;
-            
-            // Animate steps one by one
-            steps.forEach((step, index) => {
-                const el = document.createElement('div');
-                el.className = 'step-item';
-                el.innerHTML = `
-                    <div class="step-badge">${step.l}</div>
-                    <div class="step-content">${formatMathExpression(step.m)}</div>
-                `;
-                container.appendChild(el);
+            const steps = state.currentProblem.solveSteps;
+
+            for(let i=0; i<steps.length; i++) {
+                const step = steps[i];
                 
-                setTimeout(() => {
-                    el.classList.add('visible');
-                }, index * 600);
-            });
+                const card = document.createElement('div');
+                let typeClass = '';
+                
+                if(step.l === 'SUBSTITUTE') typeClass = 'substitute';
+                else if(step.l === 'ADD' || step.l === 'MULTIPLY' || step.l === 'SUBTRACT' || step.l === 'DIVIDE' || step.l === 'EXPONENT' || step.l === 'PARENTHESES') typeClass = 'operation';
+                else if(step.l === 'ANSWER' || i === steps.length - 1) typeClass = 'answer';
+                
+                card.className = `step-card ${typeClass}`;
+                
+                // Color Code the variables in the solution steps using the same formatter
+                let mathHTML = formatMath(step.m);
 
-            setTimeout(() => {
+                card.innerHTML = `
+                    <div class="step-label">${step.l}</div>
+                    <div class="step-math">${mathHTML}</div>
+                `;
+                
+                wrapper.appendChild(card);
+                
+                // Trigger reflow for transition
+                void card.offsetWidth;
+                
+                await new Promise(r => setTimeout(r, 100)); // Tiny delay before adding visible class
+                card.classList.add('visible');
+                
+                await new Promise(r => setTimeout(r, 600)); // Wait before showing next step
+            }
+            
+            // Check for Unlock condition immediately after showing steps
+            if(isCorrect && state.streak >= UNLOCK_THRESHOLD && state.level < 4) { // Only unlock up to level 4
+                 setTimeout(() => {
+                    document.getElementById('unlock-modal').style.display = 'flex';
+                    fireConfetti();
+                 }, 1000);
+            } else {
                 document.getElementById('next-btn').style.display = 'block';
-            }, steps.length * 600);
+            }
         }
 
-        function nextQuestion() {
-            loadNextProblem();
+        function nextLevel() {
+            document.getElementById('unlock-modal').style.display = 'none';
+            if(state.level < LEVELS_DB.length - 1) {
+                initLevel(state.level + 1);
+            } else {
+                alert("You have mastered all levels!");
+                initLevel(0);
+            }
         }
 
-        // --- VISUAL FX ---
-        function confettiBurst() {
-            const canvas = document.getElementById('confetti');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            let particles = [];
-            const colors = ['#22d3ee', '#f472b6', '#4ade80', '#fbbf24'];
-            
-            for(let i=0; i<60; i++) {
+        /* --- CONFETTI --- */
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function fireConfetti() {
+            particles = [];
+            const colors = ['#22d3ee', '#f472b6', '#fbbf24', '#34d399', '#ef4444'];
+            for(let i=0; i<100; i++) {
                 particles.push({
-                    x: window.innerWidth/2, 
-                    y: window.innerHeight/2,
-                    vx: (Math.random()-0.5)*15, 
-                    vy: (Math.random()-0.5)*15,
-                    color: colors[Math.floor(Math.random()*colors.length)],
-                    life: 100
+                    x: window.innerWidth/2, y: window.innerHeight/2,
+                    vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15,
+                    size: Math.random()*6+2, color: colors[Math.floor(Math.random()*colors.length)],
+                    life: 120
                 });
             }
-            
-            function animate() {
-                ctx.clearRect(0,0,canvas.width,canvas.height);
-                let active = false;
-                particles.forEach(p => {
-                    if(p.life > 0) {
-                        p.x += p.vx;
-                        p.y += p.vy;
-                        p.vy += 0.5; // gravity
-                        p.life--;
-                        ctx.fillStyle = p.color;
-                        ctx.fillRect(p.x, p.y, 6, 6);
-                        active = true;
-                    }
-                });
-                if(active) requestAnimationFrame(animate);
-            }
-            animate();
+            updateConfetti();
+        }
+
+        function updateConfetti() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            let active = false;
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life--;
+                if(p.life > 0) {
+                    active = true;
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                }
+            });
+            if(active) requestAnimationFrame(updateConfetti);
         }
 
     </script>
