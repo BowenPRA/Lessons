@@ -766,15 +766,18 @@
             document.getElementById('visual-wrapper').classList.remove('active');
             
             // Parse for Display
-            const displayStr = p.q_display ? p.q_display : p.q;
+            // Use p.q (the question) for display so algebra is shown
+            const displayStr = p.q;
             renderMathString(displayStr);
         }
 
         function renderMathString(str) {
             const display = document.getElementById('math-problem');
             
+            // If it contains text (e.g. "If x ="), we render it more plainly
             if(/[a-zA-Z]/.test(str)) {
-                display.innerHTML = `<span style="font-size:0.6em; text-align:center">${str}</span>`;
+                // Text heavy - Increased font size for readability
+                display.innerHTML = `<span style="font-size:0.9em; text-align:center; padding: 0 10px;">${str}</span>`;
                 return;
             }
 
@@ -876,6 +879,9 @@
         }
 
         function handleLoss(p, userVal) {
+            // Lock input to prevent interference during explanation
+            gameState.problemSolved = true; 
+
             const currentProgress = gameState.levelProgress[gameState.level];
             
             // Reset Streak
@@ -894,16 +900,33 @@
             const hint = document.getElementById('hint-text');
             let msg = generateSmartHint(p, userVal);
             // Append the actual answer for learning
-            msg += ` <br><span style="color:#fff; font-size:0.9em">The answer is ${p.a}. Try it again later!</span>`;
+            msg += ` <br><span style="color:#fff; font-size:0.9em">The answer is ${p.a}. Let's watch the solution:</span>`;
             
             hint.innerHTML = msg; // innerHTML to support break
             hint.style.color = "var(--neon-amber)";
             hint.style.opacity = '1';
             
-            setTimeout(() => {
-                // Auto reload next problem since this one is pushed back
-                loadProblem();
-            }, 3000); // Give time to read
+            // Hide keypad to focus on visualization
+            document.getElementById('keypad').style.display = 'none';
+
+            // Show Visualization instead of just waiting
+            if(p.steps && p.steps.length > 0) {
+                document.getElementById('visual-wrapper').classList.add('active');
+                
+                const isSubtractingNegative = p.q.includes("- (-") || (p.q_display && p.q_display.includes("- (-"));
+                
+                // Delay slightly to let the shake/hint register
+                setTimeout(() => {
+                    if(isSubtractingNegative) {
+                        animateMorph(p.steps, p.a, false);
+                    } else {
+                        animateSteps(p.steps, p.a, false);
+                    }
+                }, 1500);
+            } else {
+                // Fallback (though all problems have steps)
+                setTimeout(() => loadProblem(), 3000);
+            }
         }
 
         function animateMorph(steps, finalResult, shouldUnlock) {
