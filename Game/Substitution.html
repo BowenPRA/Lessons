@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Substitution Mastery</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* --- THEME: COSMIC PURPLE (Same as Integer Mastery) --- */
+            --bg-deep: #020617;
+            
+            /* UI Elements */
+            --glass-panel: rgba(20, 15, 40, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+
+            /* Interactive Colors */
+            --tile-bg: rgba(40, 30, 60, 0.7);
+            --tile-border: rgba(255, 255, 255, 0.1);
+            --tile-hover: rgba(60, 45, 90, 0.9);
+            
+            /* Accents */
+            --neon-cyan: #22d3ee;
+            --neon-pink: #f472b6;
+            --neon-amber: #fbbf24;
+            --neon-green: #34d399;
+            --neon-purple: #a855f7;
+            --neon-danger: #ef4444;
+            --neon-red: #f43f5e;
+
+            /* Dimensions */
+            --sidebar-width: 280px;
+            --max-board-width: 750px; /* Slightly wider for algebra text */
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            background: radial-gradient(ellipse at top, #4c1d95 0%, #1e1b4b 50%, #020617 100%);
+            color: var(--text-primary);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* --- BACKGROUND ANIMATION --- */
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
+            background-size: 200px 200px;
+            animation: twinkle 100s linear infinite;
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-500px); } }
+
+        /* --- LAYOUT --- */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--glass-panel);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            gap: 1.2rem;
+            z-index: 20;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            line-height: 1.1;
+            color: #fff;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            margin-bottom: 0.5rem;
+        }
+        .brand span { color: var(--neon-cyan); }
+
+        .level-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .level-btn {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 0.95rem;
+            width: 100%;
+        }
+
+        .level-btn.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        .level-btn:not(.locked):hover { background: rgba(255,255,255,0.05); color: #f1f5f9; }
+        
+        .level-btn.active {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+        }
+
+        /* --- MAIN GAME ARENA --- */
+        .arena {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .game-board-wrapper {
+            width: 100%;
+            max-width: var(--max-board-width);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeIn 0.6s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Game Header */
+        .game-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .header-left { display: flex; flex-direction: column; gap: 4px; }
+
+        .game-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            color: var(--neon-cyan);
+            border: 1px solid rgba(255,255,255,0.1);
+            width: fit-content;
+        }
+
+        /* Streak Wrapper */
+        .streak-wrapper {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(15, 23, 42, 0.6); 
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.15);
+            min-width: 120px;
+            justify-content: center;
+        }
+        .streak-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 700; }
+        .flame-icon { color: #fbbf24; font-size: 1.2rem; filter: drop-shadow(0 0 8px #d97706); animation: flicker 1.5s infinite alternate; }
+        .streak-count { font-family: 'Outfit'; font-size: 1.4rem; font-weight: 800; color: #fff; }
+        
+        @keyframes flicker { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
+
+        /* --- GAME CARD --- */
+        .game-card {
+            background: var(--glass-panel);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--neon-danger); }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+
+        /* Math Display */
+        .math-display {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.5rem, 4vw, 4rem);
+            font-weight: 800;
+            margin: 1rem 0 2rem 0;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            height: auto; min-height: 80px;
+            flex-wrap: wrap;
+            transition: all 0.5s ease;
+        }
+        
+        .txt-pos { color: var(--neon-cyan); text-shadow: 0 0 20px rgba(34, 211, 238, 0.4); }
+        .txt-neg { color: var(--neon-pink); text-shadow: 0 0 20px rgba(244, 114, 182, 0.4); }
+        .txt-var { color: var(--neon-purple); text-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
+        .txt-op { color: var(--text-secondary); margin: 0 5px; }
+        .txt-result { color: #fff; margin-left: 10px; animation: popIn 0.5s ease; }
+        
+        /* Highlight Class for Concept Morph */
+        .morph-highlight {
+            color: var(--neon-amber) !important;
+            text-shadow: 0 0 25px var(--neon-amber);
+            transform: scale(1.3);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+
+        /* Input Box */
+        .input-box {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            height: 70px; width: 220px;
+            margin: 0 auto 1.5rem auto;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Outfit', sans-serif; font-size: 2.5rem; font-weight: 700;
+            color: #fff;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .input-cursor::after { content: '|'; animation: blink 1s step-start infinite; color: var(--neon-cyan); }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Keypad */
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .key {
+            background: var(--tile-bg);
+            border: 1px solid var(--tile-border);
+            border-radius: 12px;
+            height: 64px;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 700;
+            color: #fff; cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+        }
+        .key:active { transform: translateY(4px); box-shadow: none; background: var(--tile-hover); }
+        .key:hover { background: var(--tile-hover); border-color: rgba(255,255,255,0.3); }
+        
+        .key-submit {
+            grid-column: span 3;
+            background: rgba(34, 211, 238, 0.15);
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            letter-spacing: 2px; text-transform: uppercase; font-size: 1.1rem;
+        }
+        .key-submit:hover { background: rgba(34, 211, 238, 0.25); box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); }
+        .key-clear { color: var(--neon-danger); border-color: rgba(239, 68, 68, 0.3); }
+
+        .hint-text {
+            min-height: 24px;
+            color: var(--neon-amber);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            opacity: 0; transition: opacity 0.3s;
+            line-height: 1.4;
+            padding: 0 1rem;
+        }
+
+        /* --- VISUALIZATION WRAPPER --- */
+        .visual-wrapper {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            max-height: 0; opacity: 0;
+            transition: max-height 0.8s ease, opacity 0.5s ease, margin 0.5s;
+        }
+        .visual-wrapper.active {
+            max-height: 300px; opacity: 1; margin-bottom: 20px; padding: 10px;
+        }
+        svg {
+            width: 100%; height: 200px; display: block;
+        }
+        
+        /* SVG Elements */
+        .axis-line { stroke: var(--text-secondary); stroke-width: 2; opacity: 0.5; }
+        .tick-line { stroke: var(--text-secondary); stroke-width: 2; opacity: 0.3; }
+        .tick-text { fill: var(--text-secondary); font-family: 'Outfit'; font-weight: 700; font-size: 12px; text-anchor: middle; }
+        
+        /* Bolder Arrows */
+        .arrow-pos { stroke: var(--neon-cyan); stroke-width: 8; fill: none; filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.6)); stroke-linecap: round; }
+        .arrow-neg { stroke: var(--neon-pink); stroke-width: 8; fill: none; filter: drop-shadow(0 0 6px rgba(244, 114, 182, 0.6)); stroke-linecap: round; }
+        .arrow-head-pos { fill: var(--neon-cyan); }
+        .arrow-head-neg { fill: var(--neon-pink); }
+        
+        /* Labels on Arrows */
+        .label-pos { fill: var(--neon-cyan); font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 16px; text-anchor: middle; text-shadow: 0 2px 4px rgba(0,0,0,0.9); }
+        .label-neg { fill: var(--neon-pink); font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 16px; text-anchor: middle; text-shadow: 0 2px 4px rgba(0,0,0,0.9); }
+
+        .result-line { stroke: #fff; stroke-width: 2; stroke-dasharray: 6,6; opacity: 0.8; }
+
+        /* Next Button */
+        .next-btn {
+            width: 100%; max-width: 400px; margin: 10px auto 0;
+            background: var(--neon-green); color: #020617;
+            border: none; border-radius: 12px;
+            padding: 16px; font-weight: 800; font-family: 'Outfit';
+            text-transform: uppercase; cursor: pointer;
+            display: none; font-size: 1.1rem;
+            animation: popIn 0.3s;
+        }
+        .next-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; z-index: 100;
+        }
+        .modal-card {
+            background: var(--glass-panel); border: 1px solid var(--glass-border);
+            padding: 3rem; border-radius: 24px; text-align: center; max-width: 500px; width: 90%;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            animation: popIn 0.4s;
+        }
+        .modal-title { font-size: 2.5rem; font-family: 'Outfit'; margin-bottom: 0.5rem; color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green); }
+        .modal-btn {
+            padding: 16px 32px; border-radius: 50px; border: none;
+            background: var(--neon-cyan); color: #000; font-weight: 800; font-family: 'Outfit'; font-size: 1.2rem;
+            cursor: pointer; margin-top: 20px; transition: transform 0.2s;
+        }
+        .modal-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(34, 211, 238, 0.5); }
+
+        /* --- CANVAS --- */
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; }
+            .sidebar { 
+                width: 100%; height: auto; padding: 1rem; border-right: none; border-bottom: 1px solid var(--glass-border);
+                flex-direction: row; align-items: center; overflow-x: auto; gap: 8px;
+            }
+            .level-list { flex-direction: row; width: max-content; }
+            .level-btn { width: auto; white-space: nowrap; padding: 8px 12px; font-size: 0.8rem; }
+            .brand { display: none; } /* Hide brand on mobile to save space */
+            .arena { padding: 1rem; }
+            .game-board-wrapper { max-width: 100%; }
+            .math-display { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="app-container">
+        <!-- SIDEBAR NAVIGATION -->
+        <nav class="sidebar">
+            <div class="brand">Substitution<br><span>Mastery</span></div>
+            <div class="level-list" id="level-list-container">
+                <!-- Generated by JS -->
+            </div>
+        </nav>
+
+        <!-- MAIN ARENA -->
+        <main class="arena">
+            <div class="game-board-wrapper">
+                
+                <header class="game-header">
+                    <div class="header-left">
+                        <h1 class="game-title">Substitution Mastery</h1>
+                        <span class="difficulty-badge" id="difficulty-badge">Level 1: The Direct Swap</span>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top:4px;" id="progress-text">Question 1/20</div>
+                    </div>
+                    
+                    <!-- STREAK DISPLAY -->
+                    <div class="streak-wrapper">
+                        <i class="fa-solid fa-fire flame-icon"></i>
+                        <span class="streak-count" id="streak-display">0</span>
+                    </div>
+                </header>
+
+                <!-- Visualization Panel (Collapsible) -->
+                <div class="visual-wrapper" id="visual-wrapper">
+                    <svg id="number-line-svg" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            <!-- Increased Marker Size for Thicker Arrows -->
+                            <marker id="arrow-pos-head" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                <path d="M0,0 L6,3 L0,6 L0,0" class="arrow-head-pos" />
+                            </marker>
+                            <marker id="arrow-neg-head" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                <path d="M0,0 L6,3 L0,6 L0,0" class="arrow-head-neg" />
+                            </marker>
+                        </defs>
+                        <g id="grid-layer"></g>
+                        <g id="arrows-layer"></g>
+                    </svg>
+                </div>
+
+                <!-- Game Interaction Card -->
+                <div class="game-card" id="game-card">
+                    <div class="math-display" id="math-problem">
+                        <!-- Problems inject here -->
+                    </div>
+
+                    <div class="input-box input-cursor" id="input-display"></div>
+                    <div class="hint-text" id="hint-text"></div>
+
+                    <div class="keypad-grid" id="keypad">
+                        <div class="key" onclick="handleInput('7')">7</div>
+                        <div class="key" onclick="handleInput('8')">8</div>
+                        <div class="key" onclick="handleInput('9')">9</div>
+                        <div class="key" onclick="handleInput('4')">4</div>
+                        <div class="key" onclick="handleInput('5')">5</div>
+                        <div class="key" onclick="handleInput('6')">6</div>
+                        <div class="key" onclick="handleInput('1')">1</div>
+                        <div class="key" onclick="handleInput('2')">2</div>
+                        <div class="key" onclick="handleInput('3')">3</div>
+                        <div class="key" onclick="handleInput('-')"><i class="fa-solid fa-minus"></i></div>
+                        <div class="key" onclick="handleInput('0')">0</div>
+                        <div class="key key-clear" onclick="handleInput('C')">C</div>
+                        <div class="key key-submit" id="submit-btn" onclick="checkAnswer()">SUBMIT</div>
+                    </div>
+
+                    <button class="next-btn" id="next-btn" onclick="nextProblem()">
+                        Next Question <i class="fa-solid fa-arrow-right" style="margin-left:8px"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Unlock Modal -->
+    <div class="modal-overlay" id="unlock-modal">
+        <div class="modal-card">
+            <div class="modal-title">Level Complete!</div>
+            <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 1rem;" id="unlock-msg">You've mastered this concept.</p>
+            <i class="fa-solid fa-lock-open" style="font-size: 3rem; color: var(--neon-amber); margin: 20px 0;"></i>
+            <br>
+            <button class="modal-btn" onclick="goToNextLevel()">Start Next Level</button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * SUBSTITUTION MASTERY
+         */
+
+        // --- DATASET: 20 Questions Per Level ---
+        const LEVELS_DB = [
+            {
+                name: "Level 1",
+                desc: "The Direct Swap",
+                color: "var(--neon-cyan)",
+                problems: [
+                    { q: "If x = 5, calculate x + 4", q_display: "5 + 4", a: 9, steps: [5, 4] },
+                    { q: "If x = 10, calculate x - 3", q_display: "10 - 3", a: 7, steps: [10, -3] },
+                    { q: "If y = 7, calculate 10 + y", q_display: "10 + 7", a: 17, steps: [10, 7] },
+                    { q: "If a = 8, calculate 20 - a", q_display: "20 - 8", a: 12, steps: [20, -8] },
+                    { q: "If k = 0, calculate k + 15", q_display: "0 + 15", a: 15, steps: [0, 15] },
+                    { q: "If m = 6, calculate 2m", q_display: "2(6)", a: 12, steps: [12] },
+                    { q: "If n = 4, calculate 5n", q_display: "5(4)", a: 20, steps: [20] },
+                    { q: "If p = 10, calculate 3p", q_display: "3(10)", a: 30, steps: [30] },
+                    { q: "If x = 12, calculate x/2", q_display: "12 / 2", a: 6, steps: [6] },
+                    { q: "If x = 20, calculate x/4", q_display: "20 / 4", a: 5, steps: [5] },
+                    { q: "If b = 100, calculate b - 1", q_display: "100 - 1", a: 99, steps: [100, -1] },
+                    { q: "If c = 1, calculate 10c", q_display: "10(1)", a: 10, steps: [10] },
+                    { q: "If x = 9, calculate x + x", q_display: "9 + 9", a: 18, steps: [9, 9] },
+                    { q: "If y = 50, calculate y/10", q_display: "50 / 10", a: 5, steps: [5] },
+                    { q: "If z = 3, calculate 12 - z", q_display: "12 - 3", a: 9, steps: [12, -3] },
+                    { q: "If a = 11, calculate 2a", q_display: "2(11)", a: 22, steps: [22] },
+                    { q: "If x = 7, calculate 7x", q_display: "7(7)", a: 49, steps: [49] },
+                    { q: "If w = 15, calculate w - 15", q_display: "15 - 15", a: 0, steps: [15, -15] },
+                    { q: "If q = 8, calculate 16/q", q_display: "16 / 8", a: 2, steps: [2] },
+                    { q: "If x = 1, calculate 100x", q_display: "100(1)", a: 100, steps: [100] }
+                ]
+            },
+            {
+                name: "Level 2",
+                desc: "Two-Step Rhythm",
+                color: "var(--neon-green)",
+                problems: [
+                    { q: "If x = 3, calculate 2x + 1", q_display: "6 + 1", a: 7, steps: [6, 1] },
+                    { q: "If x = 5, calculate 3x - 2", q_display: "15 - 2", a: 13, steps: [15, -2] },
+                    { q: "If a = 4, calculate 5a + 3", q_display: "20 + 3", a: 23, steps: [20, 3] },
+                    { q: "If y = 10, calculate 2y - 10", q_display: "20 - 10", a: 10, steps: [20, -10] },
+                    { q: "If m = 2, calculate 10m + 5", q_display: "20 + 5", a: 25, steps: [20, 5] },
+                    { q: "If k = 6, calculate 4k - 1", q_display: "24 - 1", a: 23, steps: [24, -1] },
+                    { q: "If x = 8, calculate x/2 + 1", q_display: "4 + 1", a: 5, steps: [4, 1] },
+                    { q: "If x = 12, calculate x/4 - 2", q_display: "3 - 2", a: 1, steps: [3, -2] },
+                    { q: "If p = 5, calculate 20 - 2p", q_display: "20 - 10", a: 10, steps: [20, -10] },
+                    { q: "If w = 10, calculate 50 - 3w", q_display: "50 - 30", a: 20, steps: [50, -30] },
+                    { q: "If n = 3, calculate 1 + 4n", q_display: "1 + 12", a: 13, steps: [1, 12] },
+                    { q: "If b = 7, calculate 2b + b", q_display: "14 + 7", a: 21, steps: [14, 7] },
+                    { q: "If x = 0, calculate 5x + 8", q_display: "0 + 8", a: 8, steps: [0, 8] },
+                    { q: "If x = 1, calculate 10x - 9", q_display: "10 - 9", a: 1, steps: [10, -9] },
+                    { q: "If a = 20, calculate a/5 + 6", q_display: "4 + 6", a: 10, steps: [4, 6] },
+                    { q: "If y = 4, calculate 10 + y/2", q_display: "10 + 2", a: 12, steps: [10, 2] },
+                    { q: "If c = 9, calculate 2c - 18", q_display: "18 - 18", a: 0, steps: [18, -18] },
+                    { q: "If x = 5, calculate 100 - 10x", q_display: "100 - 50", a: 50, steps: [100, -50] },
+                    { q: "If z = 2, calculate 3z + 4z", q_display: "6 + 8", a: 14, steps: [6, 8] },
+                    { q: "If x = 6, calculate x/3 + x", q_display: "2 + 6", a: 8, steps: [2, 6] }
+                ]
+            },
+            {
+                name: "Level 3",
+                desc: "The Bubble Wrap",
+                color: "var(--neon-amber)",
+                problems: [
+                    { q: "If x = -2, calculate x + 5", q_display: "-2 + 5", a: 3, steps: [-2, 5] },
+                    { q: "If x = -4, calculate x + 4", q_display: "-4 + 4", a: 0, steps: [-4, 4] },
+                    { q: "If y = -3, calculate 10 + y", q_display: "10 + (-3)", a: 7, steps: [10, -3] },
+                    { q: "If a = -5, calculate a - 2", q_display: "-5 - 2", a: -7, steps: [-5, -2] },
+                    { q: "If k = -1, calculate k - 9", q_display: "-1 - 9", a: -10, steps: [-1, -9] },
+                    { q: "If x = -3, calculate 2x", q_display: "2(-3)", a: -6, steps: [-6] },
+                    { q: "If x = -5, calculate 3x", q_display: "3(-5)", a: -15, steps: [-15] },
+                    { q: "If m = -10, calculate m/2", q_display: "-10 / 2", a: -5, steps: [-5] },
+                    { q: "If x = -2, calculate 2x + 5", q_display: "-4 + 5", a: 1, steps: [-4, 5] },
+                    { q: "If x = -3, calculate 3x - 1", q_display: "-9 - 1", a: -10, steps: [-9, -1] },
+                    { q: "If p = -4, calculate 10p", q_display: "10(-4)", a: -40, steps: [-40] },
+                    { q: "If a = -6, calculate a/3 + 2", q_display: "-2 + 2", a: 0, steps: [-2, 2] },
+                    { q: "If x = -1, calculate 1 - x", q_display: "1 - (-1)", a: 2, steps: [1, 1] },
+                    { q: "If y = -5, calculate 10 - y", q_display: "10 - (-5)", a: 15, steps: [10, 5] },
+                    { q: "If x = -2, calculate 5 - x", q_display: "5 - (-2)", a: 7, steps: [5, 2] },
+                    { q: "If w = -3, calculate -2w", q_display: "-2(-3)", a: 6, steps: [6] },
+                    { q: "If k = -5, calculate -4k", q_display: "-4(-5)", a: 20, steps: [20] },
+                    { q: "If x = -1, calculate 5x + 5", q_display: "-5 + 5", a: 0, steps: [-5, 5] },
+                    { q: "If a = -10, calculate 20 + a", q_display: "20 + (-10)", a: 10, steps: [20, -10] },
+                    { q: "If x = -4, calculate 0 - x", q_display: "0 - (-4)", a: 4, steps: [0, 4] }
+                ]
+            },
+            {
+                name: "Level 4",
+                desc: "Double Trouble",
+                color: "var(--neon-pink)",
+                problems: [
+                    { q: "If x = 3 and y = 2, calculate x + y", q_display: "3 + 2", a: 5, steps: [3, 2] },
+                    { q: "If x = 5 and y = 3, calculate x - y", q_display: "5 - 3", a: 2, steps: [5, -3] },
+                    { q: "If a = 4 and b = 5, calculate ab", q_display: "4(5)", a: 20, steps: [20] },
+                    { q: "If x = 2 and y = -3, calculate xy", q_display: "2(-3)", a: -6, steps: [-6] },
+                    { q: "If m = 10, calculate 2(m + 1)", q_display: "2(11)", a: 22, steps: [22] },
+                    { q: "If n = 5, calculate 3(n - 2)", q_display: "3(3)", a: 9, steps: [9] },
+                    { q: "If x = 4, calculate 5(10 - x)", q_display: "5(6)", a: 30, steps: [30] },
+                    { q: "If a = 3, calculate a(a + 2)", q_display: "3(5)", a: 15, steps: [15] },
+                    { q: "If x = 2 and y = 5, calculate 2x + y", q_display: "4 + 5", a: 9, steps: [4, 5] },
+                    { q: "If a = 3 and b = 4, calculate 3a - 2b", q_display: "9 - 8", a: 1, steps: [9, -8] },
+                    { q: "If x = 6, calculate (x + 4)/2", q_display: "10 / 2", a: 5, steps: [5] },
+                    { q: "If x = 10, calculate (20 - x)/5", q_display: "10 / 5", a: 2, steps: [2] },
+                    { q: "If x = -2, calculate 3(x + 5)", q_display: "3(3)", a: 9, steps: [9] },
+                    { q: "If y = -4, calculate 2(y - 1)", q_display: "2(-5)", a: -10, steps: [-10] },
+                    { q: "If x = 3 and y = -2, calculate x + 2y", q_display: "3 + (-4)", a: -1, steps: [3, -4] },
+                    { q: "If a = 5, calculate 2(a + a)", q_display: "2(10)", a: 20, steps: [20] },
+                    { q: "If x = -3, calculate x(x + 1)", q_display: "-3(-2)", a: 6, steps: [6] },
+                    { q: "If p = 4 and q = 2, calculate p/q", q_display: "4 / 2", a: 2, steps: [2] },
+                    { q: "If x = 5, calculate 10(x - 5)", q_display: "10(0)", a: 0, steps: [0] },
+                    { q: "If x = -1 and y = -1, calculate x + y", q_display: "-1 + (-1)", a: -2, steps: [-1, -1] }
+                ]
+            },
+            {
+                name: "Level 5",
+                desc: "The Powerhouse",
+                color: "var(--neon-purple)",
+                problems: [
+                    { q: "If x = 3, calculate x^2", q_display: "9", a: 9, steps: [9] },
+                    { q: "If x = 5, calculate x^2 + 1", q_display: "25 + 1", a: 26, steps: [25, 1] },
+                    { q: "If x = 2, calculate 3x^2", q_display: "3(4)", a: 12, steps: [12] },
+                    { q: "If x = -2, calculate x^2", q_display: "4", a: 4, steps: [4] },
+                    { q: "If x = -4, calculate x^2", q_display: "16", a: 16, steps: [16] },
+                    { q: "If x = -1, calculate x^2 + 5", q_display: "1 + 5", a: 6, steps: [1, 5] },
+                    { q: "If x = -3, calculate 2x^2", q_display: "2(9)", a: 18, steps: [18] },
+                    { q: "If x = 4, calculate x^2 - x", q_display: "16 - 4", a: 12, steps: [16, -4] },
+                    { q: "If x = -2, calculate x^2 + x", q_display: "4 + (-2)", a: 2, steps: [4, -2] },
+                    { q: "If y = 3, calculate 2y^2 - 10", q_display: "18 - 10", a: 8, steps: [18, -10] },
+                    { q: "If x = 5, calculate sqrt(x + 4)", q_display: "3", a: 3, steps: [3] },
+                    { q: "If x = 10, calculate sqrt(10x)", q_display: "10", a: 10, steps: [10] },
+                    { q: "If x = -5, calculate 100 - x^2", q_display: "100 - 25", a: 75, steps: [100, -25] },
+                    { q: "If a = 3, calculate a^3", q_display: "27", a: 27, steps: [27] },
+                    { q: "If x = 2, calculate (x + 3)^2", q_display: "25", a: 25, steps: [25] },
+                    { q: "If x = 3 and y = 4, calculate x^2 + y^2", q_display: "9 + 16", a: 25, steps: [9, 16] },
+                    { q: "If x = -2, calculate x^3", q_display: "-8", a: -8, steps: [-8] },
+                    { q: "If x = 5, calculate 2(x - 2)^2", q_display: "2(9)", a: 18, steps: [18] },
+                    { q: "If x = -1, calculate 1 - x^2", q_display: "1 - 1", a: 0, steps: [1, -1] },
+                    { q: "If x = 3, calculate 2x^2 + 3x - 5", q_display: "18 + 9 - 5", a: 22, steps: [18, 9, -5] }
+                ]
+            }
+        ];
+
+        let gameState = {
+            level: 0,
+            levelProgress: [], // Stores { pool: [], streak: 0 } per level
+            currentInput: "",
+            isAnimating: false,
+            problemSolved: false,
+            processing: false, // Flag to prevent spamming checkAnswer
+            maxLevelUnlocked: 0,
+            currentProblem: null
+        };
+
+        // --- INIT ---
+        window.onload = () => {
+            initializeGameData();
+            renderSidebar();
+            loadProblem();
+            updateStreakUI();
+            
+            // Keyboard Listener
+            document.addEventListener('keydown', (e) => {
+                if(gameState.isAnimating || gameState.problemSolved || gameState.processing) return;
+                
+                const key = e.key;
+                if(/[0-9]/.test(key)) handleInput(key);
+                if(key === '-' || key === 'Minus') handleInput('-');
+                if(key === 'Backspace') handleInput('Backspace');
+                if(key === 'Enter') checkAnswer();
+                if(key === 'c' || key === 'C' || key === 'Escape') handleInput('C');
+            });
+        };
+
+        function initializeGameData() {
+            // Initialize progress for all levels
+            gameState.levelProgress = LEVELS_DB.map(level => {
+                // Create a shuffled copy of the pool
+                const pool = [...level.problems];
+                shuffleArray(pool);
+                return {
+                    pool: pool,
+                    streak: 0,
+                    totalAnswered: 0 // To track if pool is empty
+                };
+            });
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function renderSidebar() {
+            const container = document.getElementById('level-list-container');
+            container.innerHTML = '';
+            
+            LEVELS_DB.forEach((lvl, idx) => {
+                const btn = document.createElement('button');
+                const isLocked = idx > gameState.maxLevelUnlocked;
+                const isActive = idx === gameState.level;
+                
+                btn.className = `level-btn ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`;
+                
+                let iconClass = 'fa-star';
+                if(idx===1) iconClass = 'fa-meteor';
+                if(idx===2) iconClass = 'fa-rocket';
+                if(idx===3) iconClass = 'fa-user-astronaut';
+                if(idx===4) iconClass = 'fa-infinity';
+
+                const icon = isLocked ? '<i class="fa-solid fa-lock"></i>' : `<i class="fa-solid ${iconClass}" style="color:${lvl.color}"></i>`;
+                
+                btn.innerHTML = `${icon} <span>${lvl.name}</span>`;
+                
+                if(!isLocked) {
+                    btn.onclick = () => switchLevel(idx);
+                }
+                container.appendChild(btn);
+            });
+        }
+
+        function switchLevel(idx) {
+            if(idx > gameState.maxLevelUnlocked) return;
+            gameState.level = idx;
+            gameState.currentInput = "";
+            renderSidebar();
+            loadProblem();
+            updateStreakUI();
+        }
+
+        function loadProblem() {
+            const levelData = LEVELS_DB[gameState.level];
+            const currentProgress = gameState.levelProgress[gameState.level];
+            
+            // Reset flags for new problem
+            gameState.problemSolved = false;
+            gameState.isAnimating = false;
+            gameState.processing = false;
+
+            // Check if pool is empty
+            if(currentProgress.pool.length === 0) {
+                 // Level Complete!
+                 if(gameState.level < 4 && gameState.level === gameState.maxLevelUnlocked) {
+                     showUnlockModal();
+                 } else {
+                     // Reset pool for practice
+                     currentProgress.pool = [...levelData.problems];
+                     shuffleArray(currentProgress.pool);
+                     loadProblem();
+                 }
+                 return;
+            }
+
+            // Get first problem from pool
+            gameState.currentProblem = currentProgress.pool[0];
+            const p = gameState.currentProblem;
+            
+            // Text updates
+            const badge = document.getElementById('difficulty-badge');
+            badge.innerText = `${levelData.name}: ${levelData.desc}`;
+            badge.style.color = levelData.color;
+            badge.style.borderColor = levelData.color;
+            
+            const remaining = currentProgress.pool.length;
+            document.getElementById('progress-text').innerText = `Remaining: ${remaining}`;
+
+            // State Reset
+            gameState.currentInput = "";
+            
+            // UI Reset
+            document.getElementById('input-display').innerText = "";
+            document.getElementById('input-display').classList.add('input-cursor');
+            document.getElementById('input-display').style.color = "#fff";
+            document.getElementById('input-display').style.borderColor = "var(--glass-border)";
+            document.getElementById('hint-text').style.opacity = '0';
+            
+            document.getElementById('keypad').style.display = 'grid';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('visual-wrapper').classList.remove('active');
+            
+            // Parse for Display using the prompt text (p.q) to show algebra
+            renderMathString(p.q);
+        }
+
+        function renderMathString(str) {
+            const display = document.getElementById('math-problem');
+            
+            // Format algebra text to handle exponents and sqrt correctly in HTML
+            let formattedStr = str
+                .replace(/\^(\d+)/g, '<sup>$1</sup>') // x^2 -> x<sup>2</sup>
+                .replace(/sqrt\(([^)]+)\)/g, '√<span style="border-top:2px solid currentColor; padding-top:2px;">$1</span>'); // sqrt(x)
+
+            // Highlighting Variables logic
+            // We highlight single variables x, y, a, b, etc.
+            formattedStr = formattedStr.replace(/\b([a-zA-Z])\b/g, '<span class="txt-var">$1</span>');
+
+            // Since Substitution questions are text-heavy (e.g. "If x = ..."), we use the text container style
+            display.innerHTML = `<span style="font-size:0.8em; text-align:center; padding: 0 10px; line-height:1.5; display:inline-block; max-width:100%; word-wrap:break-word;">${formattedStr}</span>`;
+        }
+
+        // --- INPUT HANDLING ---
+        function handleInput(val) {
+            // Guard against inputs during animation or after solved
+            if(gameState.isAnimating || gameState.problemSolved || gameState.processing) return;
+            
+            if(val === 'C') {
+                gameState.currentInput = "";
+            } else if (val === 'Backspace') {
+                gameState.currentInput = gameState.currentInput.slice(0, -1);
+            } else if (val === '-') {
+                if(gameState.currentInput === "") gameState.currentInput = "-";
+            } else {
+                if(gameState.currentInput.length < 6) gameState.currentInput += val;
+            }
+            
+            const display = document.getElementById('input-display');
+            display.innerText = gameState.currentInput;
+            display.classList.remove('input-cursor');
+            void display.offsetWidth;
+            display.classList.add('input-cursor');
+        }
+
+        function checkAnswer() {
+            // Strong Guard Clause against spam
+            if(gameState.problemSolved || gameState.isAnimating || gameState.processing) return;
+            
+            if(gameState.currentInput === "" || gameState.currentInput === "-") return;
+            
+            // Set processing flag immediately
+            gameState.processing = true;
+
+            const p = gameState.currentProblem;
+            const userVal = parseInt(gameState.currentInput);
+            
+            if(userVal === p.a) {
+                handleWin(p);
+            } else {
+                handleLoss(p, userVal);
+            }
+        }
+
+        function handleWin(p) {
+            gameState.problemSolved = true;
+            
+            const currentProgress = gameState.levelProgress[gameState.level];
+            
+            // Remove problem from pool
+            currentProgress.pool.shift();
+            
+            // Update Streak
+            currentProgress.streak++;
+            updateStreakUI();
+            
+            // UI Success
+            const input = document.getElementById('input-display');
+            input.style.color = "var(--neon-green)";
+            input.style.borderColor = "var(--neon-green)";
+            input.classList.remove('input-cursor');
+            
+            document.getElementById('hint-text').innerHTML = "Correct! <span style='color:#fff'>Subsituting variables...</span>";
+            document.getElementById('hint-text').style.color = "var(--neon-green)";
+            document.getElementById('hint-text').style.opacity = '1';
+
+            document.getElementById('keypad').style.display = 'none';
+            
+            // Check Unlock Conditions BEFORE animation
+            const shouldUnlock = (currentProgress.streak >= 7 || currentProgress.pool.length === 0) 
+                                 && gameState.level < 4 
+                                 && gameState.level === gameState.maxLevelUnlocked;
+
+            // Visualization
+            document.getElementById('visual-wrapper').classList.add('active');
+            
+            // All Substitution problems start with text, so we use the Reveal animation first
+            animateAlgebraReveal(p, shouldUnlock);
+        }
+
+        function handleLoss(p, userVal) {
+            // Lock input to prevent interference during explanation
+            gameState.problemSolved = true; 
+
+            const currentProgress = gameState.levelProgress[gameState.level];
+            
+            // Reset Streak
+            currentProgress.streak = 0;
+            updateStreakUI();
+            
+            // Move problem to end of pool
+            currentProgress.pool.shift(); // Remove from front
+            currentProgress.pool.push(p); // Add to back
+            
+            const card = document.getElementById('game-card');
+            card.classList.remove('shake');
+            void card.offsetWidth;
+            card.classList.add('shake');
+            
+            const hint = document.getElementById('hint-text');
+            let msg = generateSmartHint(p, userVal);
+            // Append the actual answer for learning
+            msg += ` <br><span style="color:#fff; font-size:0.9em">The answer is ${p.a}. Let's watch the substitution:</span>`;
+            
+            hint.innerHTML = msg; // innerHTML to support break
+            hint.style.color = "var(--neon-amber)";
+            hint.style.opacity = '1';
+            
+            // Hide keypad to focus on visualization
+            document.getElementById('keypad').style.display = 'none';
+
+            // Show Visualization
+            document.getElementById('visual-wrapper').classList.add('active');
+            
+            // Delay slightly to let the shake/hint register
+            setTimeout(() => {
+                animateAlgebraReveal(p, false);
+            }, 1500);
+        }
+
+        // Animation: Algebra Text -> Numeric Expression -> Number Line Arrows
+        function animateAlgebraReveal(p, shouldUnlock) {
+            const display = document.getElementById('math-problem');
+            
+            // 1. Fade out algebra text
+            setTimeout(() => {
+                display.style.opacity = 0;
+                
+                // 2. Replace with Numeric Expression (p.q_display)
+                setTimeout(() => {
+                    // Update Hint
+                    const hint = document.getElementById('hint-text');
+                    if(hint.innerText.includes("Subsituting")) {
+                         // Keep current hint if correct
+                    } else {
+                         // Or show simplified
+                         // hint.innerHTML = "<span style='color:var(--neon-cyan)'>Solving...</span>"; 
+                    }
+
+                    // Render the numeric math string (handles colors for nums)
+                    renderNumericString(p.q_display); 
+                    display.style.opacity = 1;
+                    
+                    // 3. Then proceed to standard math visualization
+                    const isSubtractingNegative = p.q_display.includes("- (-");
+                    
+                    setTimeout(() => {
+                        if(isSubtractingNegative) {
+                            animateMorph(p.steps, p.a, shouldUnlock);
+                        } else {
+                            animateSteps(p.steps, p.a, shouldUnlock);
+                        }
+                    }, 1500);
+
+                }, 500);
+            }, 500);
+        }
+
+        // Specialized renderer for the intermediate numeric step to ensure colors are correct
+        function renderNumericString(str) {
+            const display = document.getElementById('math-problem');
+            const parts = str.split(' ');
+            let html = "";
+            parts.forEach(part => {
+                // Check if number (including parenthesis wrapped like (5))
+                const cleanPart = part.replace(/[()]/g, '');
+                if(!isNaN(parseFloat(cleanPart))) {
+                    let numVal = parseFloat(cleanPart);
+                    let cls = numVal >= 0 ? 'txt-pos' : 'txt-neg';
+                    html += `<span class="${cls}">${part}</span> `;
+                } else {
+                    html += `<span class="txt-op">${part}</span> `;
+                }
+            });
+            display.innerHTML = html;
+        }
+
+        function animateMorph(steps, finalResult, shouldUnlock) {
+            const display = document.getElementById('math-problem');
+            setTimeout(() => {
+                 display.style.opacity = 0;
+                 setTimeout(() => {
+                     let newHtml = "";
+                     steps.forEach((s, i) => {
+                         let cls = s >= 0 ? 'txt-pos' : 'txt-neg';
+                         if(i > 0) {
+                             newHtml += `<span class="txt-op morph-highlight">+</span> <span class="txt-pos morph-highlight">${s}</span> `;
+                         } else {
+                             newHtml += `<span class="${cls}">${s}</span> `;
+                         }
+                     });
+                     display.innerHTML = newHtml;
+                     display.style.opacity = 1;
+                     
+                     const hint = document.getElementById('hint-text');
+                     hint.innerHTML = "Subtracting a negative is the same as <span style='color:var(--neon-amber)'>Adding!</span>";
+                     
+                     setTimeout(() => {
+                         animateSteps(steps, finalResult, shouldUnlock);
+                     }, 1500);
+
+                 }, 500);
+            }, 500);
+        }
+
+        function generateSmartHint(p, userVal) {
+            const correct = p.a;
+            if (Math.abs(userVal) === Math.abs(correct)) return "Right number, wrong sign!";
+            
+            // Substitution Hints
+            if (p.q.includes("calculate x -")) return "Remember: subtracting a negative is like adding!";
+            if (p.q.includes("calculate -")) return "Check your negative signs carefully when substituting.";
+            if (p.q.includes("^2")) return "Remember: A negative number squared becomes positive!";
+            
+            return "Watch your substitution and order of operations!";
+        }
+
+        function updateStreakUI() {
+            const currentStreak = gameState.levelProgress[gameState.level] ? gameState.levelProgress[gameState.level].streak : 0;
+            const disp = document.getElementById('streak-display');
+            disp.innerText = currentStreak;
+            
+            const flame = document.querySelector('.flame-icon');
+            if(currentStreak === 0) flame.style.opacity = 0.2;
+            else flame.style.opacity = 1;
+            
+            if(currentStreak >= 7) {
+                flame.style.color = "#ef4444"; 
+                flame.style.filter = "drop-shadow(0 0 10px #ef4444)";
+            } else {
+                flame.style.color = "#fbbf24";
+                flame.style.filter = "drop-shadow(0 0 8px #d97706)";
+            }
+        }
+
+        function showNextBtn(shouldUnlock) {
+            const btn = document.getElementById('next-btn');
+            btn.style.display = 'block';
+            if(shouldUnlock) {
+                setTimeout(() => showUnlockModal(), 1000);
+            }
+        }
+
+        function nextProblem() {
+            loadProblem();
+        }
+
+        function showUnlockModal() {
+            document.getElementById('unlock-modal').style.display = 'flex';
+            fireConfetti();
+        }
+
+        function goToNextLevel() {
+            document.getElementById('unlock-modal').style.display = 'none';
+            gameState.maxLevelUnlocked++;
+            switchLevel(gameState.level + 1);
+        }
+
+        // --- VISUALIZATION ENGINE ---
+        const SVG_W = 800;
+        const SVG_H = 200;
+        const BASE_Y = 160;
+
+        function drawGrid(minVal, maxVal) {
+            const gridGroup = document.getElementById('grid-layer');
+            gridGroup.innerHTML = '';
+            
+            let range = maxVal - minVal;
+            if(range < 20) range = 20; 
+            const paddedMin = minVal - (range * 0.1);
+            const paddedMax = maxVal + (range * 0.1);
+            const span = paddedMax - paddedMin;
+            
+            const pxPerUnit = SVG_W / span;
+            const zeroX = (0 - paddedMin) * pxPerUnit;
+
+            const axis = createLine(0, BASE_Y, SVG_W, BASE_Y, "axis-line");
+            gridGroup.appendChild(axis);
+
+            let interval = 1;
+            if(range > 20) interval = 5;
+            if(range > 50) interval = 10;
+            if(range > 100) interval = 25;
+            if(range > 500) interval = 100;
+
+            const startTick = Math.ceil(paddedMin / interval) * interval;
+            const endTick = Math.floor(paddedMax / interval) * interval;
+
+            for(let i = startTick; i <= endTick; i+=interval) {
+                const x = (i - paddedMin) * pxPerUnit;
+                const tick = createLine(x, BASE_Y - 5, x, BASE_Y + 5, "tick-line");
+                gridGroup.appendChild(tick);
+                
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", x); text.setAttribute("y", BASE_Y + 25);
+                text.setAttribute("class", "tick-text");
+                text.textContent = i;
+                if(i === 0) { text.style.fill = "#fff"; text.style.fontSize="14px"; }
+                gridGroup.appendChild(text);
+            }
+
+            return { pxPerUnit, zeroX, paddedMin };
+        }
+
+        async function animateSteps(steps, finalResult, shouldUnlock) {
+            let current = 0;
+            let min = 0, max = 0;
+            const points = [0];
+            
+            steps.forEach(s => { current += s; points.push(current); });
+            min = Math.min(...points); max = Math.max(...points);
+            
+            const scaleData = drawGrid(min, max);
+            document.getElementById('arrows-layer').innerHTML = ''; 
+
+            let valTracker = 0;
+            for(let i=0; i<steps.length; i++) {
+                const stepVal = steps[i];
+                const startVal = valTracker;
+                valTracker += stepVal;
+                
+                const startX = (startVal - scaleData.paddedMin) * scaleData.pxPerUnit;
+                const endX = (valTracker - scaleData.paddedMin) * scaleData.pxPerUnit;
+                
+                const yPos = BASE_Y - 50 - (i * 40); 
+                
+                await animateArrow(startX, endX, yPos, stepVal >= 0, stepVal);
+            }
+            
+            const finalX = (finalResult - scaleData.paddedMin) * scaleData.pxPerUnit;
+            const lastY = BASE_Y - 50 - ((steps.length-1)*40);
+            drawResultLine(finalX, lastY);
+
+            showNextBtn(shouldUnlock);
+        }
+
+        function createLine(x1, y1, x2, y2, cls) {
+            const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            l.setAttribute("x1", x1); l.setAttribute("y1", y1);
+            l.setAttribute("x2", x2); l.setAttribute("y2", y2);
+            l.setAttribute("class", cls);
+            return l;
+        }
+
+        function animateArrow(x1, x2, y, isPos, value) {
+            return new Promise(resolve => {
+                const layer = document.getElementById('arrows-layer');
+                const arrow = createLine(x1, y, x1, y, isPos ? "arrow-pos" : "arrow-neg");
+                arrow.setAttribute("marker-end", isPos ? "url(#arrow-pos-head)" : "url(#arrow-neg-head)");
+                
+                const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                const midX = (x1 + x2) / 2;
+                label.setAttribute("x", midX);
+                label.setAttribute("y", y - 10);
+                label.setAttribute("class", isPos ? "label-pos" : "label-neg");
+                label.textContent = (value > 0 ? "+" : "") + value;
+                label.style.opacity = 0;
+
+                layer.appendChild(arrow);
+                layer.appendChild(label);
+
+                let progress = 0;
+                function step() {
+                    progress += 0.02; 
+                    if(progress > 1) progress = 1;
+                    const curX = x1 + ((x2 - x1) * progress);
+                    arrow.setAttribute("x2", curX);
+                    
+                    if(progress > 0.5) label.style.opacity = (progress - 0.5) * 2;
+
+                    if(progress < 1) requestAnimationFrame(step);
+                    else {
+                        label.style.opacity = 1;
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(step);
+            });
+        }
+
+        function drawResultLine(x, topY) {
+            const layer = document.getElementById('arrows-layer');
+            const l = createLine(x, topY, x, BASE_Y, "result-line");
+            layer.appendChild(l);
+        }
+
+        // --- CONFETTI ---
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function fireConfetti() {
+            particles = [];
+            const colors = ['#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
+            for(let i=0; i<100; i++) {
+                particles.push({
+                    x: window.innerWidth/2, y: window.innerHeight/2,
+                    vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15,
+                    size: Math.random()*5+3, color: colors[Math.floor(Math.random()*colors.length)],
+                    life: 100
+                });
+            }
+            updateConfetti();
+        }
+        function updateConfetti() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            let active = false;
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life--;
+                if(p.life > 0) {
+                    active = true;
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                }
+            });
+            if(active) requestAnimationFrame(updateConfetti);
+        }
+
+    </script>
+</body>
+</html>
