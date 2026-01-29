@@ -385,7 +385,7 @@
 
     // --- SVG HELPERS ---
     
-    // 1. Zoom from Cell to DNA
+    // 1. Zoom from Cell to DNA (Improved Chromosome)
     function getCellZoomSVG() {
         return `
         <svg viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
@@ -401,31 +401,40 @@
             <!-- Arrow 1 -->
             <path d="M 115 125 L 180 125" stroke="white" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="5,5" />
 
-            <!-- Chromosome -->
+            <!-- Chromosome (Improved: X Shape) -->
             <g transform="translate(220, 125)">
-                <path d="M -15 -30 Q 0 0 -15 30" stroke="#fbbf24" stroke-width="8" stroke-linecap="round" fill="none" />
-                <path d="M 15 -30 Q 0 0 15 30" stroke="#fbbf24" stroke-width="8" stroke-linecap="round" fill="none" />
-                <circle cx="0" cy="0" r="5" fill="#f59e0b" />
+                <!-- Left Chromatid -->
+                <path d="M -8 -35 Q -15 -10 -8 0 Q -15 10 -8 35 Q 5 10 5 0 Q 5 -10 -8 -35" fill="#fbbf24" stroke="#d97706" stroke-width="2" />
+                <!-- Right Chromatid -->
+                <path d="M 8 -35 Q 15 -10 8 0 Q 15 10 8 35 Q -5 10 -5 0 Q -5 -10 8 -35" fill="#fbbf24" stroke="#d97706" stroke-width="2" />
+                <!-- Centromere -->
+                <circle cx="0" cy="0" r="6" fill="#f59e0b" stroke="white" stroke-width="1"/>
             </g>
             <text x="220" y="180" fill="#fbbf24" font-family="sans-serif" font-size="14" text-anchor="middle" font-weight="bold">CHROMOSOME</text>
 
             <!-- Arrow 2 -->
             <path d="M 250 125 L 320 125" stroke="white" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="5,5" />
 
-            <!-- DNA -->
+            <!-- DNA (Improved: Double Helix Twist) -->
             <g transform="translate(380, 75)">
-                <path d="M 0 0 Q 20 25 0 50 Q -20 75 0 100 Q 20 125 0 150" stroke="#3b82f6" stroke-width="4" fill="none" />
-                <path d="M 20 0 Q 0 25 20 50 Q 40 75 20 100 Q 0 125 20 150" stroke="#60a5fa" stroke-width="4" fill="none" />
-                <!-- Rungs -->
-                <line x1="5" y1="15" x2="15" y2="15" stroke="white" stroke-width="2" />
-                <line x1="5" y1="65" x2="15" y2="65" stroke="white" stroke-width="2" />
-                <line x1="5" y1="115" x2="15" y2="115" stroke="white" stroke-width="2" />
+                <!-- Back Strand -->
+                <path d="M 0 0 Q 15 25 0 50 Q -15 75 0 100 Q 15 125 0 150" stroke="#1e3a8a" stroke-width="6" fill="none" opacity="0.6"/>
                 
-                <!-- Gene Highlight -->
-                <rect x="-25" y="40" width="70" height="70" rx="5" stroke="#ec4899" stroke-width="2" fill="none" stroke-dasharray="4,4">
+                <!-- Base Pairs -->
+                <line x1="2" y1="15" x2="18" y2="15" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+                <line x1="-2" y1="40" x2="22" y2="40" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/>
+                <line x1="2" y1="65" x2="18" y2="65" stroke="#10b981" stroke-width="3" stroke-linecap="round"/>
+                <line x1="-2" y1="90" x2="22" y2="90" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+                <line x1="2" y1="115" x2="18" y2="115" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+                
+                <!-- Front Strand -->
+                <path d="M 20 0 Q 5 25 20 50 Q 35 75 20 100 Q 5 125 20 150" stroke="#3b82f6" stroke-width="6" fill="none" />
+
+                <!-- Gene Highlight Box -->
+                <rect x="-20" y="35" width="60" height="60" rx="5" stroke="#ec4899" stroke-width="2" fill="none" stroke-dasharray="4,4">
                     <animate attributeName="stroke-dashoffset" from="16" to="0" dur="1s" repeatCount="indefinite" />
                 </rect>
-                 <text x="60" y="80" fill="#ec4899" font-family="sans-serif" font-size="12" font-weight="bold">GENE</text>
+                 <text x="60" y="70" fill="#ec4899" font-family="sans-serif" font-size="12" font-weight="bold">GENE</text>
             </g>
             <text x="390" y="240" fill="#3b82f6" font-family="sans-serif" font-size="14" text-anchor="middle" font-weight="bold">DNA</text>
 
@@ -437,7 +446,71 @@
         </svg>`;
     }
 
-    // 2. Sperm vs Egg
+    // 2. Ladder to Helix SVG (New)
+    function getDNAHelixSVG() {
+        return `
+        <svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="strandGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            
+            <!-- Labels -->
+            <text x="100" y="30" fill="white" font-family="sans-serif" font-weight="bold" text-anchor="middle">Ladder</text>
+            <text x="400" y="30" fill="white" font-family="sans-serif" font-weight="bold" text-anchor="middle">Double Helix</text>
+            <path d="M 180 30 L 320 30" stroke="white" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="5,5"/>
+
+            <!-- Flat Ladder (Left) -->
+            <g transform="translate(50, 60)">
+                <line x1="20" y1="0" x2="20" y2="140" stroke="url(#strandGrad)" stroke-width="8" stroke-linecap="round"/>
+                <line x1="80" y1="0" x2="80" y2="140" stroke="url(#strandGrad)" stroke-width="8" stroke-linecap="round"/>
+                
+                <!-- Base Pairs -->
+                <!-- A-T (Red-Yellow) -->
+                <line x1="24" y1="20" x2="52" y2="20" stroke="#ef4444" stroke-width="6" />
+                <line x1="52" y1="20" x2="76" y2="20" stroke="#f59e0b" stroke-width="6" />
+                
+                <!-- C-G (Green-Blue) -->
+                <line x1="24" y1="50" x2="52" y2="50" stroke="#10b981" stroke-width="6" />
+                <line x1="52" y1="50" x2="76" y2="50" stroke="#3b82f6" stroke-width="6" />
+                
+                <!-- T-A -->
+                <line x1="24" y1="80" x2="52" y2="80" stroke="#f59e0b" stroke-width="6" />
+                <line x1="52" y1="80" x2="76" y2="80" stroke="#ef4444" stroke-width="6" />
+                
+                <!-- G-C -->
+                <line x1="24" y1="110" x2="52" y2="110" stroke="#3b82f6" stroke-width="6" />
+                <line x1="52" y1="110" x2="76" y2="110" stroke="#10b981" stroke-width="6" />
+            </g>
+
+            <!-- Twisted Helix (Right) -->
+            <g transform="translate(350, 60)">
+                <!-- Back Strands/Rungs -->
+                <path d="M 0 0 Q 20 20 0 40 Q -20 60 0 80 Q 20 100 0 120" stroke="#1e3a8a" stroke-width="8" fill="none" opacity="0.5"/>
+                
+                <!-- Pairs twisting -->
+                <line x1="0" y1="20" x2="30" y2="20" stroke="#ef4444" stroke-width="4" />
+                <line x1="30" y1="20" x2="40" y2="20" stroke="#f59e0b" stroke-width="4" />
+                
+                <line x1="-10" y1="60" x2="20" y2="60" stroke="#10b981" stroke-width="4" />
+                <line x1="20" y1="60" x2="40" y2="60" stroke="#3b82f6" stroke-width="4" />
+                
+                <line x1="0" y1="100" x2="30" y2="100" stroke="#f59e0b" stroke-width="4" />
+                <line x1="30" y1="100" x2="40" y2="100" stroke="#ef4444" stroke-width="4" />
+
+                <!-- Front Strand -->
+                <path d="M 40 0 Q 20 20 40 40 Q 60 60 40 80 Q 20 100 40 120" stroke="url(#strandGrad)" stroke-width="8" fill="none" />
+                <path d="M 0 0 Q 20 20 0 40" stroke="url(#strandGrad)" stroke-width="8" fill="none" stroke-linecap="round"/> <!-- Top connect -->
+            </g>
+            
+            <text x="250" y="190" fill="#e2e8f0" font-family="sans-serif" font-size="12" text-anchor="middle">Base Pairs: A-T (Red/Yellow) | C-G (Green/Blue)</text>
+        </svg>
+        `;
+    }
+
+    // 3. Sperm vs Egg
     function getGameteSVG() {
         return `
         <svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
@@ -478,78 +551,65 @@
         </svg>`;
     }
 
-    // 3. Inheritance Flow - REDESIGNED
+    // 4. Inheritance Flow - Tidied Up
     function getInheritanceSVG() {
         return `
         <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
-            <!-- Background Lines -->
-            <path d="M 125 60 L 125 100" stroke="#3b82f6" stroke-width="2" />
-            <path d="M 375 60 L 375 100" stroke="#ec4899" stroke-width="2" />
+            <!-- PARENT BOXES -->
+            <!-- Father -->
+            <rect x="50" y="20" width="120" height="60" rx="10" fill="#1e1b4b" stroke="#3b82f6" stroke-width="3" />
+            <text x="110" y="45" fill="#3b82f6" text-anchor="middle" font-weight="bold" font-size="12">FATHER</text>
+            <text x="110" y="65" fill="white" text-anchor="middle" font-weight="bold" font-size="18">XY</text>
 
-            <!-- PARENTS -->
-            <rect x="75" y="10" width="100" height="50" rx="10" fill="#1e1b4b" stroke="#3b82f6" stroke-width="2" />
-            <text x="125" y="30" fill="#3b82f6" text-anchor="middle" font-weight="bold" font-size="12">FATHER</text>
-            <text x="125" y="48" fill="white" text-anchor="middle" font-weight="bold" font-size="16">XY</text>
+            <!-- Mother -->
+            <rect x="330" y="20" width="120" height="60" rx="10" fill="#3f1226" stroke="#ec4899" stroke-width="3" />
+            <text x="390" y="45" fill="#ec4899" text-anchor="middle" font-weight="bold" font-size="12">MOTHER</text>
+            <text x="390" y="65" fill="white" text-anchor="middle" font-weight="bold" font-size="18">XX</text>
 
-            <rect x="325" y="10" width="100" height="50" rx="10" fill="#3f1226" stroke="#ec4899" stroke-width="2" />
-            <text x="375" y="30" fill="#ec4899" text-anchor="middle" font-weight="bold" font-size="12">MOTHER</text>
-            <text x="375" y="48" fill="white" text-anchor="middle" font-weight="bold" font-size="16">XX</text>
-
-            <!-- GAMETES LEVEL -->
-            <text x="250" y="90" fill="gray" text-anchor="middle" font-size="10" letter-spacing="2">GAMETES</text>
+            <!-- CONNECTING LINES (Gametes) -->
+            <!-- Father Splits -->
+            <line x1="110" y1="80" x2="80" y2="120" stroke="#3b82f6" stroke-width="2" />
+            <line x1="110" y1="80" x2="140" y2="120" stroke="#3b82f6" stroke-width="2" />
             
-            <!-- Father Branching -->
-            <path d="M 125 100 L 75 140" stroke="#3b82f6" stroke-width="2" />
-            <path d="M 125 100 L 175 140" stroke="#3b82f6" stroke-width="2" />
-            
+            <!-- Mother Splits -->
+            <line x1="390" y1="80" x2="360" y2="120" stroke="#ec4899" stroke-width="2" />
+            <line x1="390" y1="80" x2="420" y2="120" stroke="#ec4899" stroke-width="2" />
+
+            <!-- GAMETE CIRCLES -->
             <!-- Sperm X -->
-            <circle cx="75" cy="160" r="20" fill="#1e1b4b" stroke="#3b82f6" stroke-width="2"/>
-            <text x="75" y="165" fill="white" text-anchor="middle" font-weight="bold">X</text>
-            <text x="75" y="130" fill="#3b82f6" text-anchor="middle" font-size="10">Sperm</text>
-
-            <!-- Sperm Y -->
-            <circle cx="175" cy="160" r="15" fill="#1e1b4b" stroke="#3b82f6" stroke-width="2"/>
-            <text x="175" y="165" fill="white" text-anchor="middle" font-weight="bold">Y</text>
-            <text x="175" y="130" fill="#3b82f6" text-anchor="middle" font-size="10">Sperm</text>
-
-            <!-- Mother Branching (Simplified to one path for clarity or double for balance) -->
-            <!-- Showing double for balance to match Punnett square logic -->
-            <path d="M 375 100 L 325 140" stroke="#ec4899" stroke-width="2" opacity="0.5"/>
-            <path d="M 375 100 L 425 140" stroke="#ec4899" stroke-width="2" opacity="0.5"/>
+            <circle cx="80" cy="140" r="25" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+            <text x="80" y="145" fill="white" text-anchor="middle" font-weight="bold" font-size="16">X</text>
             
-            <!-- Egg X 1 -->
-            <circle cx="325" cy="160" r="20" fill="#3f1226" stroke="#ec4899" stroke-width="2"/>
-            <text x="325" y="165" fill="white" text-anchor="middle" font-weight="bold">X</text>
-            <text x="325" y="130" fill="#ec4899" text-anchor="middle" font-size="10">Egg</text>
-             <!-- Egg X 2 -->
-            <circle cx="425" cy="160" r="20" fill="#3f1226" stroke="#ec4899" stroke-width="2"/>
-            <text x="425" y="165" fill="white" text-anchor="middle" font-weight="bold">X</text>
-            <text x="425" y="130" fill="#ec4899" text-anchor="middle" font-size="10">Egg</text>
+            <!-- Sperm Y -->
+            <circle cx="140" cy="140" r="20" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+            <text x="140" y="145" fill="white" text-anchor="middle" font-weight="bold" font-size="16">Y</text>
 
+            <!-- Egg X -->
+            <circle cx="360" cy="140" r="25" fill="#3f1226" stroke="#ec4899" stroke-width="2"/>
+            <text x="360" y="145" fill="white" text-anchor="middle" font-weight="bold" font-size="16">X</text>
+            <!-- Egg X -->
+            <circle cx="420" cy="140" r="25" fill="#3f1226" stroke="#ec4899" stroke-width="2"/>
+            <text x="420" y="145" fill="white" text-anchor="middle" font-weight="bold" font-size="16">X</text>
 
-            <!-- FERTILISATION LINES -->
-            <!-- Sperm X + Egg X -->
-            <path d="M 75 180 C 75 220, 325 220, 150 260" stroke="#ffffff" stroke-width="1" stroke-dasharray="4,4" opacity="0.6" fill="none"/>
-            <path d="M 325 180 C 325 220, 150 220, 150 260" stroke="#ffffff" stroke-width="1" stroke-dasharray="4,4" opacity="0.6" fill="none"/>
+            <!-- FERTILISATION PATHS -->
+            <path d="M 80 165 C 80 200, 200 200, 150 240" stroke="#fff" stroke-width="2" stroke-dasharray="5,5" opacity="0.4" fill="none" />
+            <path d="M 360 165 C 360 200, 200 200, 150 240" stroke="#fff" stroke-width="2" stroke-dasharray="5,5" opacity="0.4" fill="none" />
+            
+            <path d="M 140 160 C 140 200, 300 200, 350 240" stroke="#fff" stroke-width="2" stroke-dasharray="5,5" opacity="0.4" fill="none" />
+            <path d="M 420 165 C 420 200, 300 200, 350 240" stroke="#fff" stroke-width="2" stroke-dasharray="5,5" opacity="0.4" fill="none" />
 
-            <!-- Sperm Y + Egg X -->
-            <path d="M 175 180 C 175 220, 425 220, 350 260" stroke="#ffffff" stroke-width="1" stroke-dasharray="4,4" opacity="0.6" fill="none"/>
-            <path d="M 425 180 C 425 220, 350 220, 350 260" stroke="#ffffff" stroke-width="1" stroke-dasharray="4,4" opacity="0.6" fill="none"/>
-
-            <!-- OFFSPRING -->
-            <text x="250" y="230" fill="gray" text-anchor="middle" font-size="10" letter-spacing="2">OFFSPRING</text>
-
-            <g transform="translate(150, 280)">
-                <circle cx="0" cy="0" r="30" fill="#ec4899" opacity="0.2" stroke="#ec4899" stroke-width="2"/>
-                <text x="0" y="5" fill="white" text-anchor="middle" font-weight="bold" font-size="16">XX</text>
-                <text x="0" y="45" fill="white" text-anchor="middle" font-size="14" font-weight="bold">GIRL</text>
+            <!-- OFFSPRING BOXES -->
+            <g transform="translate(100, 250)">
+                 <rect width="100" height="50" rx="10" fill="#831843" stroke="#ec4899" stroke-width="2" opacity="0.8"/>
+                 <text x="50" y="30" fill="white" text-anchor="middle" font-weight="bold">XX (Girl)</text>
             </g>
 
-            <g transform="translate(350, 280)">
-                <circle cx="0" cy="0" r="30" fill="#3b82f6" opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
-                <text x="0" y="5" fill="white" text-anchor="middle" font-weight="bold" font-size="16">XY</text>
-                <text x="0" y="45" fill="white" text-anchor="middle" font-size="14" font-weight="bold">BOY</text>
+            <g transform="translate(300, 250)">
+                 <rect width="100" height="50" rx="10" fill="#172554" stroke="#3b82f6" stroke-width="2" opacity="0.8"/>
+                 <text x="50" y="30" fill="white" text-anchor="middle" font-weight="bold">XY (Boy)</text>
             </g>
+            
+            <text x="250" y="310" fill="#f59e0b" text-anchor="middle" font-weight="bold" font-size="14">50 / 50 Chance</text>
         </svg>`;
     }
 
@@ -634,16 +694,8 @@
                                 <li><i class="fa-solid fa-seedling" style="color:var(--primary);"></i> A mango tree has 40 chromosomes. A fruit fly has 8.</li>
                             </ul>
                         </div>
-                         <div class="img-card" style="background:transparent; border:none;">
-                            <!-- CSS DNA Animation representation -->
-                            <div style="position: relative; width: 100px; height: 300px; margin: 0 auto;">
-                                <div style="position: absolute; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--primary), var(--accent)); left: 30px; border-radius: 2px;"></div>
-                                <div style="position: absolute; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--accent), var(--primary)); right: 30px; border-radius: 2px;"></div>
-                                ${Array.from({length: 10}).map((_, i) => `
-                                    <div style="position: absolute; top: ${10 + i * 10}%; left: 34px; width: 32px; height: 2px; background: rgba(255,255,255,0.5); animation: pulse 2s infinite ${i * 0.1}s;"></div>
-                                `).join('')}
-                            </div>
-                            <p>The "Double Helix"</p>
+                         <div class="img-card" style="background:transparent; border:none; border: 2px solid var(--primary);">
+                            ${getDNAHelixSVG()}
                         </div>
                     </div>
                 </div>
@@ -760,9 +812,13 @@
                     </div>
                     
                     <div class="grid-2 slide-up" style="max-width: 900px; margin: 0 auto; gap: 1rem;">
-                        <div style="text-align: left;">
-                            <strong class="term-female">Mothers (XX)</strong>
-                            <p>Only have X chromosomes to give.</p>
+                        <div class="note-box-write">
+                            <strong style="color:var(--primary); font-size:1.1rem; display:block; margin-bottom:0.5rem;">Sex Determination Rules:</strong>
+                            <ul style="padding-left:1.2rem; color:var(--text-muted);">
+                                <li style="margin-bottom:0.5rem;">The <strong>Sperm</strong> decides the sex.</li>
+                                <li style="margin-bottom:0.5rem;">Sperm carries <strong>X</strong> or <strong>Y</strong>.</li>
+                                <li>Egg always carries <strong>X</strong>.</li>
+                            </ul>
                         </div>
                         <div style="text-align: left;">
                             <strong class="term-male">Fathers (XY)</strong>
@@ -779,15 +835,15 @@
                 <div class="fade-in text-center">
                     <span class="brand-pill">Review</span>
                     <h2 style="margin-top:1rem;">Interactive Glossary</h2>
-                    <p>Read the definition. <strong>Guess</strong> the word. Then click to check and write it down.</p>
+                    <p>Read the clue. <strong>Guess</strong> the word. Tap to reveal.</p>
                     
                     <div class="grid-3 slide-up" style="margin-top: 2rem;">
-                        ${createFlipCard('Found in the nucleus. Humans have 46.', 'Chromosome', 'Thread of DNA')}
-                        ${createFlipCard('Controls one specific trait (e.g., eye color).', 'Gene', 'Section of DNA')}
-                        ${createFlipCard('Sperm or Egg. Has only 23 chromosomes.', 'Gamete', 'Sex Cell')}
-                        ${createFlipCard('The first cell of a new life (46 chromo).', 'Zygote', 'Fertilised Egg')}
-                        ${createFlipCard('When sperm nucleus and egg nucleus join.', 'Fertilisation', 'Fusion')}
-                        ${createFlipCard('Passing genetic info from parents to offspring.', 'Inheritance', 'Heredity')}
+                        ${createFlipCard('Chromosome', 'Thread-like structure found in the nucleus. Humans have 46 (23 pairs).')}
+                        ${createFlipCard('Gene', 'A short section of DNA that controls one specific trait (e.g., eye color).')}
+                        ${createFlipCard('Gamete', 'Sex Cell (Sperm or Egg). Has only 23 chromosomes.')}
+                        ${createFlipCard('Zygote', 'The first cell of a new life, formed by fertilisation (46 chromosomes).')}
+                        ${createFlipCard('Fertilisation', 'The moment when the sperm nucleus and egg nucleus join together.')}
+                        ${createFlipCard('Inheritance', 'The process of passing genetic information from parents to offspring.')}
                     </div>
                 </div>
             `
@@ -802,30 +858,36 @@
                         <!-- Objective 1 -->
                         <div class="card" style="display: flex; flex-direction: column; height: 100%;">
                             <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-                                <strong style="color: var(--primary); text-transform: uppercase; font-size: 0.8rem;">Obj 1: Structure</strong>
+                                <strong style="color: var(--primary); text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 0.5rem;">Objective 1</strong>
+                                <p style="font-style: italic; color: white;">Define the relationship between Chromosomes, DNA, and Genes.</p>
                             </div>
                             <div style="flex-grow: 1;">
-                                <p><strong>Chromosomes</strong> are made of <strong>DNA</strong>. <strong>Genes</strong> are sections of DNA instructions.</p>
+                                <strong style="color: var(--primary); display: block; margin-bottom: 0.5rem;">Recap:</strong>
+                                <p><strong>Chromosomes</strong> are made of <strong>DNA</strong>. <strong>Genes</strong> are short sections of DNA instructions.</p>
                             </div>
                         </div>
 
                         <!-- Objective 2 -->
                         <div class="card" style="display: flex; flex-direction: column; height: 100%;">
                             <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-                                <strong style="color: var(--secondary); text-transform: uppercase; font-size: 0.8rem;">Obj 2: Gametes</strong>
+                                <strong style="color: var(--secondary); text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 0.5rem;">Objective 2</strong>
+                                <p style="font-style: italic; color: white;">Compare male (sperm) and female (egg) gametes.</p>
                             </div>
                             <div style="flex-grow: 1;">
-                                <p>Sperm are tiny/mobile. Eggs are huge/stationary. Both have only <strong>23</strong> chromosomes.</p>
+                                <strong style="color: var(--secondary); display: block; margin-bottom: 0.5rem;">Recap:</strong>
+                                <p>Sperm are tiny & mobile. Eggs are huge & stationary. Both have only <strong>23</strong> chromosomes.</p>
                             </div>
                         </div>
 
                         <!-- Objective 3 -->
                         <div class="card" style="display: flex; flex-direction: column; height: 100%;">
                             <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-                                <strong style="color: var(--accent); text-transform: uppercase; font-size: 0.8rem;">Obj 3: Sex</strong>
+                                <strong style="color: var(--accent); text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 0.5rem;">Objective 3</strong>
+                                <p style="font-style: italic; color: white;">Explain how fertilisation determines if a baby is a boy or girl.</p>
                             </div>
                             <div style="flex-grow: 1;">
-                                <p>Sperm decides! <br>X Sperm = Girl (XX) <br>Y Sperm = Boy (XY)</p>
+                                <strong style="color: var(--accent); display: block; margin-bottom: 0.5rem;">Recap:</strong>
+                                <p>It depends on the father's sperm! <br>X Sperm = Girl (XX) <br>Y Sperm = Boy (XY)</p>
                             </div>
                         </div>
                     </div>
@@ -844,19 +906,19 @@
     ];
 
     // --- HELPER FUNCTION: CREATE FLIP CARD ---
-    function createFlipCard(definition, term, extra) {
+    function createFlipCard(term, definition) {
         return `
             <div class="flip-card" onclick="this.classList.toggle('flipped')">
                 <div class="flip-card-inner">
                     <div class="flip-front">
-                        <i class="fa-solid fa-circle-question" style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-muted); opacity: 0.5;"></i>
-                        <p style="font-size: 1.1rem; color: white;">"${definition}"</p>
-                        <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 1rem; color: var(--primary);">Tap to Reveal Term</p>
+                         <i class="fa-solid fa-circle-question" style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-muted); opacity: 0.5;"></i>
+                         <p style="color: white; font-size: 1.1rem; font-weight: 500;">"${definition}"</p>
+                         <p style="color: var(--primary); font-size: 0.8rem; margin-top: 1rem;">Tap to Reveal</p>
                     </div>
                     <div class="flip-back">
-                        <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.5rem;">${term}</h3>
-                        <p style="color: var(--amber);">${extra}</p>
-                        <p style="font-size: 0.8rem; margin-top:1rem; opacity:0.8;"><i class="fa-solid fa-pen"></i> Write this down</p>
+                        <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.8rem;">${term}</h3>
+                        <div style="width: 50px; height: 2px; background: var(--amber); margin: 0.5rem auto;"></div>
+                        <p style="color: var(--text-muted); opacity: 0.9;">${definition}</p>
                     </div>
                 </div>
             </div>
