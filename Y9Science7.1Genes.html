@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genes and Inheritance - Year 9 Science</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Bio-Genetics Theme */
+            --bg-deep: #051814; /* Deep organic green-black */       
+            --bg-card: #0f2924; /* Dark Teal */       
+            --bg-card-hover: #163832; 
+            
+            --primary: #10b981;   /* Emerald Green - Life/Cells */
+            --secondary: #ec4899; /* Pink - Female/Nucleus */
+            --accent: #3b82f6;    /* Blue - Male/DNA/Water */
+            --amber: #f59e0b;     /* Warning/Notes */
+            --danger: #ef4444;    
+
+            /* Typography */
+            --text-main: #ffffff;        
+            --text-muted: #e2e8f0;      
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            /* Genetic Helix Background Effect */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.15), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.15), transparent 40%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 10px);
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(5, 24, 20, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(5, 24, 20, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:hover { background: #059669; transform: translateY(-2px); }
+        
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 8px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.4s ease;
+        }
+
+        /* INSTRUCTION PILLS & BOXES */
+        .note-pill {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.15);
+            border: 2px solid var(--amber);
+            color: var(--amber);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        
+        /* New Explicit Note Box */
+        .note-box-write {
+            background: rgba(245, 158, 11, 0.1);
+            border: 2px solid var(--amber);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .note-box-write::before {
+            content: '✍️ Write this down';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--bg-card);
+            color: var(--amber);
+            padding: 0 10px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            border-radius: 5px;
+        }
+
+        /* New Explicit Draw Box */
+        .draw-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            position: relative;
+        }
+        .draw-box::before {
+            content: '🎨 Draw this diagram';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--bg-card);
+            color: var(--text-muted);
+            padding: 0 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        /* TYPOGRAPHY */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; font-weight: 500; }
+        strong { color: white; font-weight: 800; }
+        
+        .term { color: var(--primary); font-weight: 800; }
+        .term-female { color: var(--secondary); font-weight: 800; }
+        .term-male { color: var(--accent); font-weight: 800; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 3rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+        /* CARDS */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        
+        .img-card {
+            background: #000;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 300px;
+        }
+
+        /* FLIP CARDS */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        /* Adjusted for "Guess the definition" style */
+        .flip-front { background: var(--bg-card); }
+        .flip-front:hover { background: var(--bg-card-hover); border-color: var(--primary); }
+        .flip-back { background: linear-gradient(135deg, var(--bg-card), #064e3b); transform: rotateY(180deg); color: white; border: 2px solid var(--primary); }
+
+        /* QUIZ / INTERACTIVE */
+        .quiz-option {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.1); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--primary); }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); opacity: 0.6; }
+
+        /* SVG ANIMATIONS */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes swim { 0% { stroke-dashoffset: 20; } 100% { stroke-dashoffset: 0; } }
+        
+        .answer-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid var(--accent);
+            color: var(--text-muted);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: none;
+            text-align: left;
+        }
+        .answer-box.visible { display: block; animation: slideUp 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 9 Science</div>
+            <span style="font-weight: 700; color: var(--text-muted); font-size: 0.9rem;">Genes & Inheritance</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--primary);">
+            Thursday 29 January 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Content Injected via JS -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    const state = {
+        currentSlide: 0,
+        slides: []
+    };
+
+    // --- SVG HELPERS ---
+    
+    // 1. Zoom from Cell to DNA
+    function getCellZoomSVG() {
+        return `
+        <svg viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
+            <!-- Cell -->
+            <circle cx="80" cy="125" r="70" fill="#0f2924" stroke="#10b981" stroke-width="3" />
+            <text x="80" y="215" fill="#10b981" font-family="sans-serif" font-size="14" text-anchor="middle" font-weight="bold">CELL</text>
+            
+            <!-- Nucleus -->
+            <circle cx="80" cy="125" r="30" fill="#ec4899" opacity="0.3" />
+            <circle cx="80" cy="125" r="30" stroke="#ec4899" stroke-width="2" fill="none" />
+            <text x="80" y="105" fill="#ec4899" font-family="sans-serif" font-size="10" text-anchor="middle">Nucleus</text>
+
+            <!-- Arrow 1 -->
+            <path d="M 115 125 L 180 125" stroke="white" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="5,5" />
+
+            <!-- Chromosome -->
+            <g transform="translate(220, 125)">
+                <path d="M -15 -30 Q 0 0 -15 30" stroke="#fbbf24" stroke-width="8" stroke-linecap="round" fill="none" />
+                <path d="M 15 -30 Q 0 0 15 30" stroke="#fbbf24" stroke-width="8" stroke-linecap="round" fill="none" />
+                <circle cx="0" cy="0" r="5" fill="#f59e0b" />
+            </g>
+            <text x="220" y="180" fill="#fbbf24" font-family="sans-serif" font-size="14" text-anchor="middle" font-weight="bold">CHROMOSOME</text>
+
+            <!-- Arrow 2 -->
+            <path d="M 250 125 L 320 125" stroke="white" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="5,5" />
+
+            <!-- DNA -->
+            <g transform="translate(380, 75)">
+                <path d="M 0 0 Q 20 25 0 50 Q -20 75 0 100 Q 20 125 0 150" stroke="#3b82f6" stroke-width="4" fill="none" />
+                <path d="M 20 0 Q 0 25 20 50 Q 40 75 20 100 Q 0 125 20 150" stroke="#60a5fa" stroke-width="4" fill="none" />
+                <!-- Rungs -->
+                <line x1="5" y1="15" x2="15" y2="15" stroke="white" stroke-width="2" />
+                <line x1="5" y1="65" x2="15" y2="65" stroke="white" stroke-width="2" />
+                <line x1="5" y1="115" x2="15" y2="115" stroke="white" stroke-width="2" />
+                
+                <!-- Gene Highlight -->
+                <rect x="-25" y="40" width="70" height="70" rx="5" stroke="#ec4899" stroke-width="2" fill="none" stroke-dasharray="4,4">
+                    <animate attributeName="stroke-dashoffset" from="16" to="0" dur="1s" repeatCount="indefinite" />
+                </rect>
+                 <text x="60" y="80" fill="#ec4899" font-family="sans-serif" font-size="12" font-weight="bold">GENE</text>
+            </g>
+            <text x="390" y="240" fill="#3b82f6" font-family="sans-serif" font-size="14" text-anchor="middle" font-weight="bold">DNA</text>
+
+            <defs>
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                  <path d="M0,0 L0,6 L9,3 z" fill="#fff" />
+                </marker>
+            </defs>
+        </svg>`;
+    }
+
+    // 2. Sperm vs Egg
+    function getGameteSVG() {
+        return `
+        <svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
+            <!-- EGG -->
+            <g transform="translate(380, 100)">
+                <circle r="70" fill="#ec4899" opacity="0.2" />
+                <circle r="70" stroke="#ec4899" stroke-width="3" fill="none" />
+                <circle r="15" fill="#ec4899" opacity="0.6" />
+                <!-- Nutrients -->
+                <circle cx="-30" cy="-30" r="3" fill="white" opacity="0.5" />
+                <circle cx="20" cy="40" r="4" fill="white" opacity="0.5" />
+                <circle cx="40" cy="-20" r="2" fill="white" opacity="0.5" />
+                <text x="0" y="95" fill="#ec4899" text-anchor="middle" font-family="sans-serif" font-weight="bold">EGG (Ovum)</text>
+                <text x="0" y="115" fill="#ec4899" text-anchor="middle" font-family="sans-serif" font-size="12">Visible to naked eye</text>
+            </g>
+
+            <!-- SPERM GROUP -->
+            <g>
+                <!-- Sperm 1 -->
+                <g transform="translate(50, 60)">
+                    <ellipse cx="10" cy="0" rx="10" ry="6" fill="#3b82f6" />
+                    <path d="M 0 0 Q -20 10 -40 0 T -80 0" stroke="#3b82f6" stroke-width="2" fill="none">
+                         <animate attributeName="d" values="M 0 0 Q -20 10 -40 0 T -80 0; M 0 0 Q -20 -10 -40 0 T -80 0; M 0 0 Q -20 10 -40 0 T -80 0" dur="0.2s" repeatCount="indefinite" />
+                    </path>
+                    <animateTransform attributeName="transform" type="translate" from="50 60" to="280 90" dur="4s" repeatCount="indefinite" />
+                </g>
+                 <!-- Sperm 2 -->
+                <g transform="translate(30, 140)">
+                    <ellipse cx="10" cy="0" rx="10" ry="6" fill="#3b82f6" />
+                    <path d="M 0 0 Q -20 10 -40 0 T -80 0" stroke="#3b82f6" stroke-width="2" fill="none">
+                         <animate attributeName="d" values="M 0 0 Q -20 -10 -40 0 T -80 0; M 0 0 Q -20 10 -40 0 T -80 0; M 0 0 Q -20 -10 -40 0 T -80 0" dur="0.3s" repeatCount="indefinite" />
+                    </path>
+                    <animateTransform attributeName="transform" type="translate" from="30 140" to="260 110" dur="5s" repeatCount="indefinite" />
+                </g>
+            </g>
+            <text x="80" y="180" fill="#3b82f6" text-anchor="middle" font-family="sans-serif" font-weight="bold">SPERM</text>
+            <text x="80" y="195" fill="#3b82f6" text-anchor="middle" font-family="sans-serif" font-size="12">Microscopic</text>
+        </svg>`;
+    }
+
+    // 3. Inheritance Flow - REDESIGNED
+    function getInheritanceSVG() {
+        return `
+        <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
+            <!-- Background Lines -->
+            <path d="M 125 60 L 125 100" stroke="#3b82f6" stroke-width="2" />
+            <path d="M 375 60 L 375 100" stroke="#ec4899" stroke-width="2" />
+
+            <!-- PARENTS -->
+            <rect x="75" y="10" width="100" height="50" rx="10" fill="#1e1b4b" stroke="#3b82f6" stroke-width="2" />
+            <text x="125" y="30" fill="#3b82f6" text-anchor="middle" font-weight="bold" font-size="12">FATHER</text>
+            <text x="125" y="48" fill="white" text-anchor="middle" font-weight="bold" font-size="16">XY</text>
+
+            <rect x="325" y="10" width="100" height="50" rx="10" fill="#3f1226" stroke="#ec4899" stroke-width="2" />
+            <text x="375" y="30" fill="#ec4899" text-anchor="middle" font-weight="bold" font-size="12">MOTHER</text>
+            <text x="375" y="48" fill="white" text-anchor="middle" font-weight="bold" font-size="16">XX</text>
+
+            <!-- GAMETES LEVEL -->
+            <text x="250" y="90" fill="gray" text-anchor="middle" font-size="10" letter-spacing="2">GAMETES</text>
+            
+            <!-- Father Branching -->
+            <path d="M 125 100 L 75 140" stroke="#3b82f6" stroke-width="2" />
+            <path d="M 125 100 L 175 140" stroke="#3b82f6" stroke-width="2" />
+            
+            <!-- Sperm X -->
+            <circle cx="75" cy="160" r="20" fill="#1e1b4b" stroke="#3b82f6" stroke-width="2"/>
+            <text x="75" y="165" fill="white" text-anchor="middle" font-weight="bold">X</text>
+            <text x="75" y="130" fill="#3b82f6" text-anchor="middle" font-size="10">Sperm</text>
+
+            <!-- Sperm Y -->
+            <circle cx="175" cy="160" r="15" fill="#1e1b4b" stroke="#3b82f6" stroke-width="2"/>
+            <text x="175" y="165" fill="white" text-anchor="middle" font-weight="bold">Y</text>
+            <text x="175" y="130" fill="#3b82f6" text-anchor="middle" font-size="10">Sperm</text>
+
+            <!-- Mother Branching (Simplified to one path for clarity or double for balance) -->
+            <!-- Showing double for balance to match Punnett square logic -->
+            <path d="M 375 100 L 325 140" stroke="#ec4899" stroke-width="2" opacity="0.5"/>
+            <path d="M 375 100 L 425 140" stroke="#ec4899" stroke-width="2" opacity="0.5"/>
+            
+            <!-- Egg X 1 -->
+            <circle cx="325" cy="160" r="20" fill="#3f1226" stroke="#ec4899" stroke-width="2"/>
+            <text x="325" y="165" fill="white" text-anchor="middle" font-weight="bold">X</text>
+            <text x="325" y="130" fill="#ec4899" text-anchor="middle" font-size="10">Egg</text>
+             <!-- Egg X 2 -->
+            <circle cx="425" cy="160" r="20" fill="#3f1226" stroke="#ec4899" stroke-width="2"/>
+            <text x="425" y="165" fill="white" text-anchor="middle" font-weight="bold">X</text>
+            <text x="425" y="130" fill="#ec4899" text-anchor="middle" font-size="10">Egg</text>
+
+
+            <!-- FERTILISATION LINES -->
+            <!-- Sperm X + Egg X -->
+            <path d="M 75 180 C 75 220, 325 220, 150 260" stroke="#ffffff" stroke-width="1" stroke-dasharray="4,4" opacity="0.6" fill="none"/>
+            <path d="M 325 180 C 325 220, 150 220, 150 260" stroke="#ffffff" stroke-width="1" stroke-dasharray="4,4" opacity="0.6" fill="none"/>
+
+            <!-- Sperm Y + Egg X -->
+            <path d="M 175 180 C 175 220, 425 220, 350 260" stroke="#ffffff" stroke-width="1" stroke-dasharray="4,4" opacity="0.6" fill="none"/>
+            <path d="M 425 180 C 425 220, 350 220, 350 260" stroke="#ffffff" stroke-width="1" stroke-dasharray="4,4" opacity="0.6" fill="none"/>
+
+            <!-- OFFSPRING -->
+            <text x="250" y="230" fill="gray" text-anchor="middle" font-size="10" letter-spacing="2">OFFSPRING</text>
+
+            <g transform="translate(150, 280)">
+                <circle cx="0" cy="0" r="30" fill="#ec4899" opacity="0.2" stroke="#ec4899" stroke-width="2"/>
+                <text x="0" y="5" fill="white" text-anchor="middle" font-weight="bold" font-size="16">XX</text>
+                <text x="0" y="45" fill="white" text-anchor="middle" font-size="14" font-weight="bold">GIRL</text>
+            </g>
+
+            <g transform="translate(350, 280)">
+                <circle cx="0" cy="0" r="30" fill="#3b82f6" opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                <text x="0" y="5" fill="white" text-anchor="middle" font-weight="bold" font-size="16">XY</text>
+                <text x="0" y="45" fill="white" text-anchor="middle" font-size="14" font-weight="bold">BOY</text>
+            </g>
+        </svg>`;
+    }
+
+    // --- SLIDE DATA ---
+    state.slides = [
+        {
+            // 1. Title & Objectives
+            render: () => `
+                <div class="text-center fade-in">
+                    <i class="fa-solid fa-dna" style="font-size: 5rem; color: var(--primary); margin-bottom: 1.5rem; filter: drop-shadow(0 0 15px var(--primary)); animation: float 6s ease-in-out infinite;"></i>
+                    <h1>Genes & Inheritance</h1>
+                    <p style="font-size: 1.2rem; color: var(--text-muted); margin-top: 1rem; opacity: 0.8;">Cambridge Year 9 Science</p>
+                    
+                    <div class="card slide-up" style="max-width: 800px; margin: 3rem auto; border-left: 5px solid var(--primary); text-align: left;">
+                        <h3 style="color: var(--primary); margin-bottom: 1.5rem;">🎯 Learning Objectives</h3>
+                        <ul style="list-style: none; display: grid; gap: 1rem;">
+                            <li style="display: flex; align-items: start; gap: 1rem;">
+                                <div style="background:var(--primary); color:black; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">1</div>
+                                <span><strong>Define</strong> the relationship between Chromosomes, DNA, and Genes.</span>
+                            </li>
+                            <li style="display: flex; align-items: start; gap: 1rem;">
+                                <div style="background:var(--secondary); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">2</div>
+                                <span><strong>Compare</strong> male (sperm) and female (egg) gametes.</span>
+                            </li>
+                            <li style="display: flex; align-items: start; gap: 1rem;">
+                                <div style="background:var(--accent); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">3</div>
+                                <span><strong>Explain</strong> how fertilisation determines if a baby is a boy or girl.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 2. The Genetic Blueprint (Text)
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2 class="text-primary">I. The Genetic Blueprint</h2>
+                        
+                        <!-- Explicit Note Taking Box -->
+                        <div class="note-box-write">
+                            <div style="margin-bottom: 1.5rem;">
+                                <strong style="color:white; display:block; margin-bottom:0.2rem;">Nucleus</strong>
+                                <span style="color:var(--text-muted);">The control center. Contains <strong>46 Chromosomes</strong>.</span>
+                            </div>
+                            <div style="margin-bottom: 1.5rem;">
+                                <strong style="color:white; display:block; margin-bottom:0.2rem;">DNA</strong>
+                                <span style="color:var(--text-muted);">Chemical shaped like a <strong>Double Helix</strong> (twisted ladder). Makes up chromosomes.</span>
+                            </div>
+                            <div>
+                                <strong style="color:white; display:block; margin-bottom:0.2rem;">Gene</strong>
+                                <span style="color:var(--text-muted);">A short section of DNA that controls <strong>one</strong> characteristic (e.g., Eye Color).</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="slide-up">
+                        <!-- Explicit Draw Box -->
+                        <div class="draw-box">
+                            <p style="text-align:center; margin-bottom:1rem; font-weight:bold;">Visual Hierarchy</p>
+                            ${getCellZoomSVG()}
+                            <p style="text-align:center; font-size: 0.9rem; margin-top:1rem; opacity:0.8;">Cell &rarr; Nucleus &rarr; Chromosome &rarr; DNA &rarr; Gene</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 3. DNA Structure Detail
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Zoom In: DNA</h2>
+                    <p style="max-width: 600px; margin: 0 auto 2rem auto;">DNA stands for <strong>Deoxyribonucleic Acid</strong>. It was discovered in the 1950s.</p>
+                    
+                    <div class="grid-2 slide-up">
+                        <div class="card">
+                            <h3 class="text-primary">Fun Facts</h3>
+                            <ul style="text-align:left; gap:1rem; display:grid;">
+                                <li><i class="fa-solid fa-ruler-horizontal" style="color:var(--accent);"></i> If you uncoiled the DNA in one cell, it would be <strong>2 meters</strong> long!</li>
+                                <li><i class="fa-solid fa-fingerprint" style="color:var(--secondary);"></i> 99.9% of your DNA is exactly the same as every other human.</li>
+                                <li><i class="fa-solid fa-seedling" style="color:var(--primary);"></i> A mango tree has 40 chromosomes. A fruit fly has 8.</li>
+                            </ul>
+                        </div>
+                         <div class="img-card" style="background:transparent; border:none;">
+                            <!-- CSS DNA Animation representation -->
+                            <div style="position: relative; width: 100px; height: 300px; margin: 0 auto;">
+                                <div style="position: absolute; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--primary), var(--accent)); left: 30px; border-radius: 2px;"></div>
+                                <div style="position: absolute; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--accent), var(--primary)); right: 30px; border-radius: 2px;"></div>
+                                ${Array.from({length: 10}).map((_, i) => `
+                                    <div style="position: absolute; top: ${10 + i * 10}%; left: 34px; width: 32px; height: 2px; background: rgba(255,255,255,0.5); animation: pulse 2s infinite ${i * 0.1}s;"></div>
+                                `).join('')}
+                            </div>
+                            <p>The "Double Helix"</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 4. Gametes Comparison
+            render: () => `
+                <div class="fade-in">
+                    <h2 class="text-center">II. Gametes (Sex Cells)</h2>
+                    <p class="text-center" style="margin-bottom:2rem;">Normal cells have 46 chromosomes. Gametes have only <strong>23</strong>.</p>
+                    
+                    <div class="draw-box slide-up" style="margin-bottom: 2rem;">
+                         ${getGameteSVG()}
+                    </div>
+
+                    <div class="grid-2 slide-up">
+                        <div class="note-box-write" style="border-color: var(--accent);">
+                            <h3 class="term-male"><i class="fa-solid fa-mars"></i> Sperm (Male)</h3>
+                            <ul>
+                                <li><strong>Tiny:</strong> The smallest cell in the human body.</li>
+                                <li><strong>Mobile:</strong> Has a tail to swim to the egg.</li>
+                                <li>Carries 23 chromosomes (X or Y).</li>
+                            </ul>
+                        </div>
+                        <div class="note-box-write" style="border-color: var(--secondary);">
+                            <h3 class="term-female"><i class="fa-solid fa-venus"></i> Egg (Female)</h3>
+                            <ul>
+                                <li><strong>Huge:</strong> The largest cell. Visible as a dot.</li>
+                                <li><strong>Stationary:</strong> Does not move on its own.</li>
+                                <li>Carries 23 chromosomes (Only X).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 5. Mid-Lesson Brain Break / Quiz
+            render: () => `
+                <div class="fade-in text-center" style="max-width: 600px; margin: 0 auto;">
+                    <span class="brand-pill" style="background: var(--amber); color: black;">Brain Break</span>
+                    <h2 style="margin-top: 1rem;">Myth vs. Fact</h2>
+                    <p>Click the correct answer!</p>
+
+                    <div class="slide-up" style="margin-top: 2rem; text-align: left;">
+                        <!-- Q1 -->
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <p style="font-weight:bold; margin-bottom: 0.5rem;">1. All living things have 46 chromosomes.</p>
+                            <div class="quiz-option" onclick="checkQuiz(this, false)">Fact</div>
+                            <div class="quiz-option" onclick="checkQuiz(this, true)">Myth (Fruit flies have 8!)</div>
+                        </div>
+
+                        <!-- Q2 -->
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <p style="font-weight:bold; margin-bottom: 0.5rem;">2. A gene is bigger than a chromosome.</p>
+                            <div class="quiz-option" onclick="checkQuiz(this, false)">Fact</div>
+                            <div class="quiz-option" onclick="checkQuiz(this, true)">Myth (Genes are part of DNA, DNA is part of Chromosomes)</div>
+                        </div>
+                        
+                         <!-- Q3 -->
+                        <div class="card">
+                            <p style="font-weight:bold; margin-bottom: 0.5rem;">3. Sperm cells are the smallest cells in the male body.</p>
+                            <div class="quiz-option" onclick="checkQuiz(this, true)">Fact</div>
+                            <div class="quiz-option" onclick="checkQuiz(this, false)">Myth</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 6. Fertilisation
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2>Fertilisation</h2>
+                        <div class="note-box-write">
+                            <p style="font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center;">
+                                <span class="term-male">23</span> + 
+                                <span class="term-female">23</span> = 
+                                <span class="term">46</span>
+                            </p>
+                            <p><strong>Fertilisation:</strong> The moment the nucleus of the sperm joins the nucleus of the egg.</p>
+                            <br>
+                            <p><strong>Zygote:</strong> The new single cell formed, now with a full set of 46 chromosomes.</p>
+                        </div>
+                    </div>
+                    <div class="slide-up">
+                         <div class="img-card">
+                            <i class="fa-solid fa-certificate" style="font-size: 8rem; color: var(--text-main); opacity: 0.1; position: absolute;"></i>
+                            <div style="position: relative;">
+                                <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--secondary); display:flex; align-items:center; justify-content:center; box-shadow: 0 0 20px var(--secondary);">
+                                    23
+                                </div>
+                                <div style="position: absolute; top: 0; left: -60px; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); display:flex; align-items:center; justify-content:center; box-shadow: 0 0 10px var(--accent);">
+                                    23
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-center" style="margin-top:1rem;">Restoring the full set.</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 7. Sex Determination
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>III. Boy or Girl?</h2>
+                    <p>It depends on the <strong>Father</strong>.</p>
+                    
+                    <div class="draw-box slide-up" style="max-width: 800px; margin: 2rem auto;">
+                        ${getInheritanceSVG()}
+                    </div>
+                    
+                    <div class="grid-2 slide-up" style="max-width: 900px; margin: 0 auto; gap: 1rem;">
+                        <div style="text-align: left;">
+                            <strong class="term-female">Mothers (XX)</strong>
+                            <p>Only have X chromosomes to give.</p>
+                        </div>
+                        <div style="text-align: left;">
+                            <strong class="term-male">Fathers (XY)</strong>
+                            <p>Can give an X <strong>OR</strong> a Y.</p>
+                            <p style="font-size: 0.9rem; margin-top: 0.5rem; color: var(--amber);">*The Y chromosome is much smaller.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 8. Interactive Glossary
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill">Review</span>
+                    <h2 style="margin-top:1rem;">Interactive Glossary</h2>
+                    <p>Read the definition. <strong>Guess</strong> the word. Then click to check and write it down.</p>
+                    
+                    <div class="grid-3 slide-up" style="margin-top: 2rem;">
+                        ${createFlipCard('Found in the nucleus. Humans have 46.', 'Chromosome', 'Thread of DNA')}
+                        ${createFlipCard('Controls one specific trait (e.g., eye color).', 'Gene', 'Section of DNA')}
+                        ${createFlipCard('Sperm or Egg. Has only 23 chromosomes.', 'Gamete', 'Sex Cell')}
+                        ${createFlipCard('The first cell of a new life (46 chromo).', 'Zygote', 'Fertilised Egg')}
+                        ${createFlipCard('When sperm nucleus and egg nucleus join.', 'Fertilisation', 'Fusion')}
+                        ${createFlipCard('Passing genetic info from parents to offspring.', 'Inheritance', 'Heredity')}
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 9. Summary & Homework
+            render: () => `
+                <div class="fade-in">
+                    <h2 class="text-center">Review & Reflect</h2>
+                    
+                    <div class="grid-3 slide-up" style="gap: 1.5rem;">
+                        <!-- Objective 1 -->
+                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
+                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                                <strong style="color: var(--primary); text-transform: uppercase; font-size: 0.8rem;">Obj 1: Structure</strong>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <p><strong>Chromosomes</strong> are made of <strong>DNA</strong>. <strong>Genes</strong> are sections of DNA instructions.</p>
+                            </div>
+                        </div>
+
+                        <!-- Objective 2 -->
+                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
+                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                                <strong style="color: var(--secondary); text-transform: uppercase; font-size: 0.8rem;">Obj 2: Gametes</strong>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <p>Sperm are tiny/mobile. Eggs are huge/stationary. Both have only <strong>23</strong> chromosomes.</p>
+                            </div>
+                        </div>
+
+                        <!-- Objective 3 -->
+                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
+                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                                <strong style="color: var(--accent); text-transform: uppercase; font-size: 0.8rem;">Obj 3: Sex</strong>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <p>Sperm decides! <br>X Sperm = Girl (XX) <br>Y Sperm = Boy (XY)</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center slide-up" style="margin-top: 3rem;">
+                        <div class="note-pill">📚 Homework</div>
+                        <div style="background: rgba(255,255,255,0.05); border: 2px solid white; border-radius: 12px; padding: 1.5rem; max-width: 600px; margin: 1rem auto;">
+                            <p style="font-size: 1.2rem; margin-bottom: 1rem;">Complete homework questions <strong>7.1 and 7.2</strong>.</p>
+                            <p><i class="fa-brands fa-google"></i> Send to <strong>Mr. Bowen</strong> by Google.</p>
+                            <p style="font-size: 0.9rem; color: var(--amber); margin-top: 0.5rem; font-weight: bold;">Due: Monday</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- HELPER FUNCTION: CREATE FLIP CARD ---
+    function createFlipCard(definition, term, extra) {
+        return `
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <i class="fa-solid fa-circle-question" style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-muted); opacity: 0.5;"></i>
+                        <p style="font-size: 1.1rem; color: white;">"${definition}"</p>
+                        <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 1rem; color: var(--primary);">Tap to Reveal Term</p>
+                    </div>
+                    <div class="flip-back">
+                        <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.5rem;">${term}</h3>
+                        <p style="color: var(--amber);">${extra}</p>
+                        <p style="font-size: 0.8rem; margin-top:1rem; opacity:0.8;"><i class="fa-solid fa-pen"></i> Write this down</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- QUIZ LOGIC ---
+    window.checkQuiz = function(element, isCorrect) {
+        if(isCorrect) {
+            element.classList.add('correct');
+            element.innerHTML += ' <i class="fa-solid fa-check"></i>';
+        } else {
+            element.classList.add('incorrect');
+            element.innerHTML += ' <i class="fa-solid fa-xmark"></i>';
+        }
+        element.onclick = null; // Disable further clicks
+    }
+
+    // --- CORE APP LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        
+        // Update UI Elements
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+
+</script>
+</body>
+</html>
