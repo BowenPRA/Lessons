@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7.2 Chế độ ăn Cân bằng - Khoa học Lớp 8</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Organic Fresh Theme */
+            --bg-deep: #022c22; /* Deep organic green */       
+            --bg-card: #064e3b; /* Rich Forest Green */       
+            --bg-card-hover: #065f46; 
+            
+            --primary: #84cc16;   /* Lime Green - Vitamins/Fibre */
+            --secondary: #f97316; /* Orange - Energy/Carbs */
+            --accent: #3b82f6;    /* Blue - Protein/Dairy */
+            --danger: #ef4444;    /* Red - Sugar/Fats */
+            --amber: #f59e0b;     /* Warning/Notes */
+            --white: #ffffff;
+
+            /* Typography */
+            --text-main: #ffffff;        
+            --text-muted: #d1fae5;      
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 5vw, 5rem);
+            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
+            --fs-h3: clamp(1.2rem, 2vw, 2rem);
+            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            /* Fresh Background Effect */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(132, 204, 22, 0.1), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(249, 115, 22, 0.1), transparent 40%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 20px);
+            color: var(--text-main);
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(2, 44, 34, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #022c22;
+            box-shadow: 0 0 15px rgba(132, 204, 22, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(2, 44, 34, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(132, 204, 22, 0.6);
+            color: #022c22;
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 8px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            transition: width 0.4s ease;
+        }
+
+        /* INSTRUCTION PILLS & BOXES */
+        .note-pill {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.15);
+            border: 2px solid var(--amber);
+            color: var(--amber);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .note-box-write {
+            background: rgba(245, 158, 11, 0.1);
+            border: 2px solid var(--amber);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .note-box-write::before {
+            content: '✍️ Ghi chép lại';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--bg-card);
+            color: var(--amber);
+            padding: 0 10px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            border-radius: 5px;
+        }
+
+        .draw-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            position: relative;
+        }
+        .draw-box::before {
+            content: '🎨 Vẽ sơ đồ này';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--bg-card);
+            color: var(--text-muted);
+            padding: 0 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        /* TYPOGRAPHY */
+        .text-center { text-align: center; }
+        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(132, 204, 22, 0.5); }
+        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
+        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
+        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; font-weight: 500; }
+        strong { color: white; font-weight: 800; }
+        
+        .term-g { color: var(--primary); font-weight: 800; }
+        .term-o { color: var(--secondary); font-weight: 800; }
+        .term-b { color: var(--accent); font-weight: 800; }
+        .term-r { color: var(--danger); font-weight: 800; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 3rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+        /* CARDS */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+        
+        .img-card {
+            background: transparent;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 300px;
+        }
+
+        /* FLIP CARDS */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 250px;
+            perspective: 1000px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        
+        .flip-front { background: rgba(255,255,255,0.05); }
+        .flip-front:hover { background: rgba(255,255,255,0.1); border-color: var(--secondary); }
+        
+        .flip-back { 
+            background: linear-gradient(135deg, var(--bg-card), #042f2e); 
+            transform: rotateY(180deg); 
+            border: 2px solid var(--primary);
+        }
+
+        /* SPEECH BUBBLE STYLE FOR FLIP CARDS */
+        .bubble-front {
+            position: relative;
+            background: white;
+            color: #022c22;
+            border-radius: 20px;
+            padding: 1.5rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+        }
+        .bubble-front:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border: 15px solid transparent;
+            border-top-color: white;
+            border-bottom: 0;
+            border-left: 0;
+            margin-left: -7.5px;
+            margin-bottom: -15px;
+        }
+
+        /* CHART STYLES (Improved Robustness) */
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 300px;
+            padding-bottom: 40px;
+            border-bottom: 2px solid white;
+            border-left: 2px solid white;
+            position: relative;
+            margin-top: 2rem;
+        }
+        .chart-bar-group {
+            display: block; 
+            width: 12%;
+            height: 100%;
+            position: relative;
+        }
+        .chart-bar {
+            width: 100%;
+            background: linear-gradient(to top, var(--secondary), #fb923c);
+            border-radius: 4px 4px 0 0;
+            transition: height 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 0;
+        }
+        .chart-label {
+            position: absolute;
+            bottom: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            text-align: center;
+            color: var(--text-muted);
+            width: 150%;
+            line-height: 1.2;
+        }
+        .y-axis-label {
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            transform: rotate(-90deg) translateY(-50%);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .mystery-bar {
+            cursor: pointer;
+            background: linear-gradient(to top, #6366f1, #818cf8);
+        }
+        .mystery-bar::after {
+            content: '?';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .mystery-bar.revealed::after { content: ''; }
+
+        /* ANIMATIONS */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+        .pulse-slow { animation: float 6s ease-in-out infinite; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Khoa học Lớp 8</div>
+            <span style="font-weight: 700; color: var(--text-muted); font-size: 0.9rem;">7.2 Chế độ ăn Cân bằng</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--primary);">
+            Thứ Năm, 29/01/2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Content Injected via JS -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Trang trước">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Trang sau">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    const state = {
+        currentSlide: 0,
+        slides: []
+    };
+
+    // --- SVG HELPERS ---
+
+    // 1. Food Pyramid SVG (Detailed Cambridge Style with Emojis)
+    function getFoodPyramidSVG() {
+        return `
+        <svg viewBox="0 0 550 480" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); font-family: 'Outfit', sans-serif;">
+            
+            <!-- LEVEL 1: CARBOHYDRATES (Base) -->
+            <path d="M 50 420 L 500 420 L 450 320 L 100 320 Z" fill="#f97316" stroke="white" stroke-width="2" />
+            <text x="275" y="405" fill="#2d1b06" font-weight="800" text-anchor="middle" font-size="16">CARBONHYDRATE (TINH BỘT)</text>
+            <!-- Emojis -->
+            <text x="140" y="370" font-size="40" text-anchor="middle">🍞</text>
+            <text x="220" y="370" font-size="40" text-anchor="middle">🍚</text>
+            <text x="330" y="370" font-size="40" text-anchor="middle">🍝</text>
+            <text x="410" y="370" font-size="40" text-anchor="middle">🥣</text>
+            
+            <!-- White box for readability -->
+            <rect x="180" y="330" width="190" height="18" rx="5" fill="white" opacity="0.9" />
+            <text x="275" y="343" fill="#2d1b06" font-size="11" font-weight="bold" text-anchor="middle">Tinh bột & Chất xơ (Ăn nhiều)</text>
+
+            <!-- LEVEL 2: FRUIT & VEG -->
+            <path d="M 100 320 L 450 320 L 400 220 L 150 220 Z" fill="#84cc16" stroke="white" stroke-width="2" />
+            <text x="275" y="305" fill="#14532d" font-weight="800" text-anchor="middle" font-size="16">TRÁI CÂY & RAU CỦ</text>
+            <!-- Emojis -->
+            <text x="180" y="270" font-size="35" text-anchor="middle">🥦</text>
+            <text x="235" y="270" font-size="35" text-anchor="middle">🥕</text>
+            <text x="315" y="270" font-size="35" text-anchor="middle">🍎</text>
+            <text x="370" y="270" font-size="35" text-anchor="middle">🍌</text>
+            
+            <rect x="200" y="235" width="150" height="18" rx="5" fill="white" opacity="0.9" />
+            <text x="275" y="248" fill="#14532d" font-size="11" font-weight="bold" text-anchor="middle">Vitamin & Khoáng chất</text>
+
+            <!-- LEVEL 3: SPLIT ROW (Dairy & Protein) -->
+            <!-- Left Side: DAIRY -->
+            <path d="M 150 220 L 275 220 L 275 120 L 200 120 Z" fill="#60a5fa" stroke="white" stroke-width="2" />
+            <!-- Right Side: PROTEIN -->
+            <path d="M 275 220 L 400 220 L 350 120 L 275 120 Z" fill="#3b82f6" stroke="white" stroke-width="2" />
+            
+            <!-- Separator Line -->
+            <line x1="275" y1="220" x2="275" y2="120" stroke="white" stroke-width="3" />
+
+            <!-- Dairy Emojis (Left) -->
+            <text x="220" y="205" fill="#1e3a8a" font-weight="800" text-anchor="middle" font-size="12">SỮA</text>
+            <text x="230" y="170" font-size="30" text-anchor="middle">🥛</text>
+            <text x="250" y="150" font-size="30" text-anchor="middle">🧀</text>
+
+            <!-- Protein Emojis (Right) -->
+            <text x="330" y="205" fill="#1e3a8a" font-weight="800" text-anchor="middle" font-size="12">THỊT/CÁ</text>
+            <text x="320" y="170" font-size="30" text-anchor="middle">🍗</text>
+            <text x="300" y="150" font-size="30" text-anchor="middle">🥚</text>
+            <text x="350" y="150" font-size="30" text-anchor="middle">🐟</text>
+
+            <!-- LEVEL 4: FATS & SUGARS (Top) -->
+            <path d="M 200 120 L 350 120 L 275 20 Z" fill="#ef4444" stroke="white" stroke-width="2" />
+            <text x="275" y="45" fill="#450a0a" font-weight="800" text-anchor="middle" font-size="12">CHẤT BÉO/ĐƯỜNG</text>
+            <text x="260" y="90" font-size="25" text-anchor="middle">🍫</text>
+            <text x="290" y="90" font-size="25" text-anchor="middle">🍬</text>
+            <text x="275" y="70" font-size="22" text-anchor="middle">🍟</text>
+            
+            <rect x="230" y="100" width="90" height="15" rx="5" fill="white" opacity="0.9" />
+            <text x="275" y="112" fill="#ef4444" font-size="10" font-weight="bold" text-anchor="middle">Ăn rất ít</text>
+        </svg>
+        `;
+    }
+
+    // --- SLIDE DATA ---
+    state.slides = [
+        {
+            // 1. Title
+            render: () => `
+                <div class="text-center fade-in">
+                    <i class="fa-solid fa-carrot" style="font-size: 5rem; color: var(--secondary); margin-bottom: 1.5rem; filter: drop-shadow(0 0 15px var(--secondary)); animation: float 6s ease-in-out infinite;"></i>
+                    <i class="fa-solid fa-apple-whole" style="font-size: 5rem; color: var(--primary); margin-bottom: 1.5rem; margin-left: 1rem; filter: drop-shadow(0 0 15px var(--primary)); animation: float 6s ease-in-out infinite 1s;"></i>
+                    <h1>7.2 Chế độ ăn Cân bằng</h1>
+                    <p style="font-size: 1.2rem; color: var(--text-muted); margin-top: 1rem; opacity: 0.8;">Khoa học Lớp 8 Cambridge</p>
+                    
+                    <div class="card slide-up" style="max-width: 800px; margin: 3rem auto; border-left: 5px solid var(--primary); text-align: left;">
+                        <h3 style="color: var(--primary); margin-bottom: 1.5rem;">🎯 Mục tiêu bài học</h3>
+                        <ul style="list-style: none; display: grid; gap: 1rem;">
+                            <li style="display: flex; align-items: start; gap: 1rem;">
+                                <div style="background:var(--primary); color:#022c22; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">1</div>
+                                <span><strong>Định nghĩa</strong> thế nào là 'chế độ ăn cân bằng'.</span>
+                            </li>
+                            <li style="display: flex; align-items: start; gap: 1rem;">
+                                <div style="background:var(--secondary); color:#022c22; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">2</div>
+                                <span><strong>Xác định</strong> các chất dinh dưỡng cần ăn mỗi ngày (và chất nào cần hạn chế).</span>
+                            </li>
+                            <li style="display: flex; align-items: start; gap: 1rem;">
+                                <div style="background:var(--accent); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">3</div>
+                                <span><strong>Giải thích</strong> tại sao những người khác nhau (như vận động viên hoặc trẻ em) cần lượng năng lượng khác nhau.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 2. What is a Balanced Diet?
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2 class="text-primary">Chế độ ăn Cân bằng là gì?</h2>
+                        <div class="note-box-write">
+                            <div style="margin-bottom: 1.5rem;">
+                                <strong style="color:white; display:block; margin-bottom:0.2rem;">Chế độ ăn (Diet)</strong>
+                                <span style="color:var(--text-muted);">Thức ăn bạn tiêu thụ mỗi ngày.</span>
+                            </div>
+                            <div>
+                                <strong style="color:white; display:block; margin-bottom:0.2rem;">Chế độ ăn Cân bằng</strong>
+                                <span style="color:var(--text-muted);">Chế độ ăn cung cấp đủ các loại chất dinh dưỡng và <strong>lượng năng lượng phù hợp</strong>.</span>
+                            </div>
+                        </div>
+                        <p>Cơ thể bạn cần nhiên liệu. Hầu hết năng lượng này đến từ <span class="term-o">Carbonhydrate (Tinh bột)</span> và <span class="term-o">Chất béo</span>.</p>
+                    </div>
+                    <div class="slide-up">
+                        <div class="img-card" style="border: 2px solid var(--primary);">
+                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Balanced Food Bowl" style="width:100%; height:100%; object-fit:cover; opacity: 0.9;">
+                            <div style="position: absolute; bottom: 10px; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 8px; font-size: 0.8rem;">
+                                Hỗn hợp lành mạnh: Đạm, Rau củ, Tinh bột
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 3. Energy Needs (Chart Activity)
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2>Chúng ta cần bao nhiêu năng lượng?</h2>
+                    <p style="max-width: 800px; margin: 0 auto 1rem auto;">Năng lượng được đo bằng <strong>Megajoules (MJ)</strong>. 1 MJ = 1 triệu joules.</p>
+                    <p style="margin-bottom: 2rem;">Tại sao nhu cầu lại khác nhau? <span class="term-o">Hoạt động</span>, <span class="term-g">Sự phát triển</span>, và <span class="term-b">Kích thước</span>.</p>
+                    
+                    <div class="card slide-up" style="max-width: 900px; margin: 0 auto;">
+                        <div class="chart-container">
+                            <div class="y-axis-label">Năng lượng (MJ) mỗi ngày</div>
+                            
+                            <!-- Baby -->
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height: 20%;"></div>
+                                <div class="chart-label">Em bé<br>(3 tháng)</div>
+                            </div>
+
+                            <!-- Child -->
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height: 60%;"></div>
+                                <div class="chart-label">Trẻ em<br>(8 tuổi)</div>
+                            </div>
+
+                            <!-- Girl 15 -->
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height: 75%; background: linear-gradient(to top, var(--accent), #60a5fa);"></div>
+                                <div class="chart-label">Nữ<br>(15 tuổi)</div>
+                            </div>
+
+                            <!-- Boy 15 -->
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height: 85%; background: linear-gradient(to top, var(--accent), #60a5fa);"></div>
+                                <div class="chart-label">Nam<br>(15 tuổi)</div>
+                            </div>
+
+                            <!-- Woman -->
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height: 70%; opacity: 0.8;"></div>
+                                <div class="chart-label">Phụ nữ<br>(50 tuổi)</div>
+                            </div>
+
+                             <!-- Man -->
+                            <div class="chart-bar-group">
+                                <div class="chart-bar" style="height: 80%; opacity: 0.8;"></div>
+                                <div class="chart-label">Đàn ông<br>(50 tuổi)</div>
+                            </div>
+
+                            <!-- MYSTERY BAR -->
+                            <div class="chart-bar-group" onclick="revealMystery(this)">
+                                <div class="chart-bar mystery-bar" style="height: 98%;"></div>
+                                <div class="chart-label" id="mystery-label" style="font-weight:bold; color: var(--text-main); cursor: pointer;">???<br>(Nhấn vào tôi)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2 slide-up" style="margin-top: 2rem; font-size: 0.9rem; text-align: left; gap: 1rem;">
+                        <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                            <strong>👶 Lớn nhanh:</strong> Trẻ em cần nhiều protein và năng lượng để tạo tế bào mới.
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                            <strong>🏃 Lối sống năng động:</strong> Vận động viên cần lượng năng lượng khổng lồ để vận động cơ bắp.
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 4. Food Pyramid (Updated)
+            render: () => `
+                <div class="grid-2 fade-in">
+                    <div>
+                        <h2 class="text-primary">Tháp Dinh dưỡng</h2>
+                        <p>Chia nhóm thực phẩm giúp ta dễ nhớ. Khu vực trong tam giác càng lớn, bạn càng nên ăn nhiều loại thực phẩm đó.</p>
+                        
+                        <div class="note-box-write" style="margin-top: 1.5rem; border-color: var(--primary);">
+                            <ul style="padding-left: 1.5rem; color: var(--text-muted); gap: 0.8rem; display: flex; flex-direction: column;">
+                                <li><strong>Đáy (Lớn nhất):</strong> Carbonhydrate (Năng lượng). <br><em>VD: Cơm, Bánh mì, Mì ống.</em></li>
+                                <li><strong>Giữa:</strong> 
+                                    <ul>
+                                        <li>Trái cây & Rau (Vitamin)</li>
+                                        <li>Protein & Sữa (Tăng trưởng)</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Đỉnh (Nhỏ nhất):</strong> Chất béo & Đường. <br><em style="color:var(--danger)">Ăn rất ít!</em></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="draw-box slide-up">
+                         ${getFoodPyramidSVG()}
+                         <p style="text-align:center; font-size:0.9rem; margin-top:1rem; opacity:0.8;">Vẽ phác thảo hình tam giác này.</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 5. The Great Debate (New Slide)
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: var(--amber); color: black;">Tư duy Phản biện</span>
+                    <h2 style="margin-top: 1rem;">Cuộc tranh luận lớn về thực phẩm</h2>
+                    
+                    <div class="grid-2 slide-up" style="align-items: start; margin-top: 2rem;">
+                        <!-- Text Side -->
+                        <div style="text-align: left;">
+                            <div class="note-box-write" style="background: rgba(16, 185, 129, 0.1); border-color: var(--primary);">
+                                <strong>Đối với bài thi:</strong> Sử dụng Tháp dinh dưỡng ở slide trước. Đó là tiêu chuẩn Cambridge.
+                            </div>
+                            
+                            <h3 style="color: var(--secondary);">Tại sao nó gây tranh cãi?</h3>
+                            <ul style="list-style: none; gap: 1rem; display: grid;">
+                                <li style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                                    <strong style="color:var(--accent);"><i class="fa-solid fa-flag-usa"></i> Nguồn gốc:</strong> 
+                                    Tháp được tạo ra bởi <strong>Bộ Nông nghiệp Hoa Kỳ</strong>. Các nhà phê bình cho rằng nhóm "Sữa" tồn tại chủ yếu do ngành công nghiệp sữa vận động hành lang!
+                                </li>
+                                <li style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                                    <strong style="color:var(--primary);"><i class="fa-solid fa-plate-wheat"></i> Mô hình tốt hơn:</strong> 
+                                    Đại học Harvard đề xuất <strong>"Đĩa ăn lành mạnh"</strong> (chủ yếu là Rau & Protein, ít Sữa/Carbonhydrate hơn) là tốt hơn về mặt khoa học.
+                                </li>
+                                <li style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                                    <strong style="color:var(--danger);"><i class="fa-solid fa-newspaper"></i> Tin tức tháng 1/2026:</strong> 
+                                    Hoa Kỳ gần đây đã quyết định lật ngược kim tự tháp <strong>lộn ngược</strong> để nhấn mạnh việc hạn chế thực phẩm chế biến sẵn trước tiên!
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Visual Side -->
+                        <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                            <!-- Pyramid Icon -->
+                            <div style="margin-bottom: 2rem; opacity: 0.5;">
+                                <i class="fa-solid fa-play" style="transform: rotate(-90deg); font-size: 3rem; color: var(--secondary);"></i>
+                                <p style="font-size: 0.8rem;">Cổ điển</p>
+                            </div>
+                            
+                            <i class="fa-solid fa-arrow-down" style="color: white; margin-bottom: 2rem;"></i>
+
+                            <!-- Plate Icon -->
+                            <div style="margin-bottom: 2rem;">
+                                <i class="fa-solid fa-circle-notch" style="font-size: 5rem; color: var(--primary);"></i>
+                                <p style="font-size: 0.8rem;">Cái Đĩa (Hiện đại)</p>
+                            </div>
+
+                            <i class="fa-solid fa-arrow-down" style="color: white; margin-bottom: 2rem;"></i>
+
+                            <!-- Inverted Icon -->
+                            <div>
+                                <i class="fa-solid fa-play" style="transform: rotate(90deg); font-size: 4rem; color: var(--danger);"></i>
+                                <p style="font-size: 0.8rem;">Đảo ngược (2026)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 6. Special Mention: Fibre
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2 class="text-secondary">Lưu ý đặc biệt: Chất xơ (Fibre)</h2>
+                    <p style="margin-bottom: 2rem;">Nó <strong>không</strong> phải là chất dinh dưỡng, nhưng rất cần thiết. <br><span style="font-size:0.8rem; opacity:0.7; color: var(--amber);">(Lưu ý: Tiếng Anh Mỹ viết là 'fiber')</span></p>
+
+                    <div class="grid-2 slide-up">
+                        <div class="card" style="border-top: 4px solid var(--secondary); text-align: left;">
+                            <h3 style="color: var(--secondary);">Tại sao chúng ta cần nó?</h3>
+                            <p>Chúng ta không thể tiêu hóa chất xơ. Nó đi qua toàn bộ hệ tiêu hóa.</p>
+                            <br>
+                            <p>Nó giúp ngăn ngừa <span class="term-r">Táo bón</span> (khi phân bị tắc bên trong).</p>
+                        </div>
+
+                        <div class="img-card" style="background: white; border: none;">
+                            <img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="High Fibre Food" style="width:100%; height:100%; object-fit: cover;">
+                            <div style="position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); color: white; padding: 10px;">
+                                Nguồn: Ngũ cốc, Hạt, Rau củ (Cellulose)
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="note-box-write" style="margin-top: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; text-align: left;">
+                        <strong>Chất xơ:</strong> Chất tìm thấy trong thành tế bào thực vật (cellulose) giúp thức ăn di chuyển qua ruột.
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 7. Not Too Much (Warnings)
+            render: () => `
+                <div class="fade-in text-center">
+                    <h2 class="term-r"><i class="fa-solid fa-triangle-exclamation"></i> Đừng ăn quá nhiều!</h2>
+                    <p>Một số chất dinh dưỡng có thể gây nguy hiểm nếu ăn quá nhiều.</p>
+                    
+                    <div class="grid-3 slide-up" style="margin-top: 3rem;">
+                        <div class="card" style="border-color: var(--danger);">
+                            <i class="fa-solid fa-cube" style="font-size: 3rem; color: white; margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--danger);">Quá nhiều Đường</h3>
+                            <p>Gây sâu răng.</p>
+                            <p>Tăng nguy cơ mắc bệnh <strong>Tiểu đường</strong>.</p>
+                        </div>
+                        
+                        <div class="card" style="border-color: var(--danger);">
+                            <i class="fa-solid fa-bacon" style="font-size: 3rem; color: var(--secondary); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--danger);">Chất béo động vật</h3>
+                            <p>Có thể làm tăng nguy cơ mắc <strong>Bệnh tim</strong>.</p>
+                        </div>
+
+                        <div class="card" style="border-color: var(--danger);">
+                            <i class="fa-solid fa-weight-scale" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--danger);">Ăn quá mức</h3>
+                            <p>Quá nhiều chất béo/dầu/đường dẫn đến tăng cân.</p>
+                            <p>Gây áp lực lên tim và khớp.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 8. Activity: Advice Match
+            render: () => `
+                <div class="fade-in text-center">
+                    <span class="brand-pill" style="background: white; color: black;">Hoạt động 7.2.1</span>
+                    <h2 style="margin-top: 1rem;">Lời khuyên có tốt không?</h2>
+                    <p>Đọc lời khuyên trên thẻ. <strong>Lật thẻ</strong> để xem lý do khoa học.</p>
+
+                    <div class="grid-3 slide-up" style="margin-top: 2rem;">
+                        <!-- Match 1 -->
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                    <div class="bubble-front">
+                                        "Hãy ăn nhiều trái cây và rau tươi."
+                                    </div>
+                                    <i class="fa-solid fa-user-graduate" style="margin-top: 1rem; color: var(--primary); font-size: 2rem;"></i>
+                                </div>
+                                <div class="flip-back">
+                                    <strong style="color: var(--primary); font-size: 1.1rem;">Lý do:</strong>
+                                    <p>Chúng chứa <strong>chất xơ</strong> và rất nhiều <strong>vitamin</strong>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Match 2 -->
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                     <div class="bubble-front">
+                                        "Hãy ăn đa dạng các loại thực phẩm từ tháp dinh dưỡng."
+                                    </div>
+                                    <i class="fa-solid fa-user-graduate" style="margin-top: 1rem; color: var(--secondary); font-size: 2rem;"></i>
+                                </div>
+                                <div class="flip-back">
+                                    <strong style="color: var(--secondary); font-size: 1.1rem;">Lý do:</strong>
+                                    <p>Điều này đảm bảo bạn nhận được <strong>một chút của mỗi loại</strong> chất dinh dưỡng.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                         <!-- Match 3 -->
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                     <div class="bubble-front">
+                                        "Đừng ăn quá nhiều đồ ăn nhanh."
+                                    </div>
+                                    <i class="fa-solid fa-user-graduate" style="margin-top: 1rem; color: var(--danger); font-size: 2rem;"></i>
+                                </div>
+                                <div class="flip-back">
+                                    <strong style="color: var(--danger); font-size: 1.1rem;">Lý do:</strong>
+                                    <p>Đồ ăn nhanh chứa nhiều <strong>chất béo</strong> từ động vật và rất ít vitamin.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                         <!-- Match 4 -->
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                     <div class="bubble-front">
+                                        "Hãy chắc chắn rằng bạn ăn đủ thức ăn để giữ sức khỏe."
+                                    </div>
+                                    <i class="fa-solid fa-user-graduate" style="margin-top: 1rem; color: var(--accent); font-size: 2rem;"></i>
+                                </div>
+                                <div class="flip-back">
+                                    <strong style="color: var(--accent); font-size: 1.1rem;">Lý do:</strong>
+                                    <p>Không ăn đủ sẽ khiến các tế bào không có đủ <strong>năng lượng</strong> để duy trì sự khỏe mạnh.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                         <!-- Match 5 -->
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner">
+                                <div class="flip-front">
+                                     <div class="bubble-front">
+                                        "Đừng ăn quá nhiều chất béo và đường."
+                                    </div>
+                                    <i class="fa-solid fa-user-graduate" style="margin-top: 1rem; color: var(--amber); font-size: 2rem;"></i>
+                                </div>
+                                <div class="flip-back">
+                                    <strong style="color: var(--amber); font-size: 1.1rem;">Lý do:</strong>
+                                    <p>Nó có thể làm tăng nguy cơ mắc <strong>bệnh tim</strong> khi bạn lớn tuổi.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 9. Interactive Glossary
+            render: () => `
+                 <div class="fade-in text-center">
+                    <span class="brand-pill">Ôn tập</span>
+                    <h2 style="margin-top:1rem;">Từ điển tương tác</h2>
+                    <p>Đọc gợi ý. <strong>Đoán</strong> từ vựng. Nhấn để xem đáp án.</p>
+                    
+                    <div class="grid-2 slide-up" style="margin-top: 2rem;">
+                        ${createFlipCard('Chế độ ăn Cân bằng', 'Chế độ ăn chứa đủ các chất dinh dưỡng + lượng năng lượng chính xác.')}
+                        ${createFlipCard('Chất xơ', 'Chất thực vật giúp thức ăn di chuyển qua ruột.')}
+                        ${createFlipCard('Táo bón', 'Tình trạng phân bị tắc trong ruột.')}
+                        ${createFlipCard('Năng lượng', 'Nhiên liệu cho cơ thể (đo bằng MJ). Nhu cầu thay đổi theo tuổi/hoạt động.')}
+                    </div>
+                </div>
+            `
+        },
+        {
+            // 10. Summary & Homework
+            render: () => `
+                <div class="fade-in">
+                    <h2 class="text-center">Ôn tập & Suy ngẫm</h2>
+                    
+                    <div class="grid-3 slide-up" style="gap: 1.5rem;">
+                        <!-- Objective 1 -->
+                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
+                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                                <strong style="color: var(--primary); text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 0.5rem;">Mục tiêu 1</strong>
+                                <p style="font-style: italic; color: white;">Định nghĩa thế nào là 'chế độ ăn cân bằng'.</p>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <strong style="color: var(--primary); display: block; margin-bottom: 0.5rem;">Tóm tắt:</strong>
+                                <p>Không chỉ là đồ ăn "tốt". Nghĩa là <strong>TẤT CẢ</strong> chất dinh dưỡng với lượng <strong>ĐÚNG</strong> cho nhu cầu năng lượng của bạn.</p>
+                            </div>
+                        </div>
+
+                        <!-- Objective 2 -->
+                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
+                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                                <strong style="color: var(--secondary); text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 0.5rem;">Mục tiêu 2</strong>
+                                <p style="font-style: italic; color: white;">Xác định các chất dinh dưỡng bạn nên ăn mỗi ngày.</p>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <strong style="color: var(--secondary); display: block; margin-bottom: 0.5rem;">Tóm tắt:</strong>
+                                <p>Carb để có năng lượng, Protein để tăng trưởng, Rau quả để khỏe mạnh. <br><span class="term-r">Tránh quá nhiều Đường & Béo!</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Objective 3 -->
+                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
+                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                                <strong style="color: var(--accent); text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 0.5rem;">Mục tiêu 3</strong>
+                                <p style="font-style: italic; color: white;">Giải thích tại sao những người khác nhau cần lượng năng lượng khác nhau.</p>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <strong style="color: var(--accent); display: block; margin-bottom: 0.5rem;">Tóm tắt:</strong>
+                                <p>Nhu cầu năng lượng phụ thuộc vào: <br>1. Mức độ hoạt động<br>2. Sự phát triển (Tuổi)<br>3. Kích thước cơ thể</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center slide-up" style="margin-top: 3rem;">
+                        <div class="note-pill">📚 Bài tập về nhà</div>
+                        <div style="background: rgba(255,255,255,0.05); border: 2px solid white; border-radius: 12px; padding: 1.5rem; max-width: 600px; margin: 1rem auto;">
+                            <p style="font-size: 1.2rem; margin-bottom: 1rem;">Hoàn thành các câu hỏi cho <strong>7.1 và 7.2</strong>.</p>
+                            <p><i class="fa-brands fa-google"></i> Gửi cho <strong>Thầy Bowen</strong> qua Gmail.</p>
+                            <p style="font-size: 0.9rem; color: var(--amber); margin-top: 0.5rem; font-weight: bold;">Hạn chót: Thứ Hai</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- HELPER FUNCTION: CREATE FLIP CARD ---
+    function createFlipCard(term, definition) {
+        return `
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                         <i class="fa-solid fa-circle-question" style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-muted); opacity: 0.5;"></i>
+                         <p style="color: white; font-size: 1.1rem; font-weight: 500;">"${definition}"</p>
+                         <p style="color: var(--primary); font-size: 0.8rem; margin-top: 1rem;">Nhấn để xem đáp án</p>
+                    </div>
+                    <div class="flip-back">
+                        <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.8rem;">${term}</h3>
+                        <div style="width: 50px; height: 2px; background: var(--amber); margin: 0.5rem auto;"></div>
+                        <p style="color: var(--text-muted); opacity: 0.9;">${definition}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function revealMystery(element) {
+        element.querySelector('.mystery-bar').classList.add('revealed');
+        document.getElementById('mystery-label').innerHTML = "Vận động viên<br>Bơi lội Olympic<br>(~20 MJ!)";
+        document.getElementById('mystery-label').style.color = "#6366f1";
+    }
+
+    // --- CORE APP LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        container.innerHTML = slide.render();
+        
+        // Update UI Elements
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+
+</script>
+</body>
+</html>
