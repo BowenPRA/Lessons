@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GED Civics: Separation of Powers (Expanded)</title>
+    <title>GED Civics: Separation of Powers (ESL Supported)</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -105,17 +105,14 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: start; /* Align top for longer content */
+            justify-content: start;
             padding: 2rem;
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
         }
 
-        /* For vertical centering on short slides */
-        .slide-center {
-            justify-content: center;
-        }
+        .slide-center { justify-content: center; }
 
         .footer {
             height: var(--footer-h);
@@ -171,7 +168,7 @@
             box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
         }
 
-        /* Glass Cards */
+        /* Cards */
         .card {
             background: var(--bg-card);
             border: 1px solid rgba(255,255,255,0.08);
@@ -182,7 +179,38 @@
             -webkit-backdrop-filter: blur(8px);
         }
 
-        /* --- CHART STYLES (Hierarchy Diagram) --- */
+        /* Instructions Box (Scaffolding) */
+        .instruction-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid var(--constitution-gold);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .instruction-icon {
+            color: var(--constitution-gold);
+            font-size: 1.5rem;
+            margin-top: 0.2rem;
+        }
+
+        .notebook-badge {
+            background: var(--constitution-gold);
+            color: var(--bg-deep);
+            font-weight: 800;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- HIERARCHY DIAGRAM STYLES --- */
         .chart-container {
             display: flex;
             flex-direction: column;
@@ -191,14 +219,14 @@
             position: relative;
         }
 
-        /* Top Node */
+        /* Root Node (Constitution) */
         .chart-root {
             position: relative;
             z-index: 2;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border: 2px solid var(--constitution-gold);
-            padding: 1.5rem 3rem;
+            padding: 1rem 3rem;
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 0 25px rgba(251, 191, 36, 0.15);
@@ -206,10 +234,10 @@
         .chart-root::after {
             content: '';
             position: absolute;
-            bottom: -3rem; /* Extends down to the crossbar */
+            bottom: -2.5rem;
             left: 50%;
             width: 2px;
-            height: 3rem;
+            height: 2.5rem;
             background: var(--constitution-gold);
             opacity: 0.6;
         }
@@ -220,31 +248,30 @@
             justify-content: space-between;
             width: 100%;
             position: relative;
-            padding-top: 2rem; /* Space for the vertical connector from root */
+            padding-top: 2rem;
         }
         
-        /* The Horizontal Crossbar */
+        /* Crossbar */
         .chart-branches::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 16%; /* Start at center of first child */
-            right: 16%; /* End at center of last child */
+            left: 16%;
+            right: 16%;
             height: 2px;
             background: var(--constitution-gold);
             opacity: 0.6;
         }
         
-        /* Vertical Connectors for Branches */
         .branch-node {
             flex: 1;
-            margin: 0 1rem;
+            margin: 0 0.8rem;
             position: relative;
         }
         .branch-node::before {
             content: '';
             position: absolute;
-            top: -2rem; /* Connect to crossbar */
+            top: -2rem;
             left: 50%;
             width: 2px;
             height: 2rem;
@@ -252,20 +279,19 @@
             opacity: 0.6;
         }
 
-        /* Branch Card Content */
+        /* Detailed Branch Card */
         .branch-card {
             background: var(--bg-card);
             border: 1px solid rgba(255,255,255,0.05);
             border-top: 4px solid var(--federal-blue);
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.2rem;
             text-align: center;
-            height: 100%;
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            transition: transform 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.8rem;
+            gap: 0.5rem;
         }
         .branch-card:hover {
             transform: translateY(-5px);
@@ -274,24 +300,55 @@
         }
         
         .branch-icon {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: rgba(15, 23, 42, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: var(--constitution-gold);
             border: 1px solid rgba(251, 191, 36, 0.2);
             margin-bottom: 0.5rem;
         }
 
-        /* --- DUAL COLUMN READING LAYOUT --- */
+        /* Sub-groups within Diagram */
+        .branch-sub {
+            width: 100%;
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px dashed rgba(255,255,255,0.1);
+        }
+        .sub-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            padding: 0.4rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        .sub-row {
+            display: flex;
+            gap: 0.4rem;
+        }
+        .sub-item {
+            flex: 1;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 6px;
+            padding: 0.3rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+
+        /* --- READING LAYOUT --- */
         .reading-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            gap: 5rem; /* Increased spacing */
             align-items: start;
         }
         .col-en {
@@ -301,10 +358,10 @@
         .col-en p { margin-bottom: 1.5rem; }
         
         .col-vn {
-            font-family: 'Times New Roman', serif; /* Visual distinction */
+            font-family: 'Times New Roman', serif;
             font-style: italic;
             color: var(--text-vn);
-            font-size: 1.15rem;
+            font-size: 1.15rem; /* Increased size */
             line-height: 1.8;
             border-left: 2px solid rgba(255,255,255,0.05);
             padding-left: 2rem;
@@ -326,72 +383,43 @@
             border-bottom-style: solid;
         }
 
-        /* Definition Dock (Bottom Slide-up) */
+        /* Definition Dock (Refined) */
         .def-dock {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: rgba(15, 23, 42, 0.95);
-            border-top: 1px solid var(--constitution-gold);
+            background: rgba(15, 23, 42, 0.98);
+            border-top: 2px solid var(--constitution-gold);
             padding: 1.5rem 2rem;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             transform: translateY(110%);
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 100;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .def-dock.active {
-            transform: translateY(0);
-        }
-        .def-content {
-            max-width: 900px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .def-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-        }
-
-        /* Vocab Slide Grid */
-        .vocab-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        .vocab-card {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-        .vocab-term {
-            color: var(--constitution-gold);
-            font-family: var(--font-heading);
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.2rem;
-        }
-        .vocab-vn {
-            color: var(--text-vn);
-            font-family: var(--font-ui);
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 0.8rem;
+        .def-dock.active { transform: translateY(0); }
+        .def-content { max-width: 900px; width: 100%; display: flex; flex-direction: column; gap: 0.8rem; }
+        
+        .def-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
             border-bottom: 1px solid rgba(255,255,255,0.1);
             padding-bottom: 0.5rem;
-            display: block;
+            margin-bottom: 0.5rem;
         }
 
-        /* Quiz Styles */
+        /* Vocab Grid */
+        .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .vocab-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; }
+        .vocab-term { color: var(--constitution-gold); font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.2rem; }
+        .vocab-vn { color: var(--text-vn); font-family: var(--font-ui); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; display: block; }
+
+        /* Quiz */
         .quiz-option {
             width: 100%;
             padding: 1.2rem;
@@ -409,27 +437,16 @@
             justify-content: space-between;
             align-items: center;
         }
-        .quiz-option:hover:not(:disabled) {
-            background: rgba(255,255,255,0.08);
-            border-color: var(--federal-blue);
-        }
-        .quiz-option.correct {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: #10b981;
-            color: white;
-        }
-        .quiz-option.incorrect {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: var(--liberty-red);
-            color: white;
-        }
+        .quiz-option:hover:not(:disabled) { background: rgba(255,255,255,0.08); border-color: var(--federal-blue); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: white; }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--liberty-red); color: white; }
         .explanation-box {
             background: rgba(59, 130, 246, 0.1);
             border-left: 3px solid var(--constitution-gold);
             padding: 1rem;
             margin-top: 1.5rem;
             border-radius: 0 8px 8px 0;
-            display: none; /* Hidden by default */
+            display: none;
             animation: fadeIn 0.5s ease;
         }
 
@@ -454,22 +471,13 @@
             .reading-layout { grid-template-columns: 1fr; gap: 2rem; }
             .col-vn { border-left: none; border-top: 1px solid rgba(255,255,255,0.1); padding-left: 0; padding-top: 1.5rem; }
             
-            /* Chart Mobile: Stack Vertical */
             .chart-branches { flex-direction: column; gap: 1.5rem; padding-top: 0; }
-            .chart-branches::before { display: none; } /* Hide crossbar */
+            .chart-branches::before { display: none; }
             
             .branch-node { margin: 0; width: 100%; }
-            /* Draw simple vertical line between nodes instead */
-            .branch-node::before {
-                top: -1.5rem;
-                height: 1.5rem;
-                left: 50%;
-            }
-            .chart-root { margin-bottom: 2rem; }
-            .chart-root::after { height: 2rem; bottom: -2rem; }
+            .branch-node::before { top: -1.5rem; height: 1.5rem; left: 50%; }
             
             .def-dock { padding: 1rem; }
-            .def-content h3 { font-size: 1.1rem; }
             .vocab-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -477,7 +485,6 @@
 <body>
 
 <div class="app-shell">
-    <!-- Header -->
     <header class="header">
         <div style="display: flex; align-items: center; gap: 1rem;">
             <div class="brand-pill">GED Civics</div>
@@ -488,26 +495,27 @@
         </div>
     </header>
 
-    <!-- Main Viewport -->
     <main class="viewport" id="viewport">
         <div id="slide-container" class="slide-wrapper" aria-live="polite">
             <!-- Content injected via JS -->
         </div>
-        <div style="height: 60px;"></div> <!-- Spacer for dock -->
+        <div style="height: 60px;"></div>
     </main>
     
-    <!-- Definition Dock (Hidden by default) -->
     <div id="def-dock" class="def-dock">
         <div class="def-content">
             <div class="def-header">
-                <h3 id="dock-term" style="color: var(--constitution-gold); font-size: 1.5rem; font-family: var(--font-heading);">Term</h3>
-                <span id="dock-vn" style="color: var(--federal-blue); font-weight: 700; font-family: var(--font-ui); background: rgba(59,130,246,0.1); padding: 0.2rem 0.8rem; border-radius: 4px; border: 1px solid rgba(59,130,246,0.3);">Translation</span>
+                <div>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Vocabulary</span>
+                    <h3 id="dock-term" style="color: var(--constitution-gold); font-size: 1.8rem; font-family: var(--font-heading); margin:0;">Term</h3>
+                </div>
+                <span id="dock-vn" style="color: white; font-weight: 700; font-family: var(--font-ui); background: var(--federal-blue); padding: 0.3rem 1rem; border-radius: 6px; box-shadow: 0 4px 10px rgba(59,130,246,0.3);">Translation</span>
             </div>
-            <p id="dock-def" style="color: white; font-size: 1.1rem; margin: 0;">Definition goes here.</p>
+            <p id="dock-def" style="color: white; font-size: 1.2rem; margin: 0; border-left: 3px solid var(--federal-blue); padding-left: 1rem;">Definition</p>
+            <p id="dock-vn-def" style="color: var(--text-vn); font-size: 1.1rem; margin: 0; font-style: italic; border-left: 3px solid transparent; padding-left: 1rem;">Vietnamese Definition</p>
         </div>
     </div>
 
-    <!-- Footer Nav -->
     <footer class="footer">
         <button class="btn-nav" id="btn-prev" aria-label="Previous Slide"><i class="fa-solid fa-arrow-left"></i></button>
         <div class="progress-container"><div class="progress-fill" id="progress-fill"></div></div>
@@ -517,71 +525,72 @@
 
 <script>
     // --- CONTENT CONFIGURATION ---
+    // Refactored for Simple English (CEFR A2/B1) and Bilingual support
     const glossary = {
         "tyranny": {
-            def: "Cruel and oppressive government rule (like a dictator with total power).",
+            def: "A government where one person has all the power and acts cruelly.",
             vn: "Sự chuyên chế / Bạo quyền",
-            vn_def: "Sự cai trị tàn bạo và áp bức của chính phủ."
+            vn_def: "Một chính phủ nơi một người nắm giữ mọi quyền lực và hành động tàn nhẫn."
         },
         "separation of powers": {
-            def: "The division of government into distinct branches to limit any one branch from having too much power.",
+            def: "Splitting the government into 3 separate branches so no one has too much power.",
             vn: "Tam quyền Phân lập",
-            vn_def: "Sự phân chia chính phủ thành các nhánh riêng biệt để hạn chế quyền lực."
+            vn_def: "Chia chính phủ thành 3 nhánh riêng biệt để không ai có quá nhiều quyền lực."
         },
         "checks and balances": {
-            def: "A system where each branch can limit (check) the power of the other branches.",
+            def: "A system where each branch can stop the others from making mistakes or abusing power.",
             vn: "Kiểm soát và Đối trọng",
-            vn_def: "Hệ thống mà mỗi nhánh có thể hạn chế quyền lực của các nhánh khác."
+            vn_def: "Hệ thống mà mỗi nhánh có thể ngăn chặn các nhánh khác mắc sai lầm hoặc lạm dụng quyền lực."
         },
         "veto": {
-            def: "The President's power to reject a law passed by Congress.",
+            def: "The President's power to say 'No' to a law passed by Congress.",
             vn: "Phủ quyết",
             vn_def: "Quyền của Tổng thống từ chối một đạo luật được Quốc hội thông qua."
         },
         "bicameral": {
-            def: "A legislature composed of two separate houses (Senate and House of Representatives).",
+            def: "Having two parts in the legislature (Senate and House).",
             vn: "Lưỡng viện",
-            vn_def: "Cơ quan lập pháp bao gồm hai viện riêng biệt."
+            vn_def: "Có hai phần trong cơ quan lập pháp (Thượng viện và Hạ viện)."
         },
         "impeach": {
-            def: "To formally charge a public official with misconduct in office.",
+            def: "To officially accuse a leader of a crime or bad behavior.",
             vn: "Luận tội",
-            vn_def: "Cáo buộc chính thức một quan chức về hành vi sai trái."
+            vn_def: "Chính thức cáo buộc một nhà lãnh đạo về tội ác hoặc hành vi xấu."
         },
         "ratify": {
-            def: "To give formal consent to a treaty or agreement, making it valid.",
+            def: "To officially approve a treaty or agreement.",
             vn: "Phê chuẩn",
             vn_def: "Chính thức chấp thuận một hiệp ước hoặc thỏa thuận."
         },
         "commander-in-chief": {
-            def: "The role of the President as supreme commander of the military.",
+            def: "The President's role as the head of the military.",
             vn: "Tổng tư lệnh",
-            vn_def: "Vai trò của Tổng thống là chỉ huy tối cao của quân đội."
+            vn_def: "Vai trò của Tổng thống là người đứng đầu quân đội."
         },
         "appointments": {
-            def: "The power to choose judges, cabinet members, and ambassadors (requires Senate approval).",
+            def: "The power to choose people for important jobs like judges.",
             vn: "Sự bổ nhiệm",
-            vn_def: "Quyền chọn thẩm phán và thành viên nội các (cần Thượng viện chấp thuận)."
+            vn_def: "Quyền chọn người cho các công việc quan trọng như thẩm phán."
         },
         "judicial review": {
-            def: "The power of the Supreme Court to declare laws unconstitutional.",
+            def: "The power of the Supreme Court to decide if a law follows the Constitution.",
             vn: "Tư pháp xem xét",
-            vn_def: "Quyền của Tòa án Tối cao tuyên bố luật là vi hiến."
+            vn_def: "Quyền của Tòa án Tối cao quyết định xem một luật có tuân theo Hiến pháp hay không."
         },
         "life tenure": {
-            def: "Holding a job for life (like Supreme Court Justices) to stay independent from politics.",
+            def: "Keeping a job for your whole life. Judges have this so they can be independent.",
             vn: "Nhiệm kỳ trọn đời",
-            vn_def: "Giữ chức vụ suốt đời để giữ độc lập khỏi chính trị."
+            vn_def: "Giữ một công việc suốt đời. Các thẩm phán có điều này để họ có thể độc lập."
         },
         "unconstitutional": {
-            def: "Not allowed by the Constitution; illegal.",
+            def: "Against the rules of the Constitution; illegal.",
             vn: "Vi hiến",
-            vn_def: "Không được phép theo Hiến pháp; bất hợp pháp."
+            vn_def: "Trái với các quy tắc của Hiến pháp; bất hợp pháp."
         }
     };
 
     const slides = [
-        // SLIDE 1: INTRO
+        // SLIDE 1: INTRO (Scaffolding Instructions Added)
         {
             render: () => `
                 <div class="slide-wrapper slide-center">
@@ -594,6 +603,15 @@
                             How the U.S. Constitution prevents tyranny through structure.
                         </p>
                         
+                        <!-- Scaffolding Instruction Box -->
+                        <div class="instruction-box slide-up">
+                            <i class="fa-solid fa-pen-to-square instruction-icon"></i>
+                            <div style="text-align: left;">
+                                <strong style="color: white; display: block; margin-bottom: 0.5rem; font-size: 1.1rem;">Instructions:</strong>
+                                <span style="color: var(--text-muted);">Read the passages carefully. When you see a <span class="text-gold">gold vocabulary word</span>, copy the word and its definition into your notebook.</span>
+                            </div>
+                        </div>
+
                         <div class="card slide-up" style="text-align: left; border-left: 4px solid var(--federal-blue);">
                             <h3 style="color: var(--federal-blue); text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; margin-bottom: 1rem;">Lesson Objectives</h3>
                             <ul style="list-style: none; padding: 0;">
@@ -613,13 +631,14 @@
             `
         },
 
-        // SLIDE 2: INTERACTIVE CHART (Hierarchy)
+        // SLIDE 2: EXPANDED HIERARCHY DIAGRAM
         {
             render: () => `
                 <div class="slide-wrapper slide-center">
                     <div class="fade-in" style="width: 100%;">
                         <div class="text-center" style="margin-bottom: 2rem;">
-                            <h2 style="margin-bottom: 0.5rem;">The Structure of Government</h2>
+                            <span class="notebook-badge"><i class="fa-solid fa-book-open"></i> Copy this chart</span>
+                            <h2 style="margin-bottom: 0.5rem; margin-top: 1rem;">The Structure of Government</h2>
                             <p>Visual Hierarchy Chart</p>
                         </div>
 
@@ -640,8 +659,15 @@
                                         <div>
                                             <h3 style="color: var(--federal-blue); margin: 0;">Legislative</h3>
                                             <div style="font-family: var(--font-ui); font-weight: 700; color: var(--text-vn); font-size: 0.9rem; margin-bottom: 0.5rem;">Nhánh Lập pháp</div>
-                                            <p style="font-size: 0.95rem; margin:0; color: white;">Makes Laws<br><span style="color: var(--text-vn); font-size: 0.85rem; font-style: italic;">(Làm luật)</span></p>
                                         </div>
+                                        <div class="branch-sub">
+                                            <div class="sub-box">Congress (Quốc hội)</div>
+                                            <div class="sub-row">
+                                                <div class="sub-item">Senate</div>
+                                                <div class="sub-item">House</div>
+                                            </div>
+                                        </div>
+                                        <p style="font-size: 0.8rem; margin:0; color: white; margin-top:0.5rem;">Makes Laws</p>
                                     </div>
                                 </div>
                                 
@@ -652,8 +678,15 @@
                                         <div>
                                             <h3 style="color: var(--federal-blue); margin: 0;">Executive</h3>
                                             <div style="font-family: var(--font-ui); font-weight: 700; color: var(--text-vn); font-size: 0.9rem; margin-bottom: 0.5rem;">Nhánh Hành pháp</div>
-                                            <p style="font-size: 0.95rem; margin:0; color: white;">Enforces Laws<br><span style="color: var(--text-vn); font-size: 0.85rem; font-style: italic;">(Thực thi luật)</span></p>
                                         </div>
+                                        <div class="branch-sub">
+                                            <div class="sub-box">President (Tổng thống)</div>
+                                            <div class="sub-row">
+                                                <div class="sub-item">Vice Pres.</div>
+                                                <div class="sub-item">Cabinet</div>
+                                            </div>
+                                        </div>
+                                        <p style="font-size: 0.8rem; margin:0; color: white; margin-top:0.5rem;">Enforces Laws</p>
                                     </div>
                                 </div>
 
@@ -664,8 +697,15 @@
                                         <div>
                                             <h3 style="color: var(--federal-blue); margin: 0;">Judicial</h3>
                                             <div style="font-family: var(--font-ui); font-weight: 700; color: var(--text-vn); font-size: 0.9rem; margin-bottom: 0.5rem;">Nhánh Tư pháp</div>
-                                            <p style="font-size: 0.95rem; margin:0; color: white;">Interprets Laws<br><span style="color: var(--text-vn); font-size: 0.85rem; font-style: italic;">(Giải thích luật)</span></p>
                                         </div>
+                                        <div class="branch-sub">
+                                            <div class="sub-box">Supreme Court</div>
+                                            <div class="sub-row">
+                                                <div class="sub-item">Appeals</div>
+                                                <div class="sub-item">District</div>
+                                            </div>
+                                        </div>
+                                        <p style="font-size: 0.8rem; margin:0; color: white; margin-top:0.5rem;">Interprets Laws</p>
                                     </div>
                                 </div>
                             </div>
@@ -982,6 +1022,7 @@
         document.getElementById('dock-term').innerText = term.replace(/\b\w/g, l => l.toUpperCase()); // Capitalize
         document.getElementById('dock-def').innerText = data.def;
         document.getElementById('dock-vn').innerText = data.vn;
+        document.getElementById('dock-vn-def').innerText = data.vn_def; // New: Vietnamese Definition
         dock.classList.add('active');
     }
 
