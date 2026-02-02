@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED Civics: Separation of Powers (Expanded)</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Federal Slate Theme */
+            --bg-deep: #0f172a;        /* Dark Slate Blue Background */
+            --bg-card: rgba(30, 41, 59, 0.7); /* Glassy Slate */
+            --bg-card-hover: rgba(51, 65, 85, 0.8);
+            
+            --federal-blue: #3b82f6;    /* Primary Action */
+            --federal-blue-dim: rgba(59, 130, 246, 0.2);
+            --liberty-red: #ef4444;     /* Emphasis/Alerts */
+            --constitution-gold: #fbbf24; /* Key Terms/Highlights */
+            
+            --text-main: #f8fafc;        
+            --text-muted: #cbd5e1;       
+            --text-vn: #94a3b8;         /* Specific color for Vietnamese text */
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2rem, 5vw, 4rem);
+            --fs-h2: clamp(1.5rem, 3vw, 2.5rem);
+            --fs-body: clamp(1rem, 1.2vw, 1.25rem);
+            
+            /* Font Families */
+            --font-heading: 'Libre Baskerville', serif; /* Academic/Legal feel */
+            --font-ui: 'Outfit', sans-serif;            /* UI Elements */
+            --font-body: 'Plus Jakarta Sans', sans-serif; /* Reading text */
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-body);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            /* Subtle texture overlay */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(251, 191, 36, 0.05), transparent 25%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e293b' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--federal-blue), #1d4ed8);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: var(--font-ui);
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: start; /* Align top for longer content */
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* For vertical centering on short slides */
+        .slide-center {
+            justify-content: center;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        /* --- COMPONENTS --- */
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--federal-blue);
+            border-color: var(--federal-blue);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            transform: scale(1.05);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; border-color: transparent; }
+
+        /* Progress Bar */
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--federal-blue), var(--constitution-gold));
+            transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        /* Glass Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* --- CHART STYLES (Hierarchy Diagram) --- */
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Top Node */
+        .chart-root {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 2px solid var(--constitution-gold);
+            padding: 1.5rem 3rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(251, 191, 36, 0.15);
+        }
+        .chart-root::after {
+            content: '';
+            position: absolute;
+            bottom: -3rem; /* Extends down to the crossbar */
+            left: 50%;
+            width: 2px;
+            height: 3rem;
+            background: var(--constitution-gold);
+            opacity: 0.6;
+        }
+
+        /* Branches Row */
+        .chart-branches {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+            padding-top: 2rem; /* Space for the vertical connector from root */
+        }
+        
+        /* The Horizontal Crossbar */
+        .chart-branches::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 16%; /* Start at center of first child */
+            right: 16%; /* End at center of last child */
+            height: 2px;
+            background: var(--constitution-gold);
+            opacity: 0.6;
+        }
+        
+        /* Vertical Connectors for Branches */
+        .branch-node {
+            flex: 1;
+            margin: 0 1rem;
+            position: relative;
+        }
+        .branch-node::before {
+            content: '';
+            position: absolute;
+            top: -2rem; /* Connect to crossbar */
+            left: 50%;
+            width: 2px;
+            height: 2rem;
+            background: var(--constitution-gold);
+            opacity: 0.6;
+        }
+
+        /* Branch Card Content */
+        .branch-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-top: 4px solid var(--federal-blue);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            height: 100%;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .branch-card:hover {
+            transform: translateY(-5px);
+            border-top-color: var(--constitution-gold);
+            background: var(--bg-card-hover);
+        }
+        
+        .branch-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--constitution-gold);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- DUAL COLUMN READING LAYOUT --- */
+        .reading-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+        .col-en {
+            font-size: 1.25rem;
+            line-height: 1.8;
+        }
+        .col-en p { margin-bottom: 1.5rem; }
+        
+        .col-vn {
+            font-family: 'Times New Roman', serif; /* Visual distinction */
+            font-style: italic;
+            color: var(--text-vn);
+            font-size: 1.15rem;
+            line-height: 1.8;
+            border-left: 2px solid rgba(255,255,255,0.05);
+            padding-left: 2rem;
+        }
+        .col-vn p { margin-bottom: 1.5rem; }
+
+        /* Interactive Keywords */
+        .keyword {
+            color: var(--constitution-gold);
+            font-weight: 700;
+            border-bottom: 2px dashed rgba(251, 191, 36, 0.4);
+            cursor: help;
+            transition: all 0.2s;
+            position: relative;
+            display: inline-block;
+        }
+        .keyword:hover, .keyword.active-touch {
+            background: rgba(251, 191, 36, 0.15);
+            border-bottom-style: solid;
+        }
+
+        /* Definition Dock (Bottom Slide-up) */
+        .def-dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid var(--constitution-gold);
+            padding: 1.5rem 2rem;
+            backdrop-filter: blur(15px);
+            transform: translateY(110%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .def-dock.active {
+            transform: translateY(0);
+        }
+        .def-content {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .def-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        /* Vocab Slide Grid */
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .vocab-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .vocab-term {
+            color: var(--constitution-gold);
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+        .vocab-vn {
+            color: var(--text-vn);
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Quiz Styles */
+        .quiz-option {
+            width: 100%;
+            padding: 1.2rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text-main);
+            text-align: left;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-family: var(--font-ui);
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .quiz-option:hover:not(:disabled) {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--federal-blue);
+        }
+        .quiz-option.correct {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            color: white;
+        }
+        .quiz-option.incorrect {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--liberty-red);
+            color: white;
+        }
+        .explanation-box {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid var(--constitution-gold);
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Typography & Utilities */
+        .text-center { text-align: center; }
+        .text-gold { color: var(--constitution-gold); }
+        .text-blue { color: var(--federal-blue); }
+        
+        h1 { font-family: var(--font-heading); font-size: var(--fs-h1); margin-bottom: 0.5rem; }
+        h2 { font-family: var(--font-heading); font-size: var(--fs-h2); color: white; margin-bottom: 1.5rem; }
+        h3 { font-family: var(--font-ui); font-size: 1.3rem; margin-bottom: 0.5rem; color: white; }
+        p { margin-bottom: 1rem; color: var(--text-muted); line-height: 1.6; }
+        
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+        .slide-up { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(20px); animation-delay: 0.2s; }
+        
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .reading-layout { grid-template-columns: 1fr; gap: 2rem; }
+            .col-vn { border-left: none; border-top: 1px solid rgba(255,255,255,0.1); padding-left: 0; padding-top: 1.5rem; }
+            
+            /* Chart Mobile: Stack Vertical */
+            .chart-branches { flex-direction: column; gap: 1.5rem; padding-top: 0; }
+            .chart-branches::before { display: none; } /* Hide crossbar */
+            
+            .branch-node { margin: 0; width: 100%; }
+            /* Draw simple vertical line between nodes instead */
+            .branch-node::before {
+                top: -1.5rem;
+                height: 1.5rem;
+                left: 50%;
+            }
+            .chart-root { margin-bottom: 2rem; }
+            .chart-root::after { height: 2rem; bottom: -2rem; }
+            
+            .def-dock { padding: 1rem; }
+            .def-content h3 { font-size: 1.1rem; }
+            .vocab-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <!-- Header -->
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">GED Civics</div>
+            <span style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem; font-family: var(--font-ui); display: none; margin-left: 0.5rem; @media(min-width:600px){display:inline;}">Separation of Powers</span>
+        </div>
+        <div style="color: var(--constitution-gold); font-size: 1.5rem;">
+            <i class="fa-solid fa-scale-balanced"></i>
+        </div>
+    </header>
+
+    <!-- Main Viewport -->
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Content injected via JS -->
+        </div>
+        <div style="height: 60px;"></div> <!-- Spacer for dock -->
+    </main>
+    
+    <!-- Definition Dock (Hidden by default) -->
+    <div id="def-dock" class="def-dock">
+        <div class="def-content">
+            <div class="def-header">
+                <h3 id="dock-term" style="color: var(--constitution-gold); font-size: 1.5rem; font-family: var(--font-heading);">Term</h3>
+                <span id="dock-vn" style="color: var(--federal-blue); font-weight: 700; font-family: var(--font-ui); background: rgba(59,130,246,0.1); padding: 0.2rem 0.8rem; border-radius: 4px; border: 1px solid rgba(59,130,246,0.3);">Translation</span>
+            </div>
+            <p id="dock-def" style="color: white; font-size: 1.1rem; margin: 0;">Definition goes here.</p>
+        </div>
+    </div>
+
+    <!-- Footer Nav -->
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="progress-container"><div class="progress-fill" id="progress-fill"></div></div>
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide"><i class="fa-solid fa-arrow-right"></i></button>
+    </footer>
+</div>
+
+<script>
+    // --- CONTENT CONFIGURATION ---
+    const glossary = {
+        "tyranny": {
+            def: "Cruel and oppressive government rule (like a dictator with total power).",
+            vn: "Sự chuyên chế / Bạo quyền",
+            vn_def: "Sự cai trị tàn bạo và áp bức của chính phủ."
+        },
+        "separation of powers": {
+            def: "The division of government into distinct branches to limit any one branch from having too much power.",
+            vn: "Tam quyền Phân lập",
+            vn_def: "Sự phân chia chính phủ thành các nhánh riêng biệt để hạn chế quyền lực."
+        },
+        "checks and balances": {
+            def: "A system where each branch can limit (check) the power of the other branches.",
+            vn: "Kiểm soát và Đối trọng",
+            vn_def: "Hệ thống mà mỗi nhánh có thể hạn chế quyền lực của các nhánh khác."
+        },
+        "veto": {
+            def: "The President's power to reject a law passed by Congress.",
+            vn: "Phủ quyết",
+            vn_def: "Quyền của Tổng thống từ chối một đạo luật được Quốc hội thông qua."
+        },
+        "bicameral": {
+            def: "A legislature composed of two separate houses (Senate and House of Representatives).",
+            vn: "Lưỡng viện",
+            vn_def: "Cơ quan lập pháp bao gồm hai viện riêng biệt."
+        },
+        "impeach": {
+            def: "To formally charge a public official with misconduct in office.",
+            vn: "Luận tội",
+            vn_def: "Cáo buộc chính thức một quan chức về hành vi sai trái."
+        },
+        "ratify": {
+            def: "To give formal consent to a treaty or agreement, making it valid.",
+            vn: "Phê chuẩn",
+            vn_def: "Chính thức chấp thuận một hiệp ước hoặc thỏa thuận."
+        },
+        "commander-in-chief": {
+            def: "The role of the President as supreme commander of the military.",
+            vn: "Tổng tư lệnh",
+            vn_def: "Vai trò của Tổng thống là chỉ huy tối cao của quân đội."
+        },
+        "appointments": {
+            def: "The power to choose judges, cabinet members, and ambassadors (requires Senate approval).",
+            vn: "Sự bổ nhiệm",
+            vn_def: "Quyền chọn thẩm phán và thành viên nội các (cần Thượng viện chấp thuận)."
+        },
+        "judicial review": {
+            def: "The power of the Supreme Court to declare laws unconstitutional.",
+            vn: "Tư pháp xem xét",
+            vn_def: "Quyền của Tòa án Tối cao tuyên bố luật là vi hiến."
+        },
+        "life tenure": {
+            def: "Holding a job for life (like Supreme Court Justices) to stay independent from politics.",
+            vn: "Nhiệm kỳ trọn đời",
+            vn_def: "Giữ chức vụ suốt đời để giữ độc lập khỏi chính trị."
+        },
+        "unconstitutional": {
+            def: "Not allowed by the Constitution; illegal.",
+            vn: "Vi hiến",
+            vn_def: "Không được phép theo Hiến pháp; bất hợp pháp."
+        }
+    };
+
+    const slides = [
+        // SLIDE 1: INTRO
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="text-center fade-in" style="max-width: 800px; margin: 0 auto;">
+                        <div style="font-size: 5rem; color: var(--constitution-gold); margin-bottom: 2rem; filter: drop-shadow(0 0 40px rgba(251,191,36,0.3));">
+                            <i class="fa-solid fa-landmark"></i>
+                        </div>
+                        <h1>Separation of Powers</h1>
+                        <p style="font-size: 1.4rem; color: var(--text-muted); margin-bottom: 3rem; font-family: var(--font-ui);">
+                            How the U.S. Constitution prevents tyranny through structure.
+                        </p>
+                        
+                        <div class="card slide-up" style="text-align: left; border-left: 4px solid var(--federal-blue);">
+                            <h3 style="color: var(--federal-blue); text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; margin-bottom: 1rem;">Lesson Objectives</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="margin-bottom: 0.8rem; display: flex; align-items: center; font-size: 1.1rem;">
+                                    <i class="fa-solid fa-check-circle text-gold" style="margin-right: 12px;"></i> Identify the 3 Branches of Government.
+                                </li>
+                                <li style="margin-bottom: 0.8rem; display: flex; align-items: center; font-size: 1.1rem;">
+                                    <i class="fa-solid fa-check-circle text-gold" style="margin-right: 12px;"></i> Understand the function of each branch.
+                                </li>
+                                <li style="margin-bottom: 0; display: flex; align-items: center; font-size: 1.1rem;">
+                                    <i class="fa-solid fa-check-circle text-gold" style="margin-right: 12px;"></i> Master key bilingual vocabulary.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: INTERACTIVE CHART (Hierarchy)
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="width: 100%;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                            <h2 style="margin-bottom: 0.5rem;">The Structure of Government</h2>
+                            <p>Visual Hierarchy Chart</p>
+                        </div>
+
+                        <div class="chart-container slide-up">
+                            <!-- Level 1 -->
+                            <div class="chart-root">
+                                <i class="fa-solid fa-scroll text-gold" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                <h3 style="margin:0; font-family: var(--font-heading);">The Constitution</h3>
+                                <span style="font-size: 0.9rem; color: var(--text-muted);">Supreme Law of the Land</span>
+                            </div>
+
+                            <!-- Level 2 -->
+                            <div class="chart-branches">
+                                <!-- Branch 1 -->
+                                <div class="branch-node">
+                                    <div class="branch-card">
+                                        <div class="branch-icon"><i class="fa-solid fa-users-rectangle"></i></div>
+                                        <div>
+                                            <h3 style="color: var(--federal-blue); margin: 0;">Legislative</h3>
+                                            <div style="font-family: var(--font-ui); font-weight: 700; color: var(--text-vn); font-size: 0.9rem; margin-bottom: 0.5rem;">Nhánh Lập pháp</div>
+                                            <p style="font-size: 0.95rem; margin:0; color: white;">Makes Laws<br><span style="color: var(--text-vn); font-size: 0.85rem; font-style: italic;">(Làm luật)</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Branch 2 -->
+                                <div class="branch-node">
+                                    <div class="branch-card">
+                                        <div class="branch-icon"><i class="fa-solid fa-user-tie"></i></div>
+                                        <div>
+                                            <h3 style="color: var(--federal-blue); margin: 0;">Executive</h3>
+                                            <div style="font-family: var(--font-ui); font-weight: 700; color: var(--text-vn); font-size: 0.9rem; margin-bottom: 0.5rem;">Nhánh Hành pháp</div>
+                                            <p style="font-size: 0.95rem; margin:0; color: white;">Enforces Laws<br><span style="color: var(--text-vn); font-size: 0.85rem; font-style: italic;">(Thực thi luật)</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Branch 3 -->
+                                <div class="branch-node">
+                                    <div class="branch-card">
+                                        <div class="branch-icon"><i class="fa-solid fa-gavel"></i></div>
+                                        <div>
+                                            <h3 style="color: var(--federal-blue); margin: 0;">Judicial</h3>
+                                            <div style="font-family: var(--font-ui); font-weight: 700; color: var(--text-vn); font-size: 0.9rem; margin-bottom: 0.5rem;">Nhánh Tư pháp</div>
+                                            <p style="font-size: 0.95rem; margin:0; color: white;">Interprets Laws<br><span style="color: var(--text-vn); font-size: 0.85rem; font-style: italic;">(Giải thích luật)</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: READING (Separation of Powers - General)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--constitution-gold); color: #0f172a;">Core Concept</span>
+                             <h2 style="margin:0;">The Fear of Power</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>The U.S. Constitution was designed with a deep fear of <span class="keyword" data-term="tyranny">tyranny</span>. The founders did not want a king or any single group to have total control. To prevent this, they created the <span class="keyword" data-term="separation of powers">separation of powers</span>.</p>
+                                <p>This structure ensures that no branch is supreme. Instead, they must cooperate to govern. For example, Congress can pass a law, but the President can <span class="keyword" data-term="veto">veto</span> it. This friction is intentional.</p>
+                                <p>This interaction is called <span class="keyword" data-term="checks and balances">checks and balances</span>. It essentially means that ambition is used to counteract ambition, ensuring the government protects the rights of the people rather than abusing them.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Hiến pháp Hoa Kỳ được thiết kế với nỗi lo sợ sâu sắc về sự chuyên chế. Các nhà sáng lập không muốn có một vị vua hay bất kỳ nhóm đơn lẻ nào nắm toàn quyền kiểm soát. Để ngăn chặn điều này, họ đã tạo ra sự tam quyền phân lập.</p>
+                                <p>Cấu trúc này đảm bảo rằng không có nhánh nào là tối cao. Thay vào đó, họ phải hợp tác để cai trị. Ví dụ, Quốc hội có thể thông qua một đạo luật, nhưng Tổng thống có thể phủ quyết nó. Sự va chạm này là có chủ đích.</p>
+                                <p>Sự tương tác này được gọi là kiểm soát và đối trọng. Về cơ bản, điều này có nghĩa là tham vọng được sử dụng để chống lại tham vọng, đảm bảo chính phủ bảo vệ quyền của người dân thay vì lạm dụng chúng.</p>
+                            </div>
+                        </div>
+                        <div class="text-center" style="margin-top: 2rem; color: var(--constitution-gold); font-size: 0.9rem;">
+                            <i class="fa-solid fa-hand-pointer"></i> Tap the underlined words for definitions.
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: READING (Legislative)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-building-columns text-gold" style="font-size: 2rem;"></i>
+                             <h2 style="margin:0;">The Legislative Branch</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>The Legislative Branch is known as Congress. Its primary job is to write bills that become laws. Congress is <span class="keyword" data-term="bicameral">bicameral</span>, meaning it is split into two parts: the House of Representatives and the Senate. Both must agree on a law before it goes to the President.</p>
+                                <p>The <strong>House of Representatives</strong> is based on population size. Larger states get more representatives. The House has the specific power to introduce tax bills and to <span class="keyword" data-term="impeach">impeach</span> (accuse) federal officials of crimes.</p>
+                                <p>The <strong>Senate</strong> represents the states equally, with two Senators per state regardless of size. The Senate acts as the jury in impeachment trials and has the power to <span class="keyword" data-term="ratify">ratify</span> treaties and confirm appointments.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Nhánh Lập pháp được gọi là Quốc hội. Công việc chính của nó là soạn thảo các dự luật để trở thành luật. Quốc hội là cơ quan lưỡng viện, nghĩa là nó được chia thành hai phần: Hạ viện và Thượng viện. Cả hai phải đồng ý về một đạo luật trước khi nó được chuyển đến Tổng thống.</p>
+                                <p><strong>Hạ viện</strong> dựa trên quy mô dân số. Các bang lớn hơn có nhiều đại diện hơn. Hạ viện có quyền cụ thể để giới thiệu các dự luật thuế và luận tội (cáo buộc) các quan chức liên bang về tội ác.</p>
+                                <p><strong>Thượng viện</strong> đại diện cho các bang một cách bình đẳng, với hai Thượng nghị sĩ mỗi bang bất kể quy mô. Thượng viện đóng vai trò là bồi thẩm đoàn trong các phiên tòa luận tội và có quyền phê chuẩn các hiệp ước và xác nhận các bổ nhiệm.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: READING (Executive)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-user-tie text-gold" style="font-size: 2rem;"></i>
+                             <h2 style="margin:0;">The Executive Branch</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>The Executive Branch is led by the President and Vice President. Their job is to enforce the laws created by Congress. The President also serves as the <span class="keyword" data-term="commander-in-chief">Commander-in-Chief</span> of the armed forces, though only Congress can declare war.</p>
+                                <p>The President cannot run the country alone. They are helped by the "Cabinet," which is a group of advisors who lead departments like Defense, Education, and State. These departments carry out the daily work of the government.</p>
+                                <p>A major power of the Executive Branch is making <span class="keyword" data-term="appointments">appointments</span>. The President nominates judges and cabinet members, but the Senate must approve them. This is a key example of checks and balances.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Nhánh Hành pháp do Tổng thống và Phó Tổng thống lãnh đạo. Công việc của họ là thực thi các luật do Quốc hội tạo ra. Tổng thống cũng đóng vai trò là Tổng tư lệnh của các lực lượng vũ trang, mặc dù chỉ có Quốc hội mới có thể tuyên chiến.</p>
+                                <p>Tổng thống không thể điều hành đất nước một mình. Họ được giúp đỡ bởi "Nội các", là một nhóm các cố vấn lãnh đạo các bộ như Quốc phòng, Giáo dục và Ngoại giao. Các bộ này thực hiện công việc hàng ngày của chính phủ.</p>
+                                <p>Một quyền lực lớn của Nhánh Hành pháp là thực hiện các bổ nhiệm. Tổng thống đề cử các thẩm phán và thành viên nội các, nhưng Thượng viện phải chấp thuận họ. Đây là một ví dụ chính về kiểm soát và đối trọng.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: READING (Judicial)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-gavel text-gold" style="font-size: 2rem;"></i>
+                             <h2 style="margin:0;">The Judicial Branch</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>The Judicial Branch consists of the federal courts, with the Supreme Court at the top. Their job is to interpret the law. This means they decide exactly what a law means and how it applies to real situations.</p>
+                                <p>To ensure judges make fair decisions based on the law and not politics, federal judges are given <span class="keyword" data-term="life tenure">life tenure</span>. They keep their jobs until they die or retire, so they don't have to worry about winning elections.</p>
+                                <p>The most powerful tool of the courts is <span class="keyword" data-term="judicial review">judicial review</span>. This allows the Supreme Court to look at a law passed by Congress or an action by the President and declare it <span class="keyword" data-term="unconstitutional">unconstitutional</span> (illegal).</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Nhánh Tư pháp bao gồm các tòa án liên bang, với Tòa án Tối cao đứng đầu. Công việc của họ là giải thích luật. Điều này có nghĩa là họ quyết định chính xác một đạo luật có nghĩa là gì và nó áp dụng như thế nào vào các tình huống thực tế.</p>
+                                <p>Để đảm bảo các thẩm phán đưa ra các quyết định công bằng dựa trên luật pháp và không phải chính trị, các thẩm phán liên bang được trao nhiệm kỳ trọn đời. Họ giữ công việc của mình cho đến khi qua đời hoặc nghỉ hưu, vì vậy họ không phải lo lắng về việc chiến thắng trong các cuộc bầu cử.</p>
+                                <p>Công cụ mạnh nhất của các tòa án là tư pháp xem xét. Điều này cho phép Tòa án Tối cao xem xét một đạo luật do Quốc hội thông qua hoặc một hành động của Tổng thống và tuyên bố nó là vi hiến (bất hợp pháp).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: VOCAB GLOSSARY
+        {
+            render: () => {
+                let cards = '';
+                for (const [key, val] of Object.entries(glossary)) {
+                    // Capitalize key
+                    const title = key.replace(/\b\w/g, l => l.toUpperCase());
+                    cards += `
+                        <div class="vocab-card">
+                            <div class="vocab-term">${title}</div>
+                            <div class="vocab-vn">${val.vn}</div>
+                            <div style="margin-bottom:0.5rem; color:#fff;">${val.def}</div>
+                            <div style="color:var(--text-vn); font-style:italic; font-size:0.9rem;">${val.vn_def}</div>
+                        </div>
+                    `;
+                }
+                return `
+                    <div class="slide-wrapper">
+                        <div class="fade-in">
+                            <div class="text-center">
+                                <span class="brand-pill" style="background: var(--constitution-gold); color: #0f172a;">Review</span>
+                                <h2 style="margin-top: 1rem;">Vocabulary Glossary</h2>
+                            </div>
+                            <div class="vocab-grid slide-up">
+                                ${cards}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        },
+
+        // SLIDE 8: QUIZ
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 800px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Knowledge Check</h2>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- Q1 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 1 / 5</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">Which group acts as the "court" during an impeachment trial?</h3>
+                                <div id="q1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q1')">A. The Supreme Court</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q1')">B. The House of Representatives</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q1')">C. The Senate</button>
+                                </div>
+                                <div id="q1-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> The House accuses (impeaches), but the <strong>Senate</strong> acts as the jury to decide if the official is removed.
+                                </div>
+                            </div>
+
+                            <!-- Q2 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 2 / 5</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">What is "Judicial Review"?</h3>
+                                <div id="q2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q2')">A. The power to veto laws.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q2')">B. The power to declare laws unconstitutional.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q2')">C. The power to nominate judges.</button>
+                                </div>
+                                <div id="q2-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> Judicial Review allows the Supreme Court to cancel laws that violate the Constitution.
+                                </div>
+                            </div>
+
+                            <!-- Q3 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 3 / 5</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">Who has the power to declare war?</h3>
+                                <div id="q3-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q3')">A. Congress (Legislative)</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q3')">B. The President (Executive)</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q3')">C. The Supreme Court (Judicial)</button>
+                                </div>
+                                <div id="q3-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> While the President is Commander-in-Chief, the Constitution gives <strong>Congress</strong> the sole power to officially declare war.
+                                </div>
+                            </div>
+
+                            <!-- Q4 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 4 / 5</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">Why do federal judges have life tenure?</h3>
+                                <div id="q4-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q4')">A. To give them more power than the President.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q4')">B. To keep them independent from political pressure.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q4')">C. Because there are not enough lawyers.</button>
+                                </div>
+                                <div id="q4-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> Life tenure ensures judges don't have to worry about winning elections or pleasing politicians, allowing them to follow the law fairly.
+                                </div>
+                            </div>
+
+                            <!-- Q5 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 5 / 5</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">Which action is an example of the Executive Branch checking the Legislative Branch?</h3>
+                                <div id="q5-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q5')">A. Declaring a law unconstitutional.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q5')">B. Impeaching a judge.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q5')">C. Vetoing a bill.</button>
+                                </div>
+                                <div id="q5-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> The President (Executive) can <strong>veto</strong> a bill passed by Congress (Legislative), stopping it from becoming a law.
+                                </div>
+                            </div>
+                            
+                            <div class="text-center" style="margin-top: 3rem;">
+                                <button onclick="location.reload()" style="background: transparent; color: var(--text-muted); border: 1px solid var(--text-muted); padding: 0.8rem 2rem; border-radius: 50px; cursor: pointer; transition: all 0.2s;">
+                                    <i class="fa-solid fa-rotate-right"></i> Restart Lesson
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- LOGIC ---
+    let currentSlide = 0;
+    const slideContainer = document.getElementById('slide-container');
+    const progressBar = document.getElementById('progress-fill');
+    const btnNext = document.getElementById('btn-next');
+    const btnPrev = document.getElementById('btn-prev');
+    const dock = document.getElementById('def-dock');
+
+    function renderSlide() {
+        // Inject HTML
+        slideContainer.innerHTML = slides[currentSlide].render();
+        
+        // Update UI State
+        const progress = ((currentSlide + 1) / slides.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        
+        btnPrev.disabled = currentSlide === 0;
+        btnNext.disabled = currentSlide === slides.length - 1;
+
+        // Reset Scroll
+        document.getElementById('viewport').scrollTop = 0;
+
+        // Re-attach listeners for new content
+        attachKeywordListeners();
+    }
+
+    function changeSlide(direction) {
+        if (direction === 'next' && currentSlide < slides.length - 1) {
+            currentSlide++;
+        } else if (direction === 'prev' && currentSlide > 0) {
+            currentSlide--;
+        }
+        renderSlide();
+    }
+
+    // Keyword Logic
+    function attachKeywordListeners() {
+        const keywords = document.querySelectorAll('.keyword');
+        
+        keywords.forEach(el => {
+            const termKey = el.dataset.term.toLowerCase();
+            const data = glossary[termKey];
+
+            if (!data) return;
+
+            // Desktop: Mouse Enter/Leave
+            el.addEventListener('mouseenter', () => showDock(termKey, data));
+            el.addEventListener('mouseleave', hideDock);
+
+            // Mobile: Touch (Toggle)
+            el.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent body click from hiding
+                showDock(termKey, data);
+            });
+        });
+    }
+
+    function showDock(term, data) {
+        document.getElementById('dock-term').innerText = term.replace(/\b\w/g, l => l.toUpperCase()); // Capitalize
+        document.getElementById('dock-def').innerText = data.def;
+        document.getElementById('dock-vn').innerText = data.vn;
+        dock.classList.add('active');
+    }
+
+    function hideDock() {
+        dock.classList.remove('active');
+    }
+
+    // Quiz Logic
+    window.handleQuiz = function(btn, isCorrect, qId) {
+        const parent = document.getElementById(qId + '-opts');
+        const explainBox = document.getElementById(qId + '-explain');
+        const options = parent.querySelectorAll('.quiz-option');
+        
+        // Disable all siblings
+        options.forEach(opt => {
+            opt.disabled = true;
+            opt.style.cursor = 'default';
+            opt.style.opacity = '0.6';
+        });
+
+        // Highlight selected
+        btn.style.opacity = '1';
+        if (isCorrect) {
+            btn.classList.add('correct');
+            btn.innerHTML += ' <i class="fa-solid fa-check" style="float:right;"></i>';
+        } else {
+            btn.classList.add('incorrect');
+            btn.innerHTML += ' <i class="fa-solid fa-xmark" style="float:right;"></i>';
+        }
+
+        // Show Explanation
+        if(explainBox) {
+            explainBox.style.display = 'block';
+        }
+    };
+
+    // Global Listeners
+    btnNext.addEventListener('click', () => changeSlide('next'));
+    btnPrev.addEventListener('click', () => changeSlide('prev'));
+    
+    // Body click to close dock on mobile if open
+    document.body.addEventListener('click', () => {
+        if(dock.classList.contains('active')) hideDock();
+    });
+
+    // Keyboard Nav
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') changeSlide('next');
+        if(e.key === 'ArrowLeft') changeSlide('prev');
+    });
+
+    // Init
+    renderSlide();
+
+</script>
+</body>
+</html>
