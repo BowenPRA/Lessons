@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Balance Patcher v2.2 | PRA Studios</title>
+    <title>Balance Patcher v2.3 | PRA Studios</title>
     
     <!-- React Core -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -155,12 +155,18 @@
             else if (level === 2) namePool = TIER_2_ITEMS;
             else namePool = TIER_3_ITEMS;
 
+            // --- UNIQUE ITEMS FIX ---
+            // Shuffle the name pool and slice the first 4 to ensure unique names for this batch
+            const shuffledNames = [...namePool]
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 4);
+
             const brokenIndices = new Set();
             // Ensure exactly 2 items are broken per batch for consistency
             while(brokenIndices.size < 2) brokenIndices.add(Math.floor(Math.random() * 4));
 
             for (let i = 0; i < 4; i++) {
-                const name = namePool[Math.floor(Math.random() * namePool.length)];
+                const name = shuffledNames[i]; // Use our unique list
                 const needsPatch = brokenIndices.has(i);
                 
                 let base, expected, percent, isBuff;
@@ -168,19 +174,16 @@
                 // MATH DIFFICULTY CURVE (Based on GDD)
                 if (level === 1) {
                     // Level 1: Intern - Multiples of 10%
-                    // We generate base numbers that are clean multiples of 10 to ensure integer results
                     percent = [10, 20, 30, 40, 50][Math.floor(Math.random() * 5)];
                     base = Math.floor(Math.random() * 10 + 1) * 10; // 10, 20... 100
                 } 
                 else if (level === 2) {
                     // Level 2: Junior Dev - 5% and 25%
-                    // To ensure 5% (1/20) and 25% (1/4) are integers, Base must be multiple of 20
                     percent = [5, 25, 75][Math.floor(Math.random() * 3)];
                     base = Math.floor(Math.random() * 10 + 2) * 20; // 40, 60... 240
                 } 
                 else {
                     // Level 3+: Senior Dev - Chaos
-                    // Any 5% increment, larger bases
                     percent = (Math.floor(Math.random() * 10) + 1) * 5; // 5, 10... 50
                     base = Math.floor(Math.random() * 20 + 5) * 10;
                 }
@@ -190,7 +193,6 @@
                     const multiplier = isBuff ? (1 + percent/100) : (1 - percent/100);
                     
                     // We calculate expected. Since we controlled Base, this should be integer.
-                    // Math.round is a safety net for float precision (e.g. 1.0000001)
                     expected = Math.round(base * multiplier);
 
                     const action = isBuff ? "Buff" : "Nerf";
@@ -384,6 +386,15 @@
                 const v = e.target.value;
                 if (v === '' || /^-?\d*$/.test(v)) {
                     setVal(v);
+                    
+                    // --- AUTO SUBMIT LOGIC ---
+                    // Instant success if value matches expected on a broken item
+                    const num = parseInt(v, 10);
+                    if (!isNaN(num) && !item.isStable && num === item.expected) {
+                        setStatus("success");
+                        onSolve(item.id, true);
+                        if (inputRef.current) inputRef.current.blur();
+                    }
                 }
             };
 
@@ -476,6 +487,7 @@
                                 placeholder={item.isStable ? "STABLE" : "PATCH..."}
                                 autoComplete="off"
                             />
+                            {/* Retained submit button as a manual override/fallback */}
                             <button 
                                 type="submit" 
                                 className="bg-slate-800 text-slate-200 px-3 rounded hover:bg-pra-cyan hover:text-black transition-colors font-bold"
