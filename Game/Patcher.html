@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Balance Patcher v2.4 | PRA Studios</title>
+    <title>Balance Patcher v2.5 | PRA Studios</title>
     
     <!-- React Core -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -114,8 +114,8 @@
 
     <script type="text/babel">
         /**
-         * BALANCE PATCHER v2.4
-         * Updated: Added Unpaid Intern Level, adjusted difficulty curve, coffee logic
+         * BALANCE PATCHER v2.5
+         * Updated: New Level 2, Less harsh punishment (30s intervals), more time.
          */
 
         const { useState, useEffect, useRef, useMemo, useCallback } = React;
@@ -149,10 +149,10 @@
             const tasks = [];
             
             // Item Naming Pool based on Level
+            // Lvl 1-3 share basic items now
             let namePool;
-            // Level 1 and 2 share the "starter" items now
-            if (level <= 2) namePool = TIER_1_ITEMS;
-            else if (level === 3) namePool = TIER_2_ITEMS;
+            if (level <= 3) namePool = TIER_1_ITEMS;
+            else if (level === 4) namePool = TIER_2_ITEMS;
             else namePool = TIER_3_ITEMS;
 
             // --- UNIQUE ITEMS FIX ---
@@ -171,25 +171,30 @@
                 
                 let base, expected, percent, isBuff;
 
-                // MATH DIFFICULTY CURVE (UPDATED)
+                // MATH DIFFICULTY CURVE (UPDATED v2.5)
                 if (level === 1) {
-                    // NEW Level 1: Unpaid Intern - 10% or 50% only
+                    // Level 1: Unpaid Intern - 10% or 50% only
                     percent = [10, 50][Math.floor(Math.random() * 2)];
-                    base = Math.floor(Math.random() * 10 + 1) * 10; // 10, 20... 100
+                    base = Math.floor(Math.random() * 10 + 1) * 10; 
                 }
                 else if (level === 2) {
+                    // NEW Level 2: Probation - 20% or 25% (Intermediate)
+                    percent = [20, 25, 50][Math.floor(Math.random() * 3)];
+                    base = Math.floor(Math.random() * 10 + 1) * 20; 
+                }
+                else if (level === 3) {
                     // Old Level 1 (Intern) - Multiples of 10%
                     percent = [10, 20, 30, 40, 50][Math.floor(Math.random() * 5)];
-                    base = Math.floor(Math.random() * 10 + 1) * 10; // 10, 20... 100
+                    base = Math.floor(Math.random() * 10 + 1) * 10; 
                 } 
-                else if (level === 3) {
+                else if (level === 4) {
                     // Old Level 2 (Junior) - 5% and 25%
                     percent = [5, 25, 75][Math.floor(Math.random() * 3)];
-                    base = Math.floor(Math.random() * 10 + 2) * 20; // 40, 60... 240
+                    base = Math.floor(Math.random() * 10 + 2) * 20; 
                 } 
                 else {
                     // Old Level 3+ (Senior) - Chaos
-                    percent = (Math.floor(Math.random() * 10) + 1) * 5; // 5, 10... 50
+                    percent = (Math.floor(Math.random() * 10) + 1) * 5; 
                     base = Math.floor(Math.random() * 20 + 5) * 10;
                 }
 
@@ -253,7 +258,7 @@
                             <p>The AI model collapsed again. It's pushing garbage stats to production.</p>
                             <p>Manually patch the <span className="font-bold underline text-red-700">broken items</span>. And grab me a double shot espresso while you're at it.</p>
                             <p className="bg-red-100 p-2 border-l-4 border-red-600 text-sm font-bold mt-2">
-                                WARNING: Strict launch window. If timer hits zero, overtime fines come out of YOUR non-existent paycheck.
+                                WARNING: Strict launch window. If timer hits zero, overtime fines ($50/30s) come out of YOUR non-existent paycheck.
                             </p>
                         </div>
 
@@ -278,16 +283,18 @@
         const StickyNote = ({ tasks, level, rank }) => {
             const getFlavorText = () => {
                 if (level === 1) return "Welcome, unpaid intern. 50% or 10%. Don't spill the coffee.";
-                if (level === 2) return "Okay, you haven't crashed it. Here's the regular intern work.";
-                if (level === 3) return "Junior Dev just quit. You're up. My coffee is cold.";
-                if (level >= 4) return "Senior Dev work. Chaos mode. Need more caffeine.";
+                if (level === 2) return "You survived Level 1. Now try quarters and fifths. Keep up.";
+                if (level === 3) return "Okay, here's the regular intern work. Multiples of 10.";
+                if (level === 4) return "Junior Dev just quit. You're up. My coffee is cold.";
+                if (level >= 5) return "Senior Dev work. Chaos mode. Need more caffeine.";
                 return "Just fix them.";
             };
 
             const getRankTitle = () => {
                 if(level === 1) return "UNPAID_TRIAL";
-                if(level === 2) return "INTERN_SPRINT";
-                if(level === 3) return "JUNIOR_SPRINT";
+                if(level === 2) return "PROBATION";
+                if(level === 3) return "INTERN_SPRINT";
+                if(level === 4) return "JUNIOR_SPRINT";
                 return "SENIOR_SPRINT";
             }
 
@@ -329,7 +336,8 @@
 
         const HUD = ({ rank, level, time, money, goal }) => {
             const progress = Math.min((money/goal) * 100, 100);
-            const isOvertime = time <= 0;
+            const isOvertime = time < 0;
+            const displayTime = Math.abs(time);
             
             return (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6 bg-pra-panel p-4 rounded border border-pra-dim/30 backdrop-blur-sm relative overflow-hidden">
@@ -352,13 +360,15 @@
 
                     {/* Timer */}
                     <div className="col-span-1 md:col-span-1 flex flex-col items-start md:items-center justify-center z-10">
-                        <div className="text-[10px] text-pra-dim uppercase tracking-widest mb-1">Launch Window</div>
-                        <div className={`text-4xl font-black tracking-widest ${time <= 10 ? 'text-pra-danger animate-pulse' : 'text-white'}`}>
-                            {time.toString().padStart(2, '0')}s
+                        <div className="text-[10px] text-pra-dim uppercase tracking-widest mb-1">
+                            {isOvertime ? <span className="text-pra-danger animate-pulse">OVERTIME DURATION</span> : "Launch Window"}
+                        </div>
+                        <div className={`text-4xl font-black tracking-widest ${isOvertime ? 'text-pra-danger' : (time <= 10 ? 'text-pra-yellow animate-pulse' : 'text-white')}`}>
+                            {isOvertime && "-"}{displayTime.toString().padStart(2, '0')}s
                         </div>
                         {isOvertime && (
-                            <div className="text-[10px] font-bold text-pra-danger animate-bounce bg-pra-danger/10 px-2 py-1 rounded mt-1">
-                                ! PENALTY APPLIED !
+                            <div className="text-[10px] font-bold text-pra-danger bg-pra-danger/10 px-2 py-1 rounded mt-1">
+                                -$50 / 30s
                             </div>
                         )}
                     </div>
@@ -512,18 +522,18 @@
             const [gameState, setGameState] = useState("title"); 
             const [level, setLevel] = useState(1);
             const [money, setMoney] = useState(100);
-            const [time, setTime] = useState(80); // More generous time (was 60)
+            const [time, setTime] = useState(100); // Generous time (100s)
             const [data, setData] = useState(null); 
             
-            // Goals adjusted for the new easier Level 1
-            const LEVEL_GOALS = { 1: 400, 2: 1000, 3: 1800, 4: 3000, 5: 4500 };
+            // Goals adjusted for the new levels
+            const LEVEL_GOALS = { 1: 400, 2: 900, 3: 1600, 4: 2800, 5: 4500 };
             const goal = LEVEL_GOALS[level] || 99999;
 
             const rank = useMemo(() => {
                 if (money < 400) return "Unpaid Intern";
-                if (money < 1000) return "Trial Intern";
-                if (money < 1800) return "Junior Dev";
-                if (money < 3000) return "Senior Dev";
+                if (money < 900) return "Probation";
+                if (money < 1600) return "Junior Dev";
+                if (money < 2800) return "Senior Dev";
                 return "Lead Arch.";
             }, [money]);
 
@@ -539,24 +549,21 @@
                 
                 const timer = setInterval(() => {
                     setTime(prev => {
-                        if (prev <= 0) return 0;
-                        return prev - 1;
+                        const newTime = prev - 1;
+                        
+                        // Overtime Penalty Logic: -50 every 30s past 0
+                        // Since newTime goes -1, -2, -3...
+                        // We check if it's negative and divisible by 30
+                        if (newTime < 0 && Math.abs(newTime) % 30 === 0) {
+                            setMoney(m => m - 50);
+                        }
+                        
+                        return newTime;
                     });
                 }, 1000);
 
                 return () => clearInterval(timer);
             }, [gameState]);
-
-            // Money Drain on Timeout - Explicit Overtime Mechanic
-            useEffect(() => {
-                if (gameState === 'playing' && time <= 0) {
-                    const drain = setInterval(() => {
-                        // Allow going into negative debt for full "fined" feeling
-                        setMoney(m => m - 10);
-                    }, 1000);
-                    return () => clearInterval(drain);
-                }
-            }, [time, gameState]);
 
             const startGame = () => {
                 setGameState("playing");
@@ -565,19 +572,19 @@
 
             const loadLevel = (lvl) => {
                 setLevel(lvl);
-                setTime(80); // Reset to new generous time
+                setTime(100); // Generous Reset
                 setData(generateLevelBatch(lvl));
             };
 
             const handleSolve = (id, isCorrect) => {
                 if (isCorrect) {
-                    setMoney(m => m + 60); // More generous reward (was 50)
+                    setMoney(m => m + 60); 
                     setData(prev => ({
                         ...prev,
                         items: prev.items.map(i => i.id === id ? { ...i, solved: true } : i)
                     }));
                 } else {
-                    setMoney(m => m - 20); // Less harsh penalty (was 25)
+                    setMoney(m => m - 20); 
                 }
             };
 
