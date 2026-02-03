@@ -2,82 +2,83 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Balance Patcher v2.5 | PRA Studios</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PRA STUDIOS | BALANCE PATCHER v3.0</title>
     
-    <!-- React Core -->
+    <!-- --- DEPENDENCIES --- -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    
-    <!-- Babel for JSX compilation in browser -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Framer Motion for Animations -->
     <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
     
-    <!-- Google Fonts -->
+    <!-- --- FONTS --- -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Permanent+Marker&family=Rock+Salt&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Permanent+Marker&family=Rock+Salt&family=Inter:wght@400;800&display=swap" rel="stylesheet">
 
-    <!-- Custom Styles & Tailwind Config -->
+    <!-- --- GLOBAL STYLES & EFFECTS --- -->
     <style>
-        /* Base Reset & Fonts */
-        body {
-            font-family: 'JetBrains Mono', monospace;
-            background-color: #050505;
-            color: #e0e0e0;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+        :root {
+            --crt-scanline: rgba(0, 0, 0, 0.2);
+            --crt-flicker: rgba(255, 255, 255, 0.02);
+            --bg-dark: #09090b;
         }
-        
+
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden; /* App-like feel */
+            color: #e4e4e7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* UTILITIES */
         .font-marker { font-family: 'Permanent Marker', cursive; }
         .font-signature { font-family: 'Rock Salt', cursive; }
-
-        /* CRT Effects - Refined for subtlety */
-        .scanlines {
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0),
-                rgba(255,255,255,0) 50%,
-                rgba(0,0,0,0.1) 50%,
-                rgba(0,0,0,0.1)
-            );
-            background-size: 100% 4px;
-            animation: scanlineMove 10s linear infinite;
-            pointer-events: none;
-            position: fixed;
-            inset: 0;
-            z-index: 50;
-        }
-
-        @keyframes scanlineMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 100%; }
-        }
-
-        .crt-flicker {
-            animation: flicker 0.15s infinite;
-        }
-
-        @keyframes flicker {
-            0% { opacity: 0.97; }
-            50% { opacity: 1.0; }
-            100% { opacity: 0.98; }
-        }
-
-        /* Utility */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Input Remove Spinners */
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
+
+        /* CRT OVERLAY FX */
+        .crt-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            animation: crt-flicker 0.15s infinite;
         }
+
+        .crt-scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 9999;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 100%;
+            animation: scanline 10s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            80% { bottom: 100%; }
+            100% { bottom: -100px; }
+        }
+
+        @keyframes crt-flicker {
+            0% { opacity: 0.95; }
+            5% { opacity: 0.85; }
+            10% { opacity: 0.95; }
+            100% { opacity: 0.95; }
+        }
+
+        /* TEXT GLOWS */
+        .glow-cyan { text-shadow: 0 0 10px rgba(34, 211, 238, 0.6); }
+        .glow-green { text-shadow: 0 0 10px rgba(74, 222, 128, 0.6); }
+        .glow-red { text-shadow: 0 0 10px rgba(244, 114, 182, 0.6); }
     </style>
 
     <script>
@@ -86,48 +87,231 @@
                 extend: {
                     colors: {
                         pra: {
-                            bg: '#121212',
-                            panel: '#1e1e1e',
+                            base: '#09090b',
+                            panel: '#18181b',
+                            border: '#27272a',
                             cyan: '#22d3ee',
-                            magenta: '#f472b6',
-                            yellow: '#fef08a',
+                            magenta: '#ec4899',
+                            yellow: '#facc15',
                             green: '#4ade80',
-                            dim: '#475569',
                             danger: '#ef4444'
                         }
                     },
                     boxShadow: {
-                        'neon-cyan': '0 0 10px rgba(34, 211, 238, 0.3)',
-                        'neon-green': '0 0 10px rgba(74, 222, 128, 0.3)',
-                        'neon-red': '0 0 10px rgba(244, 114, 182, 0.3)',
-                    },
-                    animation: {
-                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'neon-cyan': '0 0 15px -3px rgba(34, 211, 238, 0.3)',
+                        'neon-red': '0 0 15px -3px rgba(239, 68, 68, 0.4)',
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-pra-bg text-slate-200 min-h-screen">
+<body>
     <div id="root"></div>
 
     <script type="text/babel">
-        /**
-         * BALANCE PATCHER v2.5
-         * Updated: New Level 2, Less harsh punishment (30s intervals), more time.
-         */
-
-        const { useState, useEffect, useRef, useMemo, useCallback } = React;
+        // --- 1. ARCHITECTURE & CONSTANTS ---
+        const { useState, useEffect, useReducer, useRef, useMemo, useCallback } = React;
         const { motion, AnimatePresence } = window.Motion;
 
-        // --- ICONS & ASSETS ---
+        const CONFIG = {
+            LEVEL_GOALS: { 1: 400, 2: 900, 3: 1600, 4: 2800, 5: 4500 },
+            INITIAL_TIME: 100,
+            OVERTIME_PENALTY: 50,
+            OVERTIME_INTERVAL: 30,
+            CORRECT_REWARD: 60,
+            WRONG_PENALTY: 0 // CHANGED: No penalty for wrong guesses
+        };
+
+        const ITEMS = {
+            TIER_1: ["Rusty Dagger", "Canvas Tunic", "Wooden Shield", "Worn Boots", "Cracked Helm", "Old Glove"],
+            TIER_2: ["Potion of Haste", "Mana Ring", "Iron Sword", "Chainmail Vest", "Leather Boots", "Steel Helm"],
+            TIER_3: ["Phoenix Feather", "Void Staff", "Dragon Scale", "Quantum Blade", "Cyber Implant", "Neon Shield"]
+        };
+
+        // --- 2. UTILITIES & LOGIC ---
+
+        const generateBatch = (level) => {
+            const items = [];
+            const tasks = [];
+            
+            let namePool = level <= 3 ? ITEMS.TIER_1 : (level === 4 ? ITEMS.TIER_2 : ITEMS.TIER_3);
+            
+            // Unique shuffle
+            const shuffledNames = [...namePool].sort(() => 0.5 - Math.random()).slice(0, 4);
+            const brokenIndices = new Set();
+            while(brokenIndices.size < 2) brokenIndices.add(Math.floor(Math.random() * 4));
+
+            shuffledNames.forEach((name, i) => {
+                const needsPatch = brokenIndices.has(i);
+                let base, expected, percent, isBuff;
+
+                // Difficulty Curve
+                if (level === 1) {
+                    percent = [10, 50][Math.floor(Math.random() * 2)];
+                    base = Math.floor(Math.random() * 10 + 1) * 10;
+                } else if (level === 2) {
+                    percent = [20, 25, 50][Math.floor(Math.random() * 3)];
+                    base = Math.floor(Math.random() * 10 + 1) * 20; 
+                } else if (level === 3) {
+                    percent = [10, 20, 30, 40, 50][Math.floor(Math.random() * 5)];
+                    base = Math.floor(Math.random() * 10 + 1) * 10;
+                } else if (level === 4) {
+                    // Level 4: Junior Dev (Restored)
+                    percent = [5, 25, 75][Math.floor(Math.random() * 3)];
+                    base = Math.floor(Math.random() * 10 + 2) * 20; // Multiples of 20 for clean 5%/25%
+                } else {
+                    // Level 5+: Chaos
+                    percent = (Math.floor(Math.random() * 10) + 1) * 5; 
+                    // Changed from *10 to *20 to ensure 5% increments don't result in decimals (e.g. 5% of 10 is 0.5)
+                    base = Math.floor(Math.random() * 20 + 5) * 20; 
+                }
+
+                if (needsPatch) {
+                    isBuff = Math.random() > 0.5;
+                    const multiplier = isBuff ? (1 + percent/100) : (1 - percent/100);
+                    expected = Math.round(base * multiplier);
+                    
+                    // Fix: Use .pop() to get the last word (Handles "Potion of Haste" -> "Haste")
+                    const shortName = name.split(" ").pop(); 
+                    tasks.push(`${isBuff ? "Buff" : "Nerf"} ${shortName} by ${percent}%`);
+                } else {
+                    expected = base;
+                }
+
+                items.push({
+                    id: Math.random().toString(36).substr(2, 9),
+                    name, base, needsPatch, expected, solved: !needsPatch, isStable: !needsPatch
+                });
+            });
+
+            return { items, tasks };
+        };
+
+        const getRank = (money) => {
+            if (money < 400) return "UNPAID INTERN";
+            if (money < 900) return "PROBATIONARY";
+            if (money < 1600) return "JUNIOR DEV";
+            if (money < 2800) return "SENIOR DEV";
+            return "LEAD ARCHITECT";
+        };
+
+        // --- 3. CUSTOM HOOKS ---
+
+        const useParticles = () => {
+            const [particles, setParticles] = useState([]);
+            
+            const spawnParticles = (x, y, color) => {
+                const newParticles = Array.from({ length: 8 }).map((_, i) => ({
+                    id: Date.now() + i,
+                    x, y,
+                    vx: (Math.random() - 0.5) * 200,
+                    vy: (Math.random() - 0.5) * 200,
+                    color
+                }));
+                setParticles(prev => [...prev, ...newParticles]);
+                setTimeout(() => {
+                    setParticles(prev => prev.filter(p => !newParticles.find(np => np.id === p.id)));
+                }, 1000);
+            };
+            return { particles, spawnParticles };
+        };
+
+        const useAudioVisual = () => {
+            // Placeholder for if we added sound, currently handles visual shake
+            const [shake, setShake] = useState(0);
+            const triggerShake = () => {
+                setShake(5);
+                setTimeout(() => setShake(0), 200);
+            };
+            return { shake, triggerShake };
+        };
+
+        // --- 4. GAME ENGINE (REDUCER) ---
+
+        const initialState = {
+            status: 'TITLE', // TITLE, PLAYING, SUMMARY
+            level: 1,
+            money: 100,
+            time: CONFIG.INITIAL_TIME,
+            items: [],
+            tasks: [],
+            feedback: null // { type: 'success' | 'fail', id: string }
+        };
+
+        const gameReducer = (state, action) => {
+            switch (action.type) {
+                case 'START_GAME':
+                    const batch1 = generateBatch(1);
+                    return { ...initialState, status: 'PLAYING', items: batch1.items, tasks: batch1.tasks };
+                
+                case 'TICK':
+                    const newTime = state.time - 1;
+                    let moneyPenalty = 0;
+                    // Overtime logic
+                    if (newTime < 0 && Math.abs(newTime) % CONFIG.OVERTIME_INTERVAL === 0) {
+                        moneyPenalty = CONFIG.OVERTIME_PENALTY;
+                    }
+                    return { ...state, time: newTime, money: state.money - moneyPenalty };
+
+                case 'PATCH_ATTEMPT':
+                    const { id, isCorrect } = action.payload;
+                    const itemIndex = state.items.findIndex(i => i.id === id);
+                    if (itemIndex === -1) return state;
+
+                    const newItems = [...state.items];
+                    if (isCorrect) {
+                        newItems[itemIndex] = { ...newItems[itemIndex], solved: true };
+                        return { 
+                            ...state, 
+                            money: state.money + CONFIG.CORRECT_REWARD, 
+                            items: newItems,
+                            feedback: { type: 'success', id }
+                        };
+                    } else {
+                        return { 
+                            ...state, 
+                            // money: state.money - CONFIG.WRONG_PENALTY, // Logic Removed: No penalty
+                            feedback: { type: 'fail', id }
+                        };
+                    }
+
+                case 'CLEAR_FEEDBACK':
+                    return { ...state, feedback: null };
+
+                case 'NEXT_LEVEL':
+                    const nextLvl = state.level + 1;
+                    const batchNext = generateBatch(nextLvl);
+                    return { 
+                        ...state, 
+                        level: nextLvl, 
+                        time: CONFIG.INITIAL_TIME, // Reset time per sprint
+                        items: batchNext.items, 
+                        tasks: batchNext.tasks 
+                    };
+                
+                case 'RETRY_LEVEL':
+                    const batchRetry = generateBatch(state.level);
+                    return { 
+                        ...state, 
+                        time: CONFIG.INITIAL_TIME,
+                        items: batchRetry.items, 
+                        tasks: batchRetry.tasks 
+                    };
+
+                default: return state;
+            }
+        };
+
+        // --- 5. COMPONENT: ICONS ---
         const Icons = {
-            Sword: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/></svg>,
-            Shield: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
-            Potion: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 22H5c-1.1 0-2-.9-2-2V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11c0 1.1-.9 2-2 2z"/><line x1="12" y1="2" x2="12" y2="7"/><path d="M8 2h8"/></svg>,
-            Boots: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19a2 2 0 1 0 4 0a2 2 0 0 1 4 0a2 2 0 0 1 4 0a2 2 0 1 0 4 0"/><path d="M5 11h14"/><path d="M5 11a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8"/></svg>,
-            Check: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+            Sword: () => <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/></svg>,
+            Shield: () => <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+            Potion: () => <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 22H5c-1.1 0-2-.9-2-2V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11c0 1.1-.9 2-2 2z"/><line x1="12" y1="2" x2="12" y2="7"/><path d="M8 2h8"/></svg>,
+            Boots: () => <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19a2 2 0 1 0 4 0a2 2 0 0 1 4 0a2 2 0 0 1 4 0a2 2 0 1 0 4 0"/><path d="M5 11h14"/><path d="M5 11a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8"/></svg>,
+            Check: () => <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>,
+            Alert: () => <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>,
+            Ticket: () => <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         };
 
         const getItemIcon = (name) => {
@@ -137,325 +321,229 @@
             return <Icons.Boots />;
         };
 
-        // Loot Tables based on Rank
-        const TIER_1_ITEMS = ["Rusty Dagger", "Canvas Tunic", "Wooden Shield", "Worn Boots", "Cracked Helm", "Old Glove"];
-        const TIER_2_ITEMS = ["Potion of Haste", "Mana Ring", "Iron Sword", "Chainmail Vest", "Leather Boots", "Steel Helm"];
-        const TIER_3_ITEMS = ["Phoenix Feather", "Void Staff", "Dragon Scale", "Quantum Blade", "Cyber Implant", "Neon Shield"];
+        // --- 6. COMPONENTS ---
 
-        // --- GAME LOGIC ENGINE ---
-        
-        const generateLevelBatch = (level) => {
-            const items = [];
-            const tasks = [];
-            
-            // Item Naming Pool based on Level
-            // Lvl 1-3 share basic items now
-            let namePool;
-            if (level <= 3) namePool = TIER_1_ITEMS;
-            else if (level === 4) namePool = TIER_2_ITEMS;
-            else namePool = TIER_3_ITEMS;
-
-            // --- UNIQUE ITEMS FIX ---
-            // Shuffle the name pool and slice the first 4 to ensure unique names for this batch
-            const shuffledNames = [...namePool]
-                .sort(() => 0.5 - Math.random())
-                .slice(0, 4);
-
-            const brokenIndices = new Set();
-            // Ensure exactly 2 items are broken per batch for consistency
-            while(brokenIndices.size < 2) brokenIndices.add(Math.floor(Math.random() * 4));
-
-            for (let i = 0; i < 4; i++) {
-                const name = shuffledNames[i]; // Use our unique list
-                const needsPatch = brokenIndices.has(i);
-                
-                let base, expected, percent, isBuff;
-
-                // MATH DIFFICULTY CURVE (UPDATED v2.5)
-                if (level === 1) {
-                    // Level 1: Unpaid Intern - 10% or 50% only
-                    percent = [10, 50][Math.floor(Math.random() * 2)];
-                    base = Math.floor(Math.random() * 10 + 1) * 10; 
-                }
-                else if (level === 2) {
-                    // NEW Level 2: Probation - 20% or 25% (Intermediate)
-                    percent = [20, 25, 50][Math.floor(Math.random() * 3)];
-                    base = Math.floor(Math.random() * 10 + 1) * 20; 
-                }
-                else if (level === 3) {
-                    // Old Level 1 (Intern) - Multiples of 10%
-                    percent = [10, 20, 30, 40, 50][Math.floor(Math.random() * 5)];
-                    base = Math.floor(Math.random() * 10 + 1) * 10; 
-                } 
-                else if (level === 4) {
-                    // Old Level 2 (Junior) - 5% and 25%
-                    percent = [5, 25, 75][Math.floor(Math.random() * 3)];
-                    base = Math.floor(Math.random() * 10 + 2) * 20; 
-                } 
-                else {
-                    // Old Level 3+ (Senior) - Chaos
-                    percent = (Math.floor(Math.random() * 10) + 1) * 5; 
-                    base = Math.floor(Math.random() * 20 + 5) * 10;
-                }
-
-                if (needsPatch) {
-                    isBuff = Math.random() > 0.5;
-                    const multiplier = isBuff ? (1 + percent/100) : (1 - percent/100);
-                    
-                    // We calculate expected. Since we controlled Base, this should be integer.
-                    expected = Math.round(base * multiplier);
-
-                    const action = isBuff ? "Buff" : "Nerf";
-                    const shortName = name.split(" ")[1] || name; 
-                    tasks.push(`${action} ${shortName} by ${percent}%`);
-                } else {
-                    // Stable items just stay at base
-                    expected = base;
-                }
-
-                items.push({
-                    id: Math.random().toString(36).substr(2, 9),
-                    name,
-                    base,
-                    needsPatch,
-                    expected,
-                    solved: !needsPatch, 
-                    isStable: !needsPatch 
-                });
-            }
-
-            return { items, tasks };
+        const ParticleFX = ({ particles }) => {
+            return (
+                <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+                    <AnimatePresence>
+                        {particles.map(p => (
+                            <motion.div
+                                key={p.id}
+                                initial={{ x: p.x, y: p.y, opacity: 1, scale: 1 }}
+                                animate={{ x: p.x + p.vx, y: p.y + p.vy, opacity: 0, scale: 0 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.8, ease: "easeOut" }}
+                                className="absolute w-2 h-2 rounded-sm"
+                                style={{ backgroundColor: p.color }}
+                            />
+                        ))}
+                    </AnimatePresence>
+                </div>
+            );
         };
 
-        // --- COMPONENTS ---
-
-        const StartScreen = ({ onStart }) => (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-[#1a1a1a] p-6 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10" 
-                     style={{backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}>
-                </div>
-                
-                <motion.div 
-                    initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, type: "spring" }}
-                    className="bg-[#fef9c3] max-w-md w-full p-8 shadow-2xl relative rotate-1"
-                >
-                    {/* Tape Visual */}
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-32 h-8 bg-white/40 backdrop-blur-sm shadow-sm rotate-2"></div>
-
-                    <div className="font-marker text-slate-900">
-                        <div className="border-b-4 border-slate-900 pb-4 mb-6">
-                            <h1 className="text-4xl md:text-5xl font-black tracking-tighter mb-2">PRA STUDIOS</h1>
-                            <div className="flex justify-between items-center">
-                                <span className="text-lg font-bold uppercase">INTERNAL MEMO</span>
-                                <span className="text-xs font-sans font-bold bg-red-600 text-white px-2 py-1 rotate-2 rounded-sm shadow-sm">READ ASAP</span>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4 text-base md:text-lg leading-snug font-sans text-slate-800 font-medium">
-                            <p>To: <span className="bg-yellow-400 px-1 font-bold">Unpaid Intern</span></p>
-                            <p>The AI model collapsed again. It's pushing garbage stats to production.</p>
-                            <p>Manually patch the <span className="font-bold underline text-red-700">broken items</span>. And grab me a double shot espresso while you're at it.</p>
-                            <p className="bg-red-100 p-2 border-l-4 border-red-600 text-sm font-bold mt-2">
-                                WARNING: Strict launch window. If timer hits zero, overtime fines ($50/30s) come out of YOUR non-existent paycheck.
-                            </p>
-                        </div>
-
-                        <div className="mt-8 flex justify-between items-end">
-                            <div>
-                                <div className="font-signature text-2xl -rotate-6 text-blue-900 opacity-90">Bowen</div>
-                                <p className="text-[10px] font-sans text-slate-500 uppercase tracking-widest mt-1">Lead Architect</p>
-                            </div>
-
-                            <button 
-                                onClick={onStart}
-                                className="font-sans font-bold bg-slate-900 text-white px-6 py-3 hover:bg-pra-cyan hover:text-black hover:-translate-y-1 transition-all shadow-lg active:translate-y-0"
-                            >
-                                [ ACCEPT TICKET ]
-                            </button>
-                        </div>
-                    </div>
-                </motion.div>
-            </div>
-        );
-
-        const StickyNote = ({ tasks, level, rank }) => {
-            const getFlavorText = () => {
-                if (level === 1) return "Welcome, unpaid intern. 50% or 10%. Don't spill the coffee.";
-                if (level === 2) return "You survived Level 1. Now try quarters and fifths. Keep up.";
-                if (level === 3) return "Okay, here's the regular intern work. Multiples of 10.";
-                if (level === 4) return "Junior Dev just quit. You're up. My coffee is cold.";
-                if (level >= 5) return "Senior Dev work. Chaos mode. Need more caffeine.";
-                return "Just fix them.";
-            };
-
-            const getRankTitle = () => {
-                if(level === 1) return "UNPAID_TRIAL";
-                if(level === 2) return "PROBATION";
-                if(level === 3) return "INTERN_SPRINT";
-                if(level === 4) return "JUNIOR_SPRINT";
-                return "SENIOR_SPRINT";
-            }
+        const StickyNote = ({ tasks, level, isMobileCollapsed, toggleMobile }) => {
+            const flavorText = useMemo(() => {
+                if (level === 1) return "Intern. 10% or 50%. Don't mess it up.";
+                if (level === 2) return "Quarters & fifths. You on probation?";
+                if (level === 3) return "Standard sprint. Multiples of 10.";
+                if (level === 4) return "Junior dev quit. You're up.";
+                return "Chaos mode. Good luck.";
+            }, [level]);
 
             return (
-                <motion.div 
-                    initial={{ rotate: -1, y: 10, opacity: 0 }}
-                    animate={{ rotate: -1, y: 0, opacity: 1 }}
-                    className="bg-[#fef08a] text-slate-900 p-5 shadow-lg transform -rotate-1 flex flex-col h-full min-h-[250px] relative"
-                >
-                    {/* Tape */}
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-white/30 backdrop-blur-md shadow-sm rotate-1"></div>
-                    
-                    <div className="font-marker flex-1">
-                        <div className="flex justify-between items-baseline border-b-2 border-slate-900/20 pb-2 mb-3">
-                            <h2 className="text-xl font-bold">{getRankTitle()}</h2>
-                            <span className="text-xs font-sans font-bold opacity-60">TICKET #{level}42</span>
-                        </div>
-                        
-                        <p className="text-xs font-bold font-sans text-slate-600 mb-4 border-l-2 border-slate-900/50 pl-2 italic">
-                            "{getFlavorText()}"
-                        </p>
-                        
-                        <ul className="space-y-3 pl-1">
-                            {tasks.map((task, i) => (
-                                <li key={i} className="text-base md:text-lg font-bold flex items-start gap-2 leading-tight">
-                                    <span className="opacity-40 mt-1 scale-75">☐</span> 
-                                    <span>{task}</span>
-                                </li>
-                            ))}
-                        </ul>
+                <>
+                    {/* Desktop / Expanded View */}
+                    <div className={`
+                        fixed inset-x-0 top-0 z-30 md:static md:w-80 md:inset-auto md:block
+                        transition-transform duration-300 ease-in-out
+                        ${isMobileCollapsed ? '-translate-y-full md:translate-y-0' : 'translate-y-0'}
+                    `}>
+                        <motion.div 
+                            initial={{ rotate: -1 }}
+                            className="bg-[#fef08a] text-slate-900 p-6 shadow-xl relative min-h-[120px] md:min-h-[300px] border-b-4 md:border-b-0 md:rounded-sm border-slate-900/10"
+                        >
+                            {/* Tape Visual */}
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-white/30 backdrop-blur-md shadow-sm rotate-1 hidden md:block"></div>
+                            
+                            <div className="font-marker flex flex-col h-full">
+                                <div className="flex justify-between items-baseline border-b-2 border-slate-900/20 pb-2 mb-3">
+                                    <h2 className="text-xl font-bold">TICKET #{level}42</h2>
+                                    <button onClick={toggleMobile} className="md:hidden p-2">✕</button>
+                                </div>
+                                
+                                <p className="text-sm font-bold font-sans text-slate-600 mb-4 border-l-2 border-slate-900/50 pl-2 italic">
+                                    "{flavorText}"
+                                </p>
+                                
+                                <ul className="space-y-3 pl-1 overflow-y-auto max-h-[40vh] md:max-h-full">
+                                    {tasks.map((task, i) => (
+                                        <li key={i} className="text-base font-bold flex items-start gap-2 leading-tight">
+                                            <span className="opacity-40 mt-1 scale-75">☐</span> 
+                                            <span>{task}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                <div className="mt-auto pt-4 text-right hidden md:block">
+                                    <span className="font-signature text-lg text-blue-900/80">- Bowen</span>
+                                </div>
+                            </div>
+                        </motion.div>
                     </div>
 
-                    <div className="mt-4 pt-2 border-t border-slate-900/10 text-right">
-                        <span className="font-signature text-lg text-blue-900/80">- B.</span>
-                    </div>
-                </motion.div>
+                    {/* Mobile Toggle Button (Visible when collapsed) */}
+                    {isMobileCollapsed && (
+                        <button 
+                            onClick={toggleMobile}
+                            className="md:hidden fixed top-24 right-4 z-20 bg-[#fef08a] text-black p-3 rounded-full shadow-lg border-2 border-slate-900/10 font-bold flex items-center gap-2"
+                        >
+                            <Icons.Ticket />
+                            <span className="text-xs font-black">MEMO</span>
+                        </button>
+                    )}
+                </>
             );
         };
 
         const HUD = ({ rank, level, time, money, goal }) => {
             const progress = Math.min((money/goal) * 100, 100);
             const isOvertime = time < 0;
-            const displayTime = Math.abs(time);
             
             return (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6 bg-pra-panel p-4 rounded border border-pra-dim/30 backdrop-blur-sm relative overflow-hidden">
-                    
-                    {/* Overtime Alarm Overlay */}
-                    {isOvertime && (
-                        <div className="absolute inset-0 border-2 border-pra-danger pointer-events-none animate-pulse opacity-50 z-0"></div>
-                    )}
-
-                    {/* Identity */}
-                    <div className="col-span-2 md:col-span-1 flex flex-col justify-center z-10">
-                        <h1 className="text-lg md:text-xl font-bold tracking-tighter text-white">
-                            PRA<span className="text-pra-cyan">_STUDIOS</span>
-                        </h1>
-                        <div className="flex items-center gap-2 text-xs text-pra-dim mt-1 font-bold">
-                            <span className="bg-slate-800 px-2 py-0.5 rounded text-slate-300 border border-slate-700">{rank}</span>
-                            <span>:: SPRINT {level}</span>
-                        </div>
-                    </div>
-
-                    {/* Timer */}
-                    <div className="col-span-1 md:col-span-1 flex flex-col items-start md:items-center justify-center z-10">
-                        <div className="text-[10px] text-pra-dim uppercase tracking-widest mb-1">
-                            {isOvertime ? <span className="text-pra-danger animate-pulse">OVERTIME DURATION</span> : "Launch Window"}
-                        </div>
-                        <div className={`text-4xl font-black tracking-widest ${isOvertime ? 'text-pra-danger' : (time <= 10 ? 'text-pra-yellow animate-pulse' : 'text-white')}`}>
-                            {isOvertime && "-"}{displayTime.toString().padStart(2, '0')}s
-                        </div>
-                        {isOvertime && (
-                            <div className="text-[10px] font-bold text-pra-danger bg-pra-danger/10 px-2 py-1 rounded mt-1">
-                                -$50 / 30s
+                <div className="bg-pra-panel border-b border-pra-border p-4 sticky top-0 z-20 backdrop-blur-xl bg-opacity-90">
+                    <div className="max-w-7xl mx-auto flex justify-between items-center">
+                        
+                        {/* Left: Identity */}
+                        <div className="hidden md:flex flex-col">
+                            <h1 className="text-xl font-black tracking-tighter text-white">
+                                PRA<span className="text-pra-cyan">_STUDIOS</span>
+                            </h1>
+                            <div className="flex items-center gap-2 text-[10px] text-pra-cyan font-mono mt-1">
+                                <span className="bg-pra-cyan/10 px-1 rounded text-pra-cyan border border-pra-cyan/20">{rank}</span>
+                                <span>:: SPRINT {level}</span>
                             </div>
-                        )}
-                    </div>
-
-                    {/* Money/Score */}
-                    <div className="col-span-1 md:col-span-1 flex flex-col justify-center items-end z-10">
-                        <div className="text-[10px] text-pra-dim uppercase tracking-widest mb-1">Project Budget</div>
-                        <div className="flex items-baseline gap-2">
-                            <span className={`text-2xl font-bold transition-colors duration-300 ${isOvertime ? 'text-pra-danger' : (money < 0 ? 'text-pra-magenta' : 'text-pra-green')}`}>
-                                ${money}
-                            </span>
-                            <span className="text-sm text-slate-600">/ ${goal}</span>
                         </div>
-                        {/* Progress Bar */}
-                        <div className="w-full max-w-[120px] h-1.5 bg-slate-800 mt-2 rounded-full overflow-hidden">
-                            <div 
-                                className={`h-full transition-all duration-500 ease-out ${isOvertime ? 'bg-pra-danger' : 'bg-pra-green'}`} 
-                                style={{ width: `${progress}%` }}
-                            ></div>
+                        
+                        {/* Mobile Identity Compact */}
+                        <div className="md:hidden font-black text-lg tracking-tight">
+                            PRA<span className="text-pra-cyan">_OS</span>
+                        </div>
+
+                        {/* Center: Timer */}
+                        <div className="flex flex-col items-center absolute left-1/2 -translate-x-1/2">
+                            <div className={`text-4xl font-black tabular-nums tracking-widest ${isOvertime ? 'text-pra-danger animate-pulse glow-red' : (time <= 10 ? 'text-pra-yellow' : 'text-white')}`}>
+                                {isOvertime && "-"}{Math.abs(time).toString().padStart(2, '0')}s
+                            </div>
+                            {isOvertime && <div className="text-[9px] font-bold text-pra-danger uppercase bg-pra-danger/10 px-1 rounded">Overtime Penalty Active</div>}
+                        </div>
+
+                        {/* Right: Budget */}
+                        <div className="flex flex-col items-end">
+                            <div className="flex items-baseline gap-2">
+                                <span className={`text-2xl font-bold tabular-nums transition-colors duration-300 ${money < 0 ? 'text-pra-magenta' : 'text-pra-green glow-green'}`}>
+                                    ${money}
+                                </span>
+                                <span className="text-xs text-zinc-500 font-bold hidden sm:inline">/ ${goal}</span>
+                            </div>
+                            {/* Progress Bar */}
+                            <div className="w-24 md:w-32 h-1.5 bg-zinc-800 mt-1 rounded-full overflow-hidden">
+                                <div 
+                                    className={`h-full transition-all duration-500 ease-out ${isOvertime ? 'bg-pra-danger' : 'bg-pra-green'}`} 
+                                    style={{ width: `${progress}%` }}
+                                ></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             );
         };
 
-        const TerminalCard = React.forwardRef(({ item, onSolve }, ref) => {
+        const TerminalCard = React.memo(React.forwardRef(({ item, onSolve, triggerShake, spawnParticles }, ref) => {
             const [val, setVal] = useState("");
             const [status, setStatus] = useState("idle"); 
             const inputRef = useRef(null);
+            const localCardRef = useRef(null);
+            
+            const setCombinedRef = useCallback((node) => {
+                localCardRef.current = node;
+                if (typeof ref === 'function') {
+                    ref(node);
+                } else if (ref) {
+                    ref.current = node;
+                }
+            }, [ref]);
+
+            // Unified check function to prevent stale closure bugs
+            const checkAnswer = (valueToCheck) => {
+                const num = parseInt(valueToCheck, 10);
+                
+                // Stable item trap: Only error if they enter something WRONG. 
+                // Narrative says "fix broken", so stable items are technically correct at base, 
+                // but for this game logic, we enforce matching expected (which is base)
+                if (item.isStable) {
+                    if (num !== item.expected) {
+                        handleError();
+                        return;
+                    }
+                }
+
+                const isCorrect = !isNaN(num) && num === item.expected;
+
+                if (isCorrect) {
+                    setStatus("success");
+                    if (localCardRef.current) {
+                        const rect = localCardRef.current.getBoundingClientRect();
+                        spawnParticles(rect.left + rect.width/2, rect.top + rect.height/2, "#4ade80");
+                    }
+                    onSolve(item.id, true);
+                    if (inputRef.current) inputRef.current.blur();
+                } else {
+                    handleError();
+                }
+            };
+
+            const handleSubmit = (e) => {
+                if (e) e.preventDefault();
+                checkAnswer(val); // Use current state for manual submit
+            };
+
+            const handleError = () => {
+                setStatus("error");
+                triggerShake();
+                onSolve(item.id, false);
+                setVal("");
+                setTimeout(() => setStatus("idle"), 500);
+                if (inputRef.current) inputRef.current.focus();
+            };
 
             const handleChange = (e) => {
                 const v = e.target.value;
                 if (v === '' || /^-?\d*$/.test(v)) {
                     setVal(v);
                     
-                    // --- AUTO SUBMIT LOGIC ---
-                    // Instant success if value matches expected on a broken item
+                    // Auto-submit using FRESH value 'v', avoiding stale state closure
                     const num = parseInt(v, 10);
                     if (!isNaN(num) && !item.isStable && num === item.expected) {
-                        setStatus("success");
-                        onSolve(item.id, true);
-                        if (inputRef.current) inputRef.current.blur();
+                         checkAnswer(v);
                     }
                 }
-            };
-
-            const handleSubmit = (e) => {
-                e.preventDefault();
-                
-                if (item.isStable) {
-                    triggerError();
-                    return;
-                }
-
-                const num = parseInt(val, 10);
-
-                if (!isNaN(num) && num === item.expected) {
-                    setStatus("success");
-                    onSolve(item.id, true);
-                    if (inputRef.current) inputRef.current.blur();
-                } else {
-                    triggerError();
-                }
-            };
-
-            const triggerError = () => {
-                setStatus("error");
-                onSolve(item.id, false);
-                setVal("");
-                setTimeout(() => setStatus("idle"), 600);
-                if (inputRef.current) inputRef.current.focus();
             };
 
             if (status === "success" || (item.solved && !item.isStable)) {
                 return (
                     <motion.div 
                         layout
-                        ref={ref}
-                        initial={{ opacity: 0, scale: 0.8 }}
+                        ref={setCombinedRef}
+                        initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        className="bg-pra-green/10 border border-pra-green p-4 rounded flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden"
+                        className="bg-pra-green/5 border border-pra-green/30 p-4 rounded-lg flex flex-col items-center justify-center h-32 md:h-40 relative overflow-hidden group"
                     >
-                        <div className="text-pra-green mb-2"><Icons.Check /></div>
-                        <div className="text-white font-bold mb-1 text-sm">{item.name}</div>
-                        <div className="text-2xl font-bold text-pra-green shadow-neon-green">{item.expected}</div>
-                        <div className="text-[10px] text-pra-green tracking-widest mt-1 uppercase font-bold">PATCH COMMITTED</div>
+                        <div className="absolute inset-0 bg-pra-green/5 group-hover:bg-pra-green/10 transition-colors"></div>
+                        <div className="text-pra-green mb-2 scale-125"><Icons.Check /></div>
+                        <div className="text-pra-green font-bold text-sm tracking-widest uppercase">PATCHED</div>
+                        <div className="text-white text-xs mt-1 opacity-50">{item.name}</div>
                     </motion.div>
                 );
             }
@@ -463,191 +551,222 @@
             return (
                 <motion.div 
                     layout
-                    ref={ref}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={status === 'error' ? { x: [-5, 5, -5, 5, 0], opacity: 1, scale: 1 } : { opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.4 }}
+                    ref={setCombinedRef}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={status === 'error' ? { x: [-10, 10, -10, 10, 0] } : { opacity: 1, y: 0 }}
                     className={`
-                        border-2 p-4 rounded flex flex-col relative min-h-[140px] transition-colors duration-300
-                        ${status === 'error' 
-                            ? 'bg-pra-magenta/10 border-pra-magenta shadow-neon-red' 
-                            : 'bg-black/40 border-slate-700 hover:border-pra-cyan hover:bg-slate-900'}
+                        border rounded-lg p-4 flex flex-col justify-between h-32 md:h-40 transition-all duration-200 relative
+                        ${status === 'error' ? 'bg-pra-danger/10 border-pra-danger shadow-neon-red' : 'bg-pra-panel border-pra-border hover:border-pra-cyan hover:shadow-neon-cyan'}
                     `}
                 >
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className={`p-2 rounded ${status === 'error' ? 'text-pra-magenta bg-pra-magenta/10' : 'text-pra-cyan bg-pra-cyan/10'}`}>
-                            {getItemIcon(item.name)}
-                        </div>
-                        <div className="overflow-hidden">
-                            <div className="font-bold text-slate-200 text-sm truncate">{item.name}</div>
-                            <div className="text-xs text-slate-500 font-bold mt-0.5">BASE VAL: <span className="text-white text-base">{item.base}</span></div>
+                    {/* Header */}
+                    <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded-md ${status === 'error' ? 'bg-pra-danger/20 text-pra-danger' : 'bg-zinc-800 text-pra-cyan'}`}>
+                                {getItemIcon(item.name)}
+                            </div>
+                            <div>
+                                <div className="text-sm font-bold text-zinc-200 leading-none">{item.name}</div>
+                                <div className="text-[10px] text-zinc-500 font-bold mt-1 uppercase tracking-wide">
+                                    Base: <span className="text-zinc-300">{item.base}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="mt-auto w-full">
-                        <div className="flex gap-2">
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                inputMode="numeric"
-                                pattern="[0-9]*"
-                                value={val}
-                                onChange={handleChange}
-                                className={`
-                                    flex-1 bg-black border text-lg p-2 rounded focus:outline-none focus:ring-1 transition-all
-                                    placeholder:text-slate-700 font-bold
-                                    ${status === 'error' 
-                                        ? 'border-pra-magenta text-pra-magenta focus:ring-pra-magenta' 
-                                        : 'border-slate-700 text-pra-cyan focus:border-pra-cyan focus:ring-pra-cyan'}
-                                `}
-                                placeholder={item.isStable ? "STABLE" : "PATCH..."}
-                                autoComplete="off"
-                            />
-                            {/* Retained submit button as a manual override/fallback */}
-                            <button 
-                                type="submit" 
-                                className="bg-slate-800 text-slate-200 px-3 rounded hover:bg-pra-cyan hover:text-black transition-colors font-bold"
-                            >
-                                &gt;
-                            </button>
-                        </div>
-                    </form>
+                    {/* Input Area */}
+                    <div className="mt-2">
+                        <input
+                            ref={inputRef}
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={val}
+                            onChange={handleChange}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}
+                            disabled={item.solved}
+                            className={`
+                                w-full bg-black/50 border-b-2 text-lg py-1 px-2 font-mono font-bold focus:outline-none transition-colors
+                                placeholder:text-zinc-700
+                                ${status === 'error' 
+                                    ? 'border-pra-danger text-pra-danger' 
+                                    : 'border-zinc-700 text-pra-cyan focus:border-pra-cyan'}
+                            `}
+                            placeholder={item.isStable ? "STABLE" : "PATCH..."}
+                        />
+                    </div>
+
+                    {/* Status Indicator (Subtle) */}
+                    <div className="absolute top-2 right-2">
+                         <div className={`w-1.5 h-1.5 rounded-full ${item.needsPatch ? 'bg-pra-yellow animate-pulse' : 'bg-zinc-700'}`}></div>
+                    </div>
                 </motion.div>
             );
-        });
+        }));
+
+        const StartScreen = ({ onStart }) => (
+            <div className="flex flex-col items-center justify-center min-h-screen relative overflow-hidden p-6 z-50 bg-pra-base">
+                <motion.div 
+                    initial={{ scale: 0.9, opacity: 0, rotate: 1 }}
+                    animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                    transition={{ duration: 0.6, type: "spring" }}
+                    className="bg-white max-w-lg w-full p-8 md:p-12 shadow-2xl relative"
+                    style={{ transform: "rotate(-1deg)" }}
+                >
+                    {/* Tape */}
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-32 h-8 bg-zinc-200/50 backdrop-blur-sm shadow-sm rotate-2"></div>
+
+                    <div className="font-marker text-slate-900">
+                        <div className="border-b-4 border-slate-900 pb-6 mb-8">
+                            <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-2">PRA STUDIOS</h1>
+                            <div className="flex justify-between items-center">
+                                <span className="text-xl font-bold uppercase tracking-widest">URGENT MEMO</span>
+                                <span className="text-xs font-sans font-bold bg-pra-danger text-white px-3 py-1 -rotate-2 rounded-sm">DO NOT IGNORE</span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6 text-lg md:text-xl leading-snug font-sans text-slate-800 font-medium">
+                            <p>To: <span className="bg-yellow-300 px-1 font-bold">Unpaid Intern</span></p>
+                            <p>The AI balancer imploded again. It's shipping 500% buffs to prod. The community is rioting.</p>
+                            <p>You need to manually calculate the patches. <span className="font-bold underline text-red-700">Check the math</span> based on the sticky notes.</p>
+                            <div className="bg-red-50 p-4 border-l-4 border-red-600 text-sm font-bold text-red-900">
+                                <div className="flex items-center gap-2 mb-1 text-red-600"><Icons.Alert /> HR WARNING:</div>
+                                Missing the launch window triggers Overtime Penalty. We will deduct it from your future (imaginary) earnings.
+                            </div>
+                        </div>
+
+                        <div className="mt-10 flex flex-col md:flex-row justify-between items-end gap-6">
+                            <div>
+                                <div className="font-signature text-3xl -rotate-6 text-blue-900 opacity-90">Bowen</div>
+                                <p className="text-[10px] font-sans text-slate-500 uppercase tracking-widest mt-1">Lead Architect</p>
+                            </div>
+
+                            <button 
+                                onClick={onStart}
+                                className="w-full md:w-auto font-sans font-black bg-slate-900 text-white text-lg px-8 py-4 hover:bg-pra-cyan hover:text-black hover:-translate-y-1 transition-all shadow-lg active:translate-y-0"
+                            >
+                                [ START SHIFT ]
+                            </button>
+                        </div>
+                    </div>
+                </motion.div>
+                
+                {/* Ambient BG Elements */}
+                <div className="absolute inset-0 pointer-events-none opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDQwaDQwVjBIMHY0MHptMjAgMjBoMjBWMjBIMjB2MjB6TTAgMjBoMjBWMHgyMHYyMHoiIGZpbGw9IiMzMzMiIGZpbGwtb3BhY2l0eT0iMC4xIi8+PC9nPjwvc3ZnPg==')]"></div>
+            </div>
+        );
+
+        // --- 7. MAIN APP ORCHESTRATOR ---
 
         const App = () => {
-            // --- STATE ---
-            const [gameState, setGameState] = useState("title"); 
-            const [level, setLevel] = useState(1);
-            const [money, setMoney] = useState(100);
-            const [time, setTime] = useState(100); // Generous time (100s)
-            const [data, setData] = useState(null); 
-            
-            // Goals adjusted for the new levels
-            const LEVEL_GOALS = { 1: 400, 2: 900, 3: 1600, 4: 2800, 5: 4500 };
-            const goal = LEVEL_GOALS[level] || 99999;
+            const [state, dispatch] = useReducer(gameReducer, initialState);
+            const { particles, spawnParticles } = useParticles();
+            const { shake, triggerShake } = useAudioVisual();
+            const [isTicketCollapsed, setTicketCollapsed] = useState(true);
 
-            const rank = useMemo(() => {
-                if (money < 400) return "Unpaid Intern";
-                if (money < 900) return "Probation";
-                if (money < 1600) return "Junior Dev";
-                if (money < 2800) return "Senior Dev";
-                return "Lead Arch.";
-            }, [money]);
-
+            // Goals
+            const goal = CONFIG.LEVEL_GOALS[state.level] || 99999;
+            const rank = useMemo(() => getRank(state.money), [state.money]);
             const allPatched = useMemo(() => {
-                if (!data) return false;
-                return data.items.filter(i => i.needsPatch).every(i => i.solved);
-            }, [data]);
+                return state.items.length > 0 && state.items.filter(i => i.needsPatch).every(i => i.solved);
+            }, [state.items]);
 
-            // --- EFFECTS ---
-
+            // Timer Loop
             useEffect(() => {
-                if (gameState !== 'playing') return;
-                
-                const timer = setInterval(() => {
-                    setTime(prev => {
-                        const newTime = prev - 1;
-                        
-                        // Overtime Penalty Logic: -50 every 30s past 0
-                        // Since newTime goes -1, -2, -3...
-                        // We check if it's negative and divisible by 30
-                        if (newTime < 0 && Math.abs(newTime) % 30 === 0) {
-                            setMoney(m => m - 50);
-                        }
-                        
-                        return newTime;
-                    });
-                }, 1000);
-
+                if (state.status !== 'PLAYING') return;
+                const timer = setInterval(() => dispatch({ type: 'TICK' }), 1000);
                 return () => clearInterval(timer);
-            }, [gameState]);
+            }, [state.status]);
 
-            const startGame = () => {
-                setGameState("playing");
-                loadLevel(1);
+            // Handlers
+            const handleSolve = useCallback((id, isCorrect) => {
+                dispatch({ type: 'PATCH_ATTEMPT', payload: { id, isCorrect } });
+            }, []);
+
+            const handleNext = () => {
+                if (state.money >= goal) dispatch({ type: 'NEXT_LEVEL' });
+                else dispatch({ type: 'RETRY_LEVEL' });
             };
 
-            const loadLevel = (lvl) => {
-                setLevel(lvl);
-                setTime(100); // Generous Reset
-                setData(generateLevelBatch(lvl));
-            };
-
-            const handleSolve = (id, isCorrect) => {
-                if (isCorrect) {
-                    setMoney(m => m + 60); 
-                    setData(prev => ({
-                        ...prev,
-                        items: prev.items.map(i => i.id === id ? { ...i, solved: true } : i)
-                    }));
-                } else {
-                    setMoney(m => m - 20); 
-                }
-            };
-
-            const handleNextLevel = () => {
-                if (money >= goal) {
-                    loadLevel(level + 1);
-                } else {
-                    loadLevel(level);
-                }
-            };
-
-            if (gameState === 'title') {
-                return <StartScreen onStart={startGame} />;
-            }
-
-            if (!data) return <div className="flex h-screen items-center justify-center text-pra-cyan animate-pulse">CONNECTING TO PROD DB...</div>;
+            // Views
+            if (state.status === 'TITLE') return <StartScreen onStart={() => dispatch({ type: 'START_GAME' })} />;
 
             return (
-                <div className="min-h-screen relative p-4 md:p-6 lg:p-8 max-w-7xl mx-auto flex flex-col crt-flicker">
-                    
-                    <div className="scanlines"></div>
+                <div 
+                    className="min-h-screen flex flex-col relative"
+                    style={{ transform: `translate(${Math.random() * shake - shake/2}px, ${Math.random() * shake - shake/2}px)` }}
+                >
+                    {/* Visual Overlays */}
+                    <div className="crt-container"></div>
+                    <div className="crt-scanline"></div>
+                    <ParticleFX particles={particles} />
 
-                    <div className="relative z-10">
-                        <HUD rank={rank} level={level} time={time} money={money} goal={goal} />
-                    </div>
+                    <HUD rank={rank} level={state.level} time={state.time} money={state.money} goal={goal} />
 
-                    <div className="relative z-10 flex flex-col lg:flex-row gap-6 flex-1">
+                    <main className="flex-1 flex flex-col md:flex-row overflow-hidden">
                         
-                        <div className="w-full lg:w-1/3 xl:w-1/4 flex-shrink-0">
-                            <div className="sticky top-4">
-                                <StickyNote tasks={data.tasks} level={level} rank={rank} />
+                        {/* Task Sidebar / Drawer */}
+                        <StickyNote 
+                            tasks={state.tasks} 
+                            level={state.level} 
+                            isMobileCollapsed={isTicketCollapsed}
+                            toggleMobile={() => setTicketCollapsed(!isTicketCollapsed)}
+                        />
+
+                        {/* Workstation Area */}
+                        <div className="flex-1 overflow-y-auto p-4 md:p-8 no-scrollbar pb-32">
+                            <div className="max-w-5xl mx-auto">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 md:gap-6">
+                                    <AnimatePresence mode="popLayout">
+                                        {state.items.map(item => (
+                                            <TerminalCard 
+                                                key={item.id} 
+                                                item={item} 
+                                                onSolve={handleSolve}
+                                                triggerShake={triggerShake}
+                                                spawnParticles={spawnParticles}
+                                            />
+                                        ))}
+                                    </AnimatePresence>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="w-full lg:w-2/3 xl:w-3/4 flex flex-col">
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <AnimatePresence mode="popLayout">
-                                    {data.items.map(item => (
-                                        <TerminalCard key={item.id} item={item} onSolve={handleSolve} />
-                                    ))}
-                                </AnimatePresence>
-                            </div>
+                        {/* Bottom Action Bar */}
+                        <div className="fixed bottom-0 inset-x-0 bg-pra-base/90 border-t border-pra-border p-4 backdrop-blur-md z-40">
+                            <div className="max-w-5xl mx-auto flex justify-between items-center">
+                                <div className="text-xs text-zinc-500 font-mono hidden md:block">
+                                    SERVER_STATUS: <span className="text-pra-green">ONLINE</span><br/>
+                                    BATCH_ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}
+                                </div>
 
-                            <div className="mt-8 py-4 border-t border-slate-800 flex justify-center lg:justify-end items-center h-24">
-                                {allPatched ? (
-                                    <motion.button
-                                        initial={{ scale: 0.9, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        onClick={handleNextLevel}
-                                        className="bg-pra-green text-black font-bold text-lg px-8 py-4 rounded shadow-neon-green hover:bg-white hover:scale-105 transition-all w-full md:w-auto"
-                                    >
-                                        {money >= goal ? "PUSH TO PROD (NEXT SPRINT)" : "RE-RUN BATCH (QUOTA MISSED)"}
-                                    </motion.button>
-                                ) : (
-                                    <div className="text-pra-dim font-bold animate-pulse flex items-center gap-2">
-                                        <div className="w-2 h-2 bg-pra-dim rounded-full"></div>
-                                        AWAITING FIXES...
-                                    </div>
-                                )}
+                                <div className="flex-1 flex justify-center md:justify-end">
+                                    {allPatched ? (
+                                        <motion.button
+                                            initial={{ scale: 0.9, opacity: 0 }}
+                                            animate={{ scale: 1, opacity: 1 }}
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            onClick={handleNext}
+                                            className={`
+                                                font-black text-lg px-8 py-3 rounded shadow-lg transition-all w-full md:w-auto
+                                                ${state.money >= goal 
+                                                    ? 'bg-pra-green text-black shadow-neon-cyan hover:bg-white' 
+                                                    : 'bg-pra-yellow text-black hover:bg-white'}
+                                            `}
+                                        >
+                                            {state.money >= goal ? "DEPLOY TO PRODUCTION >>" : "RE-RUN BATCH (QUOTA FAILED)"}
+                                        </motion.button>
+                                    ) : (
+                                        <div className="text-zinc-600 font-bold font-mono animate-pulse flex items-center gap-2 border border-zinc-800 px-4 py-2 rounded bg-black/50">
+                                            <div className="w-2 h-2 bg-zinc-600 rounded-full"></div>
+                                            AWAITING_INPUT...
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </main>
                 </div>
             );
         };
