@@ -3,849 +3,627 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>7.3 Variation & 7.4 Natural Selection - Year 9 Science</title>
+    <title>7.3 Variation & 7.4 Natural Selection</title>
     
+    <!-- Fonts: Outfit (Headings) and Plus Jakarta Sans (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* --- CSS VARIABLES & THEME --- */
         :root {
-            /* Palette - Bio-Digital Theme */
-            --bg-deep: #051810; /* Darker Green/Black tint */       
-            --bg-card: #1b4b36; /* Deep Jungle Green */       
-            --bg-card-hover: #2e6b52; 
+            /* Theme Colors */
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --primary: #10b981;   /* Green - Nature/Bio */
+            --secondary: #8b5cf6; /* Purple - Genetics/DNA */
+            --accent: #f472b6;    /* Pink - Highlight */
+            --warning: #f59e0b;   /* Amber - "Write this down" */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
             
-            --primary: #10b981;   /* Emerald Green - Main Elements */
-            --secondary: #8b5cf6; /* Violet - DNA/Genetics */
-            --accent: #f472b6;    /* Pink - Key Terms/Mutation */
-            --amber: #f59e0b;     /* Amber - Note Taking/Warning */
-            --danger: #ef4444;    /* Red - Extinction */
-            --text-main: #ffffff;        
-            --text-muted: #e2e8f0; 
-
-            --header-h: 70px;
-            --footer-h: 80px;
-            --border-radius: 16px;
-            
-            --fs-h1: clamp(2.5rem, 5vw, 5rem);
-            --fs-h2: clamp(1.8rem, 3.5vw, 3.5rem);
-            --fs-h3: clamp(1.2rem, 2vw, 2rem);
-            --fs-body: clamp(1.1rem, 1.2vw, 1.5rem);
+            --card-radius: 16px;
+            --shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
         }
 
-        /* --- RESET & BASE --- */
+        /* --- Global Reset & Body --- */
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        
-        html, body {
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
+
+        body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-deep);
-            /* DNA Helix Abstract Background */
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.1), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%),
-                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+            background-color: var(--bg-dark);
             color: var(--text-main);
+            overflow: hidden; /* Prevent body scroll, handle in viewport */
+            height: 100vh;
+            width: 100vw;
         }
 
-        /* --- LAYOUT --- */
-        .app-shell { display: flex; flex-direction: column; height: 100vh; }
-
-        .header {
-            height: var(--header-h);
+        /* --- Dynamic Background --- */
+        .bg-fx {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%);
+            pointer-events: none;
+        }
+        
+        /* --- Layout Shell --- */
+        .app-shell {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* --- Header --- */
+        header {
+            height: 70px;
+            display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0 2rem;
-            background: rgba(5, 24, 16, 0.95);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
             z-index: 10;
         }
 
-        .brand-pill {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 0.4rem 1.2rem;
-            border-radius: 50px;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 800;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: white;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
+        .badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- Viewport (Slide Area) --- */
         .viewport {
             flex: 1;
             position: relative;
             overflow-y: auto;
-            overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
-        .slide-wrapper {
+        .slide-container {
             min-height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 2rem;
             max-width: 1400px;
             margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Vertically center content */
         }
 
-        .footer {
-            height: var(--footer-h);
-            background: rgba(5, 24, 16, 0.95);
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        /* --- Footer/Controls --- */
+        footer {
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(15, 23, 42, 0.9);
             z-index: 10;
         }
 
-        /* --- COMPONENTS --- */
-        .btn {
-            cursor: pointer;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .btn:active { transform: scale(0.96); }
-        
-        .btn-nav {
-            width: 56px;
-            height: 56px;
-            background: var(--bg-card);
-            color: var(--text-main);
-            font-size: 1.2rem;
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-        .btn-nav:hover:not(:disabled) {
-            background: var(--primary);
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
-        }
-        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
-
-        .btn-reveal {
-            background: var(--secondary);
-            color: white;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            width: 100%;
-            margin-top: 1rem;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        .btn-reveal:hover { background: #7c3aed; transform: translateY(-2px); }
-
-        .btn-sim {
-            background: var(--bg-card);
-            border: 1px solid var(--primary);
-            color: white;
-            padding: 0.5rem 1rem;
-            margin: 0.5rem;
-        }
-        .btn-sim:hover { background: var(--bg-card-hover); }
-        
-        .progress-container {
+        .progress-bar {
             flex: 1;
             margin: 0 2rem;
-            height: 8px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 10px;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
             overflow: hidden;
         }
+
         .progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transition: width 0.4s ease;
+            background: var(--primary);
+            transition: width 0.3s ease;
         }
 
-        /* SCAFFOLDING PILLS */
-        .note-pill {
-            display: inline-block;
-            background: rgba(245, 158, 11, 0.15);
-            border: 2px solid var(--amber);
-            color: var(--amber);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
+        /* --- Typography --- */
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; color: white; line-height: 1.2; }
+        h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; }
+        h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1.5rem; }
+        h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        p { font-size: 1.2rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 1rem; }
+        strong { color: white; font-weight: 700; }
+        .term { color: var(--secondary); font-weight: 800; }
+
+        /* --- Components --- */
+        
+        /* NOTE BOX (The Key Concept Cue) */
+        .note-box {
+            position: relative;
+            background: rgba(245, 158, 11, 0.08);
+            border: 2px solid var(--warning);
+            border-radius: 12px;
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.1);
+        }
+        
+        .note-badge {
+            position: absolute;
+            top: -14px;
+            left: 20px;
+            background: var(--bg-dark);
+            border: 2px solid var(--warning);
+            color: var(--warning);
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
             font-weight: 800;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* TEXT & GRID */
-        .text-center { text-align: center; }
-        h1 { font-size: var(--fs-h1); font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 1rem; color: white; text-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
-        h2 { font-size: var(--fs-h2); font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem; color: white; }
-        h3 { font-size: var(--fs-h3); font-family: 'Outfit', sans-serif; margin-bottom: 1rem; color: white; }
-        p, li { font-size: var(--fs-body); color: var(--text-muted); line-height: 1.6; font-weight: 500; }
-        strong { color: white; font-weight: 800; }
-        
-        .term { color: var(--accent); font-weight: 800; }
+        /* Grids */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
 
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 3rem; align-items: center; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-
-        /* CARDS */
+        /* Cards */
         .card {
             background: var(--bg-card);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: var(--card-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
         }
-        
+
         .img-card {
-            background: black;
-            border-radius: var(--border-radius);
+            border-radius: var(--card-radius);
             overflow: hidden;
-            border: 2px solid var(--primary);
+            border: 4px solid var(--bg-card);
+            box-shadow: var(--shadow);
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            background: #000;
         }
         .img-card img {
             width: 100%;
-            height: auto;
-            max-height: 400px;
+            height: 100%;
             object-fit: cover;
+            max-height: 450px;
         }
 
-        /* FLIP CARDS */
-        .flip-card {
-            background-color: transparent;
-            width: 100%;
-            height: 300px;
-            perspective: 1000px;
-            cursor: pointer;
-        }
-        .flip-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-        }
-        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .flip-front, .flip-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: var(--border-radius);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            border: 2px solid rgba(255,255,255,0.1);
-        }
-        .flip-front { background: var(--bg-card); }
-        .flip-front:hover { background: var(--bg-card-hover); border-color: var(--accent); }
-        .flip-back { background: linear-gradient(135deg, var(--primary), var(--secondary)); transform: rotateY(180deg); color: white; border: none; }
-
-        /* ANSWER BOX */
-        .answer-box {
-            background: rgba(244, 114, 182, 0.1);
-            border: 2px solid var(--accent);
-            color: var(--text-muted);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-top: 1rem;
-            display: none;
-            text-align: left;
-        }
-        .answer-box.visible { display: block; animation: slideUp 0.3s ease; }
-
-        /* MOTH SIMULATION STYLES */
-        .moth-container {
-            width: 100%;
-            height: 300px;
-            background-color: #d1d5db; /* Light bark default */
-            border-radius: 12px;
-            position: relative;
-            transition: background-color 0.5s ease;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            padding: 20px;
-        }
-        .moth {
-            font-size: 3rem;
-            transition: opacity 0.5s ease;
-        }
-        .moth-light { color: #e5e7eb; text-shadow: 0 0 2px black; }
-        .moth-dark { color: #1f2937; }
-
-        .tree-dark { background-color: #374151 !important; } /* Soot covered */
-        
-        /* CHART STYLES */
-        .chart-container {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-around;
-            height: 200px;
-            padding: 10px;
-            border-left: 2px solid white;
-            border-bottom: 2px solid white;
-            position: relative;
-        }
-        .bar-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 20%;
-            height: 100%;
-            justify-content: flex-end;
-        }
-        .bar {
-            width: 100%;
-            background: linear-gradient(to top, var(--primary), var(--secondary));
-            border-radius: 4px 4px 0 0;
-            transition: height 1s ease;
-            position: relative;
-        }
-        .bar-label { margin-top: 8px; font-size: 0.9rem; color: var(--text-muted); }
-        .bar-value { position: absolute; top: -25px; width: 100%; text-align: center; color: white; font-weight: bold; }
-
-        /* STORY STEPS */
-        .story-step {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-            background: rgba(255,255,255,0.05);
-            padding: 1rem;
-            border-radius: 12px;
-        }
-        .story-number {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--secondary);
-            background: rgba(139, 92, 246, 0.2);
-            width: 60px;
-            height: 60px;
+        /* Buttons */
+        .btn {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+        }
+        .btn:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); transform: scale(1.1); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-text {
+            width: auto; height: auto; border-radius: 8px; padding: 0.8rem 1.5rem; font-weight: 700;
         }
 
-        /* ANIMATIONS */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.6s ease-out; }
-        .slide-up { animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+        /* Animations */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
 
-        @media (max-width: 768px) {
-            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+        /* --- Specific Interactive Elements --- */
+        
+        /* Flip Cards */
+        .flip-container { perspective: 1000px; height: 280px; cursor: pointer; }
+        .flip-inner {
+            position: relative; width: 100%; height: 100%; text-align: center;
+            transition: transform 0.8s; transform-style: preserve-3d;
+        }
+        .flip-container.flipped .flip-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border-radius: var(--card-radius);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;
+        }
+        .flip-front { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1); }
+        .flip-back { background: linear-gradient(135deg, var(--secondary), #6d28d9); transform: rotateY(180deg); color: white; }
+
+        /* Moth Sim */
+        .moth-zone {
+            height: 300px;
+            border-radius: var(--card-radius);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            place-items: center;
+            transition: all 0.5s ease;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        .moth-zone.clean { background: #cbd5e1; /* Light Bark */ }
+        .moth-zone.dirty { background: #334155; /* Soot */ }
+        
+        .moth { font-size: 3rem; transition: opacity 0.5s; cursor: pointer; }
+        .moth:hover { transform: scale(1.2); }
+        
+        .clean .moth-light { opacity: 0.2; color: #94a3b8; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); } /* Hidden on light */
+        .clean .moth-dark { opacity: 1; color: #1e293b; }   /* Visible on light */
+        
+        .dirty .moth-light { opacity: 1; color: #e2e8f0; }   /* Visible on dark */
+        .dirty .moth-dark { opacity: 0.2; color: #0f172a; filter: drop-shadow(0 2px 2px rgba(255,255,255,0.1)); } /* Hidden on dark */
+
+        /* Chart Animations */
+        .bar { transition: height 1s ease-out; height: 0; }
+        
+        /* Mobile adjustment */
+        @media(max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr; gap: 1.5rem; }
             h1 { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
 
+<div class="bg-fx"></div>
+
 <div class="app-shell">
-    <header class="header">
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <div class="brand-pill">Year 9 Science</div>
-            <span style="font-weight: 700; color: var(--text-muted); font-size: 0.9rem;">7.3 Variation & 7.4 Natural Selection</span>
+    <header>
+        <div class="brand">
+            <span class="badge">Year 9 Science</span>
+            <span style="font-weight: 600; color: white;">Cambridge Stage 9</span>
         </div>
-        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--primary);">
-            Genetics Unit
+        <div style="font-family: 'Outfit'; font-weight: 700; color: var(--text-muted);">
+            7.3 Variation & 7.4 Natural Selection
         </div>
     </header>
 
-    <main class="viewport" id="viewport">
-        <div id="slide-container" class="slide-wrapper" aria-live="polite">
-            <!-- Slides render here -->
+    <main class="viewport">
+        <div id="slide-root" class="slide-container">
+            <!-- Content Injected Here -->
         </div>
     </main>
 
-    <footer class="footer">
-        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
-            <i class="fa-solid fa-chevron-left"></i>
-        </button>
-        
-        <div class="progress-container">
-            <div class="progress-fill" id="progress-bar"></div>
+    <footer>
+        <button class="btn" id="prev-btn" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="progress-bar">
+            <div id="progress" class="progress-fill"></div>
         </div>
-        
-        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
-            <i class="fa-solid fa-chevron-right"></i>
-        </button>
+        <button class="btn" id="next-btn" onclick="nextSlide()"><i class="fa-solid fa-arrow-right"></i></button>
     </footer>
 </div>
 
 <script>
-    const state = {
-        currentSlide: 0,
-        slides: []
-    };
-
-    // --- SLIDE DATA ---
-    state.slides = [
+    // --- Slide Data ---
+    const slides = [
+        // 1. Title
         {
-            // 1. Title & Goals
-            render: () => `
-                <div class="text-center fade-in">
-                    <i class="fa-solid fa-dna" style="font-size: 5rem; color: var(--secondary); margin-bottom: 1.5rem; filter: drop-shadow(0 0 15px var(--secondary));"></i>
+            content: `
+                <div style="text-align: center;" class="animate">
+                    <div style="font-size: 5rem; color: var(--primary); margin-bottom: 1rem;">
+                        <i class="fa-solid fa-dna fa-spin" style="--fa-animation-duration: 10s;"></i>
+                    </div>
                     <h1>Variation & Natural Selection</h1>
-                    <p style="font-size: 1.5rem; color: var(--text-muted); font-weight: 600; letter-spacing: 1px;">Why is everyone different?</p>
+                    <p style="font-size: 1.5rem; margin-top: 1rem;">Why are we all unique?</p>
                     
-                    <div class="card slide-up" style="margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; text-align: left; border-left: 5px solid var(--primary);">
-                        <h3 style="color: var(--primary); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-                            <i class="fa-solid fa-crosshairs"></i> Learning Objectives
-                        </h3>
-                        <div class="note-pill">📝 Write these down</div>
-                        <ul style="list-style: none; display: grid; gap: 1rem;">
-                            <li style="display: flex; align-items: center; gap: 1rem;">
-                                <i class="fa-solid fa-check" style="color: var(--primary);"></i>
-                                <span>Define <strong>Variation</strong> within a species.</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 1rem;">
-                                <i class="fa-solid fa-check" style="color: var(--primary);"></i>
-                                <span>Explain how <strong>Natural Selection</strong> changes a population.</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 1rem;">
-                                <i class="fa-solid fa-check" style="color: var(--primary);"></i>
-                                <span>Describe examples like <strong>Peppered Moths</strong> and <strong>Antibiotics</strong>.</span>
-                            </li>
-                        </ul>
+                    <div class="grid-3 delay-1 animate" style="margin-top: 4rem; text-align: left;">
+                        <div class="card">
+                            <h3 style="color: var(--primary);">1. Variation</h3>
+                            <p>Understand differences within a species.</p>
+                        </div>
+                        <div class="card">
+                            <h3 style="color: var(--secondary);">2. Natural Selection</h3>
+                            <p>How species change over time.</p>
+                        </div>
+                        <div class="card">
+                            <h3 style="color: var(--accent);">3. Evidence</h3>
+                            <p>Real examples: Moths & Bacteria.</p>
+                        </div>
                     </div>
                 </div>
             `
         },
+        // 2. Definitions (Warm Up)
         {
-            // 2. Warm Up (Definitions)
-            render: () => `
-                <div class="fade-in text-center">
-                    <span class="brand-pill" style="background: var(--amber); color: var(--bg-deep);">Warm Up</span>
-                    <h2 style="margin-top: 1rem;">Key Definitions</h2>
-                    <p>Before we start, let's make sure we know the basics.</p>
-                    <div class="grid-3 slide-up" style="margin-top: 3rem;">
-                        ${createFlipCard('Species', 'A Group of Organisms', 'They look similar and can breed to produce fertile offspring.', 'e.g., Humans, Dogs, Oak Trees.', 'fa-paw', 'var(--primary)')}
-                        ${createFlipCard('DNA', 'Genetic Instruction', 'The molecule inside cells that carries genetic information.', 'Found in the Nucleus.', 'fa-microscope', 'var(--secondary)')}
-                        ${createFlipCard('Inheritance', 'Passing on traits', 'How characteristics are passed from parents to offspring.', 'Eye colour, height, blood type.', 'fa-child-reaching', 'var(--accent)')}
+            content: `
+                <div class="animate">
+                    <span class="badge" style="background: var(--warning); color: black;">Warm Up</span>
+                    <h2>Key Definitions</h2>
+                    <p>Flip the cards to reveal the definitions. Do you know them?</p>
+                    
+                    <div class="grid-3 delay-1 animate" style="margin-top: 2rem;">
+                        <!-- Card 1 -->
+                        <div class="flip-container" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-inner">
+                                <div class="flip-front">
+                                    <i class="fa-solid fa-fingerprint" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                                    <h3>Species</h3>
+                                </div>
+                                <div class="flip-back">
+                                    <h3>Species</h3>
+                                    <p>A group of organisms that can breed to produce <strong>fertile offspring</strong>.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 2 -->
+                        <div class="flip-container" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-inner">
+                                <div class="flip-front">
+                                    <i class="fa-solid fa-microscope" style="font-size: 3rem; color: var(--secondary); margin-bottom: 1rem;"></i>
+                                    <h3>DNA</h3>
+                                </div>
+                                <div class="flip-back">
+                                    <h3>DNA</h3>
+                                    <p>The molecule inside the nucleus that carries <strong>genetic instructions</strong>.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="flip-container" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-inner">
+                                <div class="flip-front">
+                                    <i class="fa-solid fa-users-viewfinder" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                                    <h3>Inheritance</h3>
+                                </div>
+                                <div class="flip-back">
+                                    <h3>Inheritance</h3>
+                                    <p>The passing on of characteristics from parents to offspring.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `
         },
+        // 3. What is Variation?
         {
-            // 3. What is Variation?
-            render: () => `
-                <div class="grid-2 fade-in">
+            content: `
+                <div class="grid-2 animate">
                     <div>
                         <h2>What is Variation?</h2>
-                        <div class="note-pill">📝 Write Definition</div>
-                        <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
-                            <p style="color: white; margin-bottom: 0.5rem;"><strong class="term">Variation:</strong></p>
-                            <p>The differences between individuals belonging to the same species.</p>
+                        <div class="note-box delay-1 animate">
+                            <div class="note-badge"><i class="fa-solid fa-pen"></i> Copy This</div>
+                            <p><strong class="term">Variation</strong> is the differences between individuals of the same species.</p>
                         </div>
-                        <p>Look at the animals on the right. They are all the same species, but they have different colours and patterns.</p>
-                        <p style="margin-top: 1rem;"><strong>Causes of Variation:</strong></p>
-                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
-                            <li><strong>Genes:</strong> Inherited from parents (Eye colour).</li>
-                            <li><strong>Environment:</strong> Affected by surroundings (Scars, Tattoos).</li>
+                        
+                        <p>Look at the goats. They are the same species, but look different.</p>
+                        
+                        <h3 style="margin-top: 2rem;">Causes of Variation:</h3>
+                        <ul style="list-style: none; margin-left: 0;">
+                            <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                                <i class="fa-solid fa-dna" style="color: var(--secondary);"></i> <strong>Genetic:</strong> Inherited (Eye colour).
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fa-solid fa-sun" style="color: var(--warning);"></i> <strong>Environmental:</strong> Lifestyle (Scars, Tattoos).
+                            </li>
                         </ul>
                     </div>
-                    <div class="slide-up">
-                        <div class="img-card">
-                            <img src="https://images.unsplash.com/photo-1599572686869-79a61e05d97d?auto=format&fit=crop&w=800&q=80" alt="Goats Variation">
-                        </div>
-                        <p class="text-center" style="margin-top:0.5rem; font-size: 0.9rem;">Same species, different appearances.</p>
+                    <div class="img-card delay-2 animate">
+                        <img src="https://images.unsplash.com/photo-1524024973431-2ad916746881?auto=format&fit=crop&w=800" alt="Goats showing variation">
                     </div>
                 </div>
             `
         },
+        // 4. Graphs
         {
-            // 4. Measuring Variation (Graph)
-            render: () => `
-                <div class="fade-in text-center">
-                    <span class="brand-pill" style="background: var(--secondary);">Numeracy Skill 📊</span>
-                    <h2 style="margin-top: 1rem;">Two Types of Variation</h2>
+            content: `
+                <div class="animate">
+                    <h2 style="text-align: center;">Two Types of Variation</h2>
                     
-                    <div class="grid-2 slide-up" style="margin-top: 2rem;">
-                        <!-- DISCONTINUOUS -->
-                        <div class="card" style="text-align: left;">
-                            <h3 style="color: var(--primary);">1. Discontinuous</h3>
-                            <p style="margin-bottom: 1rem;">Limited options. No in-between values.</p>
-                            <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 2rem;">Example: Blood Type, Eye Colour, Leaflet Count (11, 13, 15).</p>
+                    <div class="grid-2" style="margin-top: 3rem;">
+                        <!-- Discontinuous -->
+                        <div class="card delay-1 animate">
+                            <h3 style="color: var(--accent);">Discontinuous Variation</h3>
+                            <p>Limited options. No in-between.</p>
+                            <p style="font-size: 0.9rem; opacity: 0.8;">Example: Blood Group, Tongue Rolling.</p>
                             
-                            <div class="chart-container">
-                                <div class="bar-group">
-                                    <div class="bar" style="height: 40%;">
-                                         <div class="bar-value">4</div>
-                                    </div>
-                                    <span class="bar-label">Blue</span>
-                                </div>
-                                <div class="bar-group">
-                                    <div class="bar" style="height: 80%;">
-                                         <div class="bar-value">8</div>
-                                    </div>
-                                    <span class="bar-label">Brown</span>
-                                </div>
-                                <div class="bar-group">
-                                    <div class="bar" style="height: 20%;">
-                                         <div class="bar-value">2</div>
-                                    </div>
-                                    <span class="bar-label">Green</span>
-                                </div>
+                            <!-- Bar Chart -->
+                            <div style="height: 200px; display: flex; align-items: flex-end; justify-content: space-around; margin-top: 1rem; border-bottom: 2px solid white; padding-bottom: 5px;">
+                                <div style="width: 20%; background: var(--accent); border-radius: 4px 4px 0 0;" class="bar" data-height="40%"></div>
+                                <div style="width: 20%; background: var(--accent); border-radius: 4px 4px 0 0;" class="bar" data-height="80%"></div>
+                                <div style="width: 20%; background: var(--accent); border-radius: 4px 4px 0 0;" class="bar" data-height="20%"></div>
+                                <div style="width: 20%; background: var(--accent); border-radius: 4px 4px 0 0;" class="bar" data-height="60%"></div>
                             </div>
-                            <p class="text-center" style="margin-top: 1rem; font-weight: 700;">Bar Chart</p>
+                            <p style="text-align: center; margin-top: 0.5rem; font-weight: bold;">Bar Chart</p>
                         </div>
-                        
-                        <!-- CONTINUOUS -->
-                        <div class="card" style="text-align: left;">
-                            <h3 style="color: var(--secondary);">2. Continuous</h3>
-                            <p style="margin-bottom: 1rem;">Can be any value within a range.</p>
-                            <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 2rem;">Example: Height, Weight, Hand Span.</p>
+
+                        <!-- Continuous -->
+                        <div class="card delay-2 animate">
+                            <h3 style="color: var(--primary);">Continuous Variation</h3>
+                            <p>Can be any value within a range.</p>
+                            <p style="font-size: 0.9rem; opacity: 0.8;">Example: Height, Weight.</p>
                             
-                            <!-- Bell Curve Visualization -->
-                            <div style="height: 200px; display: flex; align-items: flex-end; justify-content: center; position: relative; border-bottom: 2px solid white;">
+                            <!-- Bell Curve -->
+                             <div style="height: 200px; display: flex; align-items: flex-end; justify-content: center; position: relative; margin-top: 1rem; border-bottom: 2px solid white; padding-bottom: 5px;">
                                 <svg viewBox="0 0 300 150" style="width: 100%; height: 100%; overflow: visible;">
-                                    <path d="M 0 145 Q 150 -50 300 145" fill="rgba(139, 92, 246, 0.3)" stroke="var(--secondary)" stroke-width="3" />
-                                    <line x1="150" y1="145" x2="150" y2="45" stroke="white" stroke-dasharray="5,5" />
-                                    <text x="150" y="165" fill="white" text-anchor="middle" font-size="12">Average Height</text>
-                                    <text x="10" y="165" fill="white" font-size="12">Short</text>
-                                    <text x="290" y="165" fill="white" text-anchor="end" font-size="12">Tall</text>
+                                    <path d="M 10 145 C 80 145, 120 10, 150 10 C 180 10, 220 145, 290 145" fill="rgba(16, 185, 129, 0.3)" stroke="var(--primary)" stroke-width="3" />
                                 </svg>
                             </div>
-                            <p class="text-center" style="margin-top: 1rem; font-weight: 700;">Bell Curve (Normal Distribution)</p>
+                             <p style="text-align: center; margin-top: 0.5rem; font-weight: bold;">Bell Curve (Normal Distribution)</p>
                         </div>
                     </div>
                 </div>
-            `
+            `,
+            onLoad: () => {
+                setTimeout(() => {
+                    document.querySelectorAll('.bar').forEach(bar => {
+                        bar.style.height = bar.dataset.height;
+                    });
+                }, 500);
+            }
         },
+        // 5. Natural Selection Intro
         {
-            // 5. Intro to Natural Selection
-            render: () => `
-                <div class="grid-2 fade-in">
-                    <div class="slide-up order-2">
-                         <div class="img-card">
-                            <img src="https://images.unsplash.com/photo-1547528373-19f6a724d209?auto=format&fit=crop&w=800&q=80" alt="Tiger hiding">
-                        </div>
+            content: `
+                 <div class="grid-2 animate">
+                    <div class="img-card delay-2 animate">
+                        <img src="https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=800&q=80" alt="Tiger hiding">
                     </div>
-                    <div class="order-1">
-                        <h2 class="text-primary">7.4 Natural Selection</h2>
-                        <p>Look at the <strong>Tiger</strong> in the grass.</p>
-                        
-                        <div class="note-pill">📝 Write this down</div>
-                        <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
-                            <p style="color: white; margin-bottom: 0.5rem;"><strong class="term">Advantageous Feature:</strong></p>
-                            <p>A feature that helps an organism survive in its environment.</p>
-                        </div>
-
-                        <ul style="margin-left: 1.5rem;">
-                            <li><strong>Tiger:</strong> Stripes help it hide in tall grass (Camouflage) to hunt prey.</li>
-                            <li><strong>Frog:</strong> Green skin helps it hide in leaves to avoid being eaten.</li>
-                        </ul>
-                    </div>
-                </div>
-            `
-        },
-        {
-            // NEW SLIDE 6: THE GIRAFFE STORY VISUAL
-            render: () => `
-                <div class="fade-in">
-                    <h2 class="text-center" style="margin-bottom: 2rem;">The Story of the Giraffes 🦒</h2>
-                    
-                    <div class="grid-2 slide-up" style="align-items: flex-start;">
-                        <!-- STORY TEXT -->
-                        <div>
-                            <div class="story-step">
-                                <div class="story-number">1</div>
-                                <div>
-                                    <h3 style="color: var(--secondary); margin:0;">Variation Existed</h3>
-                                    <p>Long ago, some giraffes were born with short necks, and some with long necks. Just like humans have different heights.</p>
-                                </div>
-                            </div>
-
-                            <div class="story-step">
-                                <div class="story-number">2</div>
-                                <div>
-                                    <h3 style="color: var(--amber); margin:0;">Environment Changed</h3>
-                                    <p>A drought came. The grass dried up. The only food left was leaves high up in the trees.</p>
-                                </div>
-                            </div>
-
-                            <div class="story-step">
-                                <div class="story-number">3</div>
-                                <div>
-                                    <h3 style="color: var(--primary); margin:0;">Survival of the Fittest</h3>
-                                    <p>Short-necked giraffes couldn't reach food and died. Long-necked giraffes ate, survived, and had babies.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- VISUAL -->
-                        <div class="img-card" style="height: 100%;">
-                            <img src="https://images.unsplash.com/photo-1538127426967-75a6c73f6d29?auto=format&fit=crop&w=800&q=80" alt="Giraffes reaching high trees">
-                            <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.7); padding: 1rem;">
-                                <p style="color: white; text-align: center;">Nature "selected" the long necks to survive.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `
-        },
-        {
-            // 7. The Theory Summary (Formerly Slide 6)
-            render: () => `
-                <div class="fade-in text-center">
-                    <h2>Summary: How Natural Selection Works</h2>
-                    <p>We can summarize the Giraffe story into 5 scientific steps.</p>
-                    
-                    <div class="grid-3 slide-up" style="margin-top: 2rem; text-align: left;">
-                        <div class="card" style="border-top: 4px solid var(--secondary);">
-                            <h3 style="color:var(--secondary);">1. Variation</h3>
-                            <p>Differences exist in a population (e.g. neck length).</p>
-                        </div>
-                        <div class="card" style="border-top: 4px solid var(--amber);">
-                            <h3 style="color:var(--amber);">2. Environment</h3>
-                            <p>The environment changes (e.g. food runs out).</p>
-                        </div>
-                        <div class="card" style="border-top: 4px solid var(--primary);">
-                            <h3 style="color:var(--primary);">3. Survival</h3>
-                            <p>Those with the <strong>advantageous feature</strong> survive.</p>
-                        </div>
-                         <div class="card" style="border-top: 4px solid var(--accent);">
-                            <h3 style="color:var(--accent);">4. Reproduction</h3>
-                            <p>The survivors reproduce (have babies).</p>
-                        </div>
-                         <div class="card" style="border-top: 4px solid white;">
-                            <h3 style="color:white;">5. Inheritance</h3>
-                            <p>The useful gene is passed on. Over time, the whole population changes.</p>
-                        </div>
-                    </div>
-                </div>
-            `
-        },
-        {
-            // 8. Evidence: Peppered Moths
-            render: () => `
-                <div class="fade-in text-center">
-                    <h2>Evidence in Action: Peppered Moths</h2>
-                    <p>This really happened in England during the Industrial Revolution (Page 264).</p>
-
-                    <div style="margin: 1rem 0;">
-                        <button class="btn btn-sim" onclick="updateMoths('clean')">🌳 Clean Air (Lichen)</button>
-                        <button class="btn btn-sim" style="background: #374151; border-color: #4b5563;" onclick="updateMoths('dirty')">🏭 Dirty Air (Soot)</button>
-                    </div>
-
-                    <div id="moth-sim" class="moth-container slide-up">
-                        <!-- Simulated Moths -->
-                        <i class="fa-solid fa-bug moth moth-light"></i>
-                        <i class="fa-solid fa-bug moth moth-dark"></i>
-                        <i class="fa-solid fa-bug moth moth-light"></i>
-                        <i class="fa-solid fa-bug moth moth-dark"></i>
-                        <i class="fa-solid fa-bug moth moth-light"></i>
-                    </div>
-
-                    <div class="grid-2" style="margin-top: 2rem; text-align: left;">
-                        <div class="card">
-                            <h3 class="term">Before 1850</h3>
-                            <p>Trees were covered in pale lichen. Pale moths were camouflaged. Birds ate the dark ones.</p>
-                        </div>
-                        <div class="card">
-                            <h3 class="term">After 1900</h3>
-                            <p>Pollution killed lichen and turned trees black. Dark moths were camouflaged. Birds ate the pale ones.</p>
-                        </div>
-                    </div>
-                </div>
-            `
-        },
-        {
-            // 9. Modern Example: Bacteria
-            render: () => `
-                <div class="grid-2 fade-in">
                     <div>
-                        <h2 class="text-danger"><i class="fa-solid fa-virus"></i> Bacteria & Antibiotics</h2>
-                        <div class="note-pill">📝 Important Concept</div>
-                        <p>Doctors tell you to finish your antibiotics. Why?</p>
-                        <br>
-                        <ol style="margin-left: 1.5rem; line-height: 2;">
-                            <li>In a group of bacteria, some are <span class="term">Resistant</span> (hard to kill).</li>
-                            <li>Antibiotics kill the weak ones first.</li>
-                            <li>If you stop taking medicine early, the <strong>resistant</strong> ones survive.</li>
-                            <li>They multiply, creating a "Superbug" that medicine can't kill.</li>
+                        <h2>Natural Selection</h2>
+                        <p>Look at the Tiger. Why does it have stripes?</p>
+                        
+                         <div class="note-box delay-1 animate">
+                            <div class="note-badge"><i class="fa-solid fa-pen"></i> Key Term</div>
+                            <p><strong class="term">Advantageous Feature:</strong> A characteristic that helps an organism survive in its environment.</p>
+                        </div>
+
+                        <p>Nature "selects" the animals with the best features to survive. The others die.</p>
+                    </div>
+                </div>
+            `
+        },
+        // 6. The 5 Steps Summary
+        {
+            content: `
+                <div class="animate">
+                    <h2 style="text-align: center;">How Natural Selection Works</h2>
+                    
+                    <div class="note-box delay-1 animate" style="max-width: 800px; margin: 2rem auto;">
+                        <div class="note-badge"><i class="fa-solid fa-pen"></i> Copy The 5 Steps</div>
+                        <ol style="margin-left: 1.5rem; font-size: 1.2rem; line-height: 2;">
+                            <li><strong class="term">Variation:</strong> Individuals in a species are different.</li>
+                            <li><strong class="term">Competition:</strong> They fight for food, space, or mates.</li>
+                            <li><strong class="term">Survival:</strong> Those with <span style="color:var(--primary)">advantageous features</span> survive.</li>
+                            <li><strong class="term">Reproduction:</strong> The survivors have babies.</li>
+                            <li><strong class="term">Inheritance:</strong> The useful genes are passed on.</li>
                         </ol>
                     </div>
-                    <div class="slide-up">
-                         <div class="img-card">
-                            <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80" alt="Bacteria Diagram">
-                        </div>
-                        <p class="text-center" style="margin-top:0.5rem;">The resistant bacteria survive and take over.</p>
-                    </div>
                 </div>
             `
         },
+        // 7. Giraffe Story
         {
-            // 10. Timeline / Extinction
-            render: () => `
-                 <div class="fade-in text-center">
-                    <h2>The History of DNA</h2>
-                    
-                    <div class="slide-up" style="max-width: 900px; margin: 2rem auto;">
-                         <div style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem;">
-                            <div class="card" style="min-width: 250px;">
-                                <strong style="color: var(--secondary);">1860s</strong>
-                                <h3>Gregor Mendel</h3>
-                                <p>Experiments with peas. Discovered characteristics are inherited.</p>
-                            </div>
-                            <div class="card" style="min-width: 250px;">
-                                <strong style="color: var(--secondary);">1953</strong>
-                                <h3>Watson, Crick & Franklin</h3>
-                                <p>Discovered the structure of DNA (The Double Helix).</p>
-                            </div>
-                            <div class="card" style="min-width: 250px;">
-                                <strong style="color: var(--secondary);">2001</strong>
-                                <h3>Human Genome Project</h3>
-                                <p>Mapped all the genes in a human being.</p>
-                            </div>
-                        </div>
-                    </div>
+            content: `
+                <div class="animate">
+                    <h2>The Giraffe Story</h2>
+                    <p>Lamarck thought giraffes stretched their necks. <br>Darwin (Natural Selection) knew better:</p>
 
-                    <div class="card" style="margin-top: 2rem; border: 1px solid var(--danger);">
-                        <h3 style="color: var(--danger);">⚠ Extinction</h3>
-                        <p>If a species cannot adapt to a changing environment (like climate change affecting Polar Bears), they may become extinct.</p>
-                    </div>
-                </div>
-            `
-        },
-        {
-            // 11. Think Hard
-            render: () => `
-                <div class="fade-in text-center">
-                    <span class="brand-pill" style="background: var(--accent);">Challenge 🧠</span>
-                    <h2 style="margin-top: 1rem;">Think Hard</h2>
-                    
-                    <div class="grid-2 slide-up" style="max-width: 1200px; margin: 2rem auto; gap: 1.5rem;">
-                        
-                        <!-- Q1 -->
+                    <div class="grid-3 delay-1 animate" style="margin-top: 2rem;">
                         <div class="card">
-                            <h3><i class="fa-solid fa-tree"></i> Moths</h3>
-                            <p>Pollution is now lower in England. What colour are most Peppered Moths today?</p>
-                            <button class="btn btn-reveal" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Check</button>
-                            <div class="answer-box">
-                                <strong>Pale.</strong> The air is cleaner, lichens have grown back, so pale moths are hidden again.
+                            <div style="font-size: 2rem; color: var(--secondary); margin-bottom: 0.5rem;">1. Variation</div>
+                            <p>Long ago, some giraffes had short necks, some had long necks.</p>
+                        </div>
+                        <div class="card">
+                            <div style="font-size: 2rem; color: var(--warning); margin-bottom: 0.5rem;">2. Change</div>
+                            <p>The grass died. Food was only high up in trees.</p>
+                        </div>
+                        <div class="card">
+                            <div style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;">3. Selection</div>
+                            <p>Short necks died. Long necks ate, survived, and had babies.</p>
+                        </div>
+                    </div>
+                     <div class="img-card animate delay-2" style="margin-top: 1.5rem; height: 300px;">
+                        <img src="https://images.unsplash.com/photo-1547721064-da6cfb341d50?auto=format&fit=crop&w=800" alt="Giraffe">
+                    </div>
+                </div>
+            `
+        },
+        // 8. Moth Sim
+        {
+            content: `
+                <div class="animate">
+                    <h2>Evidence: Peppered Moths</h2>
+                    <p>This is the most famous example of natural selection happening quickly.</p>
+
+                    <div class="grid-2" style="margin-top: 1rem; align-items: start;">
+                        <div>
+                            <div style="text-align: left; margin-bottom: 1rem;">
+                                <p><strong>Context:</strong> Before factories, trees were clean. Pollution killed the lichen and covered trees in black soot.</p>
+                                <div style="margin: 1rem 0;">
+                                    <button class="btn-text btn" style="width:auto; border-radius: 8px; display:inline-block; margin-right: 1rem;" onclick="setMothEnv('clean')">🌳 Clean Air (1800s)</button>
+                                    <button class="btn-text btn" style="width:auto; border-radius: 8px; display:inline-block; background: #334155;" onclick="setMothEnv('dirty')">🏭 Pollution (1900s)</button>
+                                </div>
                             </div>
+                             <div id="moth-sim" class="moth-zone clean delay-1 animate" style="height: 200px;">
+                                <i class="fa-solid fa-bug moth moth-light"></i>
+                                <i class="fa-solid fa-bug moth moth-dark"></i>
+                                <i class="fa-solid fa-bug moth moth-light"></i>
+                                <i class="fa-solid fa-bug moth moth-dark"></i>
+                                <i class="fa-solid fa-bug moth moth-light"></i>
+                                <i class="fa-solid fa-bug moth moth-dark"></i>
+                            </div>
+                        </div>
+
+                        <div class="note-box delay-2 animate" style="margin-top: 0;">
+                            <div class="note-badge"><i class="fa-solid fa-pen"></i> Copy into Book</div>
+                            <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                                <li style="margin-bottom: 0.5rem;"><strong>Before 1850:</strong> Trees were light. Pale moths were camouflaged. Dark moths were eaten.</li>
+                                <li><strong>After 1850:</strong> Pollution made trees dark. Dark moths were camouflaged. Pale moths were eaten.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        // 9. Antibiotics
+        {
+            content: `
+                <div class="grid-2 animate">
+                    <div>
+                        <h2 style="color: var(--accent);">Antibiotic Resistance</h2>
+                        <p>Bacteria reproduce every 20 minutes. Evolution happens fast!</p>
+                        
+                        <div class="card delay-1 animate">
+                            <h3>How Superbugs form:</h3>
+                            <ol style="margin-left: 1.5rem; margin-top: 1rem; line-height: 1.6;">
+                                <li>You get sick. Some bacteria are <strong class="term">resistant</strong> (tough).</li>
+                                <li>Antibiotics kill the weak ones first.</li>
+                                <li>If you stop medicine early, the <strong>resistant</strong> ones survive.</li>
+                                <li>They reproduce. Now the medicine doesn't work.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="img-card delay-2 animate">
+                        <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80" alt="Bacteria in Petri Dish">
+                    </div>
+                </div>
+            `
+        },
+        // 10. Summary & Homework
+        {
+            content: `
+                 <div class="animate">
+                    <h2 style="text-align: center;">Lesson Summary</h2>
+                    
+                    <div class="grid-2 delay-1 animate" style="align-items: start; margin-top: 2rem;">
+                        <div>
+                             <h3>Check your knowledge:</h3>
+                             <ul style="list-style: none; margin-left: 0;">
+                                <li style="margin-bottom: 1rem;"><i class="fa-solid fa-check" style="color: var(--primary);"></i> <strong>Variation:</strong> Differences in species (Genes/Environment).</li>
+                                <li style="margin-bottom: 1rem;"><i class="fa-solid fa-check" style="color: var(--primary);"></i> <strong>Natural Selection:</strong> Survival of the fittest.</li>
+                                <li style="margin-bottom: 1rem;"><i class="fa-solid fa-check" style="color: var(--primary);"></i> <strong>Evolution:</strong> Change in a species over time.</li>
+                             </ul>
                         </div>
                         
-                        <!-- Q2 -->
-                        <div class="card">
-                            <h3><i class="fa-solid fa-paw"></i> Variation</h3>
-                            <p>Cheetahs have very low genetic variation (they are all almost identical). Why is this dangerous?</p>
-                            <button class="btn btn-reveal" onclick="this.nextElementSibling.classList.add('visible'); this.style.display='none'">Check</button>
-                            <div class="answer-box">
-                                If one disease kills a cheetah, it is likely to kill <strong>all of them</strong> because none have a resistant gene.
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            `
-        },
-        {
-            // 12. Summary
-            render: () => `
-                <div class="fade-in">
-                    <h2 class="text-center">📝 Lesson Summary</h2>
-                    <p class="text-center" style="margin-bottom: 2rem;">Did we meet our goals?</p>
-                    
-                    <div class="grid-3 slide-up" style="gap: 1.5rem;">
-                        <!-- Objective 1 -->
-                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
-                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-                                <strong style="color: var(--primary); text-transform: uppercase; font-size: 0.8rem;">Objective 1</strong>
-                                <p style="font-weight: 700; color: white;">Define Variation</p>
-                            </div>
-                            <div style="flex-grow: 1;">
-                                <p>Variation is the difference between individuals of the same species. It is caused by <strong>Genes</strong> and the <strong>Environment</strong>.</p>
-                            </div>
-                        </div>
-
-                        <!-- Objective 2 -->
-                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
-                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-                                <strong style="color: var(--primary); text-transform: uppercase; font-size: 0.8rem;">Objective 2</strong>
-                                <p style="font-weight: 700; color: white;">Natural Selection</p>
-                            </div>
-                            <div style="flex-grow: 1;">
-                                <p>Animals with <span class="term">Advantageous Features</span> (like camouflage) survive longer, reproduce, and pass those genes to their babies.</p>
-                            </div>
-                        </div>
-
-                        <!-- Objective 3 -->
-                        <div class="card" style="display: flex; flex-direction: column; height: 100%;">
-                            <div style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-                                <strong style="color: var(--primary); text-transform: uppercase; font-size: 0.8rem;">Objective 3</strong>
-                                <p style="font-weight: 700; color: white;">Evidence</p>
-                            </div>
-                            <div style="flex-grow: 1;">
-                                <p>We can see this happening in <strong>Peppered Moths</strong> (changing colour) and <strong>Bacteria</strong> (becoming resistant to medicine).</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `
-        },
-        {
-            // 13. Homework
-            render: () => `
-                 <div class="text-center fade-in">
-                    <h2>📚 Homework Checklist</h2>
-                    <div class="card slide-up" style="max-width: 600px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--secondary);">
-                        <h3 style="color: var(--secondary);">Topic 7.3 & 7.4 Tasks</h3>
-                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
-                            <div style="width: 50px; height: 50px; background: rgba(139, 92, 246, 0.2); color: var(--secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
-                                <i class="fa-solid fa-book-open"></i>
-                            </div>
-                            <div>
-                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Textbook Reading</p>
-                                <p>Read pages <strong>253 - 256</strong> (Variation) and <strong>261 - 265</strong> (Natural Selection).</p>
-                            </div>
-                        </div>
-                        <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-top: 1.5rem;">
-                            <div style="width: 50px; height: 50px; background: rgba(16, 185, 129, 0.2); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </div>
-                            <div>
-                                <p style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Questions</p>
-                                <p>Answer <strong>Questions 1-3</strong> on page 263 (Bacteria) and <strong>Question 4</strong> on page 265 (Moths).</p>
-                            </div>
+                        <div class="card" style="border-top: 4px solid var(--warning);">
+                            <h3 style="color: var(--warning);"><i class="fa-solid fa-book"></i> Homework</h3>
+                            <p><strong>Topic 7.3 & 7.4</strong></p>
+                            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0;">
+                            <p>1. Read pages 253 - 256.</p>
+                            <p>2. Complete Questions 1-3 on page 263.</p>
+                            <p>3. Explain why you must finish a course of antibiotics.</p>
                         </div>
                     </div>
                 </div>
@@ -853,84 +631,71 @@
         }
     ];
 
-    // --- HELPER FUNCTIONS ---
-    function createFlipCard(front, backTitle, backDesc, extraDesc, icon, color) {
-        return `
-            <div class="flip-card" onclick="this.classList.toggle('flipped')" tabindex="0" onkeypress="if(event.key === 'Enter') this.classList.toggle('flipped')">
-                <div class="flip-card-inner">
-                    <div class="flip-front">
-                        <i class="fa-solid ${icon}" style="font-size: 3rem; margin-bottom: 1rem; color: ${color};"></i>
-                        <h3 style="color: white;">${front}</h3>
-                        <p style="font-size: 0.8rem; opacity: 0.9; margin-top: 1rem; color: #fff;">(Click to Flip)</p>
-                    </div>
-                    <div class="flip-back">
-                        <h3 style="color: ${color}; background: rgba(0,0,0,0.2); padding: 0.2rem 1rem; border-radius: 50px; font-size: 1.1rem; margin-bottom: 0.5rem;">${front}</h3>
-                        <h4 style="color: white; margin-bottom: 1rem; font-weight: 600;">${backTitle}</h4>
-                        <p style="color: white; font-size: 1.1rem; font-weight: 500;">${backDesc}</p>
-                         ${extraDesc ? `<p style="font-size: 1rem; margin-top:0.5rem; opacity:0.9; color:white;">${extraDesc}</p>` : ''}
-                         <div style="margin-top: auto; font-size: 0.8rem; opacity: 0.9; color: white; background: rgba(0,0,0,0.3); padding: 0.3rem 0.8rem; border-radius: 4px;">
-                            <i class="fa-solid fa-pen"></i> Write this down if you don't remember!
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
+    // --- Core Logic ---
+    let currentSlide = 0;
+    const slideRoot = document.getElementById('slide-root');
+    const progressBar = document.getElementById('progress');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
 
-    // Moth Simulation Logic
-    window.updateMoths = function(type) {
-        const container = document.getElementById('moth-sim');
-        if(type === 'clean') {
-            container.classList.remove('tree-dark');
-            // Light background: Light moths hide (opacity low), Dark moths visible (opacity high)
-            document.querySelectorAll('.moth-light').forEach(el => el.style.opacity = '0.3');
-            document.querySelectorAll('.moth-dark').forEach(el => el.style.opacity = '1');
-        } else {
-            container.classList.add('tree-dark');
-            // Dark background: Dark moths hide (opacity low), Light moths visible (opacity high)
-            document.querySelectorAll('.moth-light').forEach(el => el.style.opacity = '1');
-            document.querySelectorAll('.moth-dark').forEach(el => el.style.opacity = '0.3');
-        }
-    }
-
-    // --- CORE APP LOGIC ---
-    function render() {
-        const container = document.getElementById('slide-container');
-        const slide = state.slides[state.currentSlide];
-        container.innerHTML = slide.render();
+    function renderSlide() {
+        // Fade out
+        slideRoot.style.opacity = 0;
         
-        // Initialize Sim if on that slide (Now slide 7 because of the new slide)
-        if(state.currentSlide === 7) {
-             setTimeout(() => window.updateMoths('clean'), 100);
-        }
-
-        // Update UI Elements
-        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
-        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
-        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
-        document.getElementById('viewport').scrollTop = 0;
+        setTimeout(() => {
+            const slideData = slides[currentSlide];
+            slideRoot.innerHTML = slideData.content;
+            slideRoot.style.opacity = 1;
+            
+            // Execute slide specific scripts if any
+            if(slideData.onLoad) slideData.onLoad();
+            
+            // Update UI
+            progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === slides.length - 1;
+            
+            // Reset moth sim default if on that slide
+            if(document.getElementById('moth-sim')) {
+                setMothEnv('clean');
+            }
+        }, 200);
     }
 
-    function changeSlide(dir) {
-        const next = state.currentSlide + dir;
-        if (next >= 0 && next < state.slides.length) {
-            state.currentSlide = next;
-            render();
+    function nextSlide() {
+        if(currentSlide < slides.length - 1) {
+            currentSlide++;
+            renderSlide();
         }
     }
 
-    // --- EVENT LISTENERS ---
-    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
-    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+    function prevSlide() {
+        if(currentSlide > 0) {
+            currentSlide--;
+            renderSlide();
+        }
+    }
 
+    // Interactive Functions
+    window.setMothEnv = function(type) {
+        const zone = document.getElementById('moth-sim');
+        if(type === 'clean') {
+            zone.className = 'moth-zone clean animate';
+        } else {
+            zone.className = 'moth-zone dirty animate';
+        }
+    }
+
+    // Keyboard Nav
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
-        if (e.key === 'ArrowLeft') changeSlide(-1);
+        if(e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+        if(e.key === 'ArrowLeft') prevSlide();
     });
 
-    // Initialize
-    render();
+    // Init
+    renderSlide();
 
 </script>
+
 </body>
 </html>
