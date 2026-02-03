@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Balance Patcher v2.3 | PRA Studios</title>
+    <title>Balance Patcher v2.4 | PRA Studios</title>
     
     <!-- React Core -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -114,9 +114,8 @@
 
     <script type="text/babel">
         /**
-         * BALANCE PATCHER - Source Code
-         * Architecture: React Functional Components with Hooks
-         * State Management: Local State (lifted to App where necessary)
+         * BALANCE PATCHER v2.4
+         * Updated: Added Unpaid Intern Level, adjusted difficulty curve, coffee logic
          */
 
         const { useState, useEffect, useRef, useMemo, useCallback } = React;
@@ -151,8 +150,9 @@
             
             // Item Naming Pool based on Level
             let namePool;
-            if (level === 1) namePool = TIER_1_ITEMS;
-            else if (level === 2) namePool = TIER_2_ITEMS;
+            // Level 1 and 2 share the "starter" items now
+            if (level <= 2) namePool = TIER_1_ITEMS;
+            else if (level === 3) namePool = TIER_2_ITEMS;
             else namePool = TIER_3_ITEMS;
 
             // --- UNIQUE ITEMS FIX ---
@@ -171,19 +171,24 @@
                 
                 let base, expected, percent, isBuff;
 
-                // MATH DIFFICULTY CURVE (Based on GDD)
+                // MATH DIFFICULTY CURVE (UPDATED)
                 if (level === 1) {
-                    // Level 1: Intern - Multiples of 10%
+                    // NEW Level 1: Unpaid Intern - 10% or 50% only
+                    percent = [10, 50][Math.floor(Math.random() * 2)];
+                    base = Math.floor(Math.random() * 10 + 1) * 10; // 10, 20... 100
+                }
+                else if (level === 2) {
+                    // Old Level 1 (Intern) - Multiples of 10%
                     percent = [10, 20, 30, 40, 50][Math.floor(Math.random() * 5)];
                     base = Math.floor(Math.random() * 10 + 1) * 10; // 10, 20... 100
                 } 
-                else if (level === 2) {
-                    // Level 2: Junior Dev - 5% and 25%
+                else if (level === 3) {
+                    // Old Level 2 (Junior) - 5% and 25%
                     percent = [5, 25, 75][Math.floor(Math.random() * 3)];
                     base = Math.floor(Math.random() * 10 + 2) * 20; // 40, 60... 240
                 } 
                 else {
-                    // Level 3+: Senior Dev - Chaos
+                    // Old Level 3+ (Senior) - Chaos
                     percent = (Math.floor(Math.random() * 10) + 1) * 5; // 5, 10... 50
                     base = Math.floor(Math.random() * 20 + 5) * 10;
                 }
@@ -244,11 +249,11 @@
                         </div>
 
                         <div className="space-y-4 text-base md:text-lg leading-snug font-sans text-slate-800 font-medium">
-                            <p>To: <span className="bg-yellow-400 px-1 font-bold">New Logic Intern</span></p>
+                            <p>To: <span className="bg-yellow-400 px-1 font-bold">Unpaid Intern</span></p>
                             <p>The AI model collapsed again. It's pushing garbage stats to production.</p>
-                            <p>Manually patch the <span className="font-bold underline text-red-700">broken items</span>. Read my notes.</p>
+                            <p>Manually patch the <span className="font-bold underline text-red-700">broken items</span>. And grab me a double shot espresso while you're at it.</p>
                             <p className="bg-red-100 p-2 border-l-4 border-red-600 text-sm font-bold mt-2">
-                                WARNING: Strict launch window. If timer hits zero, overtime fines come out of YOUR budget.
+                                WARNING: Strict launch window. If timer hits zero, overtime fines come out of YOUR non-existent paycheck.
                             </p>
                         </div>
 
@@ -272,15 +277,17 @@
 
         const StickyNote = ({ tasks, level, rank }) => {
             const getFlavorText = () => {
-                if (level === 1) return "Start easy. Don't break anything.";
-                if (level === 2) return "Okay, you haven't crashed it yet. Here's the retail stuff.";
-                if (level >= 3) return "Coffee machine is broken. Don't ask me for help.";
+                if (level === 1) return "Welcome, unpaid intern. 50% or 10%. Don't spill the coffee.";
+                if (level === 2) return "Okay, you haven't crashed it. Here's the regular intern work.";
+                if (level === 3) return "Junior Dev just quit. You're up. My coffee is cold.";
+                if (level >= 4) return "Senior Dev work. Chaos mode. Need more caffeine.";
                 return "Just fix them.";
             };
 
             const getRankTitle = () => {
-                if(level === 1) return "INTERN_SPRINT";
-                if(level === 2) return "JUNIOR_SPRINT";
+                if(level === 1) return "UNPAID_TRIAL";
+                if(level === 2) return "INTERN_SPRINT";
+                if(level === 3) return "JUNIOR_SPRINT";
                 return "SENIOR_SPRINT";
             }
 
@@ -505,16 +512,18 @@
             const [gameState, setGameState] = useState("title"); 
             const [level, setLevel] = useState(1);
             const [money, setMoney] = useState(100);
-            const [time, setTime] = useState(60);
+            const [time, setTime] = useState(80); // More generous time (was 60)
             const [data, setData] = useState(null); 
             
-            const LEVEL_GOALS = { 1: 500, 2: 1200, 3: 2000, 4: 3500, 5: 5000 };
+            // Goals adjusted for the new easier Level 1
+            const LEVEL_GOALS = { 1: 400, 2: 1000, 3: 1800, 4: 3000, 5: 4500 };
             const goal = LEVEL_GOALS[level] || 99999;
 
             const rank = useMemo(() => {
-                if (money < 500) return "Trial Intern";
-                if (money < 1200) return "Junior Dev";
-                if (money < 2000) return "Senior Dev";
+                if (money < 400) return "Unpaid Intern";
+                if (money < 1000) return "Trial Intern";
+                if (money < 1800) return "Junior Dev";
+                if (money < 3000) return "Senior Dev";
                 return "Lead Arch.";
             }, [money]);
 
@@ -556,19 +565,19 @@
 
             const loadLevel = (lvl) => {
                 setLevel(lvl);
-                setTime(60); 
+                setTime(80); // Reset to new generous time
                 setData(generateLevelBatch(lvl));
             };
 
             const handleSolve = (id, isCorrect) => {
                 if (isCorrect) {
-                    setMoney(m => m + 50);
+                    setMoney(m => m + 60); // More generous reward (was 50)
                     setData(prev => ({
                         ...prev,
                         items: prev.items.map(i => i.id === id ? { ...i, solved: true } : i)
                     }));
                 } else {
-                    setMoney(m => m - 25);
+                    setMoney(m => m - 20); // Less harsh penalty (was 25)
                 }
             };
 
