@@ -3,47 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Balance Patcher v2.2 | PRA Studios</title>
+    <title>Chaos Loop Studios | Intern Terminal</title>
     
     <!-- React Core -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     
-    <!-- Babel for JSX compilation in browser -->
+    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Framer Motion for Animations -->
+    <!-- Framer Motion -->
     <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
     
-    <!-- Google Fonts -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Permanent+Marker&family=Rock+Salt&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Permanent+Marker&family=Rock+Salt&family=vt323&display=swap" rel="stylesheet">
 
-    <!-- Custom Styles & Tailwind Config -->
+    <!-- Styles -->
     <style>
-        /* Base Reset & Fonts */
         body {
-            font-family: 'JetBrains Mono', monospace;
-            background-color: #050505;
-            color: #e0e0e0;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            font-family: 'Courier Prime', monospace;
+            background-color: #1a1a1a;
+            color: #d4d4d4;
+            overflow-x: hidden;
         }
         
         .font-marker { font-family: 'Permanent Marker', cursive; }
         .font-signature { font-family: 'Rock Salt', cursive; }
+        .font-pixel { font-family: 'VT323', monospace; }
 
-        /* CRT Effects - Refined for subtlety */
+        /* CRT Overlay */
         .scanlines {
             background: linear-gradient(
                 to bottom,
                 rgba(255,255,255,0),
                 rgba(255,255,255,0) 50%,
-                rgba(0,0,0,0.1) 50%,
-                rgba(0,0,0,0.1)
+                rgba(0,0,0,0.15) 50%,
+                rgba(0,0,0,0.15)
             );
             background-size: 100% 4px;
             animation: scanlineMove 10s linear infinite;
@@ -58,21 +58,20 @@
             100% { background-position: 0 100%; }
         }
 
-        .crt-flicker {
-            animation: flicker 0.15s infinite;
+        .paper-shadow {
+            box-shadow: 0 1px 1px rgba(0,0,0,0.15), 
+                        0 10px 0 -5px #eee, 
+                        0 10px 1px -4px rgba(0,0,0,0.15), 
+                        0 20px 0 -10px #eee, 
+                        0 20px 1px -9px rgba(0,0,0,0.15);
         }
 
-        @keyframes flicker {
-            0% { opacity: 0.97; }
-            50% { opacity: 1.0; }
-            100% { opacity: 0.98; }
-        }
-
-        /* Utility */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #666; }
         
-        /* Input Remove Spinners */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
@@ -85,120 +84,113 @@
             theme: {
                 extend: {
                     colors: {
-                        pra: {
+                        studio: {
                             bg: '#121212',
-                            panel: '#1e1e1e',
-                            cyan: '#22d3ee',
-                            magenta: '#f472b6',
-                            yellow: '#fef08a',
-                            green: '#4ade80',
-                            dim: '#475569',
-                            danger: '#ef4444'
+                            paper: '#f3f4f6',
+                            ink: '#1f2937',
+                            accent: '#f59e0b', // Amber
+                            terminal: '#10b981', // Emerald
+                            error: '#ef4444',
+                            highlight: '#3b82f6'
                         }
                     },
                     boxShadow: {
-                        'neon-cyan': '0 0 10px rgba(34, 211, 238, 0.3)',
-                        'neon-green': '0 0 10px rgba(74, 222, 128, 0.3)',
-                        'neon-red': '0 0 10px rgba(244, 114, 182, 0.3)',
-                    },
-                    animation: {
-                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'crt': '0 0 20px rgba(16, 185, 129, 0.15)',
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-pra-bg text-slate-200 min-h-screen">
+<body class="bg-studio-bg min-h-screen">
     <div id="root"></div>
 
     <script type="text/babel">
-        /**
-         * BALANCE PATCHER - Source Code
-         * Architecture: React Functional Components with Hooks
-         * State Management: Local State (lifted to App where necessary)
-         */
-
-        const { useState, useEffect, useRef, useMemo, useCallback } = React;
+        const { useState, useEffect, useRef, useMemo } = React;
         const { motion, AnimatePresence } = window.Motion;
 
-        // --- ICONS & ASSETS ---
+        // --- ASSETS & DATA ---
+
         const Icons = {
-            Sword: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/></svg>,
-            Shield: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
-            Potion: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 22H5c-1.1 0-2-.9-2-2V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11c0 1.1-.9 2-2 2z"/><line x1="12" y1="2" x2="12" y2="7"/><path d="M8 2h8"/></svg>,
-            Boots: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19a2 2 0 1 0 4 0a2 2 0 0 1 4 0a2 2 0 0 1 4 0a2 2 0 1 0 4 0"/><path d="M5 11h14"/><path d="M5 11a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8"/></svg>,
-            Check: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+            Cube: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>,
+            Server: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>,
+            Potion: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 22H5c-1.1 0-2-.9-2-2V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11c0 1.1-.9 2-2 2z"/><line x1="12" y1="2" x2="12" y2="7"/><path d="M8 2h8"/></svg>,
+            Bug: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 3"/><path d="m5 7 3 3"/><path d="m19 19-3-3"/><path d="m5 19 3-3"/><path d="M2 12h6"/><path d="M16 12h6"/></svg>,
+            Cloud: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19c0-1.7-1.3-3-3-3h-1.1c-.1-2.9-2.4-5.2-5.3-5.2-2.3 0-4.3 1.5-5 3.6-2.5.3-4.4 2.4-4.4 4.9 0 2.8 2.2 5 5 5h9.3c2.6 0 4.7-2.1 4.7-4.7z"/></svg>
         };
 
         const getItemIcon = (name) => {
-            if (/Sword|Dagger|Blade|Rifle|Bow|Wand|Staff/i.test(name)) return <Icons.Sword />;
-            if (/Shield|Guard|Vest|Helm|Greaves|Scale/i.test(name)) return <Icons.Shield />;
-            if (/Potion|Soda|Tonic|Elixir|Feather/i.test(name)) return <Icons.Potion />;
-            return <Icons.Boots />;
+            if (/Server|Latency|Ping|RAM|Storage|Load/.test(name)) return <Icons.Server />;
+            if (/Potion|Elixir|Mana|Health|Stamina/.test(name)) return <Icons.Potion />;
+            if (/Bug|Glitch|Exploit|Crash/.test(name)) return <Icons.Bug />;
+            if (/Cloud|Network|Stream|Download/.test(name)) return <Icons.Cloud />;
+            return <Icons.Cube />;
         };
 
-        // Loot Tables based on Rank
-        const TIER_1_ITEMS = ["Rusty Dagger", "Canvas Tunic", "Wooden Shield", "Worn Boots", "Cracked Helm", "Old Glove"];
-        const TIER_2_ITEMS = ["Potion of Haste", "Mana Ring", "Iron Sword", "Chainmail Vest", "Leather Boots", "Steel Helm"];
-        const TIER_3_ITEMS = ["Phoenix Feather", "Void Staff", "Dragon Scale", "Quantum Blade", "Cyber Implant", "Neon Shield"];
+        // Item Pool: No weapons, just "Game Dev" concepts
+        const GAME_ASSETS = [
+            "Potion of Hype", "Server Latency", "Hitbox Radius", "Jump Velocity", 
+            "Loot Drop Rate", "Texture Resolution", "NPC Intelligence", "Microtransaction Cost",
+            "Bloom Intensity", "Render Distance", "Loading Screen Time", "Character Charisma",
+            "Mana Regen Tick", "Shadow Quality", "Physics Gravity", "Particle Count",
+            "Walking Speed", "Inventory Slots", "Dialog Speed", "Experience Gain"
+        ];
 
-        // --- GAME LOGIC ENGINE ---
-        
+        // --- MATH ENGINE (Year 8 Curriculum) ---
+
         const generateLevelBatch = (level) => {
+            const batchSize = 4;
+            // Shuffle assets to ensure no duplicates in this batch
+            const shuffledAssets = [...GAME_ASSETS].sort(() => 0.5 - Math.random());
             const items = [];
             const tasks = [];
-            
-            // Item Naming Pool based on Level
-            let namePool;
-            if (level === 1) namePool = TIER_1_ITEMS;
-            else if (level === 2) namePool = TIER_2_ITEMS;
-            else namePool = TIER_3_ITEMS;
 
+            // Determine if we are in "Advanced Mode" (Decimal Multipliers)
+            // Level 1-2: Pure Percentages (+20%)
+            // Level 3+: Mixed Percentages and Decimals (* 1.2)
+            const allowDecimals = level >= 3;
+
+            // Pick 2 items to be "broken" (need fixing)
             const brokenIndices = new Set();
-            // Ensure exactly 2 items are broken per batch for consistency
-            while(brokenIndices.size < 2) brokenIndices.add(Math.floor(Math.random() * 4));
+            while(brokenIndices.size < 2) brokenIndices.add(Math.floor(Math.random() * batchSize));
 
-            for (let i = 0; i < 4; i++) {
-                const name = namePool[Math.floor(Math.random() * namePool.length)];
+            for (let i = 0; i < batchSize; i++) {
+                const name = shuffledAssets[i];
                 const needsPatch = brokenIndices.has(i);
                 
-                let base, expected, percent, isBuff;
+                let base, expected, operationType, value, displayValue;
 
-                // MATH DIFFICULTY CURVE (Based on GDD)
-                if (level === 1) {
-                    // Level 1: Intern - Multiples of 10%
-                    // We generate base numbers that are clean multiples of 10 to ensure integer results
-                    percent = [10, 20, 30, 40, 50][Math.floor(Math.random() * 5)];
-                    base = Math.floor(Math.random() * 10 + 1) * 10; // 10, 20... 100
-                } 
-                else if (level === 2) {
-                    // Level 2: Junior Dev - 5% and 25%
-                    // To ensure 5% (1/20) and 25% (1/4) are integers, Base must be multiple of 20
-                    percent = [5, 25, 75][Math.floor(Math.random() * 3)];
-                    base = Math.floor(Math.random() * 10 + 2) * 20; // 40, 60... 240
-                } 
-                else {
-                    // Level 3+: Senior Dev - Chaos
-                    // Any 5% increment, larger bases
-                    percent = (Math.floor(Math.random() * 10) + 1) * 5; // 5, 10... 50
-                    base = Math.floor(Math.random() * 20 + 5) * 10;
-                }
+                // Generate Base Value (Clean integers for easier mental math mostly)
+                base = (Math.floor(Math.random() * 20) + 2) * 10; // 20, 30, ... 210
 
                 if (needsPatch) {
-                    isBuff = Math.random() > 0.5;
+                    const isBuff = Math.random() > 0.5;
+                    // Percentage changes: 5%, 10%, 20%, 25%, 50%
+                    const percentages = [5, 10, 20, 25, 50];
+                    const percent = percentages[Math.floor(Math.random() * percentages.length)];
+                    
                     const multiplier = isBuff ? (1 + percent/100) : (1 - percent/100);
                     
-                    // We calculate expected. Since we controlled Base, this should be integer.
-                    // Math.round is a safety net for float precision (e.g. 1.0000001)
+                    // Core Logic: Expected value is integer rounded
                     expected = Math.round(base * multiplier);
 
-                    const action = isBuff ? "Buff" : "Nerf";
-                    const shortName = name.split(" ")[1] || name; 
-                    tasks.push(`${action} ${shortName} by ${percent}%`);
+                    // Determine how to present the task to the student
+                    const showAsDecimal = allowDecimals && Math.random() > 0.4; // 60% chance of decimal in later levels
+
+                    if (showAsDecimal) {
+                        displayValue = multiplier.toFixed(2); // e.g., "1.25" or "0.80"
+                        // Remove trailing zero if exists for cleanliness (1.20 -> 1.2)
+                        displayValue = parseFloat(displayValue).toString();
+                        operationType = "Scale to";
+                        tasks.push(`${operationType} ${name} by ${displayValue}x`);
+                    } else {
+                        displayValue = `${percent}%`;
+                        operationType = isBuff ? "Buff" : "Nerf";
+                        tasks.push(`${operationType} ${name} by ${displayValue}`);
+                    }
+
                 } else {
-                    // Stable items just stay at base
-                    expected = base;
+                    expected = base; // Stable item
                 }
 
                 items.push({
@@ -215,411 +207,368 @@
             return { items, tasks };
         };
 
+        const getBowenMessage = (level) => {
+            if (level === 1) return "Just sign the waiver and fix these. Don't touch my coffee.";
+            if (level === 2) return "You didn't crash the server yet? Fine. Here's the beta branch.";
+            if (level === 3) return "Marketing wants 'bigger numbers'. Use multipliers, it sounds smarter.";
+            if (level === 4) return "I'm delegating my backlog to you. I have a... meeting. At the pub.";
+            if (level >= 5) return "Look, if anyone asks, you're the Senior Dev now. I'm hiding under the desk.";
+            return "Get back to work.";
+        };
+
         // --- COMPONENTS ---
 
-        const StartScreen = ({ onStart }) => (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-[#1a1a1a] p-6 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10" 
-                     style={{backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}>
-                </div>
-                
-                <motion.div 
-                    initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, type: "spring" }}
-                    className="bg-[#fef9c3] max-w-md w-full p-8 shadow-2xl relative rotate-1"
-                >
-                    {/* Tape Visual */}
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-32 h-8 bg-white/40 backdrop-blur-sm shadow-sm rotate-2"></div>
+        const ContractScreen = ({ onStart }) => {
+            const [name, setName] = useState("");
 
-                    <div className="font-marker text-slate-900">
-                        <div className="border-b-4 border-slate-900 pb-4 mb-6">
-                            <h1 className="text-4xl md:text-5xl font-black tracking-tighter mb-2">PRA STUDIOS</h1>
-                            <div className="flex justify-between items-center">
-                                <span className="text-lg font-bold uppercase">INTERNAL MEMO</span>
-                                <span className="text-xs font-sans font-bold bg-red-600 text-white px-2 py-1 rotate-2 rounded-sm shadow-sm">READ ASAP</span>
+            return (
+                <div className="min-h-screen bg-[#d1d5db] flex items-center justify-center p-4 font-mono text-studio-ink">
+                    <motion.div 
+                        initial={{ y: 50, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="bg-white max-w-2xl w-full paper-shadow p-8 md:p-12 relative rotate-1"
+                    >
+                        {/* Letterhead */}
+                        <div className="flex justify-between items-start border-b-4 border-black pb-4 mb-8">
+                            <div>
+                                <h1 className="text-4xl font-bold tracking-tighter">CHAOS LOOP</h1>
+                                <p className="text-sm tracking-widest uppercase mt-1">Interactive Entertainment & Tax Shelters</p>
+                            </div>
+                            <div className="w-16 h-16 border-4 border-black rounded-full flex items-center justify-center rotate-12">
+                                <span className="font-bold text-xs text-center leading-none">NO<br/>REFUNDS</span>
                             </div>
                         </div>
 
-                        <div className="space-y-4 text-base md:text-lg leading-snug font-sans text-slate-800 font-medium">
-                            <p>To: <span className="bg-yellow-400 px-1 font-bold">New Logic Intern</span></p>
-                            <p>The AI model collapsed again. It's pushing garbage stats to production.</p>
-                            <p>Manually patch the <span className="font-bold underline text-red-700">broken items</span>. Read my notes.</p>
-                            <p className="bg-red-100 p-2 border-l-4 border-red-600 text-sm font-bold mt-2">
-                                WARNING: Strict launch window. If timer hits zero, overtime fines come out of YOUR budget.
+                        {/* Content */}
+                        <div className="space-y-6 text-sm md:text-base leading-relaxed">
+                            <h2 className="text-xl font-bold underline decoration-4 decoration-yellow-400">UNPAID INTERNSHIP AGREEMENT</h2>
+                            
+                            <p>
+                                I, the undersigned (hereinafter referred to as "The Fall Guy"), agree to optimize game balance parameters for Chaos Loop Studios.
+                            </p>
+                            
+                            <div className="bg-gray-100 p-4 border-l-4 border-studio-error italic text-xs md:text-sm">
+                                <strong>WARNING:</strong> The core codebase is held together by duct tape and prayers. Miscalculating a percentage yield by even 0.01% may result in server fires, player riots, or the sudden deletion of the CEO's save file.
+                            </div>
+
+                            <p>
+                                My duties involve translating <span className="font-bold">Percentage Adjustments</span> and <span className="font-bold">Decimal Scalars</span> into integer database values. I understand that I will be paid in "Exposure" and stale donuts.
                             </p>
                         </div>
 
-                        <div className="mt-8 flex justify-between items-end">
+                        {/* Form */}
+                        <div className="mt-12 space-y-4">
                             <div>
-                                <div className="font-signature text-2xl -rotate-6 text-blue-900 opacity-90">Bowen</div>
-                                <p className="text-[10px] font-sans text-slate-500 uppercase tracking-widest mt-1">Lead Architect</p>
+                                <label className="block font-bold text-xs uppercase mb-1">Intern Name (Print Clearly)</label>
+                                <input 
+                                    type="text" 
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="Enter your name..."
+                                    className="w-full border-b-2 border-dashed border-black bg-transparent py-2 focus:outline-none font-marker text-xl text-blue-600"
+                                />
                             </div>
 
-                            <button 
-                                onClick={onStart}
-                                className="font-sans font-bold bg-slate-900 text-white px-6 py-3 hover:bg-pra-cyan hover:text-black hover:-translate-y-1 transition-all shadow-lg active:translate-y-0"
-                            >
-                                [ ACCEPT TICKET ]
-                            </button>
-                        </div>
-                    </div>
-                </motion.div>
-            </div>
-        );
-
-        const StickyNote = ({ tasks, level, rank }) => {
-            const getFlavorText = () => {
-                if (level === 1) return "Start easy. Don't break anything.";
-                if (level === 2) return "Okay, you haven't crashed it yet. Here's the retail stuff.";
-                if (level >= 3) return "Coffee machine is broken. Don't ask me for help.";
-                return "Just fix them.";
-            };
-
-            const getRankTitle = () => {
-                if(level === 1) return "INTERN_SPRINT";
-                if(level === 2) return "JUNIOR_SPRINT";
-                return "SENIOR_SPRINT";
-            }
-
-            return (
-                <motion.div 
-                    initial={{ rotate: -1, y: 10, opacity: 0 }}
-                    animate={{ rotate: -1, y: 0, opacity: 1 }}
-                    className="bg-[#fef08a] text-slate-900 p-5 shadow-lg transform -rotate-1 flex flex-col h-full min-h-[250px] relative"
-                >
-                    {/* Tape */}
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-white/30 backdrop-blur-md shadow-sm rotate-1"></div>
-                    
-                    <div className="font-marker flex-1">
-                        <div className="flex justify-between items-baseline border-b-2 border-slate-900/20 pb-2 mb-3">
-                            <h2 className="text-xl font-bold">{getRankTitle()}</h2>
-                            <span className="text-xs font-sans font-bold opacity-60">TICKET #{level}42</span>
-                        </div>
-                        
-                        <p className="text-xs font-bold font-sans text-slate-600 mb-4 border-l-2 border-slate-900/50 pl-2 italic">
-                            "{getFlavorText()}"
-                        </p>
-                        
-                        <ul className="space-y-3 pl-1">
-                            {tasks.map((task, i) => (
-                                <li key={i} className="text-base md:text-lg font-bold flex items-start gap-2 leading-tight">
-                                    <span className="opacity-40 mt-1 scale-75">☐</span> 
-                                    <span>{task}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div className="mt-4 pt-2 border-t border-slate-900/10 text-right">
-                        <span className="font-signature text-lg text-blue-900/80">- B.</span>
-                    </div>
-                </motion.div>
-            );
-        };
-
-        const HUD = ({ rank, level, time, money, goal }) => {
-            const progress = Math.min((money/goal) * 100, 100);
-            const isOvertime = time <= 0;
-            
-            return (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6 bg-pra-panel p-4 rounded border border-pra-dim/30 backdrop-blur-sm relative overflow-hidden">
-                    
-                    {/* Overtime Alarm Overlay */}
-                    {isOvertime && (
-                        <div className="absolute inset-0 border-2 border-pra-danger pointer-events-none animate-pulse opacity-50 z-0"></div>
-                    )}
-
-                    {/* Identity */}
-                    <div className="col-span-2 md:col-span-1 flex flex-col justify-center z-10">
-                        <h1 className="text-lg md:text-xl font-bold tracking-tighter text-white">
-                            PRA<span className="text-pra-cyan">_STUDIOS</span>
-                        </h1>
-                        <div className="flex items-center gap-2 text-xs text-pra-dim mt-1 font-bold">
-                            <span className="bg-slate-800 px-2 py-0.5 rounded text-slate-300 border border-slate-700">{rank}</span>
-                            <span>:: SPRINT {level}</span>
-                        </div>
-                    </div>
-
-                    {/* Timer */}
-                    <div className="col-span-1 md:col-span-1 flex flex-col items-start md:items-center justify-center z-10">
-                        <div className="text-[10px] text-pra-dim uppercase tracking-widest mb-1">Launch Window</div>
-                        <div className={`text-4xl font-black tracking-widest ${time <= 10 ? 'text-pra-danger animate-pulse' : 'text-white'}`}>
-                            {time.toString().padStart(2, '0')}s
-                        </div>
-                        {isOvertime && (
-                            <div className="text-[10px] font-bold text-pra-danger animate-bounce bg-pra-danger/10 px-2 py-1 rounded mt-1">
-                                ! PENALTY APPLIED !
+                            <div className="flex items-center gap-4 pt-6">
+                                <button 
+                                    onClick={() => name && onStart(name)}
+                                    disabled={!name}
+                                    className={`
+                                        px-8 py-4 font-bold text-white text-lg shadow-lg transition-transform active:scale-95
+                                        ${name ? 'bg-studio-ink hover:bg-studio-accent -rotate-1 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}
+                                    `}
+                                >
+                                    [ SIGN CONTRACT ]
+                                </button>
+                                <div className="text-[10px] uppercase text-gray-500 max-w-[150px] leading-tight">
+                                    By clicking, you waive your right to sleep, bathroom breaks, and happiness.
+                                </div>
                             </div>
-                        )}
-                    </div>
+                        </div>
 
-                    {/* Money/Score */}
-                    <div className="col-span-1 md:col-span-1 flex flex-col justify-center items-end z-10">
-                        <div className="text-[10px] text-pra-dim uppercase tracking-widest mb-1">Project Budget</div>
-                        <div className="flex items-baseline gap-2">
-                            <span className={`text-2xl font-bold transition-colors duration-300 ${isOvertime ? 'text-pra-danger' : (money < 0 ? 'text-pra-magenta' : 'text-pra-green')}`}>
-                                ${money}
-                            </span>
-                            <span className="text-sm text-slate-600">/ ${goal}</span>
+                        {/* Stamp */}
+                        <div className="absolute top-1/2 right-8 opacity-20 pointer-events-none rotate-[25deg]">
+                            <div className="border-8 border-red-600 rounded p-4 text-red-600 font-black text-6xl uppercase tracking-widest">
+                                URGENT
+                            </div>
                         </div>
-                        {/* Progress Bar */}
-                        <div className="w-full max-w-[120px] h-1.5 bg-slate-800 mt-2 rounded-full overflow-hidden">
-                            <div 
-                                className={`h-full transition-all duration-500 ease-out ${isOvertime ? 'bg-pra-danger' : 'bg-pra-green'}`} 
-                                style={{ width: `${progress}%` }}
-                            ></div>
-                        </div>
-                    </div>
+                    </motion.div>
                 </div>
             );
         };
 
-        const TerminalCard = React.forwardRef(({ item, onSolve }, ref) => {
-            const [val, setVal] = useState("");
-            const [status, setStatus] = useState("idle"); 
-            const inputRef = useRef(null);
+        const PostIt = ({ tasks, level }) => {
+            return (
+                <motion.div 
+                    initial={{ rotate: 2, scale: 0.9 }}
+                    animate={{ rotate: 2, scale: 1 }}
+                    className="bg-yellow-200 text-gray-800 p-4 shadow-lg w-full max-w-xs relative mb-6 lg:mb-0"
+                >
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-yellow-100/50 backdrop-blur shadow rotate-1"></div>
+                    
+                    <div className="font-marker mb-4 border-b border-gray-400/30 pb-2">
+                        <h3 className="text-xl">Bowen's Notes</h3>
+                        <p className="font-sans text-xs text-gray-600">Sprint {level} // Priority: CRITICAL</p>
+                    </div>
 
-            const handleChange = (e) => {
-                const v = e.target.value;
-                if (v === '' || /^-?\d*$/.test(v)) {
-                    setVal(v);
-                }
-            };
+                    <p className="font-marker text-sm text-blue-800 mb-4 leading-snug">
+                        "{getBowenMessage(level)}"
+                    </p>
+
+                    <div className="space-y-2 font-mono text-sm font-bold">
+                        {tasks.map((task, i) => (
+                            <div key={i} className="flex items-start gap-2">
+                                <span className="text-red-600 mt-1">□</span>
+                                <span>{task}</span>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+            );
+        };
+
+        const TerminalRow = ({ item, onSolve, isProcessing }) => {
+            const [val, setVal] = useState("");
+            const [status, setStatus] = useState("idle"); // idle, success, error
+            const inputRef = useRef(null);
 
             const handleSubmit = (e) => {
                 e.preventDefault();
-                
+                if (status === 'success' || isProcessing) return;
+
                 if (item.isStable) {
-                    triggerError();
+                    handleError();
                     return;
                 }
 
                 const num = parseInt(val, 10);
-
-                if (!isNaN(num) && num === item.expected) {
+                if (num === item.expected) {
                     setStatus("success");
                     onSolve(item.id, true);
-                    if (inputRef.current) inputRef.current.blur();
                 } else {
-                    triggerError();
+                    handleError();
                 }
             };
 
-            const triggerError = () => {
+            const handleError = () => {
                 setStatus("error");
                 onSolve(item.id, false);
                 setVal("");
-                setTimeout(() => setStatus("idle"), 600);
-                if (inputRef.current) inputRef.current.focus();
+                setTimeout(() => setStatus("idle"), 800);
             };
-
-            if (status === "success" || (item.solved && !item.isStable)) {
-                return (
-                    <motion.div 
-                        layout
-                        ref={ref}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        className="bg-pra-green/10 border border-pra-green p-4 rounded flex flex-col items-center justify-center min-h-[140px] relative overflow-hidden"
-                    >
-                        <div className="text-pra-green mb-2"><Icons.Check /></div>
-                        <div className="text-white font-bold mb-1 text-sm">{item.name}</div>
-                        <div className="text-2xl font-bold text-pra-green shadow-neon-green">{item.expected}</div>
-                        <div className="text-[10px] text-pra-green tracking-widest mt-1 uppercase font-bold">PATCH COMMITTED</div>
-                    </motion.div>
-                );
-            }
 
             return (
-                <motion.div 
-                    layout
-                    ref={ref}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={status === 'error' ? { x: [-5, 5, -5, 5, 0], opacity: 1, scale: 1 } : { opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.4 }}
-                    className={`
-                        border-2 p-4 rounded flex flex-col relative min-h-[140px] transition-colors duration-300
-                        ${status === 'error' 
-                            ? 'bg-pra-magenta/10 border-pra-magenta shadow-neon-red' 
-                            : 'bg-black/40 border-slate-700 hover:border-pra-cyan hover:bg-slate-900'}
-                    `}
-                >
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className={`p-2 rounded ${status === 'error' ? 'text-pra-magenta bg-pra-magenta/10' : 'text-pra-cyan bg-pra-cyan/10'}`}>
-                            {getItemIcon(item.name)}
+                <div className={`
+                    relative font-mono border-b border-gray-800 p-4 transition-colors duration-300
+                    ${status === 'success' ? 'bg-studio-terminal/10' : ''}
+                    ${status === 'error' ? 'bg-studio-error/10' : 'hover:bg-white/5'}
+                `}>
+                    <div className="flex items-center justify-between gap-4">
+                        
+                        {/* Left: Icon & Name */}
+                        <div className="flex items-center gap-3 w-1/3">
+                            <div className={`
+                                w-10 h-10 flex items-center justify-center rounded 
+                                ${status === 'success' ? 'text-studio-terminal' : 'text-gray-500'}
+                            `}>
+                                {getItemIcon(item.name)}
+                            </div>
+                            <div>
+                                <div className={`font-bold text-sm ${item.solved ? 'text-studio-terminal' : 'text-white'}`}>
+                                    {item.name}
+                                </div>
+                                <div className="text-xs text-gray-500">ID: {item.id}</div>
+                            </div>
                         </div>
-                        <div className="overflow-hidden">
-                            <div className="font-bold text-slate-200 text-sm truncate">{item.name}</div>
-                            <div className="text-xs text-slate-500 font-bold mt-0.5">BASE VAL: <span className="text-white text-base">{item.base}</span></div>
+
+                        {/* Middle: Base Value */}
+                        <div className="text-center w-1/4">
+                            <div className="text-[10px] uppercase text-gray-500">Current Value</div>
+                            <div className="text-lg font-bold text-studio-highlight">{item.base}</div>
+                        </div>
+
+                        {/* Right: Input Area */}
+                        <div className="w-1/3">
+                            {status === 'success' || item.solved ? (
+                                <div className="flex items-center justify-end gap-2 text-studio-terminal font-bold">
+                                    <span>{item.expected}</span>
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" strokeWidth="3"/></svg>
+                                    <span className="text-xs uppercase bg-studio-terminal/20 px-1 rounded">PATCHED</span>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleSubmit} className="flex gap-2">
+                                    <input 
+                                        ref={inputRef}
+                                        type="number"
+                                        value={val}
+                                        onChange={(e) => setVal(e.target.value)}
+                                        placeholder={item.isStable ? "NO CHANGE" : "NEW VAL"}
+                                        className={`
+                                            w-full bg-black border border-gray-700 rounded px-2 py-1 text-right font-bold focus:outline-none focus:border-studio-highlight
+                                            ${status === 'error' ? 'border-studio-error text-studio-error animate-pulse' : 'text-white'}
+                                        `}
+                                        disabled={isProcessing}
+                                    />
+                                    <button 
+                                        type="submit"
+                                        className="bg-gray-800 hover:bg-studio-highlight text-white px-3 rounded text-sm transition-colors"
+                                    >
+                                        &gt;
+                                    </button>
+                                </form>
+                            )}
                         </div>
                     </div>
-
-                    <form onSubmit={handleSubmit} className="mt-auto w-full">
-                        <div className="flex gap-2">
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                inputMode="numeric"
-                                pattern="[0-9]*"
-                                value={val}
-                                onChange={handleChange}
-                                className={`
-                                    flex-1 bg-black border text-lg p-2 rounded focus:outline-none focus:ring-1 transition-all
-                                    placeholder:text-slate-700 font-bold
-                                    ${status === 'error' 
-                                        ? 'border-pra-magenta text-pra-magenta focus:ring-pra-magenta' 
-                                        : 'border-slate-700 text-pra-cyan focus:border-pra-cyan focus:ring-pra-cyan'}
-                                `}
-                                placeholder={item.isStable ? "STABLE" : "PATCH..."}
-                                autoComplete="off"
-                            />
-                            <button 
-                                type="submit" 
-                                className="bg-slate-800 text-slate-200 px-3 rounded hover:bg-pra-cyan hover:text-black transition-colors font-bold"
-                            >
-                                &gt;
-                            </button>
-                        </div>
-                    </form>
-                </motion.div>
+                </div>
             );
-        });
+        };
 
-        const App = () => {
-            // --- STATE ---
-            const [gameState, setGameState] = useState("title"); 
-            const [level, setLevel] = useState(1);
-            const [money, setMoney] = useState(100);
-            const [time, setTime] = useState(60);
-            const [data, setData] = useState(null); 
-            
-            const LEVEL_GOALS = { 1: 500, 2: 1200, 3: 2000, 4: 3500, 5: 5000 };
-            const goal = LEVEL_GOALS[level] || 99999;
+        const MainTerminal = ({ playerName, level, onNextLevel, onRetry }) => {
+            const [data, setData] = useState(null);
+            const [budget, setBudget] = useState(100);
+            const [gameTime, setGameTime] = useState(0); // Just for flavor
+            const [statusMsg, setStatusMsg] = useState("CONNECTED TO PRODUCTION DB");
 
-            const rank = useMemo(() => {
-                if (money < 500) return "Trial Intern";
-                if (money < 1200) return "Junior Dev";
-                if (money < 2000) return "Senior Dev";
-                return "Lead Arch.";
-            }, [money]);
-
-            const allPatched = useMemo(() => {
-                if (!data) return false;
-                return data.items.filter(i => i.needsPatch).every(i => i.solved);
-            }, [data]);
-
-            // --- EFFECTS ---
-
+            // Init Level
             useEffect(() => {
-                if (gameState !== 'playing') return;
-                
-                const timer = setInterval(() => {
-                    setTime(prev => {
-                        if (prev <= 0) return 0;
-                        return prev - 1;
-                    });
-                }, 1000);
+                const newData = generateLevelBatch(level);
+                setData(newData);
+                setStatusMsg(`LOADING SPRINT ${level} TICKETS...`);
+            }, [level]);
 
-                return () => clearInterval(timer);
-            }, [gameState]);
-
-            // Money Drain on Timeout - Explicit Overtime Mechanic
+            // Timer Flavor
             useEffect(() => {
-                if (gameState === 'playing' && time <= 0) {
-                    const drain = setInterval(() => {
-                        // Allow going into negative debt for full "fined" feeling
-                        setMoney(m => m - 10);
-                    }, 1000);
-                    return () => clearInterval(drain);
-                }
-            }, [time, gameState]);
-
-            const startGame = () => {
-                setGameState("playing");
-                loadLevel(1);
-            };
-
-            const loadLevel = (lvl) => {
-                setLevel(lvl);
-                setTime(60); 
-                setData(generateLevelBatch(lvl));
-            };
+                const i = setInterval(() => setGameTime(t => t + 1), 1000);
+                return () => clearInterval(i);
+            }, []);
 
             const handleSolve = (id, isCorrect) => {
                 if (isCorrect) {
-                    setMoney(m => m + 50);
+                    setBudget(b => b + 150);
+                    setStatusMsg("PATCH APPLIED SUCCESSFULLY. COMMITTING...");
                     setData(prev => ({
                         ...prev,
                         items: prev.items.map(i => i.id === id ? { ...i, solved: true } : i)
                     }));
                 } else {
-                    setMoney(m => m - 25);
+                    setBudget(b => Math.max(0, b - 50));
+                    setStatusMsg("ERROR: INVALID PARAMETER. SERVER UNSTABLE.");
                 }
             };
 
-            const handleNextLevel = () => {
-                if (money >= goal) {
-                    loadLevel(level + 1);
-                } else {
-                    loadLevel(level);
-                }
-            };
+            const allSolved = data ? data.items.filter(i => i.needsPatch).every(i => i.solved) : false;
 
-            if (gameState === 'title') {
-                return <StartScreen onStart={startGame} />;
-            }
-
-            if (!data) return <div className="flex h-screen items-center justify-center text-pra-cyan animate-pulse">CONNECTING TO PROD DB...</div>;
+            if (!data) return <div className="text-center mt-20 font-mono text-studio-terminal animate-pulse">BOOTING...</div>;
 
             return (
-                <div className="min-h-screen relative p-4 md:p-6 lg:p-8 max-w-7xl mx-auto flex flex-col crt-flicker">
+                <div className="max-w-6xl mx-auto p-4 lg:p-8 flex flex-col lg:flex-row gap-8 items-start relative z-10">
                     
-                    <div className="scanlines"></div>
-
-                    <div className="relative z-10">
-                        <HUD rank={rank} level={level} time={time} money={money} goal={goal} />
-                    </div>
-
-                    <div className="relative z-10 flex flex-col lg:flex-row gap-6 flex-1">
+                    {/* Left Col: Tasks */}
+                    <div className="w-full lg:w-1/3 flex flex-col gap-6">
+                        <PostIt tasks={data.tasks} level={level} />
                         
-                        <div className="w-full lg:w-1/3 xl:w-1/4 flex-shrink-0">
-                            <div className="sticky top-4">
-                                <StickyNote tasks={data.tasks} level={level} rank={rank} />
+                        {/* Stats Panel */}
+                        <div className="bg-black border border-gray-700 p-4 font-mono text-xs">
+                            <div className="flex justify-between mb-2">
+                                <span className="text-gray-500">USER:</span>
+                                <span className="text-white uppercase">{playerName}</span>
+                            </div>
+                            <div className="flex justify-between mb-2">
+                                <span className="text-gray-500">ROLE:</span>
+                                <span className="text-studio-highlight">INTERN (Lvl {level})</span>
+                            </div>
+                            <div className="flex justify-between mb-2">
+                                <span className="text-gray-500">UPTIME:</span>
+                                <span className="text-white">{gameTime}s</span>
+                            </div>
+                            <div className="border-t border-gray-800 my-2"></div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-gray-500">PROJECT BUDGET:</span>
+                                <span className={`text-xl font-bold ${budget < 100 ? 'text-studio-error' : 'text-studio-terminal'}`}>
+                                    ${budget}k
+                                </span>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="w-full lg:w-2/3 xl:w-3/4 flex flex-col">
+                    {/* Right Col: Terminal */}
+                    <div className="w-full lg:w-2/3">
+                        <div className="bg-[#0c0c0c] border-2 border-gray-800 rounded-lg overflow-hidden shadow-crt relative">
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <AnimatePresence mode="popLayout">
-                                    {data.items.map(item => (
-                                        <TerminalCard key={item.id} item={item} onSolve={handleSolve} />
-                                    ))}
-                                </AnimatePresence>
+                            {/* Terminal Header */}
+                            <div className="bg-gray-900 border-b border-gray-800 p-2 flex items-center justify-between">
+                                <div className="flex gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                </div>
+                                <div className="text-xs font-mono text-gray-500">bash -- chaos_patcher_v1.0</div>
                             </div>
 
-                            <div className="mt-8 py-4 border-t border-slate-800 flex justify-center lg:justify-end items-center h-24">
-                                {allPatched ? (
-                                    <motion.button
-                                        initial={{ scale: 0.9, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        onClick={handleNextLevel}
-                                        className="bg-pra-green text-black font-bold text-lg px-8 py-4 rounded shadow-neon-green hover:bg-white hover:scale-105 transition-all w-full md:w-auto"
+                            {/* Status Bar */}
+                            <div className="bg-studio-terminal/5 border-b border-studio-terminal/20 p-2 text-xs font-mono text-studio-terminal flex items-center gap-2">
+                                <span className="animate-pulse">▶</span>
+                                {statusMsg}
+                            </div>
+
+                            {/* Content */}
+                            <div className="min-h-[400px]">
+                                {data.items.map(item => (
+                                    <TerminalRow key={item.id} item={item} onSolve={handleSolve} />
+                                ))}
+                            </div>
+
+                            {/* Footer / Actions */}
+                            <div className="bg-gray-900 border-t border-gray-800 p-4 flex justify-end">
+                                {allSolved ? (
+                                    <motion.button 
+                                        initial={{ scale: 0.9 }}
+                                        animate={{ scale: 1 }}
+                                        onClick={onNextLevel}
+                                        className="bg-studio-terminal text-black font-bold font-mono px-6 py-2 rounded shadow-[0_0_15px_rgba(16,185,129,0.5)] hover:bg-white transition-colors"
                                     >
-                                        {money >= goal ? "PUSH TO PROD (NEXT SPRINT)" : "RE-RUN BATCH (QUOTA MISSED)"}
+                                        > DEPLOY PATCH & NEXT LEVEL
                                     </motion.button>
                                 ) : (
-                                    <div className="text-pra-dim font-bold animate-pulse flex items-center gap-2">
-                                        <div className="w-2 h-2 bg-pra-dim rounded-full"></div>
-                                        AWAITING FIXES...
+                                    <div className="text-xs text-gray-500 font-mono py-2">
+                                        // PENDING CHANGES...
                                     </div>
                                 )}
                             </div>
                         </div>
                     </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [gameState, setGameState] = useState("contract"); // contract, playing
+            const [playerName, setPlayerName] = useState("");
+            const [level, setLevel] = useState(1);
+
+            const handleStart = (name) => {
+                setPlayerName(name);
+                setGameState("playing");
+            };
+
+            return (
+                <div className="relative min-h-screen">
+                    {/* Scanlines Overlay for that CRT feel */}
+                    <div className="scanlines"></div>
+                    
+                    {gameState === 'contract' && (
+                        <ContractScreen onStart={handleStart} />
+                    )}
+
+                    {gameState === 'playing' && (
+                        <div className="pt-8">
+                            <MainTerminal 
+                                playerName={playerName} 
+                                level={level} 
+                                onNextLevel={() => setLevel(l => l + 1)}
+                            />
+                        </div>
+                    )}
                 </div>
             );
         };
