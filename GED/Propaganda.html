@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED Social Studies: Propaganda & Media Literacy (ESL Support)</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Federal Slate Theme */
+            --bg-deep: #0f172a;        /* Dark Slate Blue Background */
+            --bg-card: rgba(30, 41, 59, 0.7); /* Glassy Slate */
+            --bg-card-hover: rgba(51, 65, 85, 0.8);
+            
+            --federal-blue: #3b82f6;    /* Primary Action */
+            --federal-blue-dim: rgba(59, 130, 246, 0.2);
+            --liberty-red: #ef4444;     /* Emphasis/Alerts */
+            --constitution-gold: #fbbf24; /* Key Terms/Highlights */
+            
+            --text-main: #f8fafc;        
+            --text-muted: #cbd5e1;       
+            --text-vn: #94a3b8;         /* Specific color for Vietnamese text */
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2rem, 5vw, 4rem);
+            --fs-h2: clamp(1.5rem, 3vw, 2.5rem);
+            --fs-body: clamp(1rem, 1.2vw, 1.25rem);
+            
+            /* Font Families */
+            --font-heading: 'Libre Baskerville', serif; /* Academic/Legal feel */
+            --font-ui: 'Outfit', sans-serif;            /* UI Elements */
+            --font-body: 'Plus Jakarta Sans', sans-serif; /* Reading text */
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-body);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            /* Subtle texture overlay */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(239, 68, 68, 0.05), transparent 25%), /* Red hint for alert/warning theme */
+                radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.05), transparent 25%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e293b' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--federal-blue), #1d4ed8);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: var(--font-ui);
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .slide-center { justify-content: center; }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--federal-blue);
+            border-color: var(--federal-blue);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            transform: scale(1.05);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; border-color: transparent; }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--federal-blue), var(--constitution-gold));
+            transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* Instructions Box (Scaffolding) */
+        .instruction-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid var(--constitution-gold);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .instruction-icon {
+            color: var(--constitution-gold);
+            font-size: 1.5rem;
+            margin-top: 0.2rem;
+        }
+
+        .notebook-badge {
+            background: var(--constitution-gold);
+            color: var(--bg-deep);
+            font-weight: 800;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- VISUAL ELEMENTS FOR PROPAGANDA --- */
+        
+        /* Technique Grid */
+        .technique-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+        
+        .tech-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .tech-card:hover { transform: translateY(-5px); border-color: var(--constitution-gold); }
+        .tech-icon { font-size: 2.5rem; color: var(--constitution-gold); margin-bottom: 1rem; }
+        .tech-title { color: white; font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .tech-vn { color: var(--text-vn); font-size: 0.9rem; font-style: italic; margin-bottom: 0.8rem; }
+        .tech-desc { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+
+        /* Embedded Image Styles */
+        .img-container {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+        }
+        .img-embed {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            object-fit: cover; /* Ensures clean crop */
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        .img-caption {
+            background: rgba(0,0,0,0.7);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 0.5rem;
+            text-align: center;
+            font-family: var(--font-ui);
+        }
+        .img-container:hover .img-embed { transform: scale(1.05); }
+
+        /* --- READING LAYOUT --- */
+        .reading-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+        .col-en { font-size: 1.2rem; line-height: 1.7; }
+        .col-en p { margin-bottom: 1.5rem; }
+        
+        .col-vn {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            color: var(--text-vn);
+            font-size: 1.15rem;
+            line-height: 1.7;
+            border-left: 2px solid rgba(255,255,255,0.05);
+            padding-left: 2rem;
+        }
+        .col-vn p { margin-bottom: 1.5rem; }
+
+        /* Interactive Keywords */
+        .keyword {
+            color: var(--constitution-gold);
+            font-weight: 700;
+            border-bottom: 2px dashed rgba(251, 191, 36, 0.4);
+            cursor: help;
+            transition: all 0.2s;
+            position: relative;
+            display: inline-block;
+        }
+        .keyword:hover, .keyword.active-touch {
+            background: rgba(251, 191, 36, 0.15);
+            border-bottom-style: solid;
+        }
+
+        /* Definition Dock */
+        .def-dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.98);
+            border-top: 2px solid var(--constitution-gold);
+            padding: 1.5rem 2rem;
+            backdrop-filter: blur(20px);
+            transform: translateY(110%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .def-dock.active { transform: translateY(0); }
+        .def-content { max-width: 900px; width: 100%; display: flex; flex-direction: column; gap: 0.8rem; }
+        .def-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Vocab Grid */
+        .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .vocab-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; }
+        .vocab-term { color: var(--constitution-gold); font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.2rem; }
+        .vocab-vn { color: var(--text-vn); font-family: var(--font-ui); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; display: block; }
+
+        /* Quiz */
+        .quiz-option {
+            width: 100%;
+            padding: 1.2rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text-main);
+            text-align: left;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-family: var(--font-ui);
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .quiz-option:hover:not(:disabled) { background: rgba(255,255,255,0.08); border-color: var(--federal-blue); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: white; }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--liberty-red); color: white; }
+        .explanation-box {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid var(--constitution-gold);
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Typography & Utilities */
+        .text-center { text-align: center; }
+        .text-gold { color: var(--constitution-gold); }
+        .text-blue { color: var(--federal-blue); }
+        
+        h1 { font-family: var(--font-heading); font-size: var(--fs-h1); margin-bottom: 0.5rem; }
+        h2 { font-family: var(--font-heading); font-size: var(--fs-h2); color: white; margin-bottom: 1.5rem; }
+        h3 { font-family: var(--font-ui); font-size: 1.3rem; margin-bottom: 0.5rem; color: white; }
+        p { margin-bottom: 1rem; color: var(--text-muted); line-height: 1.6; }
+        
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+        .slide-up { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(20px); animation-delay: 0.2s; }
+        
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .reading-layout { grid-template-columns: 1fr; gap: 2rem; }
+            .col-vn { border-left: none; border-top: 1px solid rgba(255,255,255,0.1); padding-left: 0; padding-top: 1.5rem; }
+            .def-dock { padding: 1rem; }
+            .vocab-grid { grid-template-columns: 1fr; }
+            .technique-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">GED Civics</div>
+            <span style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem; font-family: var(--font-ui); display: none; margin-left: 0.5rem; @media(min-width:600px){display:inline;}">Propaganda & Media Literacy</span>
+        </div>
+        <div style="color: var(--constitution-gold); font-size: 1.5rem;">
+            <i class="fa-solid fa-bullhorn"></i>
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Content injected via JS -->
+        </div>
+        <div style="height: 60px;"></div>
+    </main>
+    
+    <div id="def-dock" class="def-dock">
+        <div class="def-content">
+            <div class="def-header">
+                <div>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Vocabulary</span>
+                    <h3 id="dock-term" style="color: var(--constitution-gold); font-size: 1.8rem; font-family: var(--font-heading); margin:0;">Term</h3>
+                </div>
+                <span id="dock-vn" style="color: white; font-weight: 700; font-family: var(--font-ui); background: var(--federal-blue); padding: 0.3rem 1rem; border-radius: 6px; box-shadow: 0 4px 10px rgba(59,130,246,0.3);">Translation</span>
+            </div>
+            <p id="dock-def" style="color: white; font-size: 1.2rem; margin: 0; border-left: 3px solid var(--federal-blue); padding-left: 1rem;">Definition</p>
+            <p id="dock-vn-def" style="color: var(--text-vn); font-size: 1.1rem; margin: 0; font-style: italic; border-left: 3px solid transparent; padding-left: 1rem;">Vietnamese Definition</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="progress-container"><div class="progress-fill" id="progress-fill"></div></div>
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide"><i class="fa-solid fa-arrow-right"></i></button>
+    </footer>
+</div>
+
+<script>
+    // --- CONTENT DATA ---
+    // Refactored for Simple English (CEFR A2/B1) and Bilingual support
+    const glossary = {
+        "propaganda": {
+            def: "Information used to influence opinion, often biased or misleading.",
+            vn: "Tuyên truyền",
+            vn_def: "Thông tin được sử dụng để ảnh hưởng đến dư luận, thường thiên vị hoặc gây hiểu lầm."
+        },
+        "persuade": {
+            def: "To convince someone to do or believe something.",
+            vn: "Thuyết phục",
+            vn_def: "Làm cho ai đó tin hoặc làm theo một điều gì đó."
+        },
+        "bias": {
+            def: "Favoring one side unfairly over another.",
+            vn: "Thiên kiến / Thành kiến",
+            vn_def: "Ưu ái một bên một cách không công bằng so với bên kia."
+        },
+        "manipulate": {
+            def: "To control or influence someone cleverly or unfairly.",
+            vn: "Thao túng",
+            vn_def: "Kiểm soát hoặc ảnh hưởng ai đó một cách khéo léo hoặc không công bằng."
+        },
+        "bandwagon": {
+            def: "A technique suggesting you should do something because 'everyone else is doing it'.",
+            vn: "Hiệu ứng đám đông",
+            vn_def: "Một kỹ thuật gợi ý bạn nên làm điều gì đó vì 'mọi người đều đang làm'."
+        },
+        "testimonial": {
+            def: "Using a famous or respected person to support an idea or product.",
+            vn: "Lời chứng thực",
+            vn_def: "Sử dụng một người nổi tiếng hoặc được kính trọng để ủng hộ một ý tưởng hoặc sản phẩm."
+        },
+        "glittering generalities": {
+            def: "Vague words that sound good but mean very little (e.g., 'Freedom', 'Justice').",
+            vn: "Những từ ngữ hào nhoáng",
+            vn_def: "Những từ ngữ mơ hồ nghe có vẻ hay nhưng ít ý nghĩa (ví dụ: 'Tự do', 'Công lý')."
+        },
+        "card stacking": {
+            def: "Showing only the positive side of an idea and hiding the negative side.",
+            vn: "Tráo bài / Xếp bài",
+            vn_def: "Chỉ hiển thị mặt tích cực của một ý tưởng và che giấu mặt tiêu cực."
+        },
+        "media literacy": {
+            def: "The ability to analyze and evaluate media messages.",
+            vn: "Hiểu biết về truyền thông",
+            vn_def: "Khả năng phân tích và đánh giá các thông điệp truyền thông."
+        },
+        "misinformation": {
+            def: "False or inaccurate information.",
+            vn: "Thông tin sai lệch",
+            vn_def: "Thông tin sai hoặc không chính xác."
+        }
+    };
+
+    const slides = [
+        // SLIDE 1: INTRO
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="text-center fade-in" style="max-width: 800px; margin: 0 auto;">
+                        <div style="font-size: 5rem; color: var(--constitution-gold); margin-bottom: 2rem; filter: drop-shadow(0 0 40px rgba(251,191,36,0.3));">
+                            <i class="fa-solid fa-eye"></i>
+                        </div>
+                        <h1>Propaganda & Media Literacy</h1>
+                        <p style="font-size: 1.4rem; color: var(--text-muted); margin-bottom: 3rem; font-family: var(--font-ui);">
+                            How information is used to persuade and manipulate.
+                        </p>
+                        
+                        <!-- Scaffolding Instruction Box -->
+                        <div class="instruction-box slide-up">
+                            <i class="fa-solid fa-pen-to-square instruction-icon"></i>
+                            <div style="text-align: left;">
+                                <strong style="color: white; display: block; margin-bottom: 0.5rem; font-size: 1.1rem;">Instructions:</strong>
+                                <span style="color: var(--text-muted);">Read the passages carefully. When you see a <span class="text-gold">gold vocabulary word</span>, copy the word and its definition into your notebook.</span>
+                            </div>
+                        </div>
+
+                        <div class="card slide-up" style="text-align: left; border-left: 4px solid var(--federal-blue);">
+                            <h3 style="color: var(--federal-blue); text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; margin-bottom: 1rem;">Lesson Objectives</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="margin-bottom: 0.8rem; display: flex; align-items: center; font-size: 1.1rem;">
+                                    <i class="fa-solid fa-check-circle text-gold" style="margin-right: 12px;"></i> Define propaganda and its purpose.
+                                </li>
+                                <li style="margin-bottom: 0.8rem; display: flex; align-items: center; font-size: 1.1rem;">
+                                    <i class="fa-solid fa-check-circle text-gold" style="margin-right: 12px;"></i> Identify common persuasion techniques.
+                                </li>
+                                <li style="margin-bottom: 0; display: flex; align-items: center; font-size: 1.1rem;">
+                                    <i class="fa-solid fa-check-circle text-gold" style="margin-right: 12px;"></i> Apply critical thinking to social media.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: VISUAL CHART (TECHNIQUE TOOLBOX)
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="width: 100%;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                            <span class="notebook-badge"><i class="fa-solid fa-book-open"></i> Study this Chart</span>
+                            <h2 style="margin-bottom: 0.5rem; margin-top: 1rem;">The Propagandist's Toolbox</h2>
+                            <p>Common ways messages try to trick your brain.</p>
+                        </div>
+
+                        <div class="technique-grid slide-up">
+                            <!-- Technique 1 -->
+                            <div class="tech-card">
+                                <i class="fa-solid fa-users tech-icon"></i>
+                                <div class="tech-title">Bandwagon</div>
+                                <div class="tech-vn">Hiệu ứng đám đông</div>
+                                <p class="tech-desc">"Everyone is doing it, so you should too." <br>Appeals to the fear of being left out.</p>
+                            </div>
+
+                            <!-- Technique 2 -->
+                            <div class="tech-card">
+                                <i class="fa-solid fa-star tech-icon"></i>
+                                <div class="tech-title">Testimonial</div>
+                                <div class="tech-vn">Lời chứng thực</div>
+                                <p class="tech-desc">Using a celebrity or expert to endorse a product or candidate.</p>
+                            </div>
+
+                            <!-- Technique 3 -->
+                            <div class="tech-card">
+                                <i class="fa-solid fa-flag tech-icon"></i>
+                                <div class="tech-title">Glittering Generalities</div>
+                                <div class="tech-vn">Từ ngữ hào nhoáng</div>
+                                <p class="tech-desc">Using vague, positive words like "Freedom" or "Honor" to stir emotion without details.</p>
+                            </div>
+                            
+                            <!-- Technique 4 -->
+                            <div class="tech-card">
+                                <i class="fa-solid fa-scale-unbalanced tech-icon"></i>
+                                <div class="tech-title">Card Stacking</div>
+                                <div class="tech-vn">Tráo bài</div>
+                                <p class="tech-desc">Showing only the good facts and hiding the bad ones to make a one-sided argument.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: READING 1 (Definition & History)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--constitution-gold); color: #0f172a;">Definition</span>
+                             <h2 style="margin:0;">What is Propaganda?</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p><span class="keyword" data-term="propaganda">Propaganda</span> is a powerful tool used to influence public opinion. Unlike education, which presents facts, the goal of propaganda is to <span class="keyword" data-term="persuade">persuade</span> you. It often appeals to emotions like fear, pride, or anger rather than logic.</p>
+                                
+                                <div class="img-container">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/We_Can_Do_It%21.jpg" alt="Rosie the Riveter Poster" class="img-embed">
+                                    <div class="img-caption">The famous "Rosie the Riveter" poster encouraged women to join the workforce during WWII.</div>
+                                </div>
+
+                                <p>Governments have used propaganda for centuries. During World War II, the U.S. government used posters like the one above to boost morale. The message was not just about working; it was about patriotism and duty.</p>
+                                <p>A key feature of propaganda is <span class="keyword" data-term="bias">bias</span>. It selects facts that support one side and ignores facts that do not. To be a good citizen, you must recognize when information is trying to manipulate your feelings.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Tuyên truyền là một công cụ mạnh mẽ được sử dụng để thay đổi dư luận. Khác với giáo dục vốn trình bày các sự kiện, mục tiêu của tuyên truyền là để thuyết phục bạn. Nó thường đánh vào cảm xúc như sợ hãi, tự hào hoặc giận dữ thay vì lý trí.</p>
+                                <p>Các chính phủ đã sử dụng tuyên truyền trong nhiều thế kỷ. Trong Thế chiến II, chính phủ Hoa Kỳ đã sử dụng các áp phích như tấm trên để nâng cao tinh thần. Thông điệp không chỉ là về làm việc; đó là về lòng yêu nước và trách nhiệm.</p>
+                                <p>Một đặc điểm chính của tuyên truyền là sự thiên kiến. Nó chọn lọc các sự kiện ủng hộ một phía và lờ đi các sự kiện không ủng hộ. Để trở thành một công dân tốt, bạn phải nhận ra khi nào thông tin đang cố gắng thao túng cảm xúc của bạn.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: READING 2 (Techniques)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-masks-theater text-gold" style="font-size: 2rem;"></i>
+                             <h2 style="margin:0;">Tricks of the Trade</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>Propagandists use specific techniques to <span class="keyword" data-term="manipulate">manipulate</span> people. One common method is the <span class="keyword" data-term="bandwagon">bandwagon</span> technique. This suggests that "everyone is doing it," so you should too. It plays on our fear of being left out.</p>
+                                <p>Another powerful technique is the use of <span class="keyword" data-term="glittering generalities">glittering generalities</span>. These are vague words that sound good but have little meaning, like "Freedom," "Justice," or "Victory." These words create positive feelings without giving specific details.</p>
+
+                                <div class="img-container">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Food_will_win_the_war_-_You_came_here_seeking_freedom%2C_now_you_must_help_to_preserve_it_-_Wheat_is_needed_for_the_allies_-_waste_nothing_-_C._E._Chambers._LCCN2002720171.jpg" alt="Food Will Win The War Poster" class="img-embed" style="object-position: top;">
+                                    <div class="img-caption">This WWI poster connects saving food to the concept of "Freedom"—a glittering generality.</div>
+                                </div>
+
+                                <p>They also use <span class="keyword" data-term="card stacking">card stacking</span>, where they stack the evidence in their favor. They might show a pile of benefits for an idea but hide the costs, making the decision seem obvious when it is actually complex.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Những người tuyên truyền sử dụng các kỹ thuật cụ thể để thao túng mọi người. Một phương pháp phổ biến là hiệu ứng đám đông. Điều này gợi ý rằng "mọi người đều đang làm điều đó", vì vậy bạn cũng nên làm theo. Nó đánh vào nỗi sợ bị bỏ rơi của chúng ta.</p>
+                                <p>Một kỹ thuật mạnh mẽ khác là sử dụng những từ ngữ hào nhoáng. Đây là những từ ngữ mơ hồ nghe có vẻ hay nhưng ít ý nghĩa, như "Tự do," "Công lý," hoặc "Chiến thắng." Những từ này tạo ra cảm xúc tích cực mà không đưa ra chi tiết cụ thể.</p>
+                                <p>Họ cũng sử dụng kỹ thuật tráo bài, nơi họ xếp bằng chứng có lợi cho mình. Họ có thể chỉ ra hàng tá lợi ích cho một ý tưởng nhưng giấu đi các chi phí, làm cho quyết định có vẻ hiển nhiên trong khi thực tế nó rất phức tạp.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: READING 3 (Modern Age)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-mobile-screen-button text-gold" style="font-size: 2rem;"></i>
+                             <h2 style="margin:0;">Propaganda in the Digital Age</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>Today, propaganda is not just on posters; it is on our phones. Social media algorithms show us information that confirms what we already believe. This creates "echo chambers" where <span class="keyword" data-term="misinformation">misinformation</span> can spread quickly.</p>
+                                <p>Modern ads also use these tricks. A car commercial showing a vehicle driving through beautiful mountains is selling the idea of adventure, not just a car. This is emotional manipulation.</p>
+                                <p>The best defense against propaganda is <span class="keyword" data-term="media literacy">media literacy</span>. You must ask questions: Who created this message? Why did they create it? What is their evidence? By thinking critically, you can protect yourself from being misled.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Ngày nay, tuyên truyền không chỉ có trên áp phích; nó nằm ngay trên điện thoại của chúng ta. Các thuật toán mạng xã hội hiển thị cho chúng ta thông tin xác nhận những gì chúng ta đã tin. Điều này tạo ra "buồng vang" nơi thông tin sai lệch có thể lan truyền nhanh chóng.</p>
+                                <p>Quảng cáo hiện đại cũng sử dụng những thủ thuật này. Một quảng cáo xe hơi chiếu cảnh chiếc xe chạy qua những ngọn núi tuyệt đẹp là đang bán ý tưởng về sự phiêu lưu, không chỉ là chiếc xe. Đây là sự thao túng cảm xúc.</p>
+                                <p>Sự phòng thủ tốt nhất chống lại tuyên truyền là hiểu biết về truyền thông. Bạn phải đặt câu hỏi: Ai đã tạo ra thông điệp này? Tại sao họ tạo ra nó? Bằng chứng của họ là gì? Bằng cách tư duy phản biện, bạn có thể tự bảo vệ mình khỏi bị lừa dối.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: VOCAB GLOSSARY
+        {
+            render: () => {
+                let cards = '';
+                for (const [key, val] of Object.entries(glossary)) {
+                    // Capitalize key
+                    const title = key.replace(/\b\w/g, l => l.toUpperCase());
+                    cards += `
+                        <div class="vocab-card">
+                            <div class="vocab-term">${title}</div>
+                            <div class="vocab-vn">${val.vn}</div>
+                            <div style="margin-bottom:0.5rem; color:#fff;">${val.def}</div>
+                            <div style="color:var(--text-vn); font-style:italic; font-size:0.9rem;">${val.vn_def}</div>
+                        </div>
+                    `;
+                }
+                return `
+                    <div class="slide-wrapper">
+                        <div class="fade-in">
+                            <div class="text-center">
+                                <span class="brand-pill" style="background: var(--constitution-gold); color: #0f172a;">Review</span>
+                                <h2 style="margin-top: 1rem;">Key Vocabulary</h2>
+                            </div>
+                            <div class="vocab-grid slide-up">
+                                ${cards}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        },
+
+        // SLIDE 7: QUIZ
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 800px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Media Literacy Quiz</h2>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- Q1 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 1 / 5</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">What is the primary goal of propaganda?</h3>
+                                <div id="q1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q1')">A. To report facts neutrally.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q1')">B. To persuade or influence opinion.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q1')">C. To educate students about history.</button>
+                                </div>
+                                <div id="q1-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> Propaganda is designed to change how you think or behave, often using emotion instead of pure facts.
+                                </div>
+                            </div>
+
+                            <!-- Q2 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 2 / 5</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">A commercial says: "Millions of Americans use this toothpaste! You should too!" What technique is this?</h3>
+                                <div id="q2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q2')">A. Name Calling</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q2')">B. Bandwagon</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q2')">C. Card Stacking</button>
+                                </div>
+                                <div id="q2-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> This is the <strong>Bandwagon</strong> technique. It appeals to your desire to fit in with the crowd.
+                                </div>
+                            </div>
+
+                            <!-- Q3 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 3 / 5</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">Using a famous actor to support a political candidate is an example of:</h3>
+                                <div id="q3-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q3')">A. Testimonial</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q3')">B. Glittering Generalities</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q3')">C. Fear Mongering</button>
+                                </div>
+                                <div id="q3-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> A <strong>Testimonial</strong> uses a respected or famous person to transfer their popularity to the idea they are supporting.
+                                </div>
+                            </div>
+
+                            <!-- Q4 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 4 / 5</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">Which term describes vague, positive words like "Freedom" that appeal to emotions?</h3>
+                                <div id="q4-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q4')">A. Card Stacking</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q4')">B. Bias</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q4')">C. Glittering Generalities</button>
+                                </div>
+                                <div id="q4-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> <strong>Glittering Generalities</strong> are "shiny" words that make us feel good but don't promise anything specific.
+                                </div>
+                            </div>
+
+                            <!-- Q5 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 5 / 5</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">What is the best defense against propaganda in the digital age?</h3>
+                                <div id="q5-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q5')">A. Banning all social media.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q5')">B. Media Literacy and critical thinking.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q5')">C. Only reading news that agrees with you.</button>
+                                </div>
+                                <div id="q5-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> Media Literacy involves asking questions about the source, motive, and evidence behind information.
+                                </div>
+                            </div>
+                            
+                            <div class="text-center" style="margin-top: 3rem;">
+                                <button onclick="location.reload()" style="background: transparent; color: var(--text-muted); border: 1px solid var(--text-muted); padding: 0.8rem 2rem; border-radius: 50px; cursor: pointer; transition: all 0.2s;">
+                                    <i class="fa-solid fa-rotate-right"></i> Restart Lesson
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- LOGIC ---
+    let currentSlide = 0;
+    const slideContainer = document.getElementById('slide-container');
+    const progressBar = document.getElementById('progress-fill');
+    const btnNext = document.getElementById('btn-next');
+    const btnPrev = document.getElementById('btn-prev');
+    const dock = document.getElementById('def-dock');
+
+    function renderSlide() {
+        // Inject HTML
+        slideContainer.innerHTML = slides[currentSlide].render();
+        
+        // Update UI State
+        const progress = ((currentSlide + 1) / slides.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        
+        btnPrev.disabled = currentSlide === 0;
+        btnNext.disabled = currentSlide === slides.length - 1;
+
+        // Reset Scroll
+        document.getElementById('viewport').scrollTop = 0;
+
+        // Re-attach listeners for new content
+        attachKeywordListeners();
+    }
+
+    function changeSlide(direction) {
+        if (direction === 'next' && currentSlide < slides.length - 1) {
+            currentSlide++;
+        } else if (direction === 'prev' && currentSlide > 0) {
+            currentSlide--;
+        }
+        renderSlide();
+    }
+
+    // Keyword Logic
+    function attachKeywordListeners() {
+        const keywords = document.querySelectorAll('.keyword');
+        
+        keywords.forEach(el => {
+            const termKey = el.dataset.term.toLowerCase();
+            const data = glossary[termKey];
+
+            if (!data) return;
+
+            // Desktop: Mouse Enter/Leave
+            el.addEventListener('mouseenter', () => showDock(termKey, data));
+            el.addEventListener('mouseleave', hideDock);
+
+            // Mobile: Touch (Toggle)
+            el.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent body click from hiding
+                showDock(termKey, data);
+            });
+        });
+    }
+
+    function showDock(term, data) {
+        document.getElementById('dock-term').innerText = term.replace(/\b\w/g, l => l.toUpperCase()); // Capitalize
+        document.getElementById('dock-def').innerText = data.def;
+        document.getElementById('dock-vn').innerText = data.vn;
+        document.getElementById('dock-vn-def').innerText = data.vn_def; 
+        dock.classList.add('active');
+    }
+
+    function hideDock() {
+        dock.classList.remove('active');
+    }
+
+    // Quiz Logic
+    window.handleQuiz = function(btn, isCorrect, qId) {
+        const parent = document.getElementById(qId + '-opts');
+        const explainBox = document.getElementById(qId + '-explain');
+        const options = parent.querySelectorAll('.quiz-option');
+        
+        // Disable all siblings
+        options.forEach(opt => {
+            opt.disabled = true;
+            opt.style.cursor = 'default';
+            opt.style.opacity = '0.6';
+        });
+
+        // Highlight selected
+        btn.style.opacity = '1';
+        if (isCorrect) {
+            btn.classList.add('correct');
+            btn.innerHTML += ' <i class="fa-solid fa-check" style="float:right;"></i>';
+        } else {
+            btn.classList.add('incorrect');
+            btn.innerHTML += ' <i class="fa-solid fa-xmark" style="float:right;"></i>';
+        }
+
+        // Show Explanation
+        if(explainBox) {
+            explainBox.style.display = 'block';
+        }
+    };
+
+    // Global Listeners
+    btnNext.addEventListener('click', () => changeSlide('next'));
+    btnPrev.addEventListener('click', () => changeSlide('prev'));
+    
+    // Body click to close dock on mobile if open
+    document.body.addEventListener('click', () => {
+        if(dock.classList.contains('active')) hideDock();
+    });
+
+    // Keyboard Nav
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') changeSlide('next');
+        if(e.key === 'ArrowLeft') changeSlide('prev');
+    });
+
+    // Init
+    renderSlide();
+
+</script>
+</body>
+</html>
