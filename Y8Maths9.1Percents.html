@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9.1 Percentages | Year 8 Maths</title>
+    
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE (High Contrast for Projectors) --- */
+            --bg-deep: #020617;
+            --bg-panel: #1e293b;
+            --primary: #3b82f6;   /* Logic Blue */
+            --accent: #f59e0b;    /* Energy Amber */
+            --success: #10b981;   /* Correct Green */
+            --danger: #ef4444;    /* Error Red */
+            --text-light: #f1f5f9;
+            --text-dim: #94a3b8;
+            
+            /* --- SIZING TOKENS --- */
+            --header-h: 80px;
+            --footer-h: 90px;
+            --radius: 24px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; user-select: none; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- BACKGROUND ANIMATION LAYER --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1 { font-family: 'Outfit'; font-weight: 900; font-size: clamp(2.5rem, 5vw, 5rem); line-height: 1.1; letter-spacing: -2px; }
+        h2 { font-family: 'Outfit'; font-weight: 800; font-size: clamp(2rem, 4vw, 3.5rem); margin-bottom: 1rem; color: white; }
+        h3 { font-family: 'Outfit'; font-weight: 700; font-size: clamp(1.5rem, 2.5vw, 2rem); color: var(--primary); }
+        p, li { font-size: clamp(1.1rem, 1.5vw, 1.4rem); line-height: 1.6; color: #cbd5e1; }
+        
+        .highlight-gold { color: var(--accent); text-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+        .highlight-blue { color: var(--primary); }
+        .highlight-green { color: var(--success); }
+
+        /* --- LAYOUT SHELL --- */
+        header {
+            height: var(--header-h);
+            flex-shrink: 0; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1.5rem;
+            border-radius: 100px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        main {
+            flex: 1;
+            position: relative;
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--bg-deep);
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1400px; 
+            margin: auto 0; 
+            min-height: min-content;
+        }
+
+        footer {
+            height: var(--footer-h);
+            flex-shrink: 0;
+            background: rgba(15, 23, 42, 0.95);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
+        }
+
+        /* --- PEDAGOGICAL NOTE BOX --- */
+        .pedagogical-note {
+            position: relative;
+            background: rgba(20, 20, 25, 0.8);
+            border: 3px solid var(--accent); 
+            border-left-width: 12px; 
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .pedagogical-badge {
+            position: absolute;
+            top: -18px;
+            left: 20px;
+            background: var(--accent);
+            color: #000;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 1px;
+        }
+
+        .note-examples { border-color: var(--primary); }
+        .note-examples .pedagogical-badge { background: var(--primary); color: white; }
+
+        .note-question { border-color: var(--accent); }
+        .note-question .pedagogical-badge { background: var(--accent); color: black; }
+
+        .note-answer { border-color: var(--success); }
+        .note-answer .pedagogical-badge { background: var(--success); color: white; }
+        
+        .note-summary { border-color: var(--text-light); }
+        .note-summary .pedagogical-badge { background: var(--text-light); color: black; }
+
+
+        /* --- CARDS & GRIDS --- */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+        .glass-card:hover { border-color: rgba(255,255,255,0.2); }
+
+        /* --- FLIP CARDS (New) --- */
+        .flip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: var(--radius);
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .flip-card-front {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .flip-card-back {
+            background: var(--primary);
+            color: white;
+            transform: rotateY(180deg);
+            border-color: white;
+        }
+
+        /* --- CONTROLS --- */
+        .btn-nav {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); transform: scale(1.1); }
+        .btn-nav:disabled { opacity: 0.2; cursor: not-allowed; }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1.2rem 2rem;
+            font-size: 1.3rem;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            transition: all 0.2s;
+            font-family: 'Outfit';
+            text-transform: uppercase;
+        }
+        .btn-action:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+
+        .progress-track {
+            flex: 1; margin: 0 2rem; height: 8px;
+            background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+
+        input[type=range] {
+            -webkit-appearance: none; width: 100%; background: transparent; margin: 1.5rem 0;
+        }
+        input[type=range]::-webkit-slider-track {
+            width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 40px; width: 40px; border-radius: 50%;
+            background: var(--accent); border: 4px solid white; margin-top: -14px;
+            box-shadow: 0 0 20px var(--accent); cursor: pointer; transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.2); }
+
+        /* --- ANIMATIONS --- */
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        .anim-enter { animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        .char-base { transition: all 0.4s ease; }
+        .aura-glow { opacity: 0; filter: blur(25px); transition: opacity 0.2s; mix-blend-mode: screen; }
+        .cup-fill { transition: fill 0.3s ease; }
+        
+        .stat-huge { font-size: 4rem; font-weight: 900; color: white; font-family: 'Outfit'; line-height: 1; }
+
+        .math-box {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            background: rgba(0,0,0,0.4);
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        
+        .fraction-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit';
+            font-weight: 900;
+            font-size: 3rem;
+        }
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0.5rem;
+        }
+        .fraction span:first-child { border-bottom: 3px solid white; padding-bottom: 2px; display: block; width: 100%; text-align: center; }
+        .fraction span:last-child { padding-top: 2px; display: block; width: 100%; text-align: center; }
+        
+        /* Summary List */
+        .summary-list {
+            list-style: none;
+            padding: 0;
+            font-size: 1.4rem;
+        }
+        .summary-list li {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            color: white;
+        }
+        .summary-icon {
+            width: 50px; height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 1000px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            h1 { font-size: 3rem; }
+            .pedagogical-note { padding: 1.5rem; }
+            .btn-nav { width: 44px; height: 44px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <header>
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <i class="fa-solid fa-percent" style="color:var(--primary); font-size:1.5rem;"></i>
+            <span style="font-weight:700; letter-spacing:1px; font-size: 1.5rem;">Year 8 Maths</span>
+        </div>
+        <div class="tag">Unit 9.1 Percentages</div>
+    </header>
+
+    <main>
+        <div id="slide-viewer" class="slide-container">
+            <!-- Slides inject here -->
+        </div>
+    </main>
+
+    <footer>
+        <button class="btn-nav" id="btn-prev" onclick="lesson.prev()"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="progress-track">
+            <div id="progress-bar" class="progress-fill"></div>
+        </div>
+        <button class="btn-nav" id="btn-next" onclick="lesson.next()"><i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+
+<script>
+/* -------------------------------------------------------------------------- */
+/* BACKGROUND FX                               */
+/* -------------------------------------------------------------------------- */
+const initCanvas = () => {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    const particles = [];
+    const symbols = ['%', '÷', '×', '+', '=', '100'];
+
+    const resize = () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    };
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.size = Math.random() * 20 + 10;
+            this.speedY = Math.random() * 0.5 + 0.1;
+            this.symbol = symbols[Math.floor(Math.random() * symbols.length)];
+            this.opacity = Math.random() * 0.2 + 0.05;
+        }
+        update() {
+            this.y -= this.speedY;
+            if (this.y < -50) this.y = height + 50;
+        }
+        draw() {
+            ctx.fillStyle = `rgba(100, 116, 139, ${this.opacity})`;
+            ctx.font = `${this.size}px 'Outfit'`;
+            ctx.fillText(this.symbol, this.x, this.y);
+        }
+    }
+
+    for (let i = 0; i < 20; i++) particles.push(new Particle());
+
+    const animate = () => {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+    animate();
+};
+
+/* -------------------------------------------------------------------------- */
+/* SVG CHARACTER                               */
+/* -------------------------------------------------------------------------- */
+const getMrBowenSVG = (idSuffix, height="350px") => `
+<svg id="bowen-${idSuffix}" viewBox="0 0 300 450" style="height:${height}; overflow:visible; margin:0 auto; display:block;">
+    <circle id="aura-${idSuffix}" cx="150" cy="150" r="140" fill="#f59e0b" class="aura-glow" />
+    <rect x="75" y="160" width="150" height="180" rx="30" fill="#3b82f6" stroke="white" stroke-width="6"/>
+    <g transform="translate(110, 200)">
+        <path id="cup-fill-${idSuffix}" d="M10 10 L15 50 Q40 65 65 50 L70 10 Z" fill="#ef4444" class="cup-fill" />
+        <path d="M10 10 L15 50 Q40 65 65 50 L70 10 Z" fill="none" stroke="white" stroke-width="4"/>
+        <path d="M70 15 Q85 15 85 30 Q85 45 68 40" fill="none" stroke="white" stroke-width="4"/>
+        <g id="steam-${idSuffix}" style="opacity:0; transition:opacity 0.3s;">
+            <path d="M25 0 Q30 -10 25 -20" stroke="white" stroke-width="3" fill="none"/>
+            <path d="M40 0 Q45 -10 40 -20" stroke="white" stroke-width="3" fill="none"/>
+            <path d="M55 0 Q60 -10 55 -20" stroke="white" stroke-width="3" fill="none"/>
+        </g>
+    </g>
+    <circle cx="150" cy="100" r="70" fill="#fcd34d" stroke="white" stroke-width="6"/>
+    <g id="face-tired-${idSuffix}">
+        <line x1="120" y1="90" x2="140" y2="90" stroke="#1e293b" stroke-width="5" stroke-linecap="round"/>
+        <line x1="160" y1="90" x2="180" y2="90" stroke="#1e293b" stroke-width="5" stroke-linecap="round"/>
+        <path d="M130 130 Q150 120 170 130" stroke="#1e293b" stroke-width="4" fill="none"/>
+    </g>
+    <g id="face-happy-${idSuffix}" style="display:none;">
+        <circle cx="130" cy="90" r="6" fill="#1e293b"/>
+        <circle cx="170" cy="90" r="6" fill="#1e293b"/>
+        <path d="M130 120 Q150 140 170 120" stroke="#1e293b" stroke-width="4" fill="none"/>
+    </g>
+    <path d="M110 340 L110 420" stroke="white" stroke-width="12" stroke-linecap="round"/>
+    <path d="M190 340 L190 420" stroke="white" stroke-width="12" stroke-linecap="round"/>
+    <g id="arms-tired-${idSuffix}">
+        <path d="M75 180 L40 280" stroke="white" stroke-width="12" stroke-linecap="round"/>
+        <path d="M225 180 L260 280" stroke="white" stroke-width="12" stroke-linecap="round"/>
+    </g>
+    <g id="arms-happy-${idSuffix}" style="display:none;">
+        <path d="M75 180 L30 120" stroke="white" stroke-width="12" stroke-linecap="round"/>
+        <path d="M225 180 L270 120" stroke="white" stroke-width="12" stroke-linecap="round"/>
+    </g>
+</svg>
+`;
+
+/* -------------------------------------------------------------------------- */
+/* LESSON LOGIC                                */
+/* -------------------------------------------------------------------------- */
+
+const slides = [
+    // SLIDE 1: Title & Objectives
+    {
+        render: () => `
+            <div style="text-align: center;" class="anim-enter">
+                <i class="fa-solid fa-percent" style="font-size: 6rem; color: var(--primary); margin-bottom: 2rem; filter: drop-shadow(0 0 20px rgba(59,130,246,0.5));"></i>
+                <h1 style="color:white; margin-bottom: 0.5rem;">Percentages</h1>
+                <p style="font-size: 2rem; color: var(--accent); font-weight: 700;">Parts of a Whole</p>
+                
+                <div class="grid-3 delay-1 anim-enter" style="margin-top: 4rem; text-align: left;">
+                    <div class="glass-card">
+                        <i class="fa-solid fa-brain" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                        <h3>Understand</h3>
+                        <p>What a percentage actually represents in real life scenarios.</p>
+                    </div>
+                    <div class="glass-card">
+                        <i class="fa-solid fa-right-left" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                        <h3>Convert</h3>
+                        <p>Changing fractions and decimals into percentages.</p>
+                    </div>
+                    <div class="glass-card">
+                        <i class="fa-solid fa-calculator" style="font-size: 2.5rem; color: var(--success); margin-bottom: 1rem;"></i>
+                        <h3>Calculate</h3>
+                        <p>Finding percentages of large amounts efficiently.</p>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 2: Interactive Warm-up
+    {
+        render: () => `
+            <div class="anim-enter">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:1.5rem;">
+                    <div>
+                        <div class="tag" style="background:var(--accent); color:black; margin-bottom:0.5rem; display:inline-block;">Warm Up Challenge</div>
+                        <h2>Find the Power Level</h2>
+                        <p>Mr. Bowen is running low on energy. Help calculate his stats.</p>
+                    </div>
+                    <div class="glass-card" style="padding: 1rem; text-align:center; min-width: 250px;">
+                        <div style="font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-dim);">Max Capacity</div>
+                        <div class="stat-huge" style="color:var(--primary);">1000</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="delay-1 anim-enter" style="position:relative;">
+                         ${getMrBowenSVG('1')}
+                    </div>
+
+                    <div class="delay-2 anim-enter">
+                        <div id="slide2-step1">
+                            <div class="pedagogical-note note-question">
+                                <div class="pedagogical-badge">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Situation
+                                </div>
+                                <p style="font-size:1.6rem; color:white;">Mr. Bowen has only had <strong>1 cup</strong> of coffee.</p>
+                                <p style="margin-top:0.5rem;">He is operating at <span class="highlight-gold">50% power</span>.</p>
+                            </div>
+                            <button class="btn-action" onclick="lesson.trigger('revealPower')">Reveal Power Level</button>
+                        </div>
+
+                        <div id="slide2-step2" style="display:none;">
+                            <div class="glass-card" style="border: 2px solid var(--primary); background: rgba(59, 130, 246, 0.1); padding: 1.5rem;">
+                                <h3 style="color:white; font-size:1.4rem; margin-bottom:0.5rem;"><i class="fa-solid fa-bolt"></i> Task</h3>
+                                <p>Drag the slider to increase power to <strong>80%</strong>.</p>
+                            </div>
+
+                            <div style="margin-top: 1.5rem;">
+                                <div style="display:flex; justify-content:space-between; font-size: 1.4rem; font-weight:700;">
+                                    <label>Energy Input</label>
+                                    <span id="s2-pct-val" style="color:var(--accent);">50%</span>
+                                </div>
+                                <input type="range" id="s2-slider" min="0" max="100" value="50">
+                            </div>
+
+                            <div class="math-box">
+                                1000 × <span id="s2-math-pct" style="color:var(--accent)">50</span>% = <span id="s2-result" style="color:white;">500</span>
+                            </div>
+
+                            <div id="s2-success" style="text-align:center; margin-top:1rem; font-weight:900; color:var(--success); font-size:1.4rem; opacity:0; transition:opacity 0.3s;">
+                                <i class="fa-solid fa-check-circle"></i> OPTIMAL POWER REACHED!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        actions: {
+            revealPower: () => {
+                document.getElementById('slide2-step1').style.display = 'none';
+                const step2 = document.getElementById('slide2-step2');
+                step2.style.display = 'block';
+                step2.classList.add('anim-enter');
+            }
+        },
+        onMount: () => {
+            const slider = document.getElementById('s2-slider');
+            if(!slider) return;
+
+            const updateState = (val) => {
+                const pctTxt = document.getElementById('s2-pct-val');
+                const mathTxt = document.getElementById('s2-math-pct');
+                const resTxt = document.getElementById('s2-result');
+                const successMsg = document.getElementById('s2-success');
+                const cup = document.getElementById('cup-fill-1');
+                const aura = document.getElementById('aura-1');
+                const steam = document.getElementById('steam-1');
+                const faceTired = document.getElementById('face-tired-1');
+                const faceHappy = document.getElementById('face-happy-1');
+                const armsTired = document.getElementById('arms-tired-1');
+                const armsHappy = document.getElementById('arms-happy-1');
+
+                const result = Math.floor(1000 * (val / 100));
+
+                pctTxt.innerText = val + "%";
+                mathTxt.innerText = val;
+                resTxt.innerText = result;
+
+                aura.style.opacity = val / 100;
+                
+                let color = "#ef4444"; 
+                if (val > 40) color = "#fcd34d";
+                if (val > 75) color = "#10b981";
+                cup.style.fill = color;
+
+                const isHappy = val > 60;
+                faceTired.style.display = isHappy ? 'none' : 'block';
+                faceHappy.style.display = isHappy ? 'block' : 'none';
+                armsTired.style.display = isHappy ? 'none' : 'block';
+                armsHappy.style.display = isHappy ? 'block' : 'none';
+                steam.style.opacity = isHappy ? 1 : 0;
+
+                if (parseInt(val) === 80) {
+                    successMsg.style.opacity = 1;
+                    resTxt.style.color = "var(--success)";
+                } else {
+                    successMsg.style.opacity = 0;
+                    resTxt.style.color = "white";
+                }
+            };
+
+            slider.addEventListener('input', (e) => updateState(e.target.value));
+        }
+    },
+
+    // SLIDE 3: Definition
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>Understanding Percentages</h2>
+                
+                <div class="grid-2">
+                    <div>
+                        <div class="pedagogical-note note-question delay-1 anim-enter">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-question"></i> Write Question</div>
+                            <p style="font-size: 1.8rem; color:white; font-weight:700;">
+                                What do we actually mean when we say <br>
+                                <span class="stat-huge" style="font-size:3.5rem; color:var(--accent);">50%</span>
+                                <br><span class="highlight-blue">OF</span> something?
+                            </p>
+                        </div>
+                        
+                        <button id="s3-reveal-btn" class="btn-action" onclick="lesson.trigger('revealDef')">Reveal Answer</button>
+                        
+                        <div id="s3-answer" style="display:none; margin-top:2rem;">
+                            <div class="pedagogical-note note-answer">
+                                <div class="pedagogical-badge">
+                                    <i class="fa-solid fa-pen-nib"></i> Write Answer
+                                </div>
+                                <p style="font-size:2rem; text-align:center; line-height:1.4;">
+                                    50% <span class="highlight-blue">OF</span> something means exactly <strong style="font-size:2.8rem; display:block; color:white;">HALF</strong>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="delay-2 anim-enter">
+                        <div class="pedagogical-note note-examples">
+                            <div class="pedagogical-badge">
+                                <i class="fa-solid fa-book"></i> Write Definition
+                            </div>
+                            <p style="font-size:1.4rem; margin-bottom:1.5rem;">
+                                <strong style="color:white;">Per Cent</strong> comes from Latin, meaning "for every <strong class="highlight-blue">100</strong>".
+                            </p>
+
+                            <div style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:12px; margin-bottom:1rem; display:flex; align-items:center; gap:2rem;">
+                                <i class="fa-solid fa-battery-full" style="font-size:3rem; color:var(--success);"></i>
+                                <div>
+                                    <div style="font-size:1.8rem; font-weight:900; color:white;">100%</div>
+                                    <div style="color:var(--text-dim);">The Whole Thing. Everything.</div>
+                                </div>
+                            </div>
+
+                            <div style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:12px; display:flex; align-items:center; gap:2rem;">
+                                <i class="fa-solid fa-battery-half" style="font-size:3rem; color:var(--accent);"></i>
+                                <div>
+                                    <div style="font-size:1.8rem; font-weight:900; color:white;">50%</div>
+                                    <div style="color:var(--text-dim);">Half of the thing.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        actions: {
+            revealDef: () => {
+                document.getElementById('s3-reveal-btn').style.display = 'none';
+                const ans = document.getElementById('s3-answer');
+                ans.style.display = 'block';
+                ans.classList.add('anim-enter');
+            }
+        }
+    },
+
+    // SLIDE 4: Level Up (9000)
+    {
+        render: () => `
+            <div class="anim-enter">
+                <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1rem;">
+                    <h2>Level Up!</h2>
+                    <div class="tag" style="background:var(--danger); color:white;">Advanced Training</div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="pedagogical-note note-question delay-1 anim-enter" style="text-align:center;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pen"></i> Write Question</div>
+                        <i class="fa-solid fa-dumbbell" style="font-size: 4rem; color: var(--accent); margin-bottom:1rem;"></i>
+                        <h3 style="color:white; margin-bottom:1rem;">The New Scenario</h3>
+                        
+                        <div style="background:rgba(0,0,0,0.3); padding:1.5rem; border-radius:12px; margin:1rem 0; text-align:left;">
+                            <p>Mr. Bowen has been training hard.</p>
+                            <p>His NEW Max Power is <strong class="highlight-blue" style="font-size:1.8rem;">9,000</strong>!</p>
+                            <div style="width:100%; height:2px; background:rgba(255,255,255,0.1); margin:1rem 0;"></div>
+                            <p><i class="fa-solid fa-mug-hot"></i> He still only had <strong>one coffee</strong> (50%).</p>
+                            <p style="margin-top:0.5rem; font-weight:700; color:white;">What is his power level?</p>
+                        </div>
+                        
+                        <button id="s4-btn" class="btn-action" onclick="lesson.trigger('reveal9000')">Reveal Power</button>
+                    </div>
+
+                    <div id="s4-answer" style="display:none;">
+                         <div class="pedagogical-note note-answer anim-enter" style="text-align:center;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-check"></i> Write Answer</div>
+                            <h3 style="color:var(--success);">The Answer</h3>
+                            <div class="stat-huge" style="margin: 0.5rem 0;">4,500</div>
+                            <p>Since 50% is half, we split 9,000 in two.</p>
+                         </div>
+
+                         <div class="pedagogical-note note-examples delay-1 anim-enter">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-calculator"></i> The Math Hack</div>
+                            <p style="margin-bottom:1rem;">How do we do this using multiplication?</p>
+                            <div class="math-box">
+                                <span style="color:var(--accent)">0.50</span> <span style="color:var(--danger)">×</span> 9000 = 4500
+                            </div>
+                            <p style="margin-top:1rem; font-size:1.1rem;">We turned the percentage into a decimal and multiplied.</p>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        actions: {
+            reveal9000: () => {
+                document.getElementById('s4-btn').style.display = 'none';
+                const ans = document.getElementById('s4-answer');
+                ans.style.display = 'block';
+            }
+        }
+    },
+
+    // SLIDE 5: The Golden Rule
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>The Golden Rule of Percentages</h2>
+                
+                <div class="grid-2" style="align-items:start;">
+                    <div class="pedagogical-note note-question delay-1 anim-enter">
+                        <div class="pedagogical-badge">
+                            <i class="fa-solid fa-star"></i> Write The Rule
+                        </div>
+                        <p style="font-size:2rem; line-height:1.4;">
+                            In mathematics, the word <strong>"OF"</strong> usually means 
+                            <br><span style="color:var(--accent); font-weight:900; font-size:2.8rem; display:block; margin: 0.5rem 0;">MULTIPLY (×)</span>
+                        </p>
+                        <div style="width:100%; height:2px; background:rgba(255,255,255,0.1); margin:1.5rem 0;"></div>
+                        <p>To find a percentage of ANY amount:</p>
+                        <ol style="margin-left:2rem; margin-top:1rem; font-weight:700;">
+                            <li style="margin-bottom:0.5rem;"><span style="color:white;">Turn Percentage into a Decimal.</span></li>
+                            <li><span style="color:white;">Multiply by the amount.</span></li>
+                        </ol>
+                    </div>
+
+                    <div class="delay-2 anim-enter">
+                        <div class="pedagogical-note note-examples">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-list-ol"></i> Write Examples</div>
+                            
+                            <div style="margin-top:1rem; display:flex; flex-direction:column; gap:1.2rem;">
+                                <div style="background:rgba(0,0,0,0.3); padding:1.2rem; border-radius:12px;">
+                                    <p style="font-size:1rem; color:var(--text-dim); margin-bottom:0.3rem;">Find 20% of 50</p>
+                                    <div style="font-family:'Courier New'; font-weight:700; font-size:1.6rem;">
+                                        <span style="color:var(--accent)">0.20</span> × 50 = <span style="color:var(--success)">10</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="background:rgba(0,0,0,0.3); padding:1.2rem; border-radius:12px;">
+                                    <p style="font-size:1rem; color:var(--text-dim); margin-bottom:0.3rem;">Find 75% of 200</p>
+                                    <div style="font-family:'Courier New'; font-weight:700; font-size:1.6rem;">
+                                        <span style="color:var(--accent)">0.75</span> × 200 = <span style="color:var(--success)">150</span>
+                                    </div>
+                                </div>
+
+                                <div style="background:rgba(0,0,0,0.3); padding:1.2rem; border-radius:12px;">
+                                    <p style="font-size:1rem; color:var(--text-dim); margin-bottom:0.3rem;">Find 6% of 1000</p>
+                                    <div style="font-family:'Courier New'; font-weight:700; font-size:1.6rem;">
+                                        <span style="color:var(--accent)">0.06</span> × 1000 = <span style="color:var(--success)">60</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 6: Final Challenge
+    {
+        render: () => `
+            <div class="anim-enter">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+                    <h2>Final Power Challenge</h2>
+                    <div class="tag" style="background:var(--success); color:black;">Class Activity</div>
+                </div>
+
+                <div class="grid-2">
+                    <!-- Character -->
+                    <div class="delay-1 anim-enter">
+                        <div class="glass-card" style="padding:1rem;">
+                            ${getMrBowenSVG('2', '300px')}
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="delay-2 anim-enter">
+                        <div class="glass-card" style="border-color:var(--accent);">
+                            <div class="pedagogical-note note-question" style="margin-top:0; padding: 1.5rem;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pen"></i> Write & Solve</div>
+                                <p style="font-size:1.6rem; color:white; line-height:1.4; margin-bottom:1rem;">
+                                    Mr. Bowen's Max Power is <strong>9000</strong>.
+                                    <br>Find his power at the following percentages:
+                                </p>
+                                
+                                <div class="grid-2" style="gap:1rem; grid-template-columns: 1fr 1fr;">
+                                    <div style="background:rgba(255,255,255,0.05); padding:0.5rem; text-align:center; border-radius:8px;">A. <strong style="color:var(--accent); font-size:1.5rem;">10%</strong></div>
+                                    <div style="background:rgba(255,255,255,0.05); padding:0.5rem; text-align:center; border-radius:8px;">B. <strong style="color:var(--accent); font-size:1.5rem;">90%</strong></div>
+                                    <div style="background:rgba(255,255,255,0.05); padding:0.5rem; text-align:center; border-radius:8px;">C. <strong style="color:var(--accent); font-size:1.5rem;">25%</strong></div>
+                                    <div style="background:rgba(255,255,255,0.05); padding:0.5rem; text-align:center; border-radius:8px;">D. <strong style="color:var(--accent); font-size:1.5rem;">67%</strong></div>
+                                </div>
+                            </div>
+
+                            <p style="font-size:1rem; color:var(--text-dim); margin-top:1rem;">Drag slider to reveal answers:</p>
+                            
+                            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:1.5rem;">
+                                <label>Percentage</label>
+                                <span id="s6-pct" style="color:var(--primary);">0%</span>
+                            </div>
+                            
+                            <input type="range" id="s6-slider" min="0" max="100" value="0">
+
+                            <div class="math-box">
+                                <span id="s6-decimal" style="color:var(--accent)">0.00</span> × 9000 = <span id="s6-result" style="color:white; font-size:2.5rem; display:block; margin-top:0.5rem;">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        onMount: () => {
+            const slider = document.getElementById('s6-slider');
+            if(!slider) return;
+
+            // Set happy face immediately for final slide
+            document.getElementById('face-tired-2').style.display = 'none';
+            document.getElementById('face-happy-2').style.display = 'block';
+            document.getElementById('arms-tired-2').style.display = 'none';
+            document.getElementById('arms-happy-2').style.display = 'block';
+
+            slider.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value);
+                const decimal = (val / 100).toFixed(2);
+                const calc = Math.floor(9000 * (val / 100));
+
+                document.getElementById('s6-pct').innerText = val + "%";
+                document.getElementById('s6-decimal').innerText = decimal;
+                
+                const resEl = document.getElementById('s6-result');
+                resEl.innerText = calc.toLocaleString();
+
+                // Visual Feedback
+                const aura = document.getElementById('aura-2');
+                const cup = document.getElementById('cup-fill-2');
+                
+                aura.style.opacity = val / 100;
+
+                let color = "#ef4444"; 
+                if (val > 40) color = "#fcd34d";
+                if (val > 80) color = "#10b981";
+                
+                cup.style.fill = color;
+                
+                if (val > 80) resEl.style.color = "var(--success)";
+                else resEl.style.color = "white";
+            });
+        }
+    },
+
+    // SLIDE 7: Intro to Fractions
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>Percentages as Fractions</h2>
+                
+                <div class="grid-2">
+                    <div class="pedagogical-note note-examples">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pen-to-square"></i> Write This Down</div>
+                        
+                        <p style="font-size:1.6rem; color:white; line-height:1.5;">
+                            A percentage is just a fraction with a denominator of <strong>100</strong>.
+                        </p>
+                        
+                        <div style="margin-top:2rem; background:rgba(0,0,0,0.3); padding:1.5rem; border-radius:16px;">
+                            <div class="fraction-box" style="margin-bottom:2rem;">
+                                <div style="color:var(--accent);">10%</div>
+                                <div>=</div>
+                                <div class="fraction"><span>10</span><span>100</span></div>
+                                <div>=</div>
+                                <div class="fraction" style="color:var(--success);"><span>1</span><span>10</span></div>
+                            </div>
+                            
+                            <p style="text-align:center; font-size:1.1rem; color:var(--text-dim);">
+                                Cancel the zeros to simplify.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pedagogical-note note-examples delay-1 anim-enter">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pen-to-square"></i> Write This Down</div>
+                        
+                         <div style="margin-top:1.5rem; background:rgba(0,0,0,0.3); padding:1.5rem; border-radius:16px;">
+                            <div class="fraction-box" style="margin-bottom:2rem;">
+                                <div style="color:var(--accent);">25%</div>
+                                <div>=</div>
+                                <div class="fraction"><span>25</span><span>100</span></div>
+                                <div>=</div>
+                                <div class="fraction" style="color:var(--success);"><span>1</span><span>4</span></div>
+                            </div>
+                            
+                            <p style="text-align:center; font-size:1.1rem; color:var(--text-dim);">
+                                Think of quarters. 25 cents is a quarter of a dollar.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 8: Flip Cards Activity
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>Convert to Fractions</h2>
+                <p style="text-align:center;">Convert these percentages to their simplest fractional form. Click to reveal.</p>
+                
+                <div class="flip-grid">
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <div class="stat-huge" style="color:var(--accent);">50%</div>
+                                <p style="margin-top:1rem;">Click to Reveal</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <div class="stat-huge">1/2</div>
+                                <p>50/100 simplified</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <div class="stat-huge" style="color:var(--accent);">20%</div>
+                                <p style="margin-top:1rem;">Click to Reveal</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <div class="stat-huge">1/5</div>
+                                <p>20/100 simplified</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <div class="stat-huge" style="color:var(--accent);">75%</div>
+                                <p style="margin-top:1rem;">Click to Reveal</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <div class="stat-huge">3/4</div>
+                                <p>Three quarters</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <div class="stat-huge" style="color:var(--accent);">5%</div>
+                                <p style="margin-top:1rem;">Click to Reveal</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <div class="stat-huge">1/20</div>
+                                <p>5/100 simplified</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 9: Application
+    {
+        render: () => `
+            <div class="anim-enter">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                    <h2>Why Fractions Matter</h2>
+                    <div class="tag" style="background:var(--primary); color:white;">Mental Math Hack</div>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="pedagogical-note note-question delay-1 anim-enter">
+                         <div class="pedagogical-badge"><i class="fa-solid fa-clock"></i> Problem</div>
+                         <p style="font-size:1.8rem; color:white;">
+                            Find <strong>25%</strong> of an hour (60 minutes).
+                         </p>
+                         <p style="margin-top:1rem;">
+                            Which method would you rather do in your head?
+                         </p>
+                    </div>
+
+                    <div class="delay-2 anim-enter" style="display:flex; flex-direction:column; gap:2rem;">
+                        <div class="glass-card" style="opacity:0.6; transform:scale(0.95);">
+                            <h3 style="color:var(--danger); font-size:1.2rem; margin-bottom:0.5rem;">Method 1: Decimals (Hard)</h3>
+                            <div class="math-box" style="font-size:1.5rem;">
+                                0.25 × 60 = <span style="color:var(--text-dim);">...uhhh...</span>
+                            </div>
+                        </div>
+
+                        <div class="glass-card" style="border-color:var(--success);">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <h3 style="color:var(--success); font-size:1.5rem; margin-bottom:0.5rem;">Method 2: Fractions (Easy)</h3>
+                                <i class="fa-solid fa-check" style="color:var(--success); font-size:1.5rem;"></i>
+                            </div>
+                            <p>25% is the same as <strong style="color:white;">1/4</strong>.</p>
+                            
+                            <div class="math-box" style="font-size:2rem; margin-top:1rem;">
+                                60 ÷ 4 = <span style="color:var(--success);">15 mins</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 10: Percentage Increase & Decrease (NEW)
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>Percentage Increase & Decrease</h2>
+                
+                <div class="grid-2">
+                    <!-- Increase -->
+                    <div class="pedagogical-note note-examples">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-arrow-trend-up"></i> Increase (Add)</div>
+                        <p style="font-size:1.4rem; color:white; margin-bottom:1rem;">
+                            1. Find the Percentage.<br>
+                            2. <strong>ADD</strong> it to the original.
+                        </p>
+                        <div class="glass-card" style="background:rgba(16, 185, 129, 0.1); border-color:var(--success);">
+                            <p style="color:white; font-size:1.2rem;"><strong>Ex:</strong> Increase 50 by 10%</p>
+                            <div class="math-box" style="font-size:1.4rem; margin-top:0.5rem;">
+                                10% of 50 = <span style="color:var(--success)">5</span>
+                                <br>
+                                50 + 5 = <span style="color:white; font-weight:900;">55</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decrease -->
+                    <div class="pedagogical-note note-examples" style="border-color:var(--danger);">
+                        <div class="pedagogical-badge" style="background:var(--danger);"><i class="fa-solid fa-arrow-trend-down"></i> Decrease (Subtract)</div>
+                        <p style="font-size:1.4rem; color:white; margin-bottom:1rem;">
+                            1. Find the Percentage.<br>
+                            2. <strong>SUBTRACT</strong> it from original.
+                        </p>
+                        <div class="glass-card" style="background:rgba(239, 68, 68, 0.1); border-color:var(--danger);">
+                            <p style="color:white; font-size:1.2rem;"><strong>Ex:</strong> Decrease 100 by 20%</p>
+                            <div class="math-box" style="font-size:1.4rem; margin-top:0.5rem;">
+                                20% of 100 = <span style="color:var(--danger)">20</span>
+                                <br>
+                                100 - 20 = <span style="color:white; font-weight:900;">80</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 11: The Gauntlet (Problem Set) (NEW)
+    {
+        render: () => `
+             <div class="anim-enter">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                    <h2>The Gauntlet</h2>
+                    <div class="tag" style="background:var(--accent); color:black;">Knowledge Check</div>
+                </div>
+                <p style="text-align:center; margin-bottom:2rem;">Solve these 4 problems. Click to reveal answer.</p>
+
+                <div class="flip-grid">
+                    <!-- Q1 -->
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front" style="background:rgba(59, 130, 246, 0.2);">
+                                <h3 style="color:white; font-size:1.5rem;">Question 1</h3>
+                                <p style="font-size:1.8rem; color:white; font-weight:700; margin-top:1rem;">60% as a fraction?</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <div class="stat-huge">3/5</div>
+                                <p>60/100 simplified</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front" style="background:rgba(59, 130, 246, 0.2);">
+                                <h3 style="color:white; font-size:1.5rem;">Question 2</h3>
+                                <p style="font-size:1.8rem; color:white; font-weight:700; margin-top:1rem;">10% of 500?</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <div class="stat-huge">50</div>
+                                <p>Move decimal once</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front" style="background:rgba(16, 185, 129, 0.2); border-color:var(--success);">
+                                <h3 style="color:white; font-size:1.5rem;">Question 3</h3>
+                                <p style="font-size:1.8rem; color:white; font-weight:700; margin-top:1rem;">Increase 40 by 50%</p>
+                            </div>
+                            <div class="flip-card-back" style="background:var(--success);">
+                                <div class="stat-huge">60</div>
+                                <p>50% is 20. <br>40 + 20 = 60</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front" style="background:rgba(239, 68, 68, 0.2); border-color:var(--danger);">
+                                <h3 style="color:white; font-size:1.5rem;">Question 4</h3>
+                                <p style="font-size:1.8rem; color:white; font-weight:700; margin-top:1rem;">Decrease 20 by 25%</p>
+                            </div>
+                            <div class="flip-card-back" style="background:var(--danger);">
+                                <div class="stat-huge">15</div>
+                                <p>25% is 5. <br>20 - 5 = 15</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 12: Summary / Exit Ticket (NEW)
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>Mission Complete: Summary</h2>
+                
+                <div class="pedagogical-note note-summary" style="margin-top:2rem;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-clipboard-list"></i> Write Summary</div>
+                    
+                    <ul class="summary-list">
+                        <li>
+                            <div class="summary-icon"><i class="fa-solid fa-quote-left"></i></div>
+                            <div>
+                                <strong style="color:var(--primary); font-size:1.6rem;">Definition</strong>
+                                <br>"Per Cent" means out of 100.
+                            </div>
+                        </li>
+                        <li>
+                            <div class="summary-icon"><i class="fa-solid fa-calculator"></i></div>
+                            <div>
+                                <strong style="color:var(--accent); font-size:1.6rem;">Calculation</strong>
+                                <br>"OF" means Multiply (×). Convert % to decimal first.
+                            </div>
+                        </li>
+                        <li>
+                            <div class="summary-icon"><i class="fa-solid fa-pizza-slice"></i></div>
+                            <div>
+                                <strong style="color:var(--success); font-size:1.6rem;">Fractions</strong>
+                                <br>Put the percentage over 100 and simplify.
+                            </div>
+                        </li>
+                         <li>
+                            <div class="summary-icon"><i class="fa-solid fa-arrow-up-right-dots"></i></div>
+                            <div>
+                                <strong style="color:white; font-size:1.6rem;">Changes</strong>
+                                <br>Find the percentage amount first, then Add or Subtract.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        `
+    }
+];
+
+/* -------------------------------------------------------------------------- */
+/* SLIDE MANAGER                               */
+/* -------------------------------------------------------------------------- */
+const lesson = {
+    index: 0,
+    container: document.getElementById('slide-viewer'),
+    progress: document.getElementById('progress-bar'),
+    
+    init() {
+        initCanvas(); 
+        this.render();
+        
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowRight' || e.key === ' ') this.next();
+            if(e.key === 'ArrowLeft') this.prev();
+        });
+    },
+
+    render() {
+        const slide = slides[this.index];
+        this.container.innerHTML = slide.render();
+        
+        if(slide.onMount) setTimeout(slide.onMount, 50);
+
+        this.progress.style.width = `${((this.index + 1) / slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = this.index === 0;
+        document.getElementById('btn-next').disabled = this.index === slides.length - 1;
+    },
+
+    next() {
+        if (this.index < slides.length - 1) {
+            this.index++;
+            this.render();
+        }
+    },
+
+    prev() {
+        if (this.index > 0) {
+            this.index--;
+            this.render();
+        }
+    },
+
+    trigger(actionName) {
+        const slide = slides[this.index];
+        if (slide.actions && slide.actions[actionName]) {
+            slide.actions[actionName]();
+        }
+    }
+};
+
+lesson.init();
+
+</script>
+</body>
+</html>
