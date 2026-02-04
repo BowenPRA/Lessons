@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED Social Studies: The Bill of Rights (ESL Support)</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Federal Slate Theme */
+            --bg-deep: #0f172a;        /* Dark Slate Blue Background */
+            --bg-card: rgba(30, 41, 59, 0.7); /* Glassy Slate */
+            
+            --federal-blue: #3b82f6;    /* Primary Action */
+            --constitution-gold: #fbbf24; /* Key Terms/Highlights */
+            
+            --text-main: #f8fafc;        
+            --text-muted: #cbd5e1;       
+            --text-vn: #94a3b8;         /* Specific color for Vietnamese text */
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2rem, 5vw, 4rem);
+            --fs-h2: clamp(1.5rem, 3vw, 2.5rem);
+            
+            /* Font Families */
+            --font-heading: 'Libre Baskerville', serif; 
+            --font-ui: 'Outfit', sans-serif;           
+            --font-body: 'Plus Jakarta Sans', sans-serif; 
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-body);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05), transparent 25%), 
+                radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.05), transparent 25%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e293b' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--federal-blue), #1d4ed8);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: var(--font-ui);
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .slide-center { justify-content: center; }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            backdrop-filter: blur(12px);
+            z-index: 50;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--federal-blue);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            transform: scale(1.05);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--federal-blue), var(--constitution-gold));
+            transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px);
+        }
+
+        .instruction-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid var(--constitution-gold);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .notebook-badge {
+            background: var(--constitution-gold);
+            color: var(--bg-deep);
+            font-weight: 800;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- DIAGRAM: HIERARCHY MAP --- */
+        .diagram-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            width: 100%;
+            padding: 1rem 0;
+        }
+
+        .diagram-level {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .diagram-box {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            min-width: 200px;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        .diagram-box:hover {
+            transform: translateY(-5px);
+            border-color: var(--constitution-gold);
+        }
+
+        .box-root {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 2px solid var(--constitution-gold);
+            width: 60%;
+        }
+
+        .box-branch {
+            flex: 1;
+            background: rgba(59, 130, 246, 0.1);
+            border-top: 3px solid var(--federal-blue);
+        }
+
+        .diagram-connector {
+            width: 2px;
+            height: 30px;
+            background: var(--constitution-gold);
+            margin: -1rem 0;
+        }
+        
+        .diagram-label {
+            font-family: var(--font-heading);
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .diagram-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .amend-group {
+            display: inline-block;
+            background: var(--bg-deep);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--constitution-gold);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            margin-top: 0.5rem;
+            font-weight: 700;
+        }
+
+        /* --- READING LAYOUT --- */
+        .reading-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+        .col-en { font-size: 1.2rem; line-height: 1.7; }
+        .col-en p { margin-bottom: 1.5rem; }
+        
+        .col-vn {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            color: var(--text-vn);
+            font-size: 1.15rem;
+            line-height: 1.7;
+            border-left: 2px solid rgba(255,255,255,0.05);
+            padding-left: 2rem;
+        }
+        .col-vn p { margin-bottom: 1.5rem; }
+
+        /* Interactive Keywords */
+        .keyword {
+            color: var(--constitution-gold);
+            font-weight: 700;
+            border-bottom: 2px dashed rgba(251, 191, 36, 0.4);
+            cursor: help;
+            transition: all 0.2s;
+        }
+        .keyword:hover {
+            background: rgba(251, 191, 36, 0.15);
+            border-bottom-style: solid;
+        }
+
+        /* Definition Dock */
+        .def-dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.98);
+            border-top: 2px solid var(--constitution-gold);
+            padding: 1.5rem 2rem;
+            backdrop-filter: blur(20px);
+            transform: translateY(110%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+        }
+        .def-dock.active { transform: translateY(0); }
+        .def-content { max-width: 900px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 0.8rem; }
+        
+        /* Vocab Grid */
+        .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .vocab-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; }
+        .vocab-term { color: var(--constitution-gold); font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.2rem; }
+        .vocab-vn { color: var(--text-vn); font-family: var(--font-ui); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; display: block; }
+
+        /* Quiz */
+        .quiz-option {
+            width: 100%;
+            padding: 1.2rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text-main);
+            text-align: left;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-family: var(--font-ui);
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+        }
+        .quiz-option:hover:not(:disabled) { background: rgba(255,255,255,0.08); border-color: var(--federal-blue); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: white; }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--liberty-red); color: white; }
+        .explanation-box {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid var(--constitution-gold);
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Typography & Utilities */
+        .text-center { text-align: center; }
+        .text-gold { color: var(--constitution-gold); }
+        h1 { font-family: var(--font-heading); font-size: var(--fs-h1); margin-bottom: 0.5rem; }
+        h2 { font-family: var(--font-heading); font-size: var(--fs-h2); color: white; margin-bottom: 1.5rem; }
+        p { margin-bottom: 1rem; color: var(--text-muted); line-height: 1.6; }
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+        .slide-up { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(20px); animation-delay: 0.2s; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 900px) {
+            .reading-layout { grid-template-columns: 1fr; gap: 2rem; }
+            .col-vn { border-left: none; border-top: 1px solid rgba(255,255,255,0.1); padding-left: 0; padding-top: 1.5rem; }
+            .diagram-level { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">GED Civics</div>
+            <span style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem; font-family: var(--font-ui); display: none; margin-left: 0.5rem; @media(min-width:600px){display:inline;}">The Bill of Rights</span>
+        </div>
+        <div style="color: var(--constitution-gold); font-size: 1.5rem;">
+            <i class="fa-solid fa-scale-balanced"></i>
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Content injected via JS -->
+        </div>
+        <div style="height: 60px;"></div>
+    </main>
+    
+    <div id="def-dock" class="def-dock">
+        <div class="def-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                <div>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Vocabulary</span>
+                    <h3 id="dock-term" style="color: var(--constitution-gold); font-size: 1.8rem; font-family: var(--font-heading); margin:0;">Term</h3>
+                </div>
+                <span id="dock-vn" style="color: white; font-weight: 700; background: var(--federal-blue); padding: 0.3rem 1rem; border-radius: 6px;">VN</span>
+            </div>
+            <p id="dock-def" style="color: white; font-size: 1.2rem; margin: 0;">Definition</p>
+            <p id="dock-vn-def" style="color: var(--text-vn); font-size: 1.1rem; margin: 0; font-style: italic;">Vietnamese Definition</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="progress-container"><div class="progress-fill" id="progress-fill"></div></div>
+        <button class="btn-nav" id="btn-next"><i class="fa-solid fa-arrow-right"></i></button>
+    </footer>
+</div>
+
+<script>
+    const glossary = {
+        "bill of rights": {
+            def: "The first 10 amendments to the U.S. Constitution, listing individual freedoms.",
+            vn: "Tuyên ngôn Nhân quyền",
+            vn_def: "10 Tu chính án đầu tiên của Hiến pháp Hoa Kỳ, liệt kê các quyền tự do cá nhân."
+        },
+        "ratify": {
+            def: "To officially approve a formal document or treaty.",
+            vn: "Phê chuẩn",
+            vn_def: "Chính thức chấp thuận một văn bản hoặc hiệp ước."
+        },
+        "amendment": {
+            def: "A change or addition to the Constitution.",
+            vn: "Tu chính án",
+            vn_def: "Sự thay đổi hoặc bổ sung vào Hiến pháp."
+        },
+        "warrant": {
+            def: "A legal paper, issued by a court, giving police permission to make an arrest, seizure, or search.",
+            vn: "Lệnh khám xét / Lệnh bắt giữ",
+            vn_def: "Văn bản pháp lý do tòa án cấp, cho phép cảnh sát bắt giữ, tịch thu hoặc khám xét."
+        },
+        "due process": {
+            def: "Fair treatment through the normal judicial system.",
+            vn: "Quy trình tố tụng công bằng",
+            vn_def: "Sự đối xử công bằng thông qua hệ thống tư pháp thông thường."
+        },
+        "double jeopardy": {
+            def: "Being tried twice for the same crime (which is forbidden).",
+            vn: "Bị xét xử hai lần (cho cùng một tội)",
+            vn_def: "Việc bị xét xử hai lần cho cùng một tội danh (điều này bị cấm)."
+        },
+        "self-incrimination": {
+            def: "Giving testimony that can be used against oneself.",
+            vn: "Tự buộc tội",
+            vn_def: "Đưa ra lời khai có thể được sử dụng để chống lại chính mình."
+        },
+        "counsel": {
+            def: "A lawyer or attorney given to help a defendant.",
+            vn: "Luật sư bào chữa",
+            vn_def: "Luật sư được chỉ định để giúp đỡ bị cáo."
+        }
+    };
+
+    const slides = [
+        // SLIDE 1: INTRO
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="text-center fade-in" style="max-width: 800px; margin: 0 auto;">
+                        <div style="font-size: 5rem; color: var(--constitution-gold); margin-bottom: 2rem; filter: drop-shadow(0 0 40px rgba(251,191,36,0.3));">
+                            <i class="fa-solid fa-scroll"></i>
+                        </div>
+                        <h1>The Bill of Rights</h1>
+                        <p style="font-size: 1.4rem; color: var(--text-muted); margin-bottom: 3rem; font-family: var(--font-ui);">
+                            Protecting the people from the power of the government.
+                        </p>
+                        
+                        <div class="instruction-box slide-up">
+                            <i class="fa-solid fa-pen-to-square instruction-icon"></i>
+                            <div style="text-align: left;">
+                                <strong style="color: white; display: block; margin-bottom: 0.5rem; font-size: 1.1rem;">Instructions:</strong>
+                                <span style="color: var(--text-muted);">Read the 4 passages covering the first 10 amendments. Click <span class="text-gold">gold words</span> for definitions.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: DIAGRAM (Hierarchy of Rights)
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="width: 100%;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                            <span class="notebook-badge"><i class="fa-solid fa-sitemap"></i> Structure of Liberty</span>
+                            <h2 style="margin-top: 1rem;">Hierarchy of Law</h2>
+                            <p>How the Constitution and Bill of Rights work together.</p>
+                        </div>
+
+                        <div class="diagram-container slide-up">
+                            <!-- Level 1 -->
+                            <div class="diagram-box box-root">
+                                <div class="diagram-label"><i class="fa-solid fa-landmark"></i> The U.S. Constitution (1787)</div>
+                                <div class="diagram-desc">The "Supreme Law of the Land." It creates the government structure (Branches, Powers, Voting).</div>
+                            </div>
+
+                            <div class="diagram-connector"></div>
+
+                            <!-- Level 2 -->
+                            <div class="diagram-box box-root" style="border-color: var(--federal-blue); background: rgba(30,41,59,0.9);">
+                                <div class="diagram-label"><i class="fa-solid fa-scroll"></i> The Bill of Rights (1791)</div>
+                                <div class="diagram-desc">The first 10 Amendments added specifically to limit the government's power over YOU.</div>
+                            </div>
+
+                            <div class="diagram-connector"></div>
+
+                            <!-- Level 3 -->
+                            <div class="diagram-level">
+                                <div class="diagram-box box-branch">
+                                    <div class="diagram-label"><i class="fa-solid fa-hand-holding-heart"></i> Liberty</div>
+                                    <div class="diagram-desc">Personal freedoms like speech, religion, and press.</div>
+                                    <div class="amend-group">Amendment 1</div>
+                                </div>
+
+                                <div class="diagram-box box-branch">
+                                    <div class="diagram-label"><i class="fa-solid fa-shield-halved"></i> Security</div>
+                                    <div class="diagram-desc">Protection of your home, property, and right to self-defense.</div>
+                                    <div class="amend-group">Amendments 2, 3, 4</div>
+                                </div>
+
+                                <div class="diagram-box box-branch">
+                                    <div class="diagram-label"><i class="fa-solid fa-gavel"></i> Justice</div>
+                                    <div class="diagram-desc">Rights when accused of a crime (trial, lawyer, silence).</div>
+                                    <div class="amend-group">Amendments 5, 6, 7, 8</div>
+                                </div>
+
+                                <div class="diagram-box box-branch">
+                                    <div class="diagram-label"><i class="fa-solid fa-scale-balanced"></i> Authority</div>
+                                    <div class="diagram-desc">Rights kept by the people and States (Federalism).</div>
+                                    <div class="amend-group">Amendments 9, 10</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: READING 1 (Origins)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--constitution-gold); color: #0f172a;">Part 1</span>
+                             <h2 style="margin:0;">A Promise to the People</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>When the U.S. Constitution was written in 1787, not everyone liked it. A group called the "Anti-Federalists" was afraid the new government would be too strong. They refused to <span class="keyword" data-term="ratify">ratify</span> (approve) the Constitution unless a list of protections for the people was added.</p>
+                                
+                                <p>James Madison wrote these changes, which we call <span class="keyword" data-term="amendment">amendments</span>. In 1791, the first ten amendments were added to the Constitution. Together, they are known as the <span class="keyword" data-term="bill of rights">Bill of Rights</span>. Their main purpose is to limit the power of the federal government.</p>
+                                
+                                <p>It is important to remember that the Constitution creates the government, but the Bill of Rights draws a line that the government cannot cross. It is the shield that protects individual liberty from tyranny.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Khi Hiến pháp Hoa Kỳ được soạn thảo vào năm 1787, không phải ai cũng thích nó. Một nhóm gọi là "Những người chống Liên bang" lo sợ chính phủ mới sẽ quá mạnh. Họ từ chối phê chuẩn (chấp thuận) Hiến pháp trừ khi một danh sách các biện pháp bảo vệ người dân được thêm vào.</p>
+                                <p>James Madison đã viết những thay đổi này, cái mà chúng ta gọi là các tu chính án. Năm 1791, mười tu chính án đầu tiên đã được thêm vào Hiến pháp. Cùng nhau, chúng được gọi là Tuyên ngôn Nhân quyền. Mục đích chính của chúng là hạn chế quyền lực của chính quyền liên bang.</p>
+                                <p>Điều quan trọng cần nhớ là Hiến pháp tạo ra chính phủ, nhưng Tuyên ngôn Nhân quyền vạch ra một giới hạn mà chính phủ không thể vượt qua. Đó là lá chắn bảo vệ quyền tự do cá nhân khỏi sự chuyên chế.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: READING 2 (The First Amendment)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-comment-dots text-gold" style="font-size: 2rem;"></i>
+                             <h2 style="margin:0;">The First Amendment: 5 Freedoms</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>The First Amendment is often considered the most important because it protects the basic freedoms of democracy. It guarantees five specific rights: freedom of religion, speech, press, assembly (gathering), and petition (complaining to the government).</p>
+                                
+                                <p>Freedom of <strong>speech</strong> allows you to criticize the government without going to jail. Freedom of the <strong>press</strong> allows news reporters to publish the truth, even if it makes leaders look bad. Freedom of <strong>religion</strong> prevents the government from forcing you to follow a specific church or banning your own beliefs.</p>
+
+                                <p>These rights ensure that citizens can share ideas and hold their leaders accountable. Without the First Amendment, democracy would not work because people would be afraid to speak the truth.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Tu chính án thứ nhất thường được coi là quan trọng nhất vì nó bảo vệ các quyền tự do cơ bản của nền dân chủ. Nó đảm bảo năm quyền cụ thể: tự do tôn giáo, ngôn luận, báo chí, hội họp (tụ tập) và kiến nghị (khiếu nại với chính phủ).</p>
+                                <p>Tự do ngôn luận cho phép bạn chỉ trích chính phủ mà không bị đi tù. Tự do báo chí cho phép các phóng viên tin tức xuất bản sự thật, ngay cả khi nó làm cho các nhà lãnh đạo trông xấu đi. Tự do tôn giáo ngăn cản chính phủ ép buộc bạn theo một tôn giáo cụ thể hoặc cấm đoán đức tin của bạn.</p>
+                                <p>Những quyền này đảm bảo rằng công dân có thể chia sẻ ý tưởng và buộc các nhà lãnh đạo của họ phải chịu trách nhiệm. Nếu không có Tu chính án thứ nhất, nền dân chủ sẽ không hoạt động vì mọi người sẽ sợ nói ra sự thật.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: READING 3 (Rights of Accused)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-gavel text-gold" style="font-size: 2rem;"></i>
+                             <h2 style="margin:0;">Rights of the Accused (4th, 5th, 6th, 8th)</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>Several amendments protect people accused of crimes. The 4th Amendment says police need a <span class="keyword" data-term="warrant">warrant</span> and a good reason to search your home. The 5th Amendment guarantees <span class="keyword" data-term="due process">due process</span> and protects you from <span class="keyword" data-term="double jeopardy">double jeopardy</span> (being tried twice) and <span class="keyword" data-term="self-incrimination">self-incrimination</span> (being forced to confess).</p>
+
+                                <p>The 6th Amendment guarantees a speedy, public trial and the right to a lawyer, also known as <span class="keyword" data-term="counsel">counsel</span>. Finally, if you are found guilty, the 8th Amendment forbids "cruel and unusual punishment."</p>
+
+                                <p>These protections exist because in the past, kings would lock people up without a fair reason. The Bill of Rights ensures that everyone is innocent until proven guilty in a fair court of law.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Nhiều tu chính án bảo vệ những người bị buộc tội. Tu chính án thứ 4 nói rằng cảnh sát cần có lệnh khám xét và lý do chính đáng để lục soát nhà của bạn. Tu chính án thứ 5 đảm bảo quy trình tố tụng công bằng và bảo vệ bạn khỏi việc bị xét xử hai lần và tự buộc tội (bị ép buộc thú nhận).</p>
+                                <p>Tu chính án thứ 6 đảm bảo một phiên tòa công khai, nhanh chóng và quyền có luật sư, còn được gọi là người bào chữa. Cuối cùng, nếu bạn bị kết tội, Tu chính án thứ 8 cấm "các hình phạt tàn nhẫn và bất thường."</p>
+                                <p>Những biện pháp bảo vệ này tồn tại vì trong quá khứ, các vị vua thường nhốt mọi người mà không có lý do công bằng. Tuyên ngôn Nhân quyền đảm bảo rằng mọi người đều vô tội cho đến khi được chứng minh là có tội tại một tòa án công bằng.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: READING 4 (Limits)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-scale-unbalanced-flip text-gold" style="font-size: 2rem;"></i>
+                             <h2 style="margin:0;">Limits and Other Rights</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>The Bill of Rights is not just about criminals or speech. The 2nd Amendment protects the right to own weapons ("bear arms"). The 3rd Amendment prevents the government from putting soldiers in your home during peacetime.</p>
+                                
+                                <p>However, no right is absolute. For example, freedom of speech does not allow you to shout "Fire!" in a crowded theater to cause panic. The government can limit rights if public safety is at risk.</p>
+
+                                <p>Finally, the 9th and 10th Amendments serve as a safety net. The 9th says people have other rights not listed in the Constitution. The 10th says any power not given to the federal government belongs to the states or the people. This balances power between the nation and the states.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Tuyên ngôn Nhân quyền không chỉ nói về tội phạm hay ngôn luận. Tu chính án thứ 2 bảo vệ quyền sở hữu vũ khí. Tu chính án thứ 3 ngăn cản chính phủ đưa binh lính vào nhà bạn trong thời bình.</p>
+                                <p>Tuy nhiên, không có quyền nào là tuyệt đối. Ví dụ, tự do ngôn luận không cho phép bạn hô "Cháy!" trong một nhà hát đông người để gây hoảng loạn. Chính phủ có thể hạn chế các quyền nếu an toàn công cộng bị đe dọa.</p>
+                                <p>Cuối cùng, Tu chính án thứ 9 và 10 đóng vai trò như một mạng lưới an toàn. Tu chính án thứ 9 nói rằng người dân có các quyền khác không được liệt kê trong Hiến pháp. Tu chính án thứ 10 nói rằng bất kỳ quyền lực nào không được trao cho chính quyền liên bang thuộc về các tiểu bang hoặc người dân. Điều này cân bằng quyền lực giữa quốc gia và các tiểu bang.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: QUIZ
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 800px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Bill of Rights Quiz</h2>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- Q1 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <h3 style="margin-bottom: 1rem;">1. Why were the Anti-Federalists concerned about the Constitution?</h3>
+                                <div id="q1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q1')">A. They feared the government would be too strong.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q1')">B. They wanted a King.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q1')">C. They didn't want any laws.</button>
+                                </div>
+                                <div id="q1-explain" class="explanation-box">
+                                    <strong>Correct!</strong> They wanted a Bill of Rights to limit the central government's power.
+                                </div>
+                            </div>
+
+                            <!-- Q2 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <h3 style="margin-bottom: 1rem;">2. Which amendment protects Freedom of Speech?</h3>
+                                <div id="q2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q2')">A. 2nd Amendment</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q2')">B. 1st Amendment</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q2')">C. 5th Amendment</button>
+                                </div>
+                                <div id="q2-explain" class="explanation-box">
+                                    <strong>Correct!</strong> The 1st Amendment protects speech, religion, press, assembly, and petition.
+                                </div>
+                            </div>
+
+                            <!-- Q3 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <h3 style="margin-bottom: 1rem;">3. What does "Double Jeopardy" mean?</h3>
+                                <div id="q3-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q3')">A. Owning two guns.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q3')">B. Having two lawyers.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q3')">C. Being tried twice for the same crime.</button>
+                                </div>
+                                <div id="q3-explain" class="explanation-box">
+                                    <strong>Correct!</strong> The 5th Amendment prevents the government from trying you twice for the exact same crime.
+                                </div>
+                            </div>
+                            
+                            <!-- Q4 -->
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <h3 style="margin-bottom: 1rem;">4. What do police need before searching your home (4th Amendment)?</h3>
+                                <div id="q4-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q4')">A. A warrant.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q4')">B. A gun.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q4')">C. Permission from the President.</button>
+                                </div>
+                                <div id="q4-explain" class="explanation-box">
+                                    <strong>Correct!</strong> They need a warrant signed by a judge, based on probable cause.
+                                </div>
+                            </div>
+
+                             <div class="text-center" style="margin-top: 3rem;">
+                                <button onclick="location.reload()" style="background: transparent; color: var(--text-muted); border: 1px solid var(--text-muted); padding: 0.8rem 2rem; border-radius: 50px; cursor: pointer; transition: all 0.2s;">
+                                    <i class="fa-solid fa-rotate-right"></i> Restart Lesson
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- LOGIC ---
+    let currentSlide = 0;
+    const slideContainer = document.getElementById('slide-container');
+    const progressBar = document.getElementById('progress-fill');
+    const btnNext = document.getElementById('btn-next');
+    const btnPrev = document.getElementById('btn-prev');
+    const dock = document.getElementById('def-dock');
+
+    function renderSlide() {
+        slideContainer.innerHTML = slides[currentSlide].render();
+        const progress = ((currentSlide + 1) / slides.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        
+        btnPrev.disabled = currentSlide === 0;
+        btnNext.disabled = currentSlide === slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+        attachKeywordListeners();
+    }
+
+    function changeSlide(direction) {
+        if (direction === 'next' && currentSlide < slides.length - 1) {
+            currentSlide++;
+        } else if (direction === 'prev' && currentSlide > 0) {
+            currentSlide--;
+        }
+        renderSlide();
+    }
+
+    function attachKeywordListeners() {
+        const keywords = document.querySelectorAll('.keyword');
+        keywords.forEach(el => {
+            const termKey = el.dataset.term.toLowerCase();
+            const data = glossary[termKey];
+            if (!data) return;
+
+            el.addEventListener('mouseenter', () => showDock(termKey, data));
+            el.addEventListener('mouseleave', hideDock);
+            el.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                showDock(termKey, data);
+            });
+        });
+    }
+
+    function showDock(term, data) {
+        document.getElementById('dock-term').innerText = term.replace(/\b\w/g, l => l.toUpperCase()); 
+        document.getElementById('dock-def').innerText = data.def;
+        document.getElementById('dock-vn').innerText = data.vn;
+        document.getElementById('dock-vn-def').innerText = data.vn_def; 
+        dock.classList.add('active');
+    }
+
+    function hideDock() {
+        dock.classList.remove('active');
+    }
+
+    window.handleQuiz = function(btn, isCorrect, qId) {
+        const parent = document.getElementById(qId + '-opts');
+        const explainBox = document.getElementById(qId + '-explain');
+        const options = parent.querySelectorAll('.quiz-option');
+        
+        options.forEach(opt => {
+            opt.disabled = true;
+            opt.style.cursor = 'default';
+            opt.style.opacity = '0.6';
+        });
+
+        btn.style.opacity = '1';
+        if (isCorrect) {
+            btn.classList.add('correct');
+            btn.innerHTML += ' <i class="fa-solid fa-check" style="float:right;"></i>';
+        } else {
+            btn.classList.add('incorrect');
+            btn.innerHTML += ' <i class="fa-solid fa-xmark" style="float:right;"></i>';
+        }
+
+        if(explainBox) explainBox.style.display = 'block';
+    };
+
+    btnNext.addEventListener('click', () => changeSlide('next'));
+    btnPrev.addEventListener('click', () => changeSlide('prev'));
+    document.body.addEventListener('click', () => {
+        if(dock.classList.contains('active')) hideDock();
+    });
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') changeSlide('next');
+        if(e.key === 'ArrowLeft') changeSlide('prev');
+    });
+
+    renderSlide();
+</script>
+</body>
+</html>
