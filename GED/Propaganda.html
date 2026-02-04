@@ -209,27 +209,153 @@
 
         /* --- VISUAL ELEMENTS FOR PROPAGANDA --- */
         
-        /* Technique Grid */
-        .technique-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            width: 100%;
+        /* PROCESS FLOW DIAGRAM STYLES */
+        .process-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0; /* Gaps handled by connector visuals */
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: stretch;
+            position: relative;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: slideInRight 0.5s ease forwards;
+        }
+
+        /* Animation delays for flow effect */
+        .process-step:nth-child(1) { animation-delay: 0.1s; }
+        .process-step:nth-child(2) { animation-delay: 0.3s; }
+        .process-step:nth-child(3) { animation-delay: 0.5s; }
+        .process-step:nth-child(4) { animation-delay: 0.7s; }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .step-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 1.5rem;
+            min-width: 60px;
+        }
+
+        .step-circle {
+            width: 60px;
+            height: 60px;
+            background: var(--bg-deep);
+            border: 2px solid var(--federal-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--federal-blue);
+            z-index: 2;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
         }
         
-        .tech-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255,255,255,0.1);
+        .process-step:hover .step-circle {
+            background: var(--federal-blue);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Vertical Connecting Line */
+        .step-line {
+            width: 3px;
+            flex-grow: 1;
+            background: rgba(255,255,255,0.1);
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        /* Animated flowing dot on the line */
+        .step-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to bottom, transparent, var(--constitution-gold), transparent);
+            animation: flowDown 2s infinite linear;
+            opacity: 0.7;
+        }
+
+        @keyframes flowDown {
+            0% { top: -50%; }
+            100% { top: 100%; }
+        }
+        
+        .process-step:last-child .step-line { display: none; }
+
+        .step-card {
+            flex: 1;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-left: 4px solid var(--federal-blue);
             border-radius: 12px;
             padding: 1.5rem;
-            text-align: center;
-            transition: transform 0.3s ease;
+            transition: transform 0.2s ease;
         }
-        .tech-card:hover { transform: translateY(-5px); border-color: var(--constitution-gold); }
-        .tech-icon { font-size: 2.5rem; color: var(--constitution-gold); margin-bottom: 1rem; }
-        .tech-title { color: white; font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 0.5rem; }
-        .tech-vn { color: var(--text-vn); font-size: 0.9rem; font-style: italic; margin-bottom: 0.8rem; }
-        .tech-desc { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+        
+        .process-step:hover .step-card {
+            transform: translateX(5px);
+            background: rgba(30, 41, 59, 0.9);
+            border-left-color: var(--constitution-gold);
+        }
+
+        /* Specific Step Styles */
+        .step-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-title {
+            color: white;
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .step-vn {
+            color: var(--text-vn);
+            font-family: var(--font-ui);
+            font-size: 0.9rem;
+            font-style: italic;
+            background: rgba(255,255,255,0.05);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .step-desc {
+            color: var(--text-muted);
+            line-height: 1.5;
+            font-size: 1rem;
+        }
+
+        /* Target Icon for the last step */
+        .process-step:last-child .step-circle {
+            border-color: var(--constitution-gold);
+            color: var(--constitution-gold);
+        }
+        .process-step:last-child:hover .step-circle {
+            background: var(--constitution-gold);
+            color: var(--bg-deep);
+        }
 
         /* Embedded Image Styles */
         .img-container {
@@ -239,24 +365,25 @@
             overflow: hidden;
             border: 1px solid rgba(255,255,255,0.2);
             position: relative;
+            background: rgba(0,0,0,0.2);
         }
         .img-embed {
             width: 100%;
             height: auto;
-            max-height: 300px;
-            object-fit: cover; /* Ensures clean crop */
+            max-height: 500px;
+            object-fit: contain; 
             display: block;
-            transition: transform 0.3s ease;
+            margin: 0 auto;
         }
         .img-caption {
-            background: rgba(0,0,0,0.7);
+            background: rgba(15, 23, 42, 0.9);
             color: var(--text-muted);
-            font-size: 0.85rem;
-            padding: 0.5rem;
+            font-size: 0.9rem;
+            padding: 0.8rem;
             text-align: center;
             font-family: var(--font-ui);
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
-        .img-container:hover .img-embed { transform: scale(1.05); }
 
         /* --- READING LAYOUT --- */
         .reading-layout {
@@ -382,7 +509,7 @@
             .col-vn { border-left: none; border-top: 1px solid rgba(255,255,255,0.1); padding-left: 0; padding-top: 1.5rem; }
             .def-dock { padding: 1rem; }
             .vocab-grid { grid-template-columns: 1fr; }
-            .technique-grid { grid-template-columns: 1fr; }
+            .process-container { padding-left: 0; }
         }
     </style>
 </head>
@@ -429,7 +556,6 @@
 
 <script>
     // --- CONTENT DATA ---
-    // Refactored for Simple English (CEFR A2/B1) and Bilingual support
     const glossary = {
         "propaganda": {
             def: "Information used to influence opinion, often biased or misleading.",
@@ -465,6 +591,11 @@
             def: "Vague words that sound good but mean very little (e.g., 'Freedom', 'Justice').",
             vn: "Những từ ngữ hào nhoáng",
             vn_def: "Những từ ngữ mơ hồ nghe có vẻ hay nhưng ít ý nghĩa (ví dụ: 'Tự do', 'Công lý')."
+        },
+        "emotional appeal": {
+            def: "Using strong feelings like fear, guilt, or pride to persuade you.",
+            vn: "Khơi gợi cảm xúc",
+            vn_def: "Sử dụng những cảm xúc mạnh mẽ như sợ hãi, tội lỗi hoặc tự hào để thuyết phục bạn."
         },
         "card stacking": {
             def: "Showing only the positive side of an idea and hiding the negative side.",
@@ -525,48 +656,75 @@
             `
         },
 
-        // SLIDE 2: VISUAL CHART (TECHNIQUE TOOLBOX)
+        // SLIDE 2: NEW PROCESS FLOW DIAGRAM
         {
             render: () => `
                 <div class="slide-wrapper slide-center">
                     <div class="fade-in" style="width: 100%;">
-                        <div class="text-center" style="margin-bottom: 2rem;">
-                            <span class="notebook-badge"><i class="fa-solid fa-book-open"></i> Study this Chart</span>
-                            <h2 style="margin-bottom: 0.5rem; margin-top: 1rem;">The Propagandist's Toolbox</h2>
-                            <p>Common ways messages try to trick your brain.</p>
+                        <div class="text-center" style="margin-bottom: 3rem;">
+                            <span class="notebook-badge"><i class="fa-solid fa-book-open"></i> The Propaganda Filter</span>
+                            <h2 style="margin-bottom: 0.5rem; margin-top: 1rem;">How Manipulation Works</h2>
+                            <p>Follow the path from the source to your reaction.</p>
                         </div>
 
-                        <div class="technique-grid slide-up">
-                            <!-- Technique 1 -->
-                            <div class="tech-card">
-                                <i class="fa-solid fa-users tech-icon"></i>
-                                <div class="tech-title">Bandwagon</div>
-                                <div class="tech-vn">Hiệu ứng đám đông</div>
-                                <p class="tech-desc">"Everyone is doing it, so you should too." <br>Appeals to the fear of being left out.</p>
+                        <div class="process-container">
+                            <!-- Step 1 -->
+                            <div class="process-step">
+                                <div class="step-visual">
+                                    <div class="step-circle"><i class="fa-solid fa-user-secret"></i></div>
+                                    <div class="step-line"></div>
+                                </div>
+                                <div class="step-card">
+                                    <div class="step-heading">
+                                        <div class="step-title">1. The Source</div>
+                                        <div class="step-vn">Nguồn tin</div>
+                                    </div>
+                                    <div class="step-desc">A government, company, or political group starts with a hidden agenda (e.g., "Sell war bonds").</div>
+                                </div>
                             </div>
 
-                            <!-- Technique 2 -->
-                            <div class="tech-card">
-                                <i class="fa-solid fa-star tech-icon"></i>
-                                <div class="tech-title">Testimonial</div>
-                                <div class="tech-vn">Lời chứng thực</div>
-                                <p class="tech-desc">Using a celebrity or expert to endorse a product or candidate.</p>
+                            <!-- Step 2 -->
+                            <div class="process-step">
+                                <div class="step-visual">
+                                    <div class="step-circle"><i class="fa-solid fa-filter"></i></div>
+                                    <div class="step-line"></div>
+                                </div>
+                                <div class="step-card">
+                                    <div class="step-heading">
+                                        <div class="step-title">2. The Technique</div>
+                                        <div class="step-vn">Kỹ thuật</div>
+                                    </div>
+                                    <div class="step-desc">They choose a method like <strong>Fear</strong> or <strong>Bandwagon</strong> to bypass your logical brain.</div>
+                                </div>
                             </div>
 
-                            <!-- Technique 3 -->
-                            <div class="tech-card">
-                                <i class="fa-solid fa-flag tech-icon"></i>
-                                <div class="tech-title">Glittering Generalities</div>
-                                <div class="tech-vn">Từ ngữ hào nhoáng</div>
-                                <p class="tech-desc">Using vague, positive words like "Freedom" or "Honor" to stir emotion without details.</p>
+                            <!-- Step 3 -->
+                            <div class="process-step">
+                                <div class="step-visual">
+                                    <div class="step-circle"><i class="fa-solid fa-heart-pulse"></i></div>
+                                    <div class="step-line"></div>
+                                </div>
+                                <div class="step-card">
+                                    <div class="step-heading">
+                                        <div class="step-title">3. The Audience</div>
+                                        <div class="step-vn">Khán giả (Bạn)</div>
+                                    </div>
+                                    <div class="step-desc">You feel an intense emotion—anger, pride, or fear—instead of thinking critically.</div>
+                                </div>
                             </div>
-                            
-                            <!-- Technique 4 -->
-                            <div class="tech-card">
-                                <i class="fa-solid fa-scale-unbalanced tech-icon"></i>
-                                <div class="tech-title">Card Stacking</div>
-                                <div class="tech-vn">Tráo bài</div>
-                                <p class="tech-desc">Showing only the good facts and hiding the bad ones to make a one-sided argument.</p>
+
+                            <!-- Step 4 -->
+                            <div class="process-step">
+                                <div class="step-visual">
+                                    <div class="step-circle"><i class="fa-solid fa-person-running"></i></div>
+                                </div>
+                                <div class="step-card" style="border-left-color: var(--constitution-gold);">
+                                    <div class="step-heading">
+                                        <div class="step-title" style="color: var(--constitution-gold);">4. The Action</div>
+                                        <div class="step-vn">Hành động</div>
+                                    </div>
+                                    <div class="step-desc">You vote, buy, or enlist without realizing you were manipulated.</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -589,7 +747,8 @@
                                 <p><span class="keyword" data-term="propaganda">Propaganda</span> is a powerful tool used to influence public opinion. Unlike education, which presents facts, the goal of propaganda is to <span class="keyword" data-term="persuade">persuade</span> you. It often appeals to emotions like fear, pride, or anger rather than logic.</p>
                                 
                                 <div class="img-container">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/We_Can_Do_It%21.jpg" alt="Rosie the Riveter Poster" class="img-embed">
+                                    <!-- Wikimedia Commons (High Reliability) -->
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/We_Can_Do_It%21.jpg" alt="Rosie the Riveter Poster" class="img-embed" referrerpolicy="no-referrer">
                                     <div class="img-caption">The famous "Rosie the Riveter" poster encouraged women to join the workforce during WWII.</div>
                                 </div>
 
@@ -607,7 +766,7 @@
             `
         },
 
-        // SLIDE 4: READING 2 (Techniques)
+        // SLIDE 4: READING 2 (Techniques) - REPLACED BROKEN IMAGE WITH LOC UNCLE SAM
         {
             render: () => `
                 <div class="slide-wrapper">
@@ -620,18 +779,20 @@
                         <div class="card reading-layout slide-up">
                             <div class="col-en">
                                 <p>Propagandists use specific techniques to <span class="keyword" data-term="manipulate">manipulate</span> people. One common method is the <span class="keyword" data-term="bandwagon">bandwagon</span> technique. This suggests that "everyone is doing it," so you should too. It plays on our fear of being left out.</p>
-                                <p>Another powerful technique is the use of <span class="keyword" data-term="glittering generalities">glittering generalities</span>. These are vague words that sound good but have little meaning, like "Freedom," "Justice," or "Victory." These words create positive feelings without giving specific details.</p>
+                                
+                                <p>Another powerful technique is <span class="keyword" data-term="emotional appeal">Emotional Appeal</span>. This targets feelings like patriotism or duty. The "Uncle Sam" poster below is famous for using direct eye contact to make you feel a personal duty to your country.</p>
 
                                 <div class="img-container">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Food_will_win_the_war_-_You_came_here_seeking_freedom%2C_now_you_must_help_to_preserve_it_-_Wheat_is_needed_for_the_allies_-_waste_nothing_-_C._E._Chambers._LCCN2002720171.jpg" alt="Food Will Win The War Poster" class="img-embed" style="object-position: top;">
-                                    <div class="img-caption">This WWI poster connects saving food to the concept of "Freedom"—a glittering generality.</div>
+                                    <!-- Wikimedia Commons (High Reliability) -->
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/1d/Unclesamwantyou.jpg" alt="Uncle Sam I Want You Poster" class="img-embed" referrerpolicy="no-referrer">
+                                    <div class="img-caption">"I Want You": This famous image appeals to <strong>patriotism</strong> and <strong>duty</strong>.</div>
                                 </div>
 
                                 <p>They also use <span class="keyword" data-term="card stacking">card stacking</span>, where they stack the evidence in their favor. They might show a pile of benefits for an idea but hide the costs, making the decision seem obvious when it is actually complex.</p>
                             </div>
                             <div class="col-vn">
                                 <p>Những người tuyên truyền sử dụng các kỹ thuật cụ thể để thao túng mọi người. Một phương pháp phổ biến là hiệu ứng đám đông. Điều này gợi ý rằng "mọi người đều đang làm điều đó", vì vậy bạn cũng nên làm theo. Nó đánh vào nỗi sợ bị bỏ rơi của chúng ta.</p>
-                                <p>Một kỹ thuật mạnh mẽ khác là sử dụng những từ ngữ hào nhoáng. Đây là những từ ngữ mơ hồ nghe có vẻ hay nhưng ít ý nghĩa, như "Tự do," "Công lý," hoặc "Chiến thắng." Những từ này tạo ra cảm xúc tích cực mà không đưa ra chi tiết cụ thể.</p>
+                                <p>Một kỹ thuật mạnh mẽ khác là khơi gợi cảm xúc. Điều này nhắm vào những cảm giác như lòng yêu nước hoặc trách nhiệm. Tấm áp phích "Uncle Sam" bên dưới nổi tiếng với việc sử dụng ánh mắt trực diện để khiến bạn cảm thấy có trách nhiệm cá nhân đối với đất nước.</p>
                                 <p>Họ cũng sử dụng kỹ thuật tráo bài, nơi họ xếp bằng chứng có lợi cho mình. Họ có thể chỉ ra hàng tá lợi ích cho một ý tưởng nhưng giấu đi các chi phí, làm cho quyết định có vẻ hiển nhiên trong khi thực tế nó rất phức tạp.</p>
                             </div>
                         </div>
