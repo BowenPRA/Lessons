@@ -806,7 +806,7 @@ const slides = [
                                         fill="#fef3c7" fill-opacity="0" />
                                 </svg>
                                 <!-- Black X (Behind Flask visually) -->
-                                <div style="position:absolute; bottom:10px; left:50%; transform:translateX(-50%) z-index:-1; font-size:3rem; color:black; font-family:sans-serif; font-weight:900;">X</div>
+                                <div id="cross-mark" style="position:absolute; bottom:10px; left:50%; transform:translateX(-50%) z-index:-1; font-size:3rem; color:black; font-family:sans-serif; font-weight:900;">X</div>
                             </div>
                         </div>
 
@@ -842,6 +842,7 @@ const slides = [
                     window.crossSim.running = true;
                     window.crossSim.startTime = Date.now();
                     const liquid = document.getElementById('flask-liquid');
+                    const cross = document.getElementById('cross-mark');
                     const timer = document.getElementById('timer-display');
                     
                     window.crossSim.interval = setInterval(() => {
@@ -852,6 +853,10 @@ const slides = [
                         let opacity = elapsed / 5;
                         if(opacity > 1) opacity = 1;
                         liquid.setAttribute('fill-opacity', opacity);
+                        
+                        // NEW: Cross fades out as liquid fades in
+                        if(cross) cross.style.opacity = 1 - opacity;
+                        
                     }, 50);
                 },
                 stop: () => {
@@ -1101,16 +1106,16 @@ const slides = [
                         <h3><i class="fa-solid fa-list-check"></i> Quick Check</h3>
                         <div id="quiz-container">
                             <div class="quiz-option" onclick="quiz.check(this, true)">
-                                1. Rate is how much product is made per second. (True)
+                                1. Rate is how much product is made per second.
                             </div>
                             <div class="quiz-option" onclick="quiz.check(this, false)">
-                                2. As reaction proceeds, rate increases. (True)
+                                2. As reaction proceeds, rate increases.
                             </div>
                             <div class="quiz-option" onclick="quiz.check(this, false)">
-                                3. A flat line means reaction is fastest. (True)
+                                3. A flat line means reaction is fastest.
                             </div>
                             <div class="quiz-option" onclick="quiz.check(this, true)">
-                                4. Particles must collide to react. (True)
+                                4. Particles must collide to react.
                             </div>
                         </div>
                         <p style="font-size:0.9rem; color:var(--text-dim); margin-top:1rem;">Click the statements that are TRUE.</p>
@@ -1126,8 +1131,9 @@ const slides = [
                         el.innerHTML += ' <i class="fa-solid fa-check" style="color:var(--accent)"></i>';
                     } else {
                         el.classList.add('wrong');
-                        el.style.opacity = '0.5';
-                        el.innerHTML = 'False statement';
+                        el.style.opacity = '0.7';
+                        // Keep text, append X icon
+                        el.innerHTML += ' <i class="fa-solid fa-xmark" style="color:var(--danger)"></i>';
                     }
                     el.style.pointerEvents = 'none';
                 }
