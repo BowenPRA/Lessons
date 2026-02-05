@@ -285,6 +285,7 @@
             text-transform: uppercase;
         }
         .btn-action:hover, .btn-action:focus { transform: translateY(-3px); box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); background: var(--primary-hover); }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; background: #64748b; }
 
         .progress-track {
             flex: 1; margin: 0 2rem; height: 8px;
@@ -305,6 +306,11 @@
         }
         input[type=range]:focus::-webkit-slider-thumb { transform: scale(1.2); }
 
+        /* Data Tables */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; color: var(--text-light); }
+        .data-table th { text-align: left; padding: 0.5rem; border-bottom: 2px solid var(--text-dim); color: var(--primary); }
+        .data-table td { padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
         /* --- ANIMATIONS --- */
         @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes bubbleRise { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-20px); opacity: 0; } }
@@ -946,20 +952,20 @@ const slides = [
         }
     },
 
-    // SLIDE 5: Disappearing Cross
+    // SLIDE 5: Disappearing Cross (REPEATABLE)
     {
         template: () => `
             <div class="anim-enter">
                 <h2>Experiment 2: Precipitation</h2>
                 <div class="grid-2">
                     <!-- Simulation -->
-                    <div class="glass-card delay-1 anim-enter" style="text-align:center;">
+                    <div class="glass-card delay-1 anim-enter" style="text-align:center; min-height: 400px;">
                         <h3>The Disappearing Cross</h3>
                         <p style="margin-bottom:1rem; font-size:0.9rem;">Test for reactions that turn cloudy (turbid).</p>
                         
                         <div style="position:relative; width:150px; margin:0 auto;">
                             <div id="flask-container">
-                                <svg viewBox="0 0 100 120" style="height:200px; overflow:visible;">
+                                <svg viewBox="0 0 100 120" style="height:160px; overflow:visible;">
                                     <!-- Flask -->
                                     <path d="M30 0 L30 40 L10 100 Q10 115 25 115 L75 115 Q90 115 90 100 L70 40 L70 0 Z" 
                                         fill="rgba(255,255,255,0.1)" stroke="white" stroke-width="3"/>
@@ -972,11 +978,26 @@ const slides = [
                             </div>
                         </div>
 
-                        <div style="margin-top:1rem; display:flex; gap:1rem; justify-content:center;">
-                            <button class="btn-action" id="start-cross">Add Acid</button>
-                            <button class="btn-action" style="background:var(--danger);" id="stop-cross">Stop Timer</button>
+                        <div style="margin-top:1rem; display:flex; gap:0.5rem; justify-content:center;">
+                            <button class="btn-action" id="start-cross" style="font-size: 1rem; padding: 0.5rem 1rem;">Add Acid</button>
+                            <button class="btn-action" id="stop-cross" disabled style="background:var(--danger); font-size: 1rem; padding: 0.5rem 1rem;">Stop</button>
+                             <button class="btn-action" id="reset-cross" disabled style="background:var(--text-dim); font-size: 1rem; padding: 0.5rem 1rem;">Reset</button>
                         </div>
-                        <div id="timer-display" style="font-size:2rem; font-weight:900; margin-top:1rem; font-family:'Courier New', monospace;">0.00s</div>
+                        <div id="timer-display" style="font-size:2rem; font-weight:900; margin-top:0.5rem; font-family:'Courier New', monospace;">0.00s</div>
+                        
+                        <!-- DATA TABLE -->
+                        <div style="max-height: 120px; overflow-y: auto; margin-top: 1rem;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Trial</th>
+                                        <th>Time (s)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="results-body">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <!-- Content -->
@@ -998,17 +1019,34 @@ const slides = [
             let startTime = 0;
             let intervalId = null;
             let isRunning = false;
+            let trialCount = 0;
             
             const liquid = container.querySelector('#flask-liquid');
             const cross = container.querySelector('#cross-mark');
             const timer = container.querySelector('#timer-display');
             const btnStart = container.querySelector('#start-cross');
             const btnStop = container.querySelector('#stop-cross');
+            const btnReset = container.querySelector('#reset-cross');
+            const resultsBody = container.querySelector('#results-body');
+
+            const resetVisuals = () => {
+                liquid.setAttribute('fill-opacity', '0');
+                if(cross) cross.style.opacity = '1';
+                timer.innerText = "0.00s";
+                btnStart.disabled = false;
+                btnStop.disabled = true;
+                btnReset.disabled = true;
+                isRunning = false;
+                clearInterval(intervalId);
+            };
 
             btnStart.addEventListener('click', () => {
                 if (isRunning) return;
                 isRunning = true;
                 startTime = Date.now();
+                btnStart.disabled = true;
+                btnStop.disabled = false;
+                btnReset.disabled = true;
                 
                 intervalId = setInterval(() => {
                     const elapsed = (Date.now() - startTime) / 1000;
@@ -1024,9 +1062,21 @@ const slides = [
             });
 
             btnStop.addEventListener('click', () => {
+                if (!isRunning) return;
                 clearInterval(intervalId);
                 isRunning = false;
+                
+                // Record
+                trialCount++;
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${trialCount}</td><td style="color:var(--accent); font-weight:bold;">${timer.innerText}</td>`;
+                resultsBody.appendChild(row);
+
+                btnStop.disabled = true;
+                btnReset.disabled = false;
             });
+
+            btnReset.addEventListener('click', resetVisuals);
 
             // Cleanup
             return () => clearInterval(intervalId);
@@ -1250,19 +1300,16 @@ const slides = [
                         <h3 style="color:var(--text-dim); margin-bottom:1rem;">Objectives Recap</h3>
                         <ul style="list-style:none;">
                             <li style="margin-bottom:1.5rem; background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
-                                <p style="font-size:0.9rem; color:var(--text-dim); text-transform:uppercase; margin-bottom:0.5rem;">Objective 1: Define Rate</p>
-                                <strong class="highlight-primary">1. Rate = Speed</strong><br>
-                                Measured by product made or reactant used per second.
+                                <strong class="highlight-primary">1. Define "Rate of Reaction"</strong><br>
+                                <p style="font-size:1rem; color:#cbd5e1; margin-top:0.5rem;">Describe rate as the change in amount of reactant or product per unit time.</p>
                             </li>
                             <li style="margin-bottom:1.5rem; background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
-                                <p style="font-size:0.9rem; color:var(--text-dim); text-transform:uppercase; margin-bottom:0.5rem;">Objective 2: Measurement</p>
-                                <strong class="highlight-accent">2. Methods</strong><br>
-                                Use Gas Syringe (volume) or Balance (mass loss).
+                                <strong class="highlight-accent">2. Describe Measurement Methods</strong><br>
+                                <p style="font-size:1rem; color:#cbd5e1; margin-top:0.5rem;">Explain how to use gas syringes for volume and balances for mass loss.</p>
                             </li>
                             <li style="margin-bottom:1.5rem; background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
-                                <p style="font-size:0.9rem; color:var(--text-dim); text-transform:uppercase; margin-bottom:0.5rem;">Objective 3: Explain Why</p>
-                                <strong class="highlight-warn">3. Collision Theory</strong><br>
-                                More particles = More collisions = Faster reaction.
+                                <strong class="highlight-warn">3. Explain using Particle Theory</strong><br>
+                                <p style="font-size:1rem; color:#cbd5e1; margin-top:0.5rem;">Use collision theory to explain how concentration and surface area affect rate.</p>
                             </li>
                         </ul>
                     </div>
