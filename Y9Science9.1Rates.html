@@ -745,7 +745,8 @@ const slides = [
                     </div>
                 </div>
 
-                <div class="pedagogical-note note-write delay-2 anim-enter" style="margin-top:2rem;">
+                <!-- UPDATED: Note is hidden initially -->
+                <div id="equip-note" class="pedagogical-note note-write delay-2" style="margin-top:2rem; display:none; opacity:0; transition:opacity 1s;">
                     <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
                     <ul>
                         <li>To measure gas volume: Use a <strong>Gas Syringe</strong>.</li>
@@ -757,6 +758,7 @@ const slides = [
         onMount: () => {
             window.equipment = {
                 selected: null,
+                matches: { syringe: false, balance: false },
                 select: (type) => {
                     document.querySelectorAll('.equip-btn').forEach(b => b.style.borderColor = 'var(--primary)');
                     
@@ -771,6 +773,18 @@ const slides = [
                         el.innerHTML = `<i class="fa-solid ${iconClass}" style="font-size:3rem; color:var(--accent);"></i>`;
                         document.getElementById(`source-${targetType}`).classList.add('disabled');
                         window.equipment.selected = null;
+                        
+                        // Track progress
+                        window.equipment.matches[targetType] = true;
+                        
+                        // Reveal Note if both are done
+                        if(window.equipment.matches.syringe && window.equipment.matches.balance) {
+                             const note = document.getElementById('equip-note');
+                             note.style.display = 'block';
+                             // Use timeout to allow display:block to render before opacity change
+                             setTimeout(() => note.style.opacity = '1', 100);
+                        }
+
                     } else if (window.equipment.selected) {
                         el.style.borderColor = 'var(--danger)';
                         setTimeout(() => { if(!el.classList.contains('filled')) el.style.borderColor = 'var(--text-dim)'; }, 500);
@@ -1075,7 +1089,7 @@ const slides = [
         }
     },
 
-    // SLIDE 9: Summary & Quiz
+    // SLIDE 9: Summary, Quiz & Final Task
     {
         render: () => `
             <div class="anim-enter">
@@ -1121,6 +1135,24 @@ const slides = [
                         <p style="font-size:0.9rem; color:var(--text-dim); margin-top:1rem;">Click the statements that are TRUE.</p>
                     </div>
                 </div>
+
+                <!-- Final Task Section -->
+                <div class="glass-card delay-3 anim-enter" style="margin-top: 2rem; text-align: center; padding: 2rem;">
+                    <h3 style="color:var(--text-light); margin-bottom:1rem;"><i class="fa-solid fa-pen-nib"></i> Final Task: Word Equation</h3>
+                    <p style="margin-bottom: 1.5rem;">Complete the equation in your books, then check your answer.</p>
+                    
+                    <div style="font-size: clamp(1.2rem, 2vw, 1.8rem); line-height: 1.6; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; display: inline-block;">
+                        Magnesium + Sulfuric Acid <i class="fa-solid fa-arrow-right-long highlight-primary" style="margin: 0 1rem;"></i> 
+                        <span id="products-hidden" style="display:none;">
+                            <span class="highlight-accent">Magnesium Sulfate</span> + <span class="highlight-warn">Hydrogen</span>
+                        </span>
+                        <span id="products-placeholder" style="color:var(--text-dim); font-style:italic;">( ? )</span>
+                    </div>
+
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+                        <button class="btn-action" onclick="window.revealProducts()">Reveal Answer</button>
+                    </div>
+                </div>
             </div>
         `,
         onMount: () => {
@@ -1138,26 +1170,26 @@ const slides = [
                     el.style.pointerEvents = 'none';
                 }
             };
+            
+            window.revealProducts = () => {
+                document.getElementById('products-placeholder').style.display = 'none';
+                const hidden = document.getElementById('products-hidden');
+                hidden.style.display = 'inline';
+                hidden.classList.add('anim-enter'); // Add animation class for smooth entry
+            };
         }
     },
-
-    // SLIDE 10: Final Task
+    
+    // SLIDE 10: Video Resource (NEW)
     {
         render: () => `
-            <div class="anim-enter" style="text-align:center; margin-top:10vh;">
-                <h2>Final Task</h2>
-                <p>Complete the word equation in your books.</p>
-                
-                <div class="pedagogical-note note-write delay-1 anim-enter" style="display:inline-block; text-align:left; margin-top:2rem;">
-                    <div class="pedagogical-badge"><i class="fa-solid fa-pen-nib"></i> Word Equation</div>
-                    <div style="font-size:1.8rem; line-height:2;">
-                        Magnesium + Sulfuric Acid <i class="fa-solid fa-arrow-right-long highlight-primary"></i> <br>
-                        <span class="highlight-accent">Magnesium Sulfate</span> + <span class="highlight-warn">Hydrogen</span>
-                    </div>
+            <div class="anim-enter" style="text-align:center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                <h2>Watch & Review</h2>
+                <div class="glass-card delay-1 anim-enter" style="padding: 10px; display: inline-block; width: 100%; max-width: 800px; aspect-ratio: 16/9; margin: 0 auto;">
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/HaQm4pNMZug?start=5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 12px;"></iframe>
                 </div>
-
-                <div class="delay-2 anim-enter" style="margin-top:4rem;">
-                    <button class="btn-action" onclick="location.reload()">
+                <div class="delay-2 anim-enter" style="margin-top: 2rem;">
+                     <button class="btn-action" onclick="location.reload()">
                         <i class="fa-solid fa-rotate-right"></i> Restart Lesson
                     </button>
                 </div>
