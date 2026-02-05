@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED Social Studies: The Big Four Documents</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Federal Slate Theme */
+            --bg-deep: #0f172a;        
+            --bg-card: rgba(30, 41, 59, 0.7); 
+            --bg-card-hover: rgba(51, 65, 85, 0.8);
+            
+            --federal-blue: #3b82f6;    
+            --liberty-red: #ef4444;     
+            --constitution-gold: #fbbf24; 
+            
+            --text-main: #f8fafc;        
+            --text-muted: #cbd5e1;        
+            --text-vn: #94a3b8;         
+
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2rem, 5vw, 3.8rem);
+            --fs-h2: clamp(1.5rem, 3vw, 2.5rem);
+            
+            --font-heading: 'Libre Baskerville', serif; 
+            --font-ui: 'Outfit', sans-serif;            
+            --font-body: 'Plus Jakarta Sans', sans-serif; 
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-body);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08), transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.05), transparent 30%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e293b' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--federal-blue), #1d4ed8);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: var(--font-ui);
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: start; 
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .slide-center { justify-content: center; align-items: center; }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--federal-blue);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            transform: scale(1.05);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; border-color: transparent; }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 2rem;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--federal-blue), var(--constitution-gold));
+            transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Instructions Box */
+        .instruction-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid var(--constitution-gold);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        /* Notebook Badge */
+        .notebook-badge {
+            background: var(--constitution-gold);
+            color: var(--bg-deep);
+            font-weight: 800;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* --- VISUAL DIAGRAMS (Redesigned) --- */
+        
+        /* General Diagram Slide Layout */
+        .diagram-container {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 0;
+        }
+        .diagram-caption {
+            margin-top: 2rem;
+            color: var(--text-muted);
+            text-align: center;
+            max-width: 600px;
+            font-size: 1.1rem;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+        }
+
+        /* 1. Waterfall Flow (Declaration) */
+        .waterfall-system {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            position: relative;
+        }
+        .wf-step {
+            width: 320px;
+            padding: 1.5rem;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 2px solid rgba(255,255,255,0.1);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s;
+        }
+        .wf-step:hover { transform: scale(1.05); }
+        .wf-step.top { 
+            border-color: var(--constitution-gold); 
+            background: rgba(251, 191, 36, 0.1);
+        }
+        .wf-step.mid {
+            border-color: var(--federal-blue);
+        }
+        .wf-step.bot {
+            border-style: dashed;
+            opacity: 0.9;
+        }
+        .wf-connector {
+            height: 50px;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--constitution-gold), var(--federal-blue));
+            margin: 0 auto;
+        }
+        .wf-connector.second {
+            background: linear-gradient(to bottom, var(--federal-blue), var(--text-muted));
+        }
+
+        /* 2. Teeter Totter (Articles) */
+        .teeter-totter {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            margin-top: 2rem;
+        }
+        .tt-plank {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            width: 100%;
+            height: 12px;
+            background: var(--text-muted);
+            border-radius: 6px;
+            transform: translateX(-50%) rotate(-20deg);
+            transform-origin: center;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tt-fulcrum {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; 
+            height: 0; 
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 60px solid #475569;
+        }
+        .tt-weight {
+            position: absolute;
+            width: 140px;
+            height: 120px;
+            background: var(--bg-card);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.5s;
+        }
+        .tt-weight.left {
+            left: 0;
+            bottom: 12px; /* Sitting on the plank */
+            transform: rotate(20deg); /* Counteract plank rotation to stay upright */
+            border-color: var(--liberty-red);
+            background: rgba(239, 68, 68, 0.1);
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+        .tt-weight.right {
+            right: 0;
+            bottom: 12px;
+            transform: rotate(20deg);
+            border-color: var(--text-muted);
+            border-style: dashed;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* 3. Cycle Triangle (Constitution) */
+        .triangle-layout {
+            position: relative;
+            width: 500px;
+            height: 450px;
+        }
+        .tri-node {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 3px solid var(--federal-blue);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 10;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            font-weight: 700;
+        }
+        .tri-node i { font-size: 2rem; margin-bottom: 5px; color: var(--text-muted); }
+        .tri-top { top: 0; left: 50%; transform: translateX(-50%); border-color: var(--constitution-gold); }
+        .tri-left { bottom: 0; left: 0; border-color: #2dd4bf; }
+        .tri-right { bottom: 0; right: 0; border-color: #a78bfa; }
+        
+        .tri-arrow {
+            position: absolute;
+            font-size: 3rem;
+            color: rgba(255,255,255,0.1);
+            z-index: 1;
+        }
+        .ta-1 { top: 35%; right: 20%; transform: rotate(60deg); }
+        .ta-2 { bottom: -10px; left: 50%; transform: translateX(-50%) rotate(-90deg); }
+        .ta-3 { top: 35%; left: 20%; transform: rotate(-120deg); }
+        
+        .tri-label {
+            position: absolute;
+            background: var(--bg-deep);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .tl-1 { top: 40%; right: 12%; }
+        .tl-2 { bottom: -25px; left: 50%; transform: translateX(-50%); }
+        .tl-3 { top: 40%; left: 12%; }
+
+        /* 4. Shield Wall (Bill of Rights) */
+        .shield-scene {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            width: 100%;
+        }
+        .threat-box {
+            text-align: center;
+            opacity: 0.7;
+        }
+        .threat-arrow {
+            font-size: 4rem;
+            color: var(--liberty-red);
+            animation: pulseThreat 2s infinite;
+        }
+        .the-shield {
+            font-size: 12rem;
+            color: var(--constitution-gold);
+            filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.4));
+            margin: 0 2rem;
+            z-index: 10;
+        }
+        .citizen-box {
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @keyframes pulseThreat {
+            0% { transform: translateX(0); opacity: 0.8; }
+            50% { transform: translateX(10px); opacity: 1; }
+            100% { transform: translateX(0); opacity: 0.8; }
+        }
+
+        /* --- READING LAYOUT --- */
+        .reading-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+        .col-en { font-size: 1.2rem; line-height: 1.7; }
+        .col-en p { margin-bottom: 1.5rem; }
+        
+        .col-vn {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            color: var(--text-vn);
+            font-size: 1.1rem;
+            line-height: 1.7;
+            border-left: 2px solid rgba(255,255,255,0.05);
+            padding-left: 2rem;
+        }
+        .col-vn p { margin-bottom: 1.5rem; }
+
+        /* Interactive Keywords */
+        .keyword {
+            color: var(--constitution-gold);
+            font-weight: 700;
+            border-bottom: 2px dashed rgba(251, 191, 36, 0.4);
+            cursor: help;
+            transition: all 0.2s;
+            position: relative;
+            display: inline-block;
+        }
+        .keyword:hover { background: rgba(251, 191, 36, 0.15); border-bottom-style: solid; }
+
+        /* Definition Dock */
+        .def-dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.98);
+            border-top: 2px solid var(--constitution-gold);
+            padding: 1.5rem 2rem;
+            backdrop-filter: blur(20px);
+            transform: translateY(110%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .def-dock.active { transform: translateY(0); }
+        .def-content { max-width: 900px; width: 100%; display: flex; flex-direction: column; gap: 0.8rem; }
+        .def-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;
+        }
+
+        /* Vocab Grid */
+        .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .vocab-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; }
+        .vocab-term { color: var(--constitution-gold); font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; }
+        .vocab-vn { color: var(--text-vn); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; display: block; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:0.5rem;}
+
+        /* Quiz */
+        .quiz-option {
+            width: 100%;
+            padding: 1.2rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text-main);
+            text-align: left;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-family: var(--font-ui);
+            transition: all 0.2s;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .quiz-option:hover:not(:disabled) { background: rgba(255,255,255,0.08); border-color: var(--federal-blue); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: white; }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--liberty-red); color: white; }
+        .explanation-box {
+            background: rgba(59, 130, 246, 0.1); border-left: 3px solid var(--constitution-gold);
+            padding: 1rem; margin-top: 1.5rem; border-radius: 0 8px 8px 0; display: none; animation: fadeIn 0.5s ease;
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+        .slide-up { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(20px); animation-delay: 0.2s; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .reading-layout { grid-template-columns: 1fr; gap: 2rem; }
+            .col-vn { border-left: none; border-top: 1px solid rgba(255,255,255,0.1); padding-left: 0; padding-top: 1.5rem; }
+            
+            /* Diagram Responsive Fixes */
+            .teeter-totter { transform: scale(0.7); margin-top: 0; }
+            .triangle-layout { transform: scale(0.65); height: 350px; width: 100%; }
+            .shield-scene { flex-direction: column; gap: 0; }
+            .the-shield { font-size: 8rem; margin: 1rem 0; }
+            .threat-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">GED Civics</div>
+            <span style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem; font-family: var(--font-ui); display: none; margin-left: 0.5rem; @media(min-width:600px){display:inline;}">The Big Four Documents</span>
+        </div>
+        <div style="color: var(--constitution-gold); font-size: 1.5rem;">
+            <i class="fa-solid fa-scroll"></i>
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slides Injected Here -->
+        </div>
+        <div style="height: 60px;"></div>
+    </main>
+    
+    <div id="def-dock" class="def-dock">
+        <div class="def-content">
+            <div class="def-header">
+                <div>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Vocabulary</span>
+                    <h3 id="dock-term" style="color: var(--constitution-gold); font-size: 1.8rem; font-family: var(--font-heading); margin:0;">Term</h3>
+                </div>
+                <span id="dock-vn" style="color: white; font-weight: 700; font-family: var(--font-ui); background: var(--federal-blue); padding: 0.3rem 1rem; border-radius: 6px;">Translation</span>
+            </div>
+            <p id="dock-def" style="color: white; font-size: 1.2rem; margin: 0; border-left: 3px solid var(--federal-blue); padding-left: 1rem;">Definition</p>
+            <p id="dock-vn-def" style="color: var(--text-vn); font-size: 1.1rem; margin: 0; font-style: italic; border-left: 3px solid transparent; padding-left: 1rem;">Vietnamese Definition</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="progress-container"><div class="progress-fill" id="progress-fill"></div></div>
+        <button class="btn-nav" id="btn-next"><i class="fa-solid fa-arrow-right"></i></button>
+    </footer>
+</div>
+
+<script>
+    // --- CONTENT DATA ---
+    const glossary = {
+        "unalienable rights": {
+            def: "Rights you are born with that cannot be taken away (Life, Liberty, Happiness).",
+            vn: "Quyền bất khả xâm phạm",
+            vn_def: "Những quyền bạn có từ khi sinh ra và không thể bị tước đoạt (Sự sống, Tự do, Mưu cầu hạnh phúc)."
+        },
+        "consent of the governed": {
+            def: "The idea that government only has power because the people agree to it.",
+            vn: "Sự đồng thuận của người dân",
+            vn_def: "Ý tưởng cho rằng chính phủ chỉ có quyền lực vì người dân đồng ý."
+        },
+        "grievances": {
+            def: "A formal list of complaints (things the King did wrong).",
+            vn: "Những lời phàn nàn/khiếu nại",
+            vn_def: "Một danh sách chính thức các khiếu nại (những điều Vua đã làm sai)."
+        },
+        "weak central government": {
+            def: "A government with no power to tax or raise an army (Articles of Confederation).",
+            vn: "Chính quyền trung ương yếu",
+            vn_def: "Một chính phủ không có quyền thu thuế hoặc xây dựng quân đội (Các Điều khoản Hợp bang)."
+        },
+        "state sovereignty": {
+            def: "The idea that states have more power than the national government.",
+            vn: "Chủ quyền tiểu bang",
+            vn_def: "Ý tưởng cho rằng các tiểu bang có nhiều quyền lực hơn chính phủ quốc gia."
+        },
+        "federalism": {
+            def: "Sharing power between the national government and state governments.",
+            vn: "Chủ nghĩa Liên bang",
+            vn_def: "Sự chia sẻ quyền lực giữa chính phủ quốc gia và chính quyền các tiểu bang."
+        },
+        "checks and balances": {
+            def: "Each branch can stop the others from getting too powerful (e.g., Veto).",
+            vn: "Kiểm soát và đối trọng",
+            vn_def: "Mỗi nhánh có thể ngăn cản các nhánh khác trở nên quá quyền lực (ví dụ: Phủ quyết)."
+        },
+        "due process": {
+            def: "Fair legal treatment (Right to a lawyer, fair trial) before punishment.",
+            vn: "Quy trình tố tụng công bằng",
+            vn_def: "Được xử lý pháp lý công bằng (Quyền có luật sư, xét xử công bằng) trước khi bị trừng phạt."
+        }
+    };
+
+    const slides = [
+        // SLIDE 1: INTRO
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="text-center fade-in" style="max-width: 800px; margin: 0 auto;">
+                        <div style="font-size: 5rem; color: var(--constitution-gold); margin-bottom: 2rem;">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </div>
+                        <h1>The "Big Four" Documents</h1>
+                        <p style="font-size: 1.4rem; color: var(--text-muted); margin-bottom: 3rem;">
+                            The Foundation of American Government
+                        </p>
+                        
+                        <div class="instruction-box slide-up">
+                            <i class="fa-solid fa-pen-to-square" style="font-size: 1.5rem; color: var(--constitution-gold);"></i>
+                            <div style="text-align: left;">
+                                <strong style="color: white; display: block; margin-bottom: 0.5rem;">Instructions:</strong>
+                                <span style="color: var(--text-muted);">Read the passages. Click the <span class="text-gold">gold words</span> for definitions. Then, copy the <strong>Diagrams</strong> on the visual slides into your notebook.</span>
+                            </div>
+                        </div>
+
+                        <div class="card slide-up" style="text-align: left; border-left: 4px solid var(--federal-blue);">
+                            <h3 style="color: var(--federal-blue); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 1rem;">Lesson Roadmap</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="margin-bottom: 0.8rem;"><i class="fa-solid fa-1 text-gold"></i> Declaration of Independence (The Breakup)</li>
+                                <li style="margin-bottom: 0.8rem;"><i class="fa-solid fa-2 text-gold"></i> Articles of Confederation (The Rebound)</li>
+                                <li style="margin-bottom: 0.8rem;"><i class="fa-solid fa-3 text-gold"></i> U.S. Constitution (The Marriage)</li>
+                                <li><i class="fa-solid fa-4 text-gold"></i> Bill of Rights (The Insurance)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: DECLARATION OF INDEPENDENCE (Text)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <span class="brand-pill">1776</span>
+                             <h2 style="margin:0;">The Declaration of Independence</h2>
+                        </div>
+                        <p style="color: var(--constitution-gold); font-style:italic;">Theme: The "Breakup Letter"</p>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>Think of this document as a "Breakup Letter." The colonies told King George III: "It's not me, it's you." It is not a law; it is a philosophy. Thomas Jefferson argued that <span class="keyword" data-term="unalienable rights">unalienable rights</span> (Life, Liberty) come from birth, not the King.</p>
+                                <p>This created the "Social Contract." The government only exists because of the <span class="keyword" data-term="consent of the governed">consent of the governed</span> (the people's permission). If the government acts like a tyrant, the people have a duty to fire it. The document also lists <span class="keyword" data-term="grievances">grievances</span> against the King.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Hãy coi tài liệu này như một "Bức thư Chia tay". Các thuộc địa đã nói với Vua George III: "Không phải tại tôi, mà là tại ông." Đây không phải là một đạo luật; nó là một triết lý. Thomas Jefferson lập luận rằng các quyền bất khả xâm phạm (Sự sống, Tự do) đến từ khi sinh ra, không phải từ Nhà vua.</p>
+                                <p>Điều này tạo ra "Khế ước Xã hội". Chính phủ chỉ tồn tại nhờ vào sự đồng thuận của người dân (sự cho phép của người dân). Nếu chính phủ hành động như một kẻ bạo chúa, người dân có nhiệm vụ sa thải nó. Tài liệu cũng liệt kê các khiếu nại chống lại Nhà vua.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: DIAGRAM 1 (Flow of Rights)
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="diagram-container fade-in">
+                        <div class="notebook-badge"><i class="fa-solid fa-book-open"></i> Visual: The Flow of Rights</div>
+                        <h2 style="margin-bottom: 2rem; color: white;">Where do Rights come from?</h2>
+                        
+                        <div class="waterfall-system slide-up">
+                            <!-- Step 1 -->
+                            <div class="wf-step top">
+                                <i class="fa-solid fa-cloud-sun" style="font-size: 2rem; color: var(--constitution-gold); margin-bottom: 10px;"></i>
+                                <h3 style="color: white; margin-bottom: 5px;">The Creator / Nature</h3>
+                                <small style="color: var(--text-muted);">The Source of Unalienable Rights</small>
+                            </div>
+                            <div class="wf-connector"></div>
+                            
+                            <!-- Step 2 -->
+                            <div class="wf-step mid">
+                                <i class="fa-solid fa-users" style="font-size: 2rem; color: var(--federal-blue); margin-bottom: 10px;"></i>
+                                <h3 style="color: white; margin-bottom: 5px;">The People</h3>
+                                <small style="color: var(--text-muted);">Hold the Power & Give Consent</small>
+                            </div>
+                            <div class="wf-connector second"></div>
+                            
+                            <!-- Step 3 -->
+                            <div class="wf-step bot">
+                                <i class="fa-solid fa-building-columns" style="font-size: 2rem; color: var(--text-muted); margin-bottom: 10px;"></i>
+                                <h3 style="color: var(--text-muted); margin-bottom: 5px;">The Government</h3>
+                                <small style="color: var(--text-muted);">Borrows Power to Protect Rights</small>
+                            </div>
+                        </div>
+
+                        <div class="diagram-caption">
+                            <strong>Logic:</strong> Rights flow down from nature to the people. The people then give limited power to the government.
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: ARTICLES OF CONFEDERATION (Text)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--text-muted); color: #0f172a;">1781</span>
+                             <h2 style="margin:0;">The Articles of Confederation</h2>
+                        </div>
+                        <p style="color: var(--constitution-gold); font-style:italic;">Theme: The "Rebound Relationship"</p>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>After breaking up with the King, the Founders were scared of strong leaders. So, they created a <span class="keyword" data-term="weak central government">weak central government</span>. It was like a "League of Friendship" where 13 states acted like separate countries.</p>
+                                <p>It failed because of <span class="keyword" data-term="state sovereignty">state sovereignty</span>. The federal government could not tax, raise an army, or pay debts. When farmers revolted (Shays' Rebellion), the government was too weak to stop it. They realized they needed a new system.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Sau khi chia tay với Nhà vua, các Nhà sáng lập sợ những nhà lãnh đạo mạnh mẽ. Vì vậy, họ đã tạo ra một chính quyền trung ương yếu. Nó giống như một "Liên minh Tình bạn", nơi 13 bang hành động như các quốc gia riêng biệt.</p>
+                                <p>Nó thất bại vì chủ quyền tiểu bang. Chính phủ liên bang không thể thu thuế, xây dựng quân đội hoặc trả nợ. Khi nông dân nổi dậy (Cuộc nổi dậy Shays), chính phủ quá yếu để ngăn chặn. Họ nhận ra rằng họ cần một hệ thống mới.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: DIAGRAM 2 (Scale)
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="diagram-container fade-in">
+                        <div class="notebook-badge"><i class="fa-solid fa-book-open"></i> Visual: The Power Imbalance</div>
+                        <h2 style="margin-bottom: 1rem; color: white;">The Failed Experiment</h2>
+                        
+                        <div class="teeter-totter slide-up">
+                            <div class="tt-fulcrum"></div>
+                            <div class="tt-plank"></div>
+                            
+                            <!-- Heavy Side -->
+                            <div class="tt-weight left">
+                                <i class="fa-solid fa-map" style="margin-bottom: 5px;"></i>
+                                STATE<br>POWER
+                            </div>
+                            
+                            <!-- Light Side -->
+                            <div class="tt-weight right">
+                                <i class="fa-solid fa-flag-usa" style="margin-bottom: 5px;"></i>
+                                FEDERAL<br>GOVT
+                            </div>
+                        </div>
+
+                        <div class="diagram-caption" style="margin-top: 3rem;">
+                            <strong>Why it failed:</strong> The States had all the weight (Power). The Federal Government was too light (Weak) to function.
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: US CONSTITUTION (Text)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">1789</span>
+                             <h2 style="margin:0;">The U.S. Constitution</h2>
+                        </div>
+                        <p style="color: var(--constitution-gold); font-style:italic;">Theme: The "Marriage Contract"</p>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>This is the supreme rulebook we use today. It solved the weakness of the Articles by creating <span class="keyword" data-term="federalism">federalism</span>—sharing power between the national government (War, Money) and states (Schools, Licenses).</p>
+                                <p>To prevent a King, it uses Separation of Powers (3 Branches) and <span class="keyword" data-term="checks and balances">checks and balances</span>. This ensures that ambition fights ambition. For example, the President can Veto laws, but Congress can Impeach the President.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Đây là cuốn luật tối cao mà chúng ta sử dụng ngày nay. Nó giải quyết sự yếu kém của các Điều khoản bằng cách tạo ra chủ nghĩa liên bang—chia sẻ quyền lực giữa chính phủ quốc gia (Chiến tranh, Tiền tệ) và các bang (Trường học, Giấy phép).</p>
+                                <p>Để ngăn chặn một vị Vua, nó sử dụng Tam quyền Phân lập (3 Nhánh) và cơ chế kiểm soát và đối trọng. Điều này đảm bảo rằng tham vọng sẽ chống lại tham vọng. Ví dụ, Tổng thống có thể Phủ quyết luật, nhưng Quốc hội có thể Luận tội Tổng thống.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: DIAGRAM 3 (Checks and Balances)
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="diagram-container fade-in">
+                        <div class="notebook-badge"><i class="fa-solid fa-book-open"></i> Visual: Rock, Paper, Scissors</div>
+                        <h2 style="margin-bottom: 2rem; color: white;">Checks & Balances</h2>
+                        
+                        <div class="triangle-layout slide-up">
+                            <!-- Executive -->
+                            <div class="tri-node tri-top">
+                                <i class="fa-solid fa-user-tie"></i>
+                                President
+                            </div>
+                            <!-- Legislative -->
+                            <div class="tri-node tri-left">
+                                <i class="fa-solid fa-users"></i>
+                                Congress
+                            </div>
+                            <!-- Judicial -->
+                            <div class="tri-node tri-right">
+                                <i class="fa-solid fa-gavel"></i>
+                                Courts
+                            </div>
+                            
+                            <!-- Arrows -->
+                            <div class="tri-arrow ta-1"><i class="fa-solid fa-arrow-right-long"></i></div>
+                            <div class="tri-arrow ta-2"><i class="fa-solid fa-arrow-right-long"></i></div>
+                            <div class="tri-arrow ta-3"><i class="fa-solid fa-arrow-right-long"></i></div>
+
+                            <!-- Labels -->
+                             <div class="tri-label tl-1">Appoints Judges</div>
+                             <div class="tri-label tl-2">Impeachment</div>
+                             <div class="tri-label tl-3">Unconstitutional?</div>
+                        </div>
+
+                        <div class="diagram-caption">
+                            <strong>The Cycle:</strong> Every branch has a weapon to stop the others. No one is supreme.
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: BILL OF RIGHTS (Text)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--liberty-red);">1791</span>
+                             <h2 style="margin:0;">The Bill of Rights</h2>
+                        </div>
+                        <p style="color: var(--constitution-gold); font-style:italic;">Theme: The "Insurance Policy"</p>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>People were afraid the new government was <em>too</em> strong. They demanded an "Insurance Policy" to protect them. The Bill of Rights (First 10 Amendments) lists what the government <strong>CANNOT</strong> do.</p>
+                                <p>It protects Civil Liberties like speech and religion. It also guarantees <span class="keyword" data-term="due process">due process</span>. This means the government cannot lock you up or take your property without a fair trial, a lawyer, and a jury.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Người dân sợ rằng chính phủ mới <em>quá</em> mạnh. Họ yêu cầu một "Chính sách Bảo hiểm" để bảo vệ họ. Tuyên ngôn Nhân quyền (10 Tu chính án đầu tiên) liệt kê những gì chính phủ <strong>KHÔNG ĐƯỢC</strong> làm.</p>
+                                <p>Nó bảo vệ các Quyền Tự do Dân sự như ngôn luận và tôn giáo. Nó cũng đảm bảo quy trình tố tụng công bằng. Điều này có nghĩa là chính phủ không thể nhốt bạn hoặc lấy tài sản của bạn mà không có một phiên tòa công bằng, luật sư và bồi thẩm đoàn.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 9: DIAGRAM 4 (Shield)
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="diagram-container fade-in">
+                        <div class="notebook-badge"><i class="fa-solid fa-book-open"></i> Visual: The Shield</div>
+                        <h2 style="margin-bottom: 2rem; color: white;">Protection from Power</h2>
+                        
+                        <div class="shield-scene slide-up">
+                            <!-- Threat -->
+                            <div class="threat-box">
+                                <h3 style="color: var(--liberty-red); margin-bottom: 1rem;">GOVERNMENT<br>POWER</h3>
+                                <i class="fa-solid fa-arrow-right-long threat-arrow"></i>
+                            </div>
+
+                            <!-- Shield -->
+                            <i class="fa-solid fa-shield-halved the-shield"></i>
+
+                            <!-- Citizen -->
+                            <div class="citizen-box">
+                                <i class="fa-solid fa-user" style="font-size: 3rem; margin-bottom: 0.5rem;"></i>
+                                <h3 style="color: white;">YOU</h3>
+                                <small style="color: var(--text-muted);">(The Citizen)</small>
+                            </div>
+                        </div>
+
+                        <div class="diagram-caption">
+                            <strong>Concept:</strong> The Bill of Rights is a shield that stops the government from crushing the individual.
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 10: VOCAB
+        {
+            render: () => {
+                let cards = '';
+                for (const [key, val] of Object.entries(glossary)) {
+                    const title = key.replace(/\b\w/g, l => l.toUpperCase());
+                    cards += `
+                        <div class="vocab-card">
+                            <div class="vocab-term">${title}</div>
+                            <div class="vocab-vn">${val.vn}</div>
+                            <div style="margin-bottom:0.5rem; color:#fff; font-size: 0.95rem;">${val.def}</div>
+                            <div style="color:var(--text-vn); font-style:italic; font-size:0.9rem;">${val.vn_def}</div>
+                        </div>
+                    `;
+                }
+                return `
+                    <div class="slide-wrapper">
+                        <div class="fade-in">
+                            <div class="text-center">
+                                <span class="brand-pill" style="background: var(--constitution-gold); color: #0f172a;">Review</span>
+                                <h2 style="margin-top: 1rem;">Vocabulary Keywords</h2>
+                            </div>
+                            <div class="vocab-grid slide-up">
+                                ${cards}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        },
+
+        // SLIDE 11: QUIZ
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 800px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Final Quiz</h2>
+                        </div>
+
+                        <div class="slide-up">
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 1 / 4</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">Why did the Articles of Confederation fail?</h3>
+                                <div id="q1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q1')">A. The President was too powerful.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q1')">B. The central government was too weak to tax or stop rebellions.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q1')">C. It did not have a Bill of Rights.</button>
+                                </div>
+                                <div id="q1-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> The Articles created a "Weak Central Government" that could not pay debts or stop Shays' Rebellion.
+                                </div>
+                            </div>
+
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 2 / 4</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">According to the Declaration of Independence, where do rights come from?</h3>
+                                <div id="q2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q2')">A. The King.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q2')">B. The Government.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q2')">C. Birth / The Creator.</button>
+                                </div>
+                                <div id="q2-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> Rights are "Unalienable," meaning you are born with them. The government does not give them to you; it protects them.
+                                </div>
+                            </div>
+
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 3 / 4</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">What is the purpose of "Checks and Balances"?</h3>
+                                <div id="q3-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q3')">A. To make sure no single branch acts like a King.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q3')">B. To give the States more power.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q3')">C. To make it easier to pass laws.</button>
+                                </div>
+                                <div id="q3-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> Just like Rock-Paper-Scissors, each branch has a weapon (Veto, Impeach) to stop the others from abusing power.
+                                </div>
+                            </div>
+
+                            <div class="card" style="margin-bottom: 2rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span class="text-gold" style="font-weight: 800;">Question 4 / 4</span>
+                                </div>
+                                <h3 style="margin-bottom: 1.5rem;">What does the Bill of Rights protect?</h3>
+                                <div id="q4-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q4')">A. The power of the President.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q4')">B. The Civil Liberties of the people (like Due Process).</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q4')">C. The right of the government to tax.</button>
+                                </div>
+                                <div id="q4-explain" class="explanation-box">
+                                    <strong>Explanation:</strong> The Bill of Rights is an "Insurance Policy" that protects individuals from the government.
+                                </div>
+                            </div>
+                            
+                            <div class="text-center" style="margin-top: 3rem;">
+                                <button onclick="location.reload()" style="background: transparent; color: var(--text-muted); border: 1px solid var(--text-muted); padding: 0.8rem 2rem; border-radius: 50px; cursor: pointer; transition: all 0.2s;">
+                                    <i class="fa-solid fa-rotate-right"></i> Restart Lesson
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- LOGIC ---
+    let currentSlide = 0;
+    const slideContainer = document.getElementById('slide-container');
+    const progressBar = document.getElementById('progress-fill');
+    const btnNext = document.getElementById('btn-next');
+    const btnPrev = document.getElementById('btn-prev');
+    const dock = document.getElementById('def-dock');
+
+    function renderSlide() {
+        slideContainer.innerHTML = slides[currentSlide].render();
+        const progress = ((currentSlide + 1) / slides.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        
+        btnPrev.disabled = currentSlide === 0;
+        btnNext.disabled = currentSlide === slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+
+        attachKeywordListeners();
+    }
+
+    function changeSlide(direction) {
+        if (direction === 'next' && currentSlide < slides.length - 1) currentSlide++;
+        else if (direction === 'prev' && currentSlide > 0) currentSlide--;
+        renderSlide();
+    }
+
+    function attachKeywordListeners() {
+        document.querySelectorAll('.keyword').forEach(el => {
+            const termKey = el.dataset.term.toLowerCase();
+            const data = glossary[termKey];
+            if (!data) return;
+            el.addEventListener('mouseenter', () => showDock(termKey, data));
+            el.addEventListener('mouseleave', hideDock);
+            el.addEventListener('click', (e) => { e.stopPropagation(); showDock(termKey, data); });
+        });
+    }
+
+    function showDock(term, data) {
+        document.getElementById('dock-term').innerText = term.replace(/\b\w/g, l => l.toUpperCase());
+        document.getElementById('dock-def').innerText = data.def;
+        document.getElementById('dock-vn').innerText = data.vn;
+        document.getElementById('dock-vn-def').innerText = data.vn_def;
+        dock.classList.add('active');
+    }
+
+    function hideDock() { dock.classList.remove('active'); }
+
+    window.handleQuiz = function(btn, isCorrect, qId) {
+        const parent = document.getElementById(qId + '-opts');
+        const explainBox = document.getElementById(qId + '-explain');
+        parent.querySelectorAll('.quiz-option').forEach(opt => {
+            opt.disabled = true;
+            opt.style.cursor = 'default';
+            opt.style.opacity = '0.6';
+        });
+        btn.style.opacity = '1';
+        if (isCorrect) {
+            btn.classList.add('correct');
+            btn.innerHTML += ' <i class="fa-solid fa-check" style="float:right;"></i>';
+        } else {
+            btn.classList.add('incorrect');
+            btn.innerHTML += ' <i class="fa-solid fa-xmark" style="float:right;"></i>';
+        }
+        if(explainBox) explainBox.style.display = 'block';
+    };
+
+    btnNext.addEventListener('click', () => changeSlide('next'));
+    btnPrev.addEventListener('click', () => changeSlide('prev'));
+    document.body.addEventListener('click', () => { if(dock.classList.contains('active')) hideDock(); });
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') changeSlide('next');
+        if(e.key === 'ArrowLeft') changeSlide('prev');
+    });
+
+    renderSlide();
+</script>
+</body>
+</html>
