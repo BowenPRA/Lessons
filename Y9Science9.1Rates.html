@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8.1 Measuring Rate of Reaction | Year 9 Science</title>
+    
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE (Science Theme) --- */
+            --bg-deep: #0f172a;    /* Deep Slate */
+            --bg-panel: #1e293b;
+            --primary: #8b5cf6;    /* Chemical Purple */
+            --accent: #10b981;     /* Acid Green */
+            --warning: #f59e0b;    /* Hazard Orange */
+            --danger: #ef4444;     /* Heat Red */
+            --text-light: #f1f5f9;
+            --text-dim: #94a3b8;
+            
+            /* --- SIZING TOKENS --- */
+            --header-h: 80px;
+            --footer-h: 90px;
+            --radius: 24px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; user-select: none; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- BACKGROUND ANIMATION LAYER --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1 { font-family: 'Outfit'; font-weight: 900; font-size: clamp(2.5rem, 5vw, 5rem); line-height: 1.1; letter-spacing: -2px; }
+        h2 { font-family: 'Outfit'; font-weight: 800; font-size: clamp(2rem, 4vw, 3.5rem); margin-bottom: 1rem; color: white; }
+        h3 { font-family: 'Outfit'; font-weight: 700; font-size: clamp(1.5rem, 2.5vw, 2rem); color: var(--primary); }
+        p, li { font-size: clamp(1.1rem, 1.5vw, 1.4rem); line-height: 1.6; color: #cbd5e1; }
+        
+        .highlight-accent { color: var(--accent); text-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        .highlight-primary { color: var(--primary); }
+        .highlight-warn { color: var(--warning); }
+
+        /* --- LAYOUT SHELL --- */
+        header {
+            height: var(--header-h);
+            flex-shrink: 0; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1.5rem;
+            border-radius: 100px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        main {
+            flex: 1;
+            position: relative;
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--bg-deep);
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1400px; 
+            margin: auto 0; 
+            min-height: min-content;
+        }
+
+        footer {
+            height: var(--footer-h);
+            flex-shrink: 0;
+            background: rgba(15, 23, 42, 0.95);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
+        }
+
+        /* --- PEDAGOGICAL NOTE BOX --- */
+        .pedagogical-note {
+            position: relative;
+            background: rgba(30, 41, 59, 0.8);
+            border: 3px solid var(--accent); 
+            border-left-width: 12px; 
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .pedagogical-badge {
+            position: absolute;
+            top: -18px;
+            left: 20px;
+            background: var(--accent);
+            color: #000;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 1px;
+        }
+
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { background: var(--primary); color: white; }
+
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { background: var(--warning); color: black; }
+
+        .note-success { border-color: var(--accent); }
+        .note-success .pedagogical-badge { background: var(--accent); color: black; }
+        
+        .note-theory { border-color: var(--danger); }
+        .note-theory .pedagogical-badge { background: var(--danger); color: white; }
+
+
+        /* --- CARDS & GRIDS --- */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-card:hover { border-color: rgba(255,255,255,0.2); }
+
+        /* --- INTERACTIVE ELEMENTS --- */
+        .reveal-card {
+            background: var(--bg-panel);
+            border: 2px dashed var(--text-dim);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .reveal-card:hover { border-color: var(--accent); background: rgba(16, 185, 129, 0.1); }
+        .reveal-card.revealed {
+            border-style: solid;
+            border-color: var(--accent);
+            background: var(--bg-panel);
+        }
+        .reveal-content { display: none; animation: popIn 0.3s forwards; }
+        .reveal-icon { font-size: 3rem; margin-bottom: 1rem; color: var(--text-dim); }
+
+        /* Draggable / Clickable Equipment */
+        .equip-slot {
+            height: 150px;
+            border: 3px dashed var(--text-dim);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+            background: rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        .equip-slot.filled { border-color: var(--accent); background: rgba(16, 185, 129, 0.1); border-style: solid; }
+        
+        .equip-btn {
+            background: var(--bg-panel);
+            border: 1px solid var(--primary);
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex; flex-direction: column; align-items: center;
+            transition: transform 0.2s;
+        }
+        .equip-btn:hover { transform: scale(1.05); background: var(--primary); }
+        .equip-btn:hover i, .equip-btn:hover span { color: white; }
+        .equip-btn i { font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem; }
+        .equip-btn.disabled { opacity: 0.3; pointer-events: none; }
+
+        /* --- CONTROLS --- */
+        .btn-nav {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); transform: scale(1.1); }
+        .btn-nav:disabled { opacity: 0.2; cursor: not-allowed; }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+            transition: all 0.2s;
+            font-family: 'Outfit';
+            text-transform: uppercase;
+        }
+        .btn-action:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); }
+
+        .progress-track {
+            flex: 1; margin: 0 2rem; height: 8px;
+            background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+
+        input[type=range] {
+            -webkit-appearance: none; width: 100%; background: transparent; margin: 1.5rem 0;
+        }
+        input[type=range]::-webkit-slider-track {
+            width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 30px; width: 30px; border-radius: 50%;
+            background: var(--accent); border: 4px solid white; margin-top: -9px;
+            box-shadow: 0 0 15px var(--accent); cursor: pointer; transition: transform 0.1s;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        .anim-enter { animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* --- QUIZ STYLES --- */
+        .quiz-option {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.1); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--accent); }
+        .quiz-option.wrong { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); }
+
+        /* Graph Tooltip */
+        .tooltip {
+            position: absolute;
+            background: white;
+            color: black;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            transform: translate(-50%, -150%);
+            white-space: nowrap;
+        }
+
+        /* Calculator Input */
+        .calc-input {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid var(--primary);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            width: 80px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 1000px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            h1 { font-size: 3rem; }
+            .pedagogical-note { padding: 1.5rem; }
+            .btn-nav { width: 44px; height: 44px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <header>
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <i class="fa-solid fa-flask" style="color:var(--primary); font-size:1.5rem;"></i>
+            <span style="font-weight:700; letter-spacing:1px; font-size: 1.5rem;">Year 9 Science</span>
+        </div>
+        <div class="tag">Unit 8.1 Reaction Rates</div>
+    </header>
+
+    <main>
+        <div id="slide-viewer" class="slide-container">
+            <!-- Slides inject here -->
+        </div>
+    </main>
+
+    <footer>
+        <button class="btn-nav" id="btn-prev" onclick="lesson.prev()"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="progress-track">
+            <div id="progress-bar" class="progress-fill"></div>
+        </div>
+        <button class="btn-nav" id="btn-next" onclick="lesson.next()"><i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+
+<script>
+/* -------------------------------------------------------------------------- */
+/* BACKGROUND FX                               */
+/* -------------------------------------------------------------------------- */
+const initCanvas = () => {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    const particles = [];
+    const symbols = ['Mg', 'H₂', 'O₂', '+', '→', '●', '○'];
+
+    const resize = () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    };
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.size = Math.random() * 20 + 10;
+            this.speedY = Math.random() * 0.5 + 0.1;
+            this.symbol = symbols[Math.floor(Math.random() * symbols.length)];
+            this.opacity = Math.random() * 0.2 + 0.05;
+        }
+        update() {
+            this.y -= this.speedY;
+            if (this.y < -50) this.y = height + 50;
+        }
+        draw() {
+            ctx.fillStyle = `rgba(148, 163, 184, ${this.opacity})`;
+            ctx.font = `${this.size}px 'Plus Jakarta Sans'`;
+            ctx.fillText(this.symbol, this.x, this.y);
+        }
+    }
+
+    for (let i = 0; i < 25; i++) particles.push(new Particle());
+
+    const animate = () => {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+    animate();
+};
+
+/* -------------------------------------------------------------------------- */
+/* HELPER COMPONENTS                           */
+/* -------------------------------------------------------------------------- */
+
+// SVG Templates
+const getFlaskSVG = (opacity) => `
+<svg viewBox="0 0 100 120" style="height:150px; overflow:visible;">
+    <path d="M30 0 L30 40 L10 100 Q10 115 25 115 L75 115 Q90 115 90 100 L70 40 L70 0 Z" 
+          fill="none" stroke="white" stroke-width="3"/>
+    <path d="M15 100 L30 40 L70 40 L85 100 Q85 110 75 110 L25 110 Q15 110 15 100" 
+          fill="#fcd34d" fill-opacity="${opacity}" />
+    <!-- The X Mark behind -->
+    <g style="z-index:-1; opacity: 1;">
+        <line x1="40" y1="70" x2="60" y2="90" stroke="#333" stroke-width="5" />
+        <line x1="60" y1="70" x2="40" y2="90" stroke="#333" stroke-width="5" />
+    </g>
+</svg>
+`;
+
+/* -------------------------------------------------------------------------- */
+/* LESSON LOGIC                                */
+/* -------------------------------------------------------------------------- */
+
+const slides = [
+    // SLIDE 1: Title
+    {
+        render: () => `
+            <div style="text-align: center; margin-top: 5vh;" class="anim-enter">
+                <i class="fa-solid fa-stopwatch" style="font-size: 6rem; color: var(--primary); margin-bottom: 2rem; filter: drop-shadow(0 0 30px rgba(139,92,246,0.6));"></i>
+                <h1 style="color:white; margin-bottom: 0.5rem;">Measuring Rate of Reaction</h1>
+                <p style="font-size: 1.5rem; color: var(--accent); font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">Unit 8.1</p>
+                
+                <div class="grid-3 delay-1 anim-enter" style="margin-top: 4rem; text-align: left;">
+                    <div class="glass-card">
+                        <i class="fa-solid fa-book-open" style="font-size: 2.5rem; color: var(--warning); margin-bottom: 1rem;"></i>
+                        <h3>Define</h3>
+                        <p>What "rate of reaction" means in chemistry.</p>
+                    </div>
+                    <div class="glass-card">
+                        <i class="fa-solid fa-ruler-combined" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                        <h3>Measure</h3>
+                        <p>Identify ways to measure the speed of reactions.</p>
+                    </div>
+                    <div class="glass-card">
+                        <i class="fa-solid fa-chart-line" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                        <h3>Explain</h3>
+                        <p>Use graphs and particle theory to explain changes.</p>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 2: Warm Up (Detective)
+    {
+        render: () => `
+            <div class="anim-enter">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom: 1.5rem;">
+                    <div class="tag" style="background:var(--warning); color:black;">Warm Up</div>
+                    <h2>The Detective Phase</h2>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="glass-card delay-1 anim-enter" style="display:flex; align-items:center; justify-content:center; gap:1.5rem; flex-wrap:wrap;">
+                        <!-- Simulated Magnesium Ribbon Image -->
+                        <svg viewBox="0 0 200 200" style="width:200px; height:200px;">
+                            <rect x="50" y="50" width="100" height="120" rx="10" fill="rgba(255,255,255,0.1)" stroke="white" stroke-width="2"/>
+                            <rect x="55" y="100" width="90" height="65" rx="5" fill="#3b82f6" fill-opacity="0.3" />
+                            <!-- Bubbles -->
+                            <circle cx="70" cy="140" r="3" fill="white" class="bubble-anim" />
+                            <circle cx="90" cy="120" r="4" fill="white" class="bubble-anim" style="animation-delay:0.2s"/>
+                            <circle cx="110" cy="150" r="2" fill="white" class="bubble-anim" style="animation-delay:0.5s"/>
+                            <circle cx="130" cy="110" r="3" fill="white" class="bubble-anim" style="animation-delay:0.1s"/>
+                            <!-- Ribbon -->
+                            <path d="M80 160 Q100 80 120 160" stroke="#cbd5e1" stroke-width="8" fill="none" />
+                        </svg>
+                        
+                        <!-- Embedded GIF -->
+                        <div style="width:250px; height:200px; border-radius:12px; overflow:hidden; border:2px solid rgba(255,255,255,0.1);">
+                            <!-- UPDATED: Replaced broken makeagif hotlink with reliable Giphy alternative -->
+                            <img src="https://media.giphy.com/media/3o7TKSjRrfPHjKt2sa/giphy.gif" alt="Magnesium Reaction" style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+                        
+                        <p style="text-align:center; width:100%; margin-top:0.5rem; font-style:italic;">Magnesium Ribbon in Acid</p>
+                    </div>
+
+                    <div class="delay-2 anim-enter">
+                        <div class="pedagogical-note note-task">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-eye"></i> Observe</div>
+                            <p style="font-size:1.4rem; color:white;">Look at the reaction.</p>
+                            <p>Click the cards to reveal 3 clues that a reaction is happening.</p>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem; margin-top:1rem;">
+                            <!-- Clue 1 -->
+                            <div class="reveal-card" onclick="this.classList.add('revealed'); this.querySelector('.reveal-content').style.display='block'; this.querySelector('.pre-reveal').style.display='none';">
+                                <div class="pre-reveal">
+                                    <i class="fa-solid fa-question reveal-icon"></i>
+                                    <h3>Clue 1</h3>
+                                </div>
+                                <div class="reveal-content">
+                                    <i class="fa-solid fa-soap reveal-icon" style="color:var(--accent);"></i>
+                                    <p style="font-weight:700;">Bubbles</p>
+                                    <p style="font-size:0.9rem;">(Gas produced)</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Clue 2 -->
+                            <div class="reveal-card" onclick="this.classList.add('revealed'); this.querySelector('.reveal-content').style.display='block'; this.querySelector('.pre-reveal').style.display='none';">
+                                <div class="pre-reveal">
+                                    <i class="fa-solid fa-question reveal-icon"></i>
+                                    <h3>Clue 2</h3>
+                                </div>
+                                <div class="reveal-content">
+                                    <i class="fa-solid fa-temperature-arrow-up reveal-icon" style="color:var(--danger);"></i>
+                                    <p style="font-weight:700;">Heat</p>
+                                    <p style="font-size:0.9rem;">(Exothermic)</p>
+                                </div>
+                            </div>
+
+                             <!-- Clue 3 -->
+                             <div class="reveal-card" onclick="this.classList.add('revealed'); this.querySelector('.reveal-content').style.display='block'; this.querySelector('.pre-reveal').style.display='none';">
+                                <div class="pre-reveal">
+                                    <i class="fa-solid fa-question reveal-icon"></i>
+                                    <h3>Clue 3</h3>
+                                </div>
+                                <div class="reveal-content">
+                                    <i class="fa-solid fa-ghost reveal-icon" style="color:var(--text-light);"></i>
+                                    <p style="font-weight:700;">Disappears</p>
+                                    <p style="font-size:0.9rem;">(Solid used up)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top:2rem;">
+                    <button class="btn-action delay-3 anim-enter" onclick="document.getElementById('hidden-note').style.display='block'; this.style.display='none'">
+                        Reveal Key Note
+                    </button>
+                    
+                    <div id="hidden-note" class="pedagogical-note note-write anim-enter" style="display:none; margin-top:1rem;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <p>We know a reaction is happening when we see <strong>bubbles</strong> (gas being made), feel <strong>heat</strong> (energy released), or when a <strong>reactant disappears</strong>.</p>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 3: What is Rate? (Magnesium Strip Analogy)
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>What is "Rate of Reaction"?</h2>
+                
+                <div class="grid-2">
+                    <div>
+                        <div class="pedagogical-note note-write delay-1 anim-enter">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Definition</div>
+                            <p style="font-size:1.6rem; color:white; margin-bottom:1rem;">
+                                <strong>Rate of Reaction:</strong> The speed at which a chemical reaction happens.
+                            </p>
+                            <p>It measures how quickly a <span class="highlight-warn">reactant is used up</span> OR how quickly a <span class="highlight-accent">product is made</span>.</p>
+                        </div>
+                        
+                        <div class="glass-card delay-2 anim-enter" style="margin-top:1rem;">
+                            <h3>The Equation</h3>
+                            <div style="font-size:1.5rem; text-align:center; padding:1rem; font-family: 'Times New Roman', serif;">
+                                $$ Rate = \\frac{\\text{Amount of product made}}{\\text{Time taken}} $$
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="delay-2 anim-enter">
+                        <div class="glass-card">
+                            <h3><i class="fa-solid fa-gauge-high"></i> Reaction Rate Simulation</h3>
+                            <p style="margin-bottom:1.5rem;">Adjust the slider: Observe the bubbles and the magnesium strip.</p>
+                            
+                            <!-- Magnesium Animation SVG -->
+                            <svg id="mg-reaction-svg" viewBox="0 0 200 200" style="background:rgba(0,0,0,0.2); border-radius:12px; margin-bottom:1rem; width:100%; height:250px;">
+                                <!-- Beaker -->
+                                <path d="M40 20 L40 160 Q40 180 60 180 L140 180 Q160 180 160 160 L160 20" stroke="white" stroke-width="4" fill="none"/>
+                                <!-- Liquid -->
+                                <path d="M45 160 Q45 175 60 175 L140 175 Q155 175 155 160 L155 60 L45 60 Z" fill="rgba(59, 130, 246, 0.3)" />
+                                
+                                <!-- Magnesium Strip Group -->
+                                <g id="strip-group">
+                                    <rect id="mg-strip" x="90" y="170" width="20" height="100" fill="#cbd5e1" transform="scale(1, -1) translate(0, -340)" /> 
+                                </g>
+
+                                <!-- Bubbles Group -->
+                                <g id="bubbles-group"></g>
+                            </svg>
+                            
+                            <label style="display:flex; justify-content:space-between; font-weight:700;">
+                                <span>Slow Rate</span>
+                                <span id="rate-val" class="highlight-primary">Rate: Low</span>
+                                <span>Fast Rate</span>
+                            </label>
+                            <!-- UPDATED: Slider starts at 1 (slowest) -->
+                            <input type="range" min="1" max="100" value="1" id="rate-slider">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        onMount: () => {
+            const slider = document.getElementById('rate-slider');
+            const strip = document.getElementById('mg-strip');
+            const bubblesGroup = document.getElementById('bubbles-group');
+            const valDisplay = document.getElementById('rate-val');
+            
+            // UPDATED: Default start at 1 (very slow)
+            let rate = 1; 
+            let stripHeight = 100;
+            let bubbles = [];
+
+            // Sync visual text on start
+            valDisplay.innerText = "Rate: Low";
+
+            slider.addEventListener('input', (e) => {
+                rate = parseInt(e.target.value);
+                if(rate < 33) valDisplay.innerText = "Rate: Low";
+                else if(rate < 66) valDisplay.innerText = "Rate: Medium";
+                else valDisplay.innerText = "Rate: High (Vigorous!)";
+                
+                if(rate > 66) valDisplay.className = "highlight-danger";
+                else valDisplay.className = "highlight-primary";
+            });
+
+            const loop = () => {
+                // UPDATED: Physics for decay rate
+                // At 100: decay approx 0.4px per frame (fast disappearance)
+                // At 1: decay approx 0.004px per frame (almost static)
+                const decay = (rate / 100) * 0.4; 
+                stripHeight -= decay;
+                
+                if(stripHeight <= 0) {
+                     stripHeight = 100; // Reset for loop effect
+                }
+                
+                strip.setAttribute('y', 175 - stripHeight);
+                strip.setAttribute('height', stripHeight);
+                strip.setAttribute('transform', ''); 
+
+                // UPDATED: Bubble spawn probability
+                // At 100: Very likely spawn
+                // At 1: Unlikely spawn
+                if (Math.random() * 100 < rate * 1.5) {
+                    const bubble = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    const x = 80 + Math.random() * 40; 
+                    const y = 175 - Math.random() * stripHeight; 
+                    
+                    bubble.setAttribute("cx", x);
+                    bubble.setAttribute("cy", y);
+                    bubble.setAttribute("r", 2 + Math.random() * 3);
+                    bubble.setAttribute("fill", "white");
+                    bubble.setAttribute("opacity", "0.7");
+                    
+                    bubblesGroup.appendChild(bubble);
+                    // UPDATED: Bubble rise speed correlates with rate (vigorous = faster bubbles)
+                    bubbles.push({ el: bubble, y: y, speed: 1 + (rate/20) });
+                }
+
+                for (let i = bubbles.length - 1; i >= 0; i--) {
+                    let b = bubbles[i];
+                    b.y -= b.speed;
+                    b.el.setAttribute("cy", b.y);
+                    b.el.setAttribute("r", parseFloat(b.el.getAttribute("r")) + 0.05);
+
+                    if (b.y < 50) { 
+                        b.el.remove();
+                        bubbles.splice(i, 1);
+                    }
+                }
+
+                window.animFrame3 = requestAnimationFrame(loop);
+            };
+
+            loop();
+            
+            const checkExist = setInterval(() => {
+                if(!document.getElementById('mg-strip')) {
+                    cancelAnimationFrame(window.animFrame3);
+                    clearInterval(checkExist);
+                }
+            }, 100);
+        }
+    },
+
+    // SLIDE 4: Experimentation (Drag & Drop / Click Match)
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>Experimentation: Collecting Data</h2>
+                <p>How do we measure reactions that produce gas? Match the equipment to the method.</p>
+
+                <div class="grid-2 delay-1 anim-enter">
+                    <!-- Methods (Targets) -->
+                    <div style="display:flex; flex-direction:column; gap:1rem;">
+                        <h3 class="highlight-accent">1. Select a Method</h3>
+                        
+                        <div id="target-volume" class="equip-slot" onclick="equipment.check(this, 'syringe')">
+                            <span style="color:var(--text-dim); pointer-events:none;">To Measure Gas Volume (cm³)</span>
+                        </div>
+                        
+                        <div id="target-mass" class="equip-slot" onclick="equipment.check(this, 'balance')">
+                            <span style="color:var(--text-dim); pointer-events:none;">To Measure Mass Loss (g)</span>
+                        </div>
+                    </div>
+
+                    <!-- Equipment (Sources) -->
+                    <div>
+                        <h3 class="highlight-primary">2. Click Equipment to Place</h3>
+                        <div style="display:flex; gap:1rem;">
+                            <div id="source-syringe" class="equip-btn" onclick="equipment.select('syringe')">
+                                <i class="fa-solid fa-syringe"></i>
+                                <span>Gas Syringe</span>
+                            </div>
+                            
+                            <div id="source-balance" class="equip-btn" onclick="equipment.select('balance')">
+                                <i class="fa-solid fa-scale-balanced"></i>
+                                <span>Digital Balance</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pedagogical-note note-write delay-2 anim-enter" style="margin-top:2rem;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                    <ul>
+                        <li>To measure gas volume: Use a <strong>Gas Syringe</strong>.</li>
+                        <li>To measure mass change: Use a <strong>Digital Balance</strong> (mass decreases as gas escapes).</li>
+                    </ul>
+                </div>
+            </div>
+        `,
+        onMount: () => {
+            window.equipment = {
+                selected: null,
+                select: (type) => {
+                    document.querySelectorAll('.equip-btn').forEach(b => b.style.borderColor = 'var(--primary)');
+                    
+                    window.equipment.selected = type;
+                    document.getElementById(`source-${type}`).style.borderColor = 'var(--accent)';
+                    document.getElementById(`source-${type}`).style.transform = 'scale(0.95)';
+                },
+                check: (el, targetType) => {
+                    if (window.equipment.selected === targetType) {
+                        el.classList.add('filled');
+                        const iconClass = targetType === 'syringe' ? 'fa-syringe' : 'fa-scale-balanced';
+                        el.innerHTML = `<i class="fa-solid ${iconClass}" style="font-size:3rem; color:var(--accent);"></i>`;
+                        document.getElementById(`source-${targetType}`).classList.add('disabled');
+                        window.equipment.selected = null;
+                    } else if (window.equipment.selected) {
+                        el.style.borderColor = 'var(--danger)';
+                        setTimeout(() => { if(!el.classList.contains('filled')) el.style.borderColor = 'var(--text-dim)'; }, 500);
+                    }
+                }
+            };
+        }
+    },
+
+    // SLIDE 5: Disappearing Cross (Interactive)
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>Experiment 2: Precipitation</h2>
+                <div class="grid-2">
+                    <!-- Simulation -->
+                    <div class="glass-card delay-1 anim-enter" style="text-align:center;">
+                        <h3>The Disappearing Cross</h3>
+                        <p style="margin-bottom:1rem; font-size:0.9rem;">Test for reactions that turn cloudy (turbid).</p>
+                        
+                        <div style="position:relative; width:150px; margin:0 auto;">
+                            <!-- X Mark is inside SVG in helper -->
+                            <div id="flask-container">
+                                <svg viewBox="0 0 100 120" style="height:200px; overflow:visible;">
+                                    <!-- The X Mark (Static Background) -->
+                                    <line x1="25" y1="125" x2="75" y2="125" stroke="black" stroke-width="8" stroke-linecap="round"/> 
+                                    <line x1="75" y1="125" x2="25" y2="125" stroke="black" stroke-width="8" stroke-linecap="round"/> 
+                                    <!-- Flask -->
+                                    <path d="M30 0 L30 40 L10 100 Q10 115 25 115 L75 115 Q90 115 90 100 L70 40 L70 0 Z" 
+                                        fill="rgba(255,255,255,0.1)" stroke="white" stroke-width="3"/>
+                                    <!-- Liquid (Opacity animates) -->
+                                    <path id="flask-liquid" d="M15 100 L30 40 L70 40 L85 100 Q85 110 75 110 L25 110 Q15 110 15 100" 
+                                        fill="#fef3c7" fill-opacity="0" />
+                                </svg>
+                                <!-- Black X (Behind Flask visually) -->
+                                <div style="position:absolute; bottom:10px; left:50%; transform:translateX(-50%) z-index:-1; font-size:3rem; color:black; font-family:sans-serif; font-weight:900;">X</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:1rem; display:flex; gap:1rem; justify-content:center;">
+                            <button class="btn-action" onclick="crossSim.start()">Add Acid</button>
+                            <button class="btn-action" style="background:var(--danger);" onclick="crossSim.stop()">Stop Timer</button>
+                        </div>
+                        <div id="timer-display" style="font-size:2rem; font-weight:900; margin-top:1rem; font-family:'Courier New';">0.00s</div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="delay-2 anim-enter">
+                        <div class="pedagogical-note note-write">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Definition</div>
+                            <p style="margin-bottom:1rem;"><strong>Precipitation:</strong> When a clear liquid turns cloudy because a solid is formed.</p>
+                            <p>We measure the time it takes for the cross to disappear.</p>
+                        </div>
+                        <div class="glass-card" style="margin-top:1rem;">
+                            <i class="fa-solid fa-triangle-exclamation" style="color:var(--warning);"></i> 
+                            Human Error: Different people might stop the timer at slightly different times (subjective).
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        onMount: () => {
+            window.crossSim = {
+                startTime: 0,
+                interval: null,
+                running: false,
+                start: () => {
+                    if(window.crossSim.running) return;
+                    window.crossSim.running = true;
+                    window.crossSim.startTime = Date.now();
+                    const liquid = document.getElementById('flask-liquid');
+                    const timer = document.getElementById('timer-display');
+                    
+                    window.crossSim.interval = setInterval(() => {
+                        const elapsed = (Date.now() - window.crossSim.startTime) / 1000;
+                        timer.innerText = elapsed.toFixed(2) + "s";
+                        
+                        // Opacity math (full opacity at 5s)
+                        let opacity = elapsed / 5;
+                        if(opacity > 1) opacity = 1;
+                        liquid.setAttribute('fill-opacity', opacity);
+                    }, 50);
+                },
+                stop: () => {
+                    clearInterval(window.crossSim.interval);
+                    window.crossSim.running = false;
+                }
+            };
+        }
+    },
+
+    // SLIDE 6: Reading Graphs
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>Reading the Graph</h2>
+                <p>The shape of the line tells the story.</p>
+                
+                <div class="grid-2">
+                    <div class="glass-card delay-1 anim-enter" style="position:relative;">
+                        <h3 style="text-align:center;">Volume of Gas vs Time</h3>
+                        
+                        <!-- Interactive SVG Graph -->
+                        <svg viewBox="0 0 300 200" style="width:100%;">
+                            <!-- Axes -->
+                            <line x1="30" y1="170" x2="280" y2="170" stroke="white" stroke-width="2"/>
+                            <line x1="30" y1="170" x2="30" y2="20" stroke="white" stroke-width="2"/>
+                            <text x="140" y="190" fill="white" font-size="10">Time</text>
+                            <text x="10" y="100" fill="white" font-size="10" transform="rotate(-90, 10, 100)">Volume</text>
+                            
+                            <!-- The Curve -->
+                            <path d="M30 170 Q60 50 150 30 L280 30" fill="none" stroke="#f59e0b" stroke-width="4" />
+                            
+                            <!-- Hover Zones -->
+                            <!-- Steep Start -->
+                            <rect x="30" y="100" width="40" height="70" fill="transparent" 
+                                onmouseover="graph.show(this, 'Steep Gradient: Fast Rate (Lots of Reactants)')" 
+                                onmouseout="graph.hide()" cursor="help"/>
+                            
+                            <!-- Gentle Slope -->
+                            <rect x="70" y="40" width="60" height="60" fill="transparent" 
+                                onmouseover="graph.show(this, 'Curve flattens: Reaction Slowing Down')" 
+                                onmouseout="graph.hide()" cursor="help"/>
+                                
+                            <!-- Flat Line -->
+                            <rect x="150" y="20" width="130" height="40" fill="transparent" 
+                                onmouseover="graph.show(this, 'Flat Line: Reaction Finished (Reactant used up)')" 
+                                onmouseout="graph.hide()" cursor="help"/>
+                        </svg>
+                        <div id="graph-tooltip" class="tooltip">Info</div>
+                    </div>
+
+                    <div class="pedagogical-note note-write delay-2 anim-enter">
+                         <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Key Points</div>
+                         <ul style="margin-top:1rem; line-height:2;">
+                            <li><strong>Steep Line:</strong> Fast Reaction (Start).</li>
+                            <li><strong>Gentle Slope:</strong> Slowing Down.</li>
+                            <li><strong>Flat Line:</strong> Finished (Rate is zero).</li>
+                            <li>The <strong>Gradient</strong> (slope) equals the Rate.</li>
+                         </ul>
+                    </div>
+                </div>
+            </div>
+        `,
+        onMount: () => {
+            window.graph = {
+                tooltip: document.getElementById('graph-tooltip'),
+                show: (el, text) => {
+                    const rect = el.getBoundingClientRect();
+                    const tooltip = window.graph.tooltip;
+                    tooltip.innerText = text;
+                    tooltip.style.opacity = 1;
+                    tooltip.style.left = "50%";
+                    tooltip.style.top = "10%";
+                },
+                hide: () => {
+                    window.graph.tooltip.style.opacity = 0;
+                }
+            };
+        }
+    },
+
+    // SLIDE 7: Calculation Check
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>Maths Check: Calculating Mean Rate</h2>
+                
+                <div class="grid-2">
+                    <div class="delay-1 anim-enter">
+                         <div class="pedagogical-note note-theory">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-calculator"></i> Formula</div>
+                            <div style="font-size:2rem; text-align:center; padding:1rem; margin:1rem 0;">
+                                $$ Rate = \\frac{Product}{Time} $$
+                            </div>
+                            <p><strong>Example:</strong> A student collects 50cm³ of gas in 25 seconds.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card delay-2 anim-enter">
+                        <h3><i class="fa-solid fa-keyboard"></i> Try It Yourself</h3>
+                        <div style="display:flex; flex-direction:column; gap:1rem; margin-top:1rem;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <label>Product (cm³):</label>
+                                <input id="calc-prod" class="calc-input" type="number" value="50">
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <label>Time (s):</label>
+                                <input id="calc-time" class="calc-input" type="number" value="25">
+                            </div>
+                            <button class="btn-action" onclick="calculateRate()">Calculate</button>
+                            
+                            <div id="calc-result" style="background:var(--bg-deep); padding:1rem; border-radius:8px; text-align:center; margin-top:1rem; font-size:1.5rem; color:var(--accent);">
+                                Result...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        onMount: () => {
+            window.calculateRate = () => {
+                const p = parseFloat(document.getElementById('calc-prod').value);
+                const t = parseFloat(document.getElementById('calc-time').value);
+                const res = document.getElementById('calc-result');
+                
+                if (t === 0) {
+                    res.innerText = "Time cannot be 0!";
+                    return;
+                }
+                const rate = (p / t).toFixed(2);
+                res.innerHTML = `${rate} cm³/s`;
+            };
+        }
+    },
+
+    // SLIDE 8: The Why (Collision Theory Canvas)
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>The "Why": Collision Theory</h2>
+                
+                <div class="grid-2">
+                    <div class="glass-card delay-1 anim-enter" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
+                        <canvas id="collision-canvas" width="400" height="300" style="background:#0f172a; width:100%;"></canvas>
+                        <div style="padding:1rem; background:rgba(255,255,255,0.05); display:flex; justify-content:space-around;">
+                            <button class="btn-action" style="font-size:0.9rem; padding:0.5rem 1rem;" onclick="simParticles.setMode('start')">Start (Fast)</button>
+                            <button class="btn-action" style="font-size:0.9rem; padding:0.5rem 1rem; background:var(--text-dim);" onclick="simParticles.setMode('end')">End (Slow)</button>
+                        </div>
+                    </div>
+
+                    <div class="pedagogical-note note-theory delay-2 anim-enter">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-atom"></i> Particle Theory</div>
+                        <p style="margin-bottom:1rem;"><strong>Collision Theory:</strong> Reactions only happen when particles collide with enough energy.</p>
+                        <ul style="margin-top:1rem;">
+                            <li style="margin-bottom:1rem;"><strong>Start:</strong> Many particles (High Concentration) → Frequent collisions → Fast Rate.</li>
+                            <li><strong>End:</strong> Few reactant particles left → Rare collisions → Slow Rate.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `,
+        onMount: () => {
+            const canvas = document.getElementById('collision-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let animationId;
+            
+            const createParticles = (count) => {
+                particles = [];
+                for(let i=0; i<count; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 4,
+                        vy: (Math.random() - 0.5) * 4,
+                        radius: 5,
+                        color: '#f59e0b'
+                    });
+                }
+            };
+
+            const update = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // Bounce walls
+                    if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                });
+                
+                animationId = requestAnimationFrame(update);
+            };
+
+            window.simParticles = {
+                setMode: (mode) => {
+                    if (mode === 'start') createParticles(60); // Many
+                    else createParticles(10); // Few
+                },
+                stop: () => cancelAnimationFrame(animationId)
+            };
+
+            // Init
+            createParticles(60);
+            update();
+
+            // Auto-cleanup on slide change logic handled in lesson.render
+            window.currentSim = window.simParticles;
+        }
+    },
+
+    // SLIDE 9: Summary & Quiz
+    {
+        render: () => `
+            <div class="anim-enter">
+                <h2>Summary & Review</h2>
+                
+                <div class="grid-2">
+                    <!-- Left: Recap -->
+                    <div class="delay-1 anim-enter">
+                        <h3 style="color:var(--text-dim); margin-bottom:1rem;">Objectives Recap</h3>
+                        <ul style="list-style:none;">
+                            <li style="margin-bottom:1.5rem; background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
+                                <strong class="highlight-primary">1. Rate = Speed</strong><br>
+                                Measured by product made or reactant used per second.
+                            </li>
+                            <li style="margin-bottom:1.5rem; background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
+                                <strong class="highlight-accent">2. Measurement</strong><br>
+                                Use Gas Syringe (volume) or Balance (mass loss).
+                            </li>
+                            <li style="margin-bottom:1.5rem; background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
+                                <strong class="highlight-warn">3. Collision Theory</strong><br>
+                                More particles = More collisions = Faster reaction.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Right: Quiz -->
+                    <div class="glass-card delay-2 anim-enter">
+                        <h3><i class="fa-solid fa-list-check"></i> Quick Check</h3>
+                        <div id="quiz-container">
+                            <div class="quiz-option" onclick="quiz.check(this, true)">
+                                1. Rate is how much product is made per second. (True)
+                            </div>
+                            <div class="quiz-option" onclick="quiz.check(this, false)">
+                                2. As reaction proceeds, rate increases. (True)
+                            </div>
+                            <div class="quiz-option" onclick="quiz.check(this, false)">
+                                3. A flat line means reaction is fastest. (True)
+                            </div>
+                            <div class="quiz-option" onclick="quiz.check(this, true)">
+                                4. Particles must collide to react. (True)
+                            </div>
+                        </div>
+                        <p style="font-size:0.9rem; color:var(--text-dim); margin-top:1rem;">Click the statements that are TRUE.</p>
+                    </div>
+                </div>
+            </div>
+        `,
+        onMount: () => {
+            window.quiz = {
+                check: (el, isCorrect) => {
+                    if (isCorrect) {
+                        el.classList.add('correct');
+                        el.innerHTML += ' <i class="fa-solid fa-check" style="color:var(--accent)"></i>';
+                    } else {
+                        el.classList.add('wrong');
+                        el.style.opacity = '0.5';
+                        el.innerHTML = 'False statement';
+                    }
+                    el.style.pointerEvents = 'none';
+                }
+            };
+        }
+    },
+
+    // SLIDE 10: Final Task
+    {
+        render: () => `
+            <div class="anim-enter" style="text-align:center; margin-top:10vh;">
+                <h2>Final Task</h2>
+                <p>Complete the word equation in your books.</p>
+                
+                <div class="pedagogical-note note-write delay-1 anim-enter" style="display:inline-block; text-align:left; margin-top:2rem;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-pen-nib"></i> Word Equation</div>
+                    <div style="font-size:1.8rem; line-height:2;">
+                        Magnesium + Sulfuric Acid <i class="fa-solid fa-arrow-right-long highlight-primary"></i> <br>
+                        <span class="highlight-accent">Magnesium Sulfate</span> + <span class="highlight-warn">Hydrogen</span>
+                    </div>
+                </div>
+
+                <div class="delay-2 anim-enter" style="margin-top:4rem;">
+                    <button class="btn-action" onclick="location.reload()">
+                        <i class="fa-solid fa-rotate-right"></i> Restart Lesson
+                    </button>
+                </div>
+            </div>
+        `
+    }
+];
+
+/* -------------------------------------------------------------------------- */
+/* SLIDE MANAGER                               */
+/* -------------------------------------------------------------------------- */
+const lesson = {
+    index: 0,
+    container: document.getElementById('slide-viewer'),
+    progress: document.getElementById('progress-bar'),
+    
+    init() {
+        initCanvas(); 
+        this.render();
+        
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowRight' || e.key === ' ') this.next();
+            if(e.key === 'ArrowLeft') this.prev();
+        });
+    },
+
+    render() {
+        // Cleanup physics if existing
+        if(window.currentSim && window.currentSim.stop) window.currentSim.stop();
+        if(window.crossSim && window.crossSim.stop) window.crossSim.stop();
+
+        const slide = slides[this.index];
+        this.container.innerHTML = slide.render();
+        
+        // Typeset Math
+        if(window.MathJax) {
+            MathJax.typesetPromise([this.container]);
+        }
+        
+        if(slide.onMount) setTimeout(slide.onMount, 50);
+
+        this.progress.style.width = `${((this.index + 1) / slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = this.index === 0;
+        document.getElementById('btn-next').disabled = this.index === slides.length - 1;
+    },
+
+    next() {
+        if (this.index < slides.length - 1) {
+            this.index++;
+            this.render();
+        }
+    },
+
+    prev() {
+        if (this.index > 0) {
+            this.index--;
+            this.render();
+        }
+    }
+};
+
+lesson.init();
+
+/* Bubbles CSS Animation for SVG */
+const styleSheet = document.createElement("style");
+styleSheet.innerText = `
+@keyframes bubbleRise {
+    0% { transform: translateY(0); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(-20px); opacity: 0; }
+}
+.bubble-anim { animation: bubbleRise 1.5s infinite ease-in; }
+`;
+document.head.appendChild(styleSheet);
+
+</script>
+</body>
+</html>
