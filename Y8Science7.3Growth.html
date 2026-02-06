@@ -288,11 +288,33 @@
         }
         .chart-label { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); width: 100px; text-align: center; font-size: 0.8rem; }
 
+        /* Life Stage Timeline */
+        .timeline-container { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 1rem; }
+        .timeline-step { background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; text-align: center; border: 2px solid transparent; flex: 1; }
+        .timeline-step:hover { border-color: var(--primary); background: rgba(139, 92, 246, 0.1); }
+        .timeline-arrow { color: var(--text-dim); font-size: 1.5rem; }
+        .stage-title { font-weight: 800; color: white; display: block; margin-bottom: 5px; }
+        .stage-desc { font-size: 0.9rem; color: var(--text-dim); }
+
+        /* Drag Sort Game */
+        .sort-container { display: flex; gap: 1rem; margin-top: 1rem; }
+        .sort-bucket { flex: 1; border: 2px dashed var(--text-dim); border-radius: 12px; padding: 1rem; min-height: 200px; transition: all 0.3s; position: relative; background: rgba(0,0,0,0.2); }
+        .sort-bucket.highlight { border-color: var(--accent); background: rgba(16, 185, 129, 0.1); }
+        .sort-bucket h4 { text-align: center; margin-bottom: 1rem; pointer-events: none; }
+        .sort-item { 
+            background: var(--primary); color: white; padding: 0.8rem 1.2rem; 
+            border-radius: 50px; margin: 0.5rem; cursor: grab; font-weight: bold; font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: inline-block;
+        }
+        .sort-item:active { cursor: grabbing; transform: scale(1.05); }
+
         @media (max-width: 1000px) {
             .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
             h1 { font-size: 3rem; }
             .pedagogical-note { padding: 1.5rem; }
             .btn-nav { width: 44px; height: 44px; }
+            .timeline-container { flex-direction: column; }
+            .timeline-arrow { transform: rotate(90deg); margin: 0.5rem 0; }
         }
     </style>
 </head>
@@ -494,11 +516,10 @@ const slides = [
                 
                 <div class="grid-2">
                     <div class="glass-card delay-1 anim-enter" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
-                        <div style="width:100%; max-width:400px; aspect-ratio:16/9; border-radius:12px; overflow:hidden; border:2px solid rgba(255,255,255,0.1); margin-bottom:1rem;">
-                            <video autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover;">
-                                <source src="Cell_Division_Mitosis.mp4" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
+                        <div style="width:100%; max-width:400px; aspect-ratio:16/9; border-radius:12px; overflow:hidden; border:2px solid rgba(255,255,255,0.1); margin-bottom:1rem; background:black;">
+                             <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-dim);">
+                                <i class="fa-solid fa-film" style="font-size:2rem; margin-right:10px;"></i> Video: Mitosis
+                            </div>
                         </div>
                         <p style="margin-top:0.5rem;">Every person on Earth began as a <strong class="highlight-accent">Single Cell</strong>.</p>
                     </div>
@@ -538,7 +559,7 @@ const slides = [
         }
     },
 
-    // SLIDE 3: Investigation (Virtual Lab) - MOVED HERE
+    // SLIDE 3: Investigation (Virtual Lab)
     {
         template: () => `
             <div class="anim-enter">
@@ -607,9 +628,7 @@ const slides = [
             const draw = () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
-                // Update and Draw
                 cells.forEach(cell => {
-                    // Ease to target position
                     cell.x += (cell.targetX - cell.x) * 0.1;
                     cell.y += (cell.targetY - cell.y) * 0.1;
                     
@@ -621,7 +640,6 @@ const slides = [
                     ctx.lineWidth = 2;
                     ctx.stroke();
                     
-                    // Nucleus
                     ctx.beginPath();
                     ctx.arc(cell.x, cell.y, cell.r/3, 0, Math.PI * 2);
                     ctx.fillStyle = '#1e293b';
@@ -632,16 +650,14 @@ const slides = [
             };
 
             const divide = () => {
-                if (cells.length > 500) return; // Cap for performance
+                if (cells.length > 500) return; 
                 hint.style.display = 'none';
                 divisions++;
                 divisionDisplay.innerText = divisions;
                 
                 const newCells = [];
                 cells.forEach(cell => {
-                    // Create two new cells slightly offset
                     const offset = cell.r * 1.5;
-                    // Jitter targets
                     const tX1 = Math.max(20, Math.min(canvas.width - 20, cell.x - offset + (Math.random()*40-20)));
                     const tY1 = Math.max(20, Math.min(canvas.height - 20, cell.y - offset + (Math.random()*40-20)));
                     
@@ -671,7 +687,7 @@ const slides = [
         }
     },
 
-    // SLIDE 4: Theory - Growth vs Development
+    // SLIDE 4: Theory - Growth vs Development (UPDATED)
     {
         template: () => `
             <div class="anim-enter">
@@ -684,7 +700,7 @@ const slides = [
                             <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Definition</div>
                             <h3 class="highlight-primary">Growth</h3>
                             <p>Growth is an increase in <strong class="highlight-accent">size</strong>.</p>
-                            <p>This happens because cells divide to make <strong>more cells</strong>, or existing cells get bigger.</p>
+                            <p>This happens because cells divide to make <strong>more cells</strong>.</p>
                             <div style="margin-top:1rem; text-align:center;">
                                 <i class="fa-solid fa-circle-dot" style="font-size:1.5rem;"></i>
                                 <i class="fa-solid fa-arrow-right"></i>
@@ -692,9 +708,12 @@ const slides = [
                                 <i class="fa-solid fa-circle-dot" style="font-size:1.5rem;"></i>
                             </div>
                         </div>
-                        <div class="glass-card" style="margin-top:1rem;">
-                            <h4>The Embryo</h4>
-                            <p>A ball of cells formed from the first cell. It grows into a baby.</p>
+                        
+                        <!-- Added Note-Write for Embryo -->
+                        <div class="pedagogical-note note-write" style="margin-top:1rem;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Copy Definition</div>
+                            <h4 style="color:var(--text-light)">The Embryo</h4>
+                            <p>A ball of cells formed from the first cell (zygote). It grows into a baby.</p>
                         </div>
                     </div>
 
@@ -703,16 +722,37 @@ const slides = [
                             <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Definition</div>
                             <h3 class="highlight-warn">Development</h3>
                             <p>Development is an increase in <strong class="highlight-accent">complexity</strong>.</p>
-                            <p>Cells become specialized (tissues, organs) and the person learns new skills (walking, talking).</p>
+                            <p>Cells become specialized (tissues, organs) and the person learns new skills.</p>
                         </div>
                         
-                        <div class="glass-card" style="margin-top:1rem;">
-                            <h4>Stages of Life</h4>
-                            <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-top:1rem; text-align:center;">
-                                <div><i class="fa-solid fa-baby"></i><br>Baby</div>
-                                <div><i class="fa-solid fa-child"></i><br>Toddler</div>
-                                <div><i class="fa-solid fa-child-reaching"></i><br>Child</div>
-                                <div><i class="fa-solid fa-user"></i><br>Adult</div>
+                        <!-- EXPANDED STAGES OF LIFE DIAGRAM -->
+                        <div class="pedagogical-note note-write" style="margin-top:1rem; padding: 1.5rem 1rem;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Copy Diagram</div>
+                            <h4 style="margin-bottom:1rem; text-align:center;">The Stages of Life</h4>
+                            <div class="timeline-container">
+                                <div class="timeline-step">
+                                    <i class="fa-solid fa-baby highlight-primary"></i>
+                                    <span class="stage-title">Infancy</span>
+                                    <span class="stage-desc">0-2 Years</span>
+                                </div>
+                                <i class="fa-solid fa-arrow-right timeline-arrow"></i>
+                                <div class="timeline-step">
+                                    <i class="fa-solid fa-child-reaching highlight-primary"></i>
+                                    <span class="stage-title">Childhood</span>
+                                    <span class="stage-desc">2-12 Years</span>
+                                </div>
+                                <i class="fa-solid fa-arrow-right timeline-arrow"></i>
+                                <div class="timeline-step">
+                                    <i class="fa-solid fa-user-group highlight-accent"></i>
+                                    <span class="stage-title">Adolescence</span>
+                                    <span class="stage-desc">13-19 Years</span>
+                                </div>
+                                <i class="fa-solid fa-arrow-right timeline-arrow"></i>
+                                <div class="timeline-step">
+                                    <i class="fa-solid fa-user-tie highlight-primary"></i>
+                                    <span class="stage-title">Adulthood</span>
+                                    <span class="stage-desc">20+ Years</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -721,7 +761,194 @@ const slides = [
         `
     },
 
-    // SLIDE 5: Health - Diet & Exercise
+    // SLIDE 5: NEW - Cell Specialisation (Missing concept)
+    {
+        template: () => `
+            <div class="anim-enter">
+                <h2>How do we get complex?</h2>
+                <p>From one simple cell to many different types.</p>
+                
+                <div class="grid-2">
+                    <div class="delay-1 anim-enter">
+                         <div class="glass-card" style="text-align:center;">
+                            <i class="fa-solid fa-splotch" style="font-size: 3rem; color: var(--text-dim); margin-bottom: 1rem;"></i>
+                            <h3>Stem Cells</h3>
+                            <p>The first cells in an embryo are identical. They can become anything.</p>
+                            <div style="font-size: 2rem; margin: 1rem 0; color: var(--accent);">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </div>
+                            <h3>Specialised Cells</h3>
+                            <p>Cells change shape to do a specific job.</p>
+                         </div>
+                    </div>
+
+                    <div class="delay-2 anim-enter">
+                        <div class="pedagogical-note note-write">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Definition</div>
+                            <h3 class="highlight-primary">Differentiation</h3>
+                            <p>The process where a cell changes to become specialized for its job.</p>
+                        </div>
+
+                        <div class="pedagogical-note note-write">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Examples</div>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
+                                    <i class="fa-solid fa-bolt highlight-warn" style="font-size: 1.5rem; width: 30px;"></i>
+                                    <div><strong>Nerve Cell:</strong> Long to carry signals.</div>
+                                </li>
+                                <li style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
+                                    <i class="fa-solid fa-droplet highlight-danger" style="font-size: 1.5rem; width: 30px;"></i>
+                                    <div><strong>Red Blood Cell:</strong> No nucleus, carries oxygen.</div>
+                                </li>
+                                <li style="display: flex; gap: 1rem; align-items: center;">
+                                    <i class="fa-solid fa-dumbbell highlight-accent" style="font-size: 1.5rem; width: 30px;"></i>
+                                    <div><strong>Muscle Cell:</strong> Stretchy to allow movement.</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 6: NEW - Adolescence Theory (Missing Concept)
+    {
+        template: () => `
+            <div class="anim-enter">
+                <h2>The Bridge to Adulthood</h2>
+                <p>Between childhood and adulthood lies <strong>Adolescence</strong>.</p>
+
+                <div class="grid-2">
+                    <div class="delay-1 anim-enter">
+                        <div class="glass-card">
+                            <h3><i class="fa-solid fa-calendar-days"></i> What is Adolescence?</h3>
+                            <p>It is the time when you are growing up from a child into an adult.</p>
+                            <p style="margin-top:1rem;">During this time, <strong>Puberty</strong> happens.</p>
+                            <p>Puberty is the <em>physical</em> changes that happen to the body to prepare it for reproduction.</p>
+                        </div>
+                    </div>
+
+                    <div class="delay-2 anim-enter">
+                        <div class="pedagogical-note note-write">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Key Chemicals</div>
+                            <h3 class="highlight-primary">Hormones</h3>
+                            <p>Chemical messengers that travel in the blood to trigger puberty.</p>
+                            
+                            <div style="margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                                <div style="margin-bottom: 1rem;">
+                                    <strong style="color: #60a5fa;">Testosterone</strong>
+                                    <p style="font-size: 0.9rem;">Produced in testes. Causes changes in boys.</p>
+                                </div>
+                                <div>
+                                    <strong style="color: #f472b6;">Oestrogen</strong>
+                                    <p style="font-size: 0.9rem;">Produced in ovaries. Causes changes in girls.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 7: NEW - Mid-Lesson Activity (Puberty Sort)
+    {
+        template: () => `
+            <div class="anim-enter" style="height: 100%; display: flex; flex-direction: column;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2>Activity: Changes During Puberty</h2>
+                    <button class="btn-action" id="check-sort">Check Answers</button>
+                </div>
+                <p>Drag (or click) the changes to sort them into the correct category.</p>
+                
+                <div class="pedagogical-note note-task" style="margin: 1rem 0; padding: 1rem;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-hand-pointer"></i> Interaction</div>
+                    <div id="source-container" style="min-height: 60px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <div class="sort-item" draggable="true" data-cat="both">Underarm Hair</div>
+                        <div class="sort-item" draggable="true" data-cat="male">Voice Breaks</div>
+                        <div class="sort-item" draggable="true" data-cat="female">Hips Widen</div>
+                        <div class="sort-item" draggable="true" data-cat="both">Acne/Spots</div>
+                        <div class="sort-item" draggable="true" data-cat="male">Shoulders Broaden</div>
+                        <div class="sort-item" draggable="true" data-cat="female">Menstruation</div>
+                        <div class="sort-item" draggable="true" data-cat="both">Growth Spurt</div>
+                        <div class="sort-item" draggable="true" data-cat="male">Facial Hair</div>
+                        <div class="sort-item" draggable="true" data-cat="female">Breasts Develop</div>
+                    </div>
+                </div>
+
+                <div class="sort-container" style="flex: 1;">
+                    <div class="sort-bucket" id="bucket-male" data-cat="male">
+                        <h4 style="color: #60a5fa;"><i class="fa-solid fa-mars"></i> Boys</h4>
+                    </div>
+                    <div class="sort-bucket" id="bucket-both" data-cat="both">
+                        <h4 style="color: var(--accent);"><i class="fa-solid fa-venus-mars"></i> Both</h4>
+                    </div>
+                    <div class="sort-bucket" id="bucket-female" data-cat="female">
+                        <h4 style="color: #f472b6;"><i class="fa-solid fa-venus"></i> Girls</h4>
+                    </div>
+                </div>
+            </div>
+        `,
+        script: (container) => {
+            const items = container.querySelectorAll('.sort-item');
+            const buckets = container.querySelectorAll('.sort-bucket');
+            const source = container.querySelector('#source-container');
+            const checkBtn = container.querySelector('#check-sort');
+            let selectedItem = null;
+
+            // Simple Click Logic for ease of use on all devices
+            items.forEach(item => {
+                item.addEventListener('click', () => {
+                    // Deselect others
+                    items.forEach(i => i.style.opacity = '1');
+                    items.forEach(i => i.style.border = 'none');
+                    
+                    selectedItem = item;
+                    item.style.opacity = '0.7';
+                    item.style.border = '2px solid white';
+                });
+            });
+
+            buckets.forEach(bucket => {
+                bucket.addEventListener('click', () => {
+                    if(selectedItem) {
+                        bucket.appendChild(selectedItem);
+                        selectedItem.style.opacity = '1';
+                        selectedItem.style.border = 'none';
+                        selectedItem = null;
+                    }
+                });
+            });
+
+            checkBtn.addEventListener('click', () => {
+                let correct = 0;
+                items.forEach(item => {
+                    const parentCat = item.parentElement.dataset.cat;
+                    const itemCat = item.dataset.cat;
+                    
+                    if(parentCat === itemCat) {
+                        item.style.backgroundColor = 'var(--accent)'; // Green
+                        item.innerHTML = `<i class="fa-solid fa-check"></i> ${item.innerText.replace('✓ ', '')}`;
+                        correct++;
+                    } else {
+                        item.style.backgroundColor = 'var(--danger)'; // Red
+                    }
+                });
+                
+                if(correct === items.length) {
+                    checkBtn.innerText = "Perfect Score!";
+                    checkBtn.disabled = true;
+                } else {
+                    checkBtn.innerText = "Try Again (Move Red Items)";
+                }
+            });
+
+            return () => {};
+        }
+    },
+
+    // SLIDE 8: Health - Diet & Exercise
     {
         template: () => `
             <div class="anim-enter">
@@ -761,7 +988,7 @@ const slides = [
         `
     },
 
-    // SLIDE 6: Smoking - The Villains
+    // SLIDE 9: Smoking - The Villains
     {
         template: () => `
             <div class="anim-enter">
@@ -836,7 +1063,7 @@ const slides = [
         }
     },
 
-    // SLIDE 7: Carbon Monoxide Deep Dive
+    // SLIDE 10: Carbon Monoxide Deep Dive
     {
         template: () => `
             <div class="anim-enter">
@@ -898,7 +1125,7 @@ const slides = [
         }
     },
 
-    // SLIDE 8: Data Analysis (The Graph)
+    // SLIDE 11: Data Analysis (The Graph)
     {
         template: () => `
             <div class="anim-enter">
@@ -962,7 +1189,7 @@ const slides = [
         }
     },
 
-    // SLIDE 9: Assessment Quiz
+    // SLIDE 12: Assessment Quiz
     {
         template: () => `
             <div class="anim-enter">
@@ -1039,7 +1266,7 @@ const slides = [
         }
     },
 
-    // SLIDE 10: Video Resource
+    // SLIDE 13: Video Resource
     {
         template: () => `
             <div class="anim-enter" style="text-align:center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
