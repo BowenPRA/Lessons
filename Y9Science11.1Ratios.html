@@ -14,7 +14,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- MathJax for formulas -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      startup: {
+        ready: () => {
+          MathJax.startup.defaultReady();
+          document.dispatchEvent(new Event('mathjax-ready'));
+        }
+      }
+    };
+    </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
@@ -265,6 +282,22 @@
         .bar-box.highlight { background: var(--accent); border-color: var(--accent); color: black; }
         .bar-box.secondary { background: var(--primary); border-color: var(--primary); }
 
+        /* Skittles Visuals */
+        .skittle-grid {
+            display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 10px;
+        }
+        .skittle {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fecaca, #ef4444);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s;
+        }
+        .skittle.green { background: radial-gradient(circle at 30% 30%, #bbf7d0, #16a34a); }
+        .skittle.purple { background: radial-gradient(circle at 30% 30%, #e9d5ff, #9333ea); }
+        .skittle:hover { transform: scale(1.2); }
+
         /* --- CONTROLS --- */
         .btn-nav {
             background: rgba(255,255,255,0.1);
@@ -458,6 +491,12 @@ class LessonController {
         new BackgroundAnimation('bg-canvas');
         this.btnPrev.addEventListener('click', () => this.prev());
         this.btnNext.addEventListener('click', () => this.next());
+        
+        // Listen for MathJax ready event
+        document.addEventListener('mathjax-ready', () => {
+             this.render(); // Re-render when MathJax is ready to ensure typeset
+        });
+
         document.addEventListener('keydown', (e) => {
             if (document.activeElement.tagName === 'INPUT') return;
             if (e.key === 'ArrowRight') this.next();
@@ -476,7 +515,12 @@ class LessonController {
         this.progressBar.style.width = `${((this.index + 1) / this.slides.length) * 100}%`;
         this.btnPrev.disabled = this.index === 0;
         this.btnNext.disabled = this.index === this.slides.length - 1;
-        if (window.MathJax) MathJax.typesetPromise([this.container]);
+        
+        // Safe MathJax rendering
+        if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+            MathJax.typesetPromise([this.container]).catch(err => console.log("MathJax typesetting failed: ", err));
+        }
+
         requestAnimationFrame(() => {
             if (slide.script) this.currentCleanup = slide.script(this.container);
         });
@@ -638,7 +682,111 @@ const slides = [
         }
     },
 
-    // SLIDE 4: Ratio Mapping (Drag & Drop)
+    // SLIDE 4: New - Sharing Ratio Guide (With Badge)
+    {
+        template: () => `
+            <div class="anim-enter">
+                <h2>Guide: Solving Sharing Problems</h2>
+                <p>When you know the <strong>TOTAL</strong>, follow this exact path.</p>
+                
+                <div class="pedagogical-note note-write" style="margin-top: 2rem;">
+                     <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                     <div class="grid-3">
+                        <div style="text-align:center;">
+                            <div style="font-size:3rem; color:var(--primary); margin-bottom:1rem;"><i class="fa-solid fa-plus"></i></div>
+                            <h3 style="margin-bottom:0.5rem;">1. Add</h3>
+                            <p>Add the ratio parts together to find the <strong>Total Parts</strong>.</p>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="font-size:3rem; color:var(--accent); margin-bottom:1rem;"><i class="fa-solid fa-divide"></i></div>
+                            <h3 style="margin-bottom:0.5rem;">2. Divide</h3>
+                            <p>Divide the <strong>Total Amount</strong> by the <strong>Total Parts</strong> to find the value of <strong>1 Part</strong>.</p>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="font-size:3rem; color:var(--warning); margin-bottom:1rem;"><i class="fa-solid fa-xmark"></i></div>
+                            <h3 style="margin-bottom:0.5rem;">3. Multiply</h3>
+                            <p>Multiply the value of <strong>1 Part</strong> by each person's ratio share.</p>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        `
+    },
+
+    // SLIDE 5: New - Dog Hotel (VND & Hidden Steps)
+    {
+        template: () => `
+            <div class="anim-enter">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-dog" style="font-size: 2.5rem; color: var(--primary);"></i>
+                    <h2>The Dog Hotel Business</h2>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="glass-card delay-1 anim-enter">
+                        <h3 style="margin-bottom:1rem;">Weekly Profit Sharing</h3>
+                        <p style="font-size:1.2rem; margin-bottom:1rem;">The Dog Hotel made <strong>800,000 ₫</strong> profit last week!</p>
+                        <p>Mr. Bowen and Mr. Seth share the profit in the ratio:</p>
+                        <div style="font-size:2.5rem; font-weight:900; color:var(--text-light); text-align:center; background:rgba(0,0,0,0.3); padding:1rem; border-radius:12px; margin:1rem 0;">
+                            <span style="color:var(--primary)">1</span> : <span style="color:var(--accent)">4</span>
+                        </div>
+                        <p style="text-align:center;"><strong>Bowen : Seth</strong></p>
+                    </div>
+
+                    <div class="delay-2 anim-enter">
+                        <div class="pedagogical-note note-task">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-calculator"></i> Your Turn</div>
+                            <p style="font-size:1.3rem;">Calculate how much profit each person gets.</p>
+                            
+                            <button id="btn-hint" class="btn-action" style="margin-top:1rem; font-size: 0.9rem; padding: 0.5rem 1rem; background: var(--bg-panel); border: 1px solid var(--text-dim); box-shadow:none;">Need a Hint?</button>
+                            
+                            <div id="hotel-steps" style="display:none; margin-top:1rem; border-left: 2px solid var(--primary); padding-left: 1rem;">
+                                <p>1. Total Parts: $1 + 4 = 5$.</p>
+                                <p>2. 1 Part: $800,000 \\div 5 = 160,000$.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <p style="font-size:0.9rem; color:var(--text-dim);">Mr. Bowen (1 Part)</p>
+                                    <div class="calc-input" style="width:150px; margin:5px 0;">160,000 ₫</div>
+                                </div>
+                                <div>
+                                    <p style="font-size:0.9rem; color:var(--text-dim);">Mr. Seth (4 Parts)</p>
+                                    <div id="seth-answer" class="calc-input" style="width:150px; margin:5px 0; border-color:var(--text-dim); color:transparent; cursor:pointer;">???</div>
+                                </div>
+                            </div>
+                            <button id="reveal-hotel" class="btn-action" style="width:100%; margin-top:1rem;">Reveal Seth's Share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        script: (container) => {
+            const btn = container.querySelector('#reveal-hotel');
+            const ans = container.querySelector('#seth-answer');
+            const hintBtn = container.querySelector('#btn-hint');
+            const steps = container.querySelector('#hotel-steps');
+
+            btn.addEventListener('click', () => {
+                ans.style.color = "white";
+                ans.style.borderColor = "var(--accent)";
+                ans.innerText = "640,000 ₫";
+                btn.style.display = "none";
+            });
+
+            hintBtn.addEventListener('click', () => {
+                steps.style.display = 'block';
+                steps.classList.add('anim-enter');
+                hintBtn.style.display = 'none';
+                if(window.MathJax && typeof window.MathJax.typesetPromise === 'function') MathJax.typesetPromise([steps]);
+            });
+            return () => {};
+        }
+    },
+
+    // SLIDE 6: Ratio Mapping
     {
         template: () => `
             <div class="anim-enter">
@@ -717,7 +865,7 @@ const slides = [
         }
     },
 
-    // SLIDE 5: The "Difference" Problem (Polished)
+    // SLIDE 7: The "Difference" Problem (Visual Fix)
     {
         template: () => `
             <div class="anim-enter">
@@ -728,50 +876,44 @@ const slides = [
                     <div class="glass-card delay-1 anim-enter" style="display:flex; flex-direction:column; justify-content:space-between;">
                         <div>
                             <h3><i class="fa-solid fa-layer-group"></i> The Visual</h3>
-                            <p style="margin-bottom:1rem;">Ratio A:B is <strong>5 : 2</strong>.</p>
-                            <p>"A gets <strong>$24 more</strong> than B".</p>
+                            <p style="margin-bottom:1rem;">Ratio Seth : Bowen is <strong>5 : 2</strong>.</p>
+                            <p>"Seth gets <strong>$24 more</strong> than Bowen".</p>
                         </div>
                         
-                        <!-- Visual Container -->
-                        <div style="position:relative; margin-top:2rem; height: 300px; display:flex; justify-content:center; align-items:flex-end; padding-bottom: 40px;">
+                        <!-- NEW ROBUST VISUALIZER -->
+                        <div style="display:flex; align-items:flex-end; gap:20px; justify-content:center; padding-top:20px; padding-bottom:10px;">
                             
-                            <!-- Floor Line -->
-                            <div style="position:absolute; bottom:30px; left:0; right:0; height:2px; background:rgba(255,255,255,0.2);"></div>
-
-                            <!-- Stack A -->
-                            <div style="margin-right: 2rem; text-align:center; z-index:1;">
-                                <div style="display:flex; flex-direction:column-reverse; gap:4px; margin-bottom:10px;">
-                                    <div class="bar-box secondary" style="width:60px; height:40px; font-size:1rem;">1</div>
-                                    <div class="bar-box secondary" style="width:60px; height:40px; font-size:1rem;">1</div>
-                                    <div class="bar-box highlight diff-box" style="width:60px; height:40px; font-size:1rem; border-color:var(--warning); color:black; background:var(--warning);">1</div>
-                                    <div class="bar-box highlight diff-box" style="width:60px; height:40px; font-size:1rem; border-color:var(--warning); color:black; background:var(--warning);">1</div>
-                                    <div class="bar-box highlight diff-box" style="width:60px; height:40px; font-size:1rem; border-color:var(--warning); color:black; background:var(--warning);">1</div>
-                                </div>
-                                <div style="font-weight:bold; color:var(--primary);">Person A</div>
-                                <div style="font-size:0.8rem; color:var(--text-dim);">(5 Parts)</div>
-                            </div>
-
-                            <!-- Stack B -->
-                            <div style="margin-right: 4rem; text-align:center; z-index:1;">
-                                <div style="display:flex; flex-direction:column-reverse; gap:4px; margin-bottom:10px;">
-                                    <div class="bar-box secondary" style="width:60px; height:40px; font-size:1rem;">1</div>
-                                    <div class="bar-box secondary" style="width:60px; height:40px; font-size:1rem;">1</div>
-                                    <!-- Spacer to align visually if needed, but flex-end handles it -->
-                                </div>
-                                <div style="font-weight:bold; color:var(--text-light);">Person B</div>
-                                <div style="font-size:0.8rem; color:var(--text-dim);">(2 Parts)</div>
-                            </div>
-
-                            <!-- Difference Marker -->
-                            <!-- Top 3 boxes of A: 3 * (40+4) = 132px roughly. Position relative to floor (30px) + Person B height (2 boxes = 88px + 10px margin) -->
-                            <div style="position:absolute; left: 50%; bottom: 128px; transform: translateX(-90px);">
-                                <div style="display:flex; align-items:center;">
-                                    <div style="width: 20px; border-top: 2px dashed var(--warning); border-bottom: 2px dashed var(--warning); border-right: 2px dashed var(--warning); height: 128px; border-radius: 0 10px 10px 0; margin-left:5px;"></div>
-                                    <div style="margin-left: 10px; color: var(--warning); font-weight:bold; text-align:left; line-height:1.2;">
-                                        Difference<br>
-                                        <span style="font-size:1.5rem;">$24</span>
+                            <!-- Seth Stack -->
+                            <div style="display:flex; flex-direction:column; align-items:center;">
+                                <div style="display:flex; flex-direction:column; gap:4px;">
+                                    <!-- Difference Part -->
+                                    <div style="display:flex;">
+                                        <div style="display:flex; flex-direction:column; gap:4px;">
+                                            <div class="bar-box highlight" style="width:50px; height:35px; font-size:0.9rem; background:var(--warning); color:black; border-color:var(--warning);">1</div>
+                                            <div class="bar-box highlight" style="width:50px; height:35px; font-size:0.9rem; background:var(--warning); color:black; border-color:var(--warning);">1</div>
+                                            <div class="bar-box highlight" style="width:50px; height:35px; font-size:0.9rem; background:var(--warning); color:black; border-color:var(--warning);">1</div>
+                                        </div>
+                                        <!-- Bracket -->
+                                        <div style="width:10px; border-top:2px dashed var(--warning); border-bottom:2px dashed var(--warning); border-right:2px dashed var(--warning); margin-left:8px; display:flex; align-items:center; justify-content:center; position:relative;">
+                                            <span style="position:absolute; left:15px; width:100px; color:var(--warning); font-weight:bold;">Diff = $24</span>
+                                        </div>
                                     </div>
+                                    <!-- Common Part -->
+                                    <div class="bar-box secondary" style="width:50px; height:35px; font-size:0.9rem;">1</div>
+                                    <div class="bar-box secondary" style="width:50px; height:35px; font-size:0.9rem;">1</div>
                                 </div>
+                                <span style="margin-top:8px; font-weight:bold; color:var(--primary);">Seth (5)</span>
+                            </div>
+
+                            <!-- Bowen Stack -->
+                            <div style="display:flex; flex-direction:column; align-items:center;">
+                                <div style="display:flex; flex-direction:column; gap:4px;">
+                                    <!-- Empty space for alignment -->
+                                    <div style="height:113px;"></div> 
+                                    <div class="bar-box secondary" style="width:50px; height:35px; font-size:0.9rem;">1</div>
+                                    <div class="bar-box secondary" style="width:50px; height:35px; font-size:0.9rem;">1</div>
+                                </div>
+                                <span style="margin-top:8px; font-weight:bold; color:var(--text-light);">Bowen (2)</span>
                             </div>
 
                         </div>
@@ -782,12 +924,12 @@ const slides = [
                             <div class="pedagogical-badge"><i class="fa-solid fa-calculator"></i> The Math</div>
                             <p>1. Find Difference in parts: $5 - 2 = 3$ parts.</p>
                             <p>2. Equate to value: <span style="color:var(--warning); font-weight:bold;">3 parts = $24</span>.</p>
-                            <p>3. Find 1 part: $24 \div 3 = \$8$.</p>
+                            <p>3. Find 1 part: $24 \\div 3 = 8$.</p>
                         </div>
                         
                         <div class="glass-card">
                             <h3>Try it:</h3>
-                            <p>If 1 part = $8, what is the Total?</p>
+                            <p>If 1 part = $8, what is the Total Amount?</p>
                             <div style="display:flex; gap:10px; margin-top:10px;">
                                 <input id="diff-input" type="number" class="calc-input" placeholder="Total?">
                                 <button id="diff-check" class="btn-action">Check</button>
@@ -816,7 +958,7 @@ const slides = [
         }
     },
 
-    // SLIDE 6: Science Application (Direct Proportion)
+    // SLIDE 8: Science Application (Visual Added)
     {
         template: () => `
             <div class="anim-enter">
@@ -827,14 +969,21 @@ const slides = [
                             <h3><i class="fa-solid fa-flask"></i> Making Bronze</h3>
                             <p>Bronze is made of <strong>Copper</strong> and <strong>Tin</strong> in the ratio <strong>9 : 1</strong>.</p>
                             <p style="margin-top:1rem;">We need to make a statue with a total mass of <strong>250 kg</strong>.</p>
+                            
+                            <!-- Simple Bar Visual -->
+                            <div style="margin-top:1rem; height:20px; width:100%; display:flex; border-radius:10px; overflow:hidden;">
+                                <div style="flex:9; background:#b45309; display:flex; align-items:center; justify-content:center; font-size:0.7rem;">Copper (9)</div>
+                                <div style="flex:1; background:#94a3b8; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:black;">Tin</div>
+                            </div>
+
                         </div>
                         <div class="pedagogical-note note-task" style="margin-top:1rem;">
                             <div class="pedagogical-badge"><i class="fa-solid fa-list-ol"></i> Steps</div>
-                            <ol style="margin-left:1.5rem;">
+                            <ul style="margin-left:1.5rem;">
                                 <li>Total Parts = $9 + 1 = 10$.</li>
-                                <li>1 Part = $250 \div 10$.</li>
+                                <li>1 Part = $250 \\div 10$.</li>
                                 <li>Multiply for each metal.</li>
-                            </ol>
+                            </ul>
                         </div>
                     </div>
 
@@ -883,7 +1032,7 @@ const slides = [
         }
     },
 
-    // SLIDE 7: Ambiguity & Error Analysis
+    // SLIDE 9: Ambiguity & Error Analysis (Skittles Fix)
     {
         template: () => `
             <div class="anim-enter">
@@ -892,30 +1041,51 @@ const slides = [
                 
                 <div class="glass-card delay-1 anim-enter" style="border-color:var(--warning);">
                     <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--warning)"></i> The Problem</h3>
-                    <p style="font-size:1.3rem;">"Two numbers are in the ratio <strong>3 : 4</strong>. One of the numbers is <strong>12</strong>."</p>
-                    <p>What is the other number?</p>
+                    <p style="font-size:1.3rem;">Seth and Landon share Skittles in the ratio <strong>3 : 4</strong>.</p>
+                    <p style="font-size:1.3rem;"><strong>"One person got 12 Skittles."</strong></p>
+                    <p>How many did the other person get?</p>
                 </div>
 
                 <div class="grid-2 delay-2 anim-enter" style="margin-top:2rem;">
                     <!-- Case A -->
                     <div style="background:rgba(255,255,255,0.05); padding:1.5rem; border-radius:16px;">
-                        <h3 class="highlight-primary">Case A: The '3' is 12</h3>
-                        <p>If 3 parts = 12, then 1 part = 4.</p>
-                        <p>Other number (4 parts) = $4 \times 4 = 16$.</p>
+                        <h3 class="highlight-primary">Case A: Seth got 12</h3>
+                        <div style="margin:10px 0; color:var(--text-dim); font-size:1.1rem; line-height:1.5;">
+                             <p>1. Seth (3 parts) = 12.</p>
+                             <p>2. 1 Part = $12 \\div 3 = 4$.</p>
+                             <p>3. Landon (4 parts) = $4 \\times 4 = 16$.</p>
+                        </div>
                         <button class="btn-action" style="margin-top:1rem; font-size:1rem; width:100%;" id="btn-case-a">Visualize A</button>
                         <div id="vis-a" style="margin-top:1rem; display:none;">
-                            $$ 12 : 16 $$
+                            <p style="font-weight:bold; margin-bottom:5px;">Seth (12):</p>
+                            <div class="skittle-grid">
+                                ${'<div class="skittle purple"></div>'.repeat(12)}
+                            </div>
+                             <p style="font-weight:bold; margin-bottom:5px; margin-top:10px;">Landon (16):</p>
+                            <div class="skittle-grid">
+                                ${'<div class="skittle green"></div>'.repeat(16)}
+                            </div>
                         </div>
                     </div>
                     
                     <!-- Case B -->
                     <div style="background:rgba(255,255,255,0.05); padding:1.5rem; border-radius:16px;">
-                        <h3 class="highlight-accent">Case B: The '4' is 12</h3>
-                        <p>If 4 parts = 12, then 1 part = 3.</p>
-                        <p>Other number (3 parts) = $3 \times 3 = 9$.</p>
+                        <h3 class="highlight-accent">Case B: Landon got 12</h3>
+                         <div style="margin:10px 0; color:var(--text-dim); font-size:1.1rem; line-height:1.5;">
+                             <p>1. Landon (4 parts) = 12.</p>
+                             <p>2. 1 Part = $12 \\div 4 = 3$.</p>
+                             <p>3. Seth (3 parts) = $3 \\times 3 = 9$.</p>
+                        </div>
                         <button class="btn-action" style="margin-top:1rem; font-size:1rem; width:100%;" id="btn-case-b">Visualize B</button>
                          <div id="vis-b" style="margin-top:1rem; display:none;">
-                            $$ 9 : 12 $$
+                            <p style="font-weight:bold; margin-bottom:5px;">Seth (9):</p>
+                            <div class="skittle-grid">
+                                ${'<div class="skittle purple"></div>'.repeat(9)}
+                            </div>
+                             <p style="font-weight:bold; margin-bottom:5px; margin-top:10px;">Landon (12):</p>
+                            <div class="skittle-grid">
+                                ${'<div class="skittle green"></div>'.repeat(12)}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -927,13 +1097,13 @@ const slides = [
             const btnB = container.querySelector('#btn-case-b');
             const visB = container.querySelector('#vis-b');
 
-            btnA.addEventListener('click', () => { visA.style.display = 'block'; MathJax.typesetPromise([visA]); });
-            btnB.addEventListener('click', () => { visB.style.display = 'block'; MathJax.typesetPromise([visB]); });
+            btnA.addEventListener('click', () => { visA.style.display = 'block'; });
+            btnB.addEventListener('click', () => { visB.style.display = 'block'; });
             return () => {};
         }
     },
 
-    // SLIDE 8: Real World - Limiting Factors
+    // SLIDE 10: Real World - Limiting Factors
     {
         template: () => `
             <div class="anim-enter">
@@ -1004,7 +1174,7 @@ const slides = [
         }
     },
 
-    // SLIDE 9: Assessment Quiz
+    // SLIDE 11: Assessment Quiz
     {
         template: () => `
             <div class="anim-enter">
@@ -1056,7 +1226,7 @@ const slides = [
         }
     },
 
-    // SLIDE 10: Final Task
+    // SLIDE 12: Final Task (Homework & Video)
     {
         template: () => `
              <div class="anim-enter" style="text-align:center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
@@ -1066,14 +1236,13 @@ const slides = [
                          <h3><i class="fa-solid fa-draw-polygon"></i> Angles in a Triangle</h3>
                          <p>The angles of a triangle are in the ratio <strong>1 : 2 : 3</strong>.</p>
                          <p>Remember: Angles in a triangle sum to <strong>180°</strong>.</p>
-                         <div style="margin-top:2rem; padding:1rem; background:rgba(255,255,255,0.1); border-radius:12px;">
-                            <strong>Task:</strong> Calculate the size of the largest angle.
+                         <div style="margin-top:2rem; padding:1.5rem; background:rgba(255,255,255,0.1); border-radius:12px; border-left: 5px solid var(--accent);">
+                            <h4 style="color:var(--accent); margin-bottom:0.5rem; font-size:1.2rem;">HOMEWORK</h4>
+                            <p style="font-size:1.4rem; font-weight:bold; color:white;">Workbook page 147 to 154</p>
                          </div>
                     </div>
-                     <div class="glass-card delay-2 anim-enter" style="display:flex; align-items:center; justify-content:center; flex-direction:column;">
-                        <i class="fa-brands fa-youtube" style="font-size:4rem; color:#ff0000; margin-bottom:1rem;"></i>
-                        <p>Watch the summary video for homework.</p>
-                        <button class="btn-action" style="margin-top:1rem;">Open Video Resource</button>
+                     <div class="glass-card delay-2 anim-enter" style="padding:0; overflow:hidden; background:black;">
+                        <iframe width="100%" height="350" src="https://www.youtube.com/embed/2SP132pYFCA?si=maths_triangle" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border:none;"></iframe>
                     </div>
                 </div>
             </div>
