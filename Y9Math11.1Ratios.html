@@ -90,6 +90,13 @@
         h3 { font-family: 'Outfit'; font-weight: 700; font-size: clamp(1.5rem, 2.5vw, 2rem); color: var(--primary); }
         p, li { font-size: clamp(1.1rem, 1.5vw, 1.4rem); line-height: 1.6; color: #cbd5e1; }
         
+        /* Helper Classes for Text Colors */
+        .text-red { color: var(--danger); }
+        .text-green { color: var(--accent); }
+        .text-purple { color: var(--primary); }
+        .text-warn { color: var(--warning); }
+        .text-white { color: white; }
+
         .highlight-accent { color: var(--accent); text-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
         .highlight-primary { color: var(--primary); }
         .highlight-warn { color: var(--warning); }
@@ -264,31 +271,80 @@
         .calc-input:focus { border-color: var(--accent); }
 
         /* --- SPECIFIC VISUALS --- */
-        .skittle {
-            width: 30px; height: 30px;
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.3);
-            border: 2px solid rgba(255,255,255,0.2);
-            margin: 2px;
+        
+        /* Bar Models */
+        .bar-model-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; position: relative; }
+        .bar-model-label { width: 80px; font-weight: bold; text-align: right; font-size: 1.1rem; }
+        .bar-model-blocks { display: flex; gap: 6px; }
+        
+        .model-block {
+            width: 50px; height: 50px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800;
+            color: white;
+            background: rgba(255,255,255,0.05);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 1.1rem;
         }
-        .skittle-red { background: #ef4444; }
-        .skittle-green { background: #10b981; }
-        .skittle-purple { background: #8b5cf6; }
+        
+        .model-block.red { border-color: var(--danger); background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .model-block.green { border-color: var(--accent); background: rgba(16, 185, 129, 0.1); color: var(--accent); }
+        .model-block.purple { border-color: var(--primary); background: rgba(139, 92, 246, 0.1); color: var(--primary); }
+        
+        .model-block.highlight { 
+            transform: scale(1.1); 
+            box-shadow: 0 0 20px currentColor;
+            background: currentColor;
+            color: black !important;
+            border-color: white;
+        }
 
-        .factor-bubble {
-            display: inline-flex;
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid var(--text-dim);
-            align-items: center; justify-content: center;
-            font-weight: bold;
-            margin: 5px;
+        /* Math Display Rows (HTML Math) */
+        .math-row {
+            display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+            font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.2);
+        }
+        .math-op { color: var(--text-dim); }
+        .math-res { color: white; background: rgba(255,255,255,0.1); padding: 0 10px; border-radius: 8px; }
+
+        /* Brackets */
+        .bracket-container {
+            position: absolute; display: flex; justify-content: center; pointer-events: none;
+        }
+        .bracket-line {
+            border: 2px dashed white; opacity: 0.7;
+        }
+        .bracket-label {
+            position: absolute; 
+            background: var(--bg-panel); 
+            padding: 2px 8px; 
+            font-weight: bold; font-size: 0.9rem;
+            border-radius: 4px; white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            z-index: 5;
+        }
+
+        /* HCF Atoms */
+        .atomic-bar { display: flex; gap: 2px; margin: 15px 0; align-items: center; flex-wrap: wrap; }
+        .atomic-unit { 
+            width: 10px; height: 30px; 
+            background: rgba(255,255,255,0.1); 
+            border-radius: 2px; 
             transition: all 0.3s;
         }
-        .factor-bubble.common { border-color: var(--warning); color: var(--warning); transform: scale(1.1); }
-        .factor-bubble.hcf { background: var(--warning); color: black; border-color: var(--warning); transform: scale(1.3); box-shadow: 0 0 15px var(--warning); }
+        .atomic-unit.active { 
+            height: 40px; 
+            box-shadow: 0 0 10px currentColor;
+            margin-right: 2px;
+        }
+        .group-separator { width: 8px; } /* Gap between groups */
+
 
         /* --- ANIMATIONS --- */
         @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
@@ -466,28 +522,23 @@ const slides = [
                 <h1 style="color:white; margin-bottom: 0.5rem;">Proportion & HCF</h1>
                 <p style="font-size: 1.5rem; color: var(--accent); font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">Advanced Ratio Skills</p>
                 
-                <div class="grid-3 delay-1 anim-enter" style="margin-top: 4rem; text-align: left;">
+                <div class="grid-2 delay-1 anim-enter" style="margin-top: 4rem; text-align: left; max-width: 900px; margin-left: auto; margin-right: auto;">
                     <div class="glass-card">
                         <i class="fa-solid fa-up-right-and-down-left-from-center" style="font-size: 2.5rem; color: var(--warning); margin-bottom: 1rem;"></i>
                         <h3>1. Proportions</h3>
-                        <p>Scaling up recipes and solving "unknown part" problems.</p>
-                    </div>
-                    <div class="glass-card">
-                        <i class="fa-solid fa-link" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem;"></i>
-                        <h3>2. Linking Ratios</h3>
-                        <p>Combining two separate ratios into one chain.</p>
+                        <p>Scaling up recipes and solving "unknown part" problems using the bucket method.</p>
                     </div>
                     <div class="glass-card">
                         <i class="fa-solid fa-scissors" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
-                        <h3>3. HCF & Simplifying</h3>
-                        <p>Using the Highest Common Factor to reduce ratios.</p>
+                        <h3>2. HCF & Simplifying</h3>
+                        <p>Using the Highest Common Factor to reduce ratios to their simplest form.</p>
                     </div>
                 </div>
             </div>
         `
     },
 
-    // SLIDE 2: Warm Up Problem 1
+    // SLIDE 2: Warm Up Problem 1 (Scaling)
     {
         template: () => `
             <div class="anim-enter">
@@ -501,36 +552,65 @@ const slides = [
                         <h3><i class="fa-solid fa-candy-cane"></i> Seth's Skittles</h3>
                         <p>Seth has a bag of Skittles.</p>
                         <div style="font-size:1.4rem; background:rgba(0,0,0,0.3); padding:1rem; border-radius:12px; margin:1rem 0;">
-                            Ratio <strong style="color:var(--danger)">Red</strong> : <strong style="color:var(--accent)">Green</strong> is <strong>4 : 5</strong>
+                            Ratio <strong class="text-red">4</strong> : <strong class="text-green">5</strong> (<span class="text-red">Red</span> : <span class="text-green">Green</span>)
                         </div>
-                        <p style="font-size:1.3rem;">If he counts <strong>120 Green</strong> Skittles, how many Red ones are there?</p>
+                        <p style="font-size:1.3rem;">If he counts <strong><span class="text-green">120 Green</span></strong> Skittles, how many Red ones are there?</p>
+                        
+                        <div class="pedagogical-note note-task" style="margin-top:2rem;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-magnifying-glass"></i> Setup</div>
+                            <div class="math-row">
+                                <span class="text-red">4</span> <span class="math-op">:</span> <span class="text-green">5</span> 
+                                <span class="math-op">=</span> 
+                                <span class="text-red">?</span> <span class="math-op">:</span> <span class="text-green">120</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="delay-2 anim-enter">
-                        <div class="pedagogical-note note-task">
-                            <div class="pedagogical-badge"><i class="fa-solid fa-magnifying-glass"></i> Find the Multiplier</div>
-                            <p>Don't guess! Find the scale factor between the ratio and the real number.</p>
-                        </div>
+                    <div class="glass-card delay-2 anim-enter" style="position:relative; min-height:400px; display:flex; flex-direction:column; justify-content:center;">
+                        <button id="reveal-btn-1" class="btn-action" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; width:auto;">Reveal Visual Solution</button>
                         
-                        <div class="glass-card" style="position:relative; overflow:hidden;">
-                            <button id="reveal-btn-1" class="btn-action" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; width:auto;">Reveal Solution</button>
+                        <div id="solution-1" style="filter:blur(10px); opacity:0.5; transition:all 0.5s;">
+                            <h3 class="highlight-primary" style="margin-bottom:1.5rem; text-align:center;">The Multiplier Method</h3>
                             
-                            <div id="solution-1" style="filter:blur(10px); opacity:0.5; transition:all 0.5s;">
-                                <h3 class="highlight-primary">The Solution</h3>
-                                <div style="margin-top:1rem;">
-                                    <p><strong>1. Identify Relationship:</strong></p>
-                                    <p>Ratio Green = 5. Actual Green = 120.</p>
-                                    
-                                    <p style="margin-top:1rem;"><strong>2. Find Multiplier:</strong></p>
-                                    <p>$$120 \\div 5 = 24$$</p>
-                                    
-                                    <p style="margin-top:1rem;"><strong>3. Apply to Red:</strong></p>
-                                    <p>$$4 \\times 24 = 96$$</p>
-                                    
-                                    <div style="margin-top:1rem; padding:1rem; background:var(--accent); color:black; border-radius:8px; font-weight:bold; text-align:center;">
-                                        Answer: 96 Red Skittles
+                            <!-- Visual Bar Model -->
+                            <div style="margin-bottom:2rem; padding: 0 1rem;">
+                                <!-- Red Row -->
+                                <div class="bar-model-row">
+                                    <div class="bar-model-label text-red">Red</div>
+                                    <div class="bar-model-blocks">
+                                        <div class="model-block red">?</div>
+                                        <div class="model-block red">?</div>
+                                        <div class="model-block red">?</div>
+                                        <div class="model-block red">?</div>
+                                    </div>
+                                    <div style="margin-left:1rem; font-weight:bold; color:var(--danger); opacity:0;" class="final-calc">4 × 24 = 96</div>
+                                </div>
+
+                                <!-- Green Row -->
+                                <div class="bar-model-row">
+                                    <div class="bar-model-label text-green">Green</div>
+                                    <div class="bar-model-blocks" style="position:relative;">
+                                        <div class="model-block green">?</div>
+                                        <div class="model-block green">?</div>
+                                        <div class="model-block green">?</div>
+                                        <div class="model-block green">?</div>
+                                        <div class="model-block green">?</div>
+                                        
+                                        <!-- Visual Bracket for 120 -->
+                                        <div class="bracket-container" style="top: 60px; left:0; width:100%; height:20px;">
+                                            <div class="bracket-line" style="width:100%; border-top:none; border-bottom:2px dashed var(--accent); border-left:2px dashed var(--accent); border-right:2px dashed var(--accent);"></div>
+                                            <div class="bracket-label" style="top:25px; color:var(--accent);">Total = 120</div>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+                            
+                            <div style="text-align:center; margin-top: 3rem;">
+                                <p><strong>Step 1:</strong> Find the value of 1 block.</p>
+                                <div class="math-row">
+                                    <span class="text-green">120</span> <span class="math-op">÷</span> <span class="text-green">5</span> <span class="math-op">=</span> <span class="math-res text-white">24</span>
+                                </div>
+                                <button id="fill-btn-1" class="btn-action" style="margin-top:1rem; font-size:1rem; padding:0.5rem 1rem;">Fill Blocks</button>
                             </div>
                         </div>
                     </div>
@@ -539,17 +619,35 @@ const slides = [
         `,
         script: (container) => {
             const btn = container.querySelector('#reveal-btn-1');
+            const fillBtn = container.querySelector('#fill-btn-1');
             const content = container.querySelector('#solution-1');
+            const blocks = container.querySelectorAll('.model-block');
+            const finalCalc = container.querySelector('.final-calc');
+
             btn.addEventListener('click', () => {
                 btn.style.display = 'none';
                 content.style.filter = 'blur(0)';
                 content.style.opacity = '1';
             });
+
+            fillBtn.addEventListener('click', () => {
+                blocks.forEach((b, i) => {
+                    setTimeout(() => {
+                        b.innerText = "24";
+                        b.classList.add('highlight');
+                        setTimeout(() => b.classList.remove('highlight'), 300);
+                    }, i * 100);
+                });
+                setTimeout(() => {
+                    finalCalc.style.opacity = '1';
+                    fillBtn.style.display = 'none';
+                }, blocks.length * 100 + 200);
+            });
             return () => {};
         }
     },
 
-    // SLIDE 3: Warm Up Problem 2
+    // SLIDE 3: Warm Up Problem 2 (Sharing Total)
     {
         template: () => `
             <div class="anim-enter">
@@ -563,36 +661,58 @@ const slides = [
                         <h3><i class="fa-solid fa-bag-shopping"></i> The Big Bag</h3>
                         <p>Seth opens a bigger bag.</p>
                         <div style="font-size:1.4rem; background:rgba(0,0,0,0.3); padding:1rem; border-radius:12px; margin:1rem 0;">
-                            Ratio <strong style="color:var(--danger)">Red</strong> : <strong style="color:var(--accent)">Green</strong> is <strong>3 : 7</strong>
+                            Ratio <strong class="text-red">3</strong> : <strong class="text-green">7</strong> (<span class="text-red">Red</span> : <span class="text-green">Green</span>)
                         </div>
                         <p style="font-size:1.3rem;">There are <strong>300 Total</strong> Skittles.</p>
-                        <p>How many are <strong>Green</strong>?</p>
+                        <p>How many are <strong class="text-green">Green</strong>?</p>
                     </div>
 
-                    <div class="delay-2 anim-enter">
-                         <div class="pedagogical-note note-write">
-                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Remember</div>
-                            <p>If you have the TOTAL, you must find the TOTAL PARTS first.</p>
-                        </div>
+                    <div class="glass-card delay-2 anim-enter" style="position:relative; min-height:400px; display:flex; flex-direction:column; justify-content:center;">
+                        <button id="reveal-btn-2" class="btn-action" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; width:auto;">Reveal Visual Solution</button>
                         
-                         <div class="glass-card" style="position:relative; overflow:hidden;">
-                            <button id="reveal-btn-2" class="btn-action" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; width:auto;">Reveal Solution</button>
-                            
-                            <div id="solution-2" style="filter:blur(10px); opacity:0.5; transition:all 0.5s;">
-                                <h3 class="highlight-primary">The Solution</h3>
-                                <div style="margin-top:1rem;">
-                                    <p><strong>1. Total Parts:</strong> $3 + 7 = 10$ parts.</p>
-                                    
-                                    <p style="margin-top:1rem;"><strong>2. Value of 1 Part:</strong></p>
-                                    <p>$$300 \\text{ (Total)} \\div 10 \\text{ (Parts)} = 30$$</p>
-                                    
-                                    <p style="margin-top:1rem;"><strong>3. Calculate Green:</strong></p>
-                                    <p>Green has 7 parts.</p>
-                                    <p>$$7 \\times 30 = 210$$</p>
-                                    
-                                    <div style="margin-top:1rem; padding:1rem; background:var(--accent); color:black; border-radius:8px; font-weight:bold; text-align:center;">
-                                        Answer: 210 Green Skittles
+                        <div id="solution-2" style="filter:blur(10px); opacity:0.5; transition:all 0.5s;">
+                            <!-- Visual Bar Model -->
+                            <div style="margin-bottom:2rem; position:relative; padding-right: 30px;">
+                                <!-- Bracket for TOTAL (Spanning vertically) -->
+                                <div class="bracket-container" style="top:0; bottom:0; right:-20px; width:20px; flex-direction:column; height:100%;">
+                                    <div class="bracket-line" style="height:100%; border-left:none; border-top:2px dashed white; border-bottom:2px dashed white; border-right:2px dashed white;"></div>
+                                    <div class="bracket-label" style="right:-90px; top:45%;">Total = 300</div>
+                                </div>
+
+                                <!-- Red Row -->
+                                <div class="bar-model-row">
+                                    <div class="bar-model-label text-red">Red</div>
+                                    <div class="bar-model-blocks">
+                                        <div class="model-block red">?</div>
+                                        <div class="model-block red">?</div>
+                                        <div class="model-block red">?</div>
                                     </div>
+                                </div>
+
+                                <!-- Green Row -->
+                                <div class="bar-model-row">
+                                    <div class="bar-model-label text-green">Green</div>
+                                    <div class="bar-model-blocks">
+                                        <div class="model-block green">?</div>
+                                        <div class="model-block green">?</div>
+                                        <div class="model-block green">?</div>
+                                        <div class="model-block green">?</div>
+                                        <div class="model-block green">?</div>
+                                        <div class="model-block green">?</div>
+                                        <div class="model-block green">?</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align:center;">
+                                <p><strong>Step 1:</strong> Total Parts = <span class="text-red">3</span> + <span class="text-green">7</span> = <strong>10</strong>.</p>
+                                <p><strong>Step 2:</strong> 1 Part Value.</p>
+                                <div class="math-row">
+                                    <span>300</span> <span class="math-op">÷</span> <span>10</span> <span class="math-op">=</span> <span class="math-res">30</span>
+                                </div>
+                                <button id="fill-btn-2" class="btn-action" style="margin-top:1rem; font-size:1rem; padding:0.5rem 1rem;">Fill & Solve Green</button>
+                                <div id="res-2" style="margin-top:1rem; font-size:1.5rem; font-weight:bold; color:var(--accent); opacity:0; transition:opacity 0.5s;">
+                                    Green = 7 × 30 = 210
                                 </div>
                             </div>
                         </div>
@@ -602,68 +722,113 @@ const slides = [
         `,
         script: (container) => {
             const btn = container.querySelector('#reveal-btn-2');
+            const fillBtn = container.querySelector('#fill-btn-2');
             const content = container.querySelector('#solution-2');
+            const blocks = container.querySelectorAll('.model-block');
+            const res = container.querySelector('#res-2');
+
             btn.addEventListener('click', () => {
                 btn.style.display = 'none';
                 content.style.filter = 'blur(0)';
                 content.style.opacity = '1';
             });
+
+            fillBtn.addEventListener('click', () => {
+                fillBtn.style.display = 'none';
+                blocks.forEach((b, i) => {
+                    setTimeout(() => {
+                        b.innerText = "30";
+                        b.classList.add('highlight');
+                        setTimeout(() => b.classList.remove('highlight'), 300);
+                    }, i * 50);
+                });
+                setTimeout(() => {
+                    res.style.opacity = '1';
+                }, blocks.length * 50 + 200);
+            });
             return () => {};
         }
     },
 
-    // SLIDE 4: Challenge A
+    // SLIDE 4: Challenge A (Party Bag - Triple Ratio)
     {
         template: () => `
             <div class="anim-enter">
                 <div style="display:flex; align-items:center; gap:1rem; margin-bottom: 1rem;">
-                    <div class="tag" style="background:var(--danger); color:white;">Challenge A</div>
-                    <h2>The Triple Ratio</h2>
+                    <div class="tag" style="background:var(--danger); color:white;">Challenge</div>
+                    <h2>The Triple Ratio (Party Bag)</h2>
                 </div>
                 
                 <div class="grid-2">
                     <div class="glass-card delay-1 anim-enter">
-                        <h3><i class="fa-solid fa-gift"></i> The Party Bag</h3>
-                        <p>This bag has three colors: <span style="color:var(--danger)">Red</span>, <span style="color:var(--accent)">Green</span>, and <span style="color:var(--primary)">Purple</span>.</p>
-                        
-                        <div style="text-align:center; margin: 2rem 0; font-size:2rem; font-weight:900;">
-                            <span style="color:var(--danger)">3</span> : 
-                            <span style="color:var(--accent)">2</span> : 
-                            <span style="color:var(--primary)">5</span>
+                        <h3><i class="fa-solid fa-gift"></i> The Setup</h3>
+                        <p>This bag has three colors:</p>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem; text-align:center; margin:1rem 0;">
+                            <div class="text-red" style="font-weight:bold; font-size:1.2rem;">Red</div>
+                            <div class="text-green" style="font-weight:bold; font-size:1.2rem;">Green</div>
+                            <div class="text-purple" style="font-weight:bold; font-size:1.2rem;">Purple</div>
+                            
+                            <div style="font-size:2rem; font-weight:900;">3</div>
+                            <div style="font-size:2rem; font-weight:900;">2</div>
+                            <div style="font-size:2rem; font-weight:900;">5</div>
                         </div>
                         
                         <div class="pedagogical-note note-task">
                             <div class="pedagogical-badge"><i class="fa-solid fa-puzzle-piece"></i> The Clue</div>
-                            <p>There are <strong>150 Purple</strong> Skittles.</p>
+                            <p>There are <strong class="text-purple">150 Purple</strong> Skittles.</p>
+                            <p>How many <strong class="text-red">Red</strong>? What is the <strong>Total</strong>?</p>
                         </div>
-                        <p><strong>Calculate:</strong></p>
-                        <ol style="margin-left:2rem; margin-top:0.5rem;">
-                            <li>Number of Red Skittles?</li>
-                            <li>Total Skittles in the bag?</li>
-                        </ol>
                     </div>
 
-                    <div class="glass-card delay-2 anim-enter" style="position:relative;">
-                        <button id="reveal-btn-3" class="btn-action" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; width:auto;">Show Calculation</button>
+                    <div class="glass-card delay-2 anim-enter" style="position:relative; min-height:400px; display:flex; flex-direction:column; justify-content:center;">
+                        <button id="reveal-btn-3" class="btn-action" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; width:auto;">Visualize Steps</button>
                         
                         <div id="solution-3" style="opacity:0; transition:opacity 0.5s;">
-                            <h3 class="highlight-primary">Step-by-Step</h3>
+                            <!-- Visual Bar Model -->
+                            <div style="margin-bottom:2rem; padding-left:10px;">
+                                <!-- Red -->
+                                <div class="bar-model-row">
+                                    <div class="bar-model-label text-red">Red</div>
+                                    <div class="bar-model-blocks">
+                                        <div class="model-block red">?</div>
+                                        <div class="model-block red">?</div>
+                                        <div class="model-block red">?</div>
+                                    </div>
+                                    <div id="res-red" style="margin-left:1rem; font-weight:bold; color:var(--danger); opacity:0;">3 × 30 = 90</div>
+                                </div>
+                                <!-- Green -->
+                                <div class="bar-model-row">
+                                    <div class="bar-model-label text-green">Green</div>
+                                    <div class="bar-model-blocks">
+                                        <div class="model-block green">?</div>
+                                        <div class="model-block green">?</div>
+                                    </div>
+                                </div>
+                                <!-- Purple -->
+                                <div class="bar-model-row">
+                                    <div class="bar-model-label text-purple">Purple</div>
+                                    <div class="bar-model-blocks" style="position:relative;">
+                                        <div class="model-block purple">?</div>
+                                        <div class="model-block purple">?</div>
+                                        <div class="model-block purple">?</div>
+                                        <div class="model-block purple">?</div>
+                                        <div class="model-block purple">?</div>
+                                        <!-- Bracket -->
+                                        <div class="bracket-container" style="top: 60px; left:0; width:100%; height:20px;">
+                                            <div class="bracket-line" style="width:100%; border-top:none; border-bottom:2px dashed var(--primary); border-left:2px dashed var(--primary); border-right:2px dashed var(--primary);"></div>
+                                            <div class="bracket-label" style="top:25px; color:var(--primary);">150 Total</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             
-                            <div style="margin-bottom:1.5rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:1rem;">
-                                <p style="color:var(--text-dim); font-size:0.9rem;">Step 1: Find "1 Part"</p>
-                                <p>Purple = 5 parts = 150.</p>
-                                <p>$$150 \\div 5 = 30 \\text{ (Scale Factor)}$$</p>
-                            </div>
-
-                            <div style="margin-bottom:1.5rem;">
-                                <p style="color:var(--text-dim); font-size:0.9rem;">Step 2: Calculate Red</p>
-                                <p>$$3 \\text{ (parts)} \\times 30 = \\mathbf{90}$$</p>
-                            </div>
-
-                            <div>
-                                <p style="color:var(--text-dim); font-size:0.9rem;">Step 3: Calculate Total</p>
-                                <p>Total Parts: $3 + 2 + 5 = 10$.</p>
-                                <p>$$10 \\times 30 = \\mathbf{300}$$</p>
+                            <div style="text-align:center; margin-top:3rem;">
+                                <p style="font-size:0.9rem; color:var(--text-dim);">Step 1: Find 1 Part (Purple)</p>
+                                <div class="math-row">
+                                    <span class="text-purple">150</span> <span class="math-op">÷</span> <span class="text-purple">5</span> <span class="math-op">=</span> <span class="math-res">30</span>
+                                </div>
+                                <button id="fill-btn-3" class="btn-action" style="margin-top:1rem; padding:0.5rem 1rem; font-size:1rem;">Fill All Blocks</button>
+                                <p id="res-total" style="margin-top:1rem; font-weight:bold; opacity:0;">Total = 10 parts × 30 = 300</p>
                             </div>
                         </div>
                     </div>
@@ -672,111 +837,39 @@ const slides = [
         `,
         script: (container) => {
             const btn = container.querySelector('#reveal-btn-3');
+            const fillBtn = container.querySelector('#fill-btn-3');
             const content = container.querySelector('#solution-3');
+            const blocks = container.querySelectorAll('.model-block');
+            const resRed = container.querySelector('#res-red');
+            const resTotal = container.querySelector('#res-total');
+
             btn.addEventListener('click', () => {
                 btn.style.display = 'none';
                 content.style.opacity = '1';
+            });
+
+            fillBtn.addEventListener('click', () => {
+                fillBtn.style.display = 'none';
+                blocks.forEach((b, i) => {
+                    setTimeout(() => {
+                        b.innerText = "30";
+                        b.classList.add('highlight');
+                        if (b.classList.contains('red')) b.style.color = "black";
+                        if (b.classList.contains('green')) b.style.color = "black";
+                        if (b.classList.contains('purple')) b.style.color = "black";
+                        setTimeout(() => b.classList.remove('highlight'), 300);
+                    }, i * 50);
+                });
+                setTimeout(() => {
+                    resRed.style.opacity = '1';
+                    resTotal.style.opacity = '1';
+                }, blocks.length * 50 + 200);
             });
             return () => {};
         }
     },
 
-    // SLIDE 5: Challenge B (Ratio Link)
-    {
-        template: () => `
-            <div class="anim-enter">
-                <div style="display:flex; align-items:center; gap:1rem; margin-bottom: 1rem;">
-                    <div class="tag" style="background:var(--danger); color:white;">Challenge B</div>
-                    <h2>The "Ratio Link"</h2>
-                </div>
-                
-                <div class="grid-2">
-                    <div class="delay-1 anim-enter">
-                        <p>Sometimes you have two separate ratios that share a common link.</p>
-                        
-                        <div class="glass-card" style="margin-top:1rem;">
-                            <div style="display:flex; justify-content:space-around; align-items:center; margin-bottom:1rem;">
-                                <div style="text-align:center;">
-                                    <div style="font-size:0.9rem; color:var(--text-dim);">Ratio 1</div>
-                                    <div style="font-weight:bold; font-size:1.2rem;">R : G</div>
-                                    <div style="font-size:1.5rem; color:var(--primary);">1 : 2</div>
-                                </div>
-                                <i class="fa-solid fa-link" style="color:var(--text-dim);"></i>
-                                <div style="text-align:center;">
-                                    <div style="font-size:0.9rem; color:var(--text-dim);">Ratio 2</div>
-                                    <div style="font-weight:bold; font-size:1.2rem;">G : P</div>
-                                    <div style="font-size:1.5rem; color:var(--accent);">3 : 4</div>
-                                </div>
-                            </div>
-                            <div class="pedagogical-note note-task">
-                                <p><strong>Problem:</strong> If there are <strong>12 Red</strong> Skittles, how many <strong>Purple</strong> are there?</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="glass-card delay-2 anim-enter" style="position:relative;">
-                        <button id="reveal-btn-4" class="btn-action" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; width:auto;">Reveal Chain Strategy</button>
-                        
-                        <div id="solution-4" style="opacity:0; transition:opacity 0.5s;">
-                            <h3 class="highlight-accent">The Chain Method</h3>
-                            
-                            <!-- Visual Chain -->
-                            <div style="display:flex; align-items:center; justify-content:space-between; margin:2rem 0; position:relative;">
-                                <!-- Red -->
-                                <div style="text-align:center;">
-                                    <div class="skittle skittle-red"></div>
-                                    <div style="font-weight:bold;">Red</div>
-                                    <div style="font-size:1.5rem;">12</div>
-                                </div>
-                                
-                                <!-- Arrow -->
-                                <div style="text-align:center; flex:1;">
-                                    <div style="font-size:0.8rem; color:var(--text-dim);">x2 (Ratio 1:2)</div>
-                                    <i class="fa-solid fa-arrow-right" style="color:var(--primary);"></i>
-                                </div>
-
-                                <!-- Green -->
-                                <div style="text-align:center;">
-                                    <div class="skittle skittle-green"></div>
-                                    <div style="font-weight:bold;">Green</div>
-                                    <div style="font-size:1.5rem; color:var(--primary);">24</div>
-                                </div>
-
-                                <!-- Arrow -->
-                                <div style="text-align:center; flex:1;">
-                                    <div style="font-size:0.8rem; color:var(--text-dim);">÷3 then x4</div>
-                                    <i class="fa-solid fa-arrow-right" style="color:var(--accent);"></i>
-                                </div>
-
-                                <!-- Purple -->
-                                <div style="text-align:center;">
-                                    <div class="skittle skittle-purple"></div>
-                                    <div style="font-weight:bold;">Purple</div>
-                                    <div style="font-size:1.5rem; color:var(--accent);">32</div>
-                                </div>
-                            </div>
-
-                            <p>1. <strong>Red to Green:</strong> Red is 12. Ratio is 1:2. So Green is $12 \\times 2 = 24$.</p>
-                            <p>2. <strong>Green to Purple:</strong> Green is 24. Ratio is 3:4.</p>
-                            <p style="margin-left: 1rem;">Multiplier: $24 \\div 3 = 8$.</p>
-                            <p style="margin-left: 1rem;">Purple: $4 \\times 8 = 32$.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `,
-        script: (container) => {
-            const btn = container.querySelector('#reveal-btn-4');
-            const content = container.querySelector('#solution-4');
-            btn.addEventListener('click', () => {
-                btn.style.display = 'none';
-                content.style.opacity = '1';
-            });
-            return () => {};
-        }
-    },
-
-    // SLIDE 6: Theory HCF
+    // SLIDE 5: Theory HCF
     {
         template: () => `
             <div class="anim-enter">
@@ -794,11 +887,10 @@ const slides = [
                             <h3 style="margin-bottom:1rem;">Example: 12 : 18</h3>
                             <p>Factors of 12: 1, 2, 3, 4, <strong class="highlight-warn">6</strong>, 12</p>
                             <p>Factors of 18: 1, 2, 3, <strong class="highlight-warn">6</strong>, 9, 18</p>
-                            <p style="margin-top:1rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:1rem;">
-                                The HCF is <strong>6</strong>. Divide both sides by 6.
-                            </p>
-                            <div style="text-align:center; font-size:2rem; font-weight:900; margin-top:1rem;">
-                                2 : 3
+                            <div class="math-row" style="margin-top:1rem; font-size:1.5rem;">
+                                <span>12</span> <span class="math-op">:</span> <span>18</span>
+                                <span class="math-op">→</span>
+                                <span class="highlight-warn">2</span> <span class="math-op">:</span> <span class="highlight-warn">3</span>
                             </div>
                         </div>
                     </div>
@@ -829,44 +921,50 @@ const slides = [
         `
     },
 
-    // SLIDE 7: HCF Interactive Tool
+    // SLIDE 6: HCF Interactive Tool (Enhanced Visualization)
     {
         template: () => `
             <div class="anim-enter">
                 <h2>HCF Hunter</h2>
-                <p>Enter two numbers to see their factors and find the simplified ratio.</p>
+                <p>Visualize the "Atomic Units" to see how they group together.</p>
 
-                <div class="glass-card" style="max-width:800px; margin:0 auto;">
+                <div class="glass-card" style="max-width:900px; margin:0 auto;">
                     <div class="grid-2" style="gap:1rem; margin-bottom:2rem;">
                         <div>
                             <label>Part 1</label>
-                            <input type="number" id="hcf-n1" class="calc-input" value="24">
+                            <input type="number" id="hcf-n1" class="calc-input" value="12">
                         </div>
                         <div>
                             <label>Part 2</label>
-                            <input type="number" id="hcf-n2" class="calc-input" value="36">
+                            <input type="number" id="hcf-n2" class="calc-input" value="18">
                         </div>
                     </div>
                     
-                    <button id="btn-hcf" class="btn-action">Find Factors & Simplify</button>
+                    <button id="btn-hcf" class="btn-action">Visualize Atoms & Simplify</button>
 
                     <div id="hcf-results" style="margin-top:2rem; display:none;">
-                        <!-- Factors Visualization -->
-                        <div style="margin-bottom:1rem;">
-                            <p>Factors of <span id="res-n1"></span>:</p>
-                            <div id="factors-n1" style="min-height:50px;"></div>
-                        </div>
-                        <div style="margin-bottom:1rem;">
-                            <p>Factors of <span id="res-n2"></span>:</p>
-                            <div id="factors-n2" style="min-height:50px;"></div>
+                        
+                        <!-- Atomic Visualization -->
+                        <div style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:12px; margin-bottom:2rem;">
+                            <div style="margin-bottom:10px; display:flex; justify-content:space-between;">
+                                <span>Part 1 (<span id="res-n1"></span> units)</span>
+                                <span style="color:var(--warning); font-weight:bold;">Groups of <span class="res-hcf-val"></span></span>
+                            </div>
+                            <div id="atomic-n1" class="atomic-bar"></div>
+                            
+                            <div style="margin-bottom:10px; margin-top:20px; display:flex; justify-content:space-between;">
+                                <span>Part 2 (<span id="res-n2"></span> units)</span>
+                                <span style="color:var(--warning); font-weight:bold;">Groups of <span class="res-hcf-val"></span></span>
+                            </div>
+                            <div id="atomic-n2" class="atomic-bar"></div>
                         </div>
 
                         <div class="pedagogical-note note-success">
                             <div class="pedagogical-badge"><i class="fa-solid fa-check"></i> Simplified</div>
                             <div style="text-align:center;">
-                                <p>Highest Common Factor (HCF) = <strong id="val-hcf" style="font-size:1.5rem;"></strong></p>
-                                <div style="font-size:3rem; font-weight:900; margin-top:1rem;">
-                                    <span id="simp-n1" class="highlight-primary"></span> : <span id="simp-n2" class="highlight-accent"></span>
+                                <p>Highest Common Factor (HCF) = <strong class="res-hcf-val" style="font-size:1.5rem; color:var(--warning);"></strong></p>
+                                <div class="math-row" style="margin-top:1rem;">
+                                    <span id="simp-n1" class="text-white"></span> <span class="math-op">:</span> <span id="simp-n2" class="text-white"></span>
                                 </div>
                             </div>
                         </div>
@@ -880,14 +978,6 @@ const slides = [
             const in2 = container.querySelector('#hcf-n2');
             const results = container.querySelector('#hcf-results');
             
-            const getFactors = (n) => {
-                const factors = [];
-                for(let i=1; i<=n; i++) {
-                    if(n % i === 0) factors.push(i);
-                }
-                return factors;
-            };
-
             const getHCF = (a, b) => {
                 while(b) {
                     let t = b;
@@ -897,38 +987,62 @@ const slides = [
                 return a;
             };
 
+            const renderAtoms = (n, hcf, containerId) => {
+                const c = container.querySelector(containerId);
+                c.innerHTML = '';
+                // Render n atoms
+                for(let i=1; i<=n; i++) {
+                    const el = document.createElement('div');
+                    el.className = 'atomic-unit';
+                    c.appendChild(el);
+                    
+                    // Add separator
+                    if (i % hcf === 0 && i !== n) {
+                        const sep = document.createElement('div');
+                        sep.className = 'group-separator';
+                        c.appendChild(sep);
+                    }
+                }
+
+                // Group highlighting animation
+                setTimeout(() => {
+                   const atoms = c.querySelectorAll('.atomic-unit');
+                   let currentGroup = 0;
+                   let count = 0;
+                   
+                   atoms.forEach((atom, idx) => {
+                       count++;
+                       // Color based on group index
+                       if(currentGroup % 2 === 0) atom.style.background = "var(--primary)";
+                       else atom.style.background = "var(--accent)";
+                       atom.classList.add('active');
+                       
+                       if(count === hcf) {
+                           currentGroup++;
+                           count = 0;
+                       }
+                   });
+                }, n * 30 + 500);
+            };
+
             btn.addEventListener('click', () => {
                 const n1 = parseInt(in1.value);
                 const n2 = parseInt(in2.value);
-                
-                if(!n1 || !n2) return;
+                if(!n1 || !n2 || n1 > 60 || n2 > 60) {
+                    alert("Please enter numbers between 1 and 60 for visualization.");
+                    return;
+                }
 
                 results.style.display = 'block';
                 container.querySelector('#res-n1').innerText = n1;
                 container.querySelector('#res-n2').innerText = n2;
 
-                const f1 = getFactors(n1);
-                const f2 = getFactors(n2);
                 const hcf = getHCF(n1, n2);
+                container.querySelectorAll('.res-hcf-val').forEach(el => el.innerText = hcf);
 
-                const renderFactors = (factors, containerId) => {
-                    const c = container.querySelector(containerId);
-                    c.innerHTML = '';
-                    factors.forEach(f => {
-                        const el = document.createElement('div');
-                        el.className = 'factor-bubble';
-                        if (f2.includes(f) && containerId.includes('n1')) el.classList.add('common');
-                        if (f1.includes(f) && containerId.includes('n2')) el.classList.add('common');
-                        if (f === hcf) el.classList.add('hcf');
-                        el.innerText = f;
-                        c.appendChild(el);
-                    });
-                };
+                renderAtoms(n1, hcf, '#atomic-n1');
+                renderAtoms(n2, hcf, '#atomic-n2');
 
-                renderFactors(f1, '#factors-n1');
-                renderFactors(f2, '#factors-n2');
-
-                container.querySelector('#val-hcf').innerText = hcf;
                 container.querySelector('#simp-n1').innerText = n1 / hcf;
                 container.querySelector('#simp-n2').innerText = n2 / hcf;
             });
@@ -937,7 +1051,7 @@ const slides = [
         }
     },
 
-    // SLIDE 8: Practice Drill
+    // SLIDE 7: Practice Drill
     {
         template: () => `
             <div class="anim-enter">
@@ -983,96 +1097,126 @@ const slides = [
         }
     },
 
-    // SLIDE 9: Real World (Map Scales)
+    // SLIDE 8: Real World (Map Scales - Fixed)
     {
         template: () => `
             <div class="anim-enter">
                 <h2>Real World: Map Scales</h2>
-                <p>Maps use ratios to shrink the world. <strong>1 : 25,000</strong> is a common ratio.</p>
-                
                 <div class="grid-2">
                     <div class="glass-card delay-1 anim-enter">
                         <h3><i class="fa-solid fa-map"></i> Understanding Scale</h3>
-                        <p style="font-size:1.2rem; margin-bottom:1rem;"><strong>1 : 50,000</strong> means:</p>
-                        <p>1 cm on the map = 50,000 cm in real life.</p>
+                        <p>Maps use ratios to shrink the world. <strong>1 : 50,000</strong> is a common ratio.</p>
                         
-                        <div class="pedagogical-note note-task">
-                             <div class="pedagogical-badge"><i class="fa-solid fa-calculator"></i> Convert</div>
-                             <p>50,000 cm is hard to visualize.</p>
-                             <p>$$50,000 \\div 100 = 500 \\text{ meters}$$</p>
-                             <p>$$500 \\div 1000 = 0.5 \\text{ km}$$</p>
-                             <p>So <strong>2cm</strong> on map = <strong>1km</strong> real life.</p>
+                        <div class="pedagogical-note note-task" style="margin-top:1.5rem;">
+                             <div class="pedagogical-badge"><i class="fa-solid fa-calculator"></i> Logic Check</div>
+                             <p><strong>1 : 50,000</strong> means 1 cm on the map = 50,000 cm in real life.</p>
+                             <div class="math-row" style="font-size:1.1rem; margin-top:1rem;">
+                                50,000 <span class="math-op">÷</span> 100 <span class="math-op">=</span> 500m
+                             </div>
+                             <div class="math-row" style="font-size:1.1rem;">
+                                500 <span class="math-op">÷</span> 1000 <span class="math-op">=</span> 0.5km
+                             </div>
+                             <p style="margin-top:1rem; font-size:1.2rem; text-align:center;">So <strong>2cm</strong> on map = <strong>1km</strong> real life.</p>
                         </div>
                     </div>
 
                     <div class="glass-card delay-2 anim-enter">
-                        <h3>Scale Calculator</h3>
-                        <div style="margin-bottom:1rem;">
-                            <label>Map Distance (cm):</label>
-                            <input type="number" id="map-dist" class="calc-input" value="10">
-                        </div>
-                        <div style="margin-bottom:1rem;">
-                            <label>Map Scale (1 : ?):</label>
-                            <input type="number" id="map-scale" class="calc-input" value="25000">
-                        </div>
-                        <button id="btn-scale" class="btn-action">Calculate Real Distance</button>
+                        <h3><i class="fa-solid fa-location-dot"></i> Map Missions</h3>
                         
-                        <div id="scale-res" style="margin-top:1.5rem; text-align:center; font-weight:900; font-size:1.5rem; color:var(--accent);"></div>
+                        <!-- Problem 1 -->
+                        <div style="margin-bottom:2rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:1.5rem;">
+                            <p style="font-weight:bold; margin-bottom:0.5rem;">1. Scale is 1:50,000. Distance is 14cm.</p>
+                            <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:1rem;">What is the real distance?</p>
+                            <button class="btn-action btn-reveal" data-target="sol-map-1" style="font-size:0.9rem; padding:0.5rem 1rem;">Show Answer</button>
+                            <div id="sol-map-1" style="display:none; margin-top:1rem;">
+                                <div class="math-row" style="font-size:1.2rem;">
+                                    14 <span class="math-op">×</span> 0.5km <span class="math-op">=</span> <span class="math-res">7 km</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Problem 2 -->
+                        <div>
+                            <p style="font-weight:bold; margin-bottom:0.5rem;">2. Scale is 1:25,000. Distance is 8cm.</p>
+                            <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:1rem;">Hint: 1cm = 250m = 0.25km.</p>
+                            <button class="btn-action btn-reveal" data-target="sol-map-2" style="font-size:0.9rem; padding:0.5rem 1rem;">Show Answer</button>
+                            <div id="sol-map-2" style="display:none; margin-top:1rem;">
+                                <div class="math-row" style="font-size:1.2rem;">
+                                    8 <span class="math-op">×</span> 0.25km <span class="math-op">=</span> <span class="math-res">2 km</span>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
         `,
         script: (container) => {
-            const btn = container.querySelector('#btn-scale');
-            const dist = container.querySelector('#map-dist');
-            const scale = container.querySelector('#map-scale');
-            const res = container.querySelector('#scale-res');
-
-            btn.addEventListener('click', () => {
-                const d = parseFloat(dist.value);
-                const s = parseFloat(scale.value);
-                
-                const realCm = d * s;
-                const realM = realCm / 100;
-                const realKm = realM / 1000;
-
-                res.innerHTML = `
-                    <div>${realM} meters</div>
-                    <div style="font-size:1rem; color:var(--text-dim);">(${realKm} km)</div>
-                `;
+            container.querySelectorAll('.btn-reveal').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    const target = container.querySelector(`#${targetId}`);
+                    btn.style.display = 'none';
+                    target.style.display = 'block';
+                    target.classList.add('anim-enter');
+                });
             });
             return () => {};
         }
     },
 
-    // SLIDE 10: Final Quiz
+    // SLIDE 9: Lesson Summary & Assessment
     {
         template: () => `
             <div class="anim-enter">
-                <h2>Assessment: Mastery Check</h2>
-                <div class="glass-card" style="max-width:800px; margin:0 auto;">
-                    
-                    <div class="quiz-item" style="margin-bottom:2rem;">
-                        <p style="font-weight:bold; margin-bottom:0.5rem;">1. Simplify the ratio 48 : 60.</p>
-                        <div class="quiz-option" data-correct="false">24 : 30</div>
-                        <div class="quiz-option" data-correct="true">4 : 5</div>
-                        <div class="quiz-option" data-correct="false">8 : 10</div>
+                <h2>Lesson Summary & Assessment</h2>
+                <div class="grid-2">
+                    <!-- Summary Column -->
+                    <div class="glass-card delay-1 anim-enter">
+                        <h3><i class="fa-solid fa-list-check"></i> Recap</h3>
+                        
+                        <div style="margin-bottom:2rem;">
+                            <h4 style="color:var(--primary); margin-bottom:0.5rem;"><i class="fa-solid fa-scale-unbalanced"></i> Proportions</h4>
+                            <p style="font-size:1rem; color:var(--text-dim);">To scale a ratio up or down:</p>
+                            <ul style="margin-left:1.5rem; font-size:1rem;">
+                                <li>Find the value of <strong>1 Part</strong> (The Unitary Method).</li>
+                                <li>Multiply that value by the other parts.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 style="color:var(--accent); margin-bottom:0.5rem;"><i class="fa-solid fa-scissors"></i> HCF (Simplifying)</h4>
+                            <p style="font-size:1rem; color:var(--text-dim);">To make ratios smaller:</p>
+                            <ul style="margin-left:1.5rem; font-size:1rem;">
+                                <li>Find the <strong>Highest Common Factor</strong>.</li>
+                                <li>Divide both sides by that number.</li>
+                            </ul>
+                        </div>
                     </div>
 
-                    <div class="quiz-item" style="margin-bottom:2rem;">
-                        <p style="font-weight:bold; margin-bottom:0.5rem;">2. If R:G is 2:3 and G:B is 3:5, what is R:B?</p>
-                        <div class="quiz-option" data-correct="true">2 : 5</div>
-                        <div class="quiz-option" data-correct="false">6 : 15</div>
-                        <div class="quiz-option" data-correct="false">Cannot tell</div>
-                    </div>
+                    <!-- Quiz Column -->
+                    <div class="glass-card delay-2 anim-enter">
+                        <h3><i class="fa-solid fa-clipboard-check"></i> Mastery Check</h3>
+                        
+                        <div class="quiz-item" style="margin-bottom:1.5rem;">
+                            <p style="font-weight:bold; margin-bottom:0.5rem; font-size:1rem;">1. Simplify 48 : 60.</p>
+                            <div class="quiz-option" data-correct="false" style="padding:0.5rem 1rem;">24 : 30</div>
+                            <div class="quiz-option" data-correct="true" style="padding:0.5rem 1rem;">4 : 5</div>
+                        </div>
 
-                    <div class="quiz-item">
-                        <p style="font-weight:bold; margin-bottom:0.5rem;">3. A map scale is 1:100. How long is a 5m wall on the map?</p>
-                        <div class="quiz-option" data-correct="false">50 cm</div>
-                        <div class="quiz-option" data-correct="true">5 cm</div>
-                        <div class="quiz-option" data-correct="false">0.5 cm</div>
-                    </div>
+                        <div class="quiz-item" style="margin-bottom:1.5rem;">
+                            <p style="font-weight:bold; margin-bottom:0.5rem; font-size:1rem;">2. If R:G is 2:3 and G:B is 3:5, what is R:B?</p>
+                            <div class="quiz-option" data-correct="true" style="padding:0.5rem 1rem;">2 : 5</div>
+                            <div class="quiz-option" data-correct="false" style="padding:0.5rem 1rem;">6 : 15</div>
+                        </div>
 
+                        <div class="quiz-item">
+                            <p style="font-weight:bold; margin-bottom:0.5rem; font-size:1rem;">3. Map scale 1:100. Real wall 5m. Map length?</p>
+                            <div class="quiz-option" data-correct="false" style="padding:0.5rem 1rem;">50 cm</div>
+                            <div class="quiz-option" data-correct="true" style="padding:0.5rem 1rem;">5 cm</div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         `,
@@ -1094,31 +1238,6 @@ const slides = [
             });
             return () => {};
         }
-    },
-
-    // SLIDE 11: Homework
-    {
-        template: () => `
-             <div class="anim-enter" style="text-align:center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                <h2>Lesson Complete</h2>
-                <div class="grid-2" style="text-align:left;">
-                    <div class="glass-card delay-1 anim-enter">
-                         <h3><i class="fa-solid fa-house-user"></i> Homework</h3>
-                         <div style="margin-top:2rem; padding:1.5rem; background:rgba(255,255,255,0.1); border-radius:12px; border-left: 5px solid var(--accent);">
-                            <p style="font-size:1.4rem; font-weight:bold; color:white;">Exercise 11.2 (Proportions)</p>
-                            <p style="color:var(--text-dim);">Questions 4, 6, 9 (The Challenge)</p>
-                         </div>
-                         <div style="margin-top:1rem; padding:1.5rem; background:rgba(255,255,255,0.1); border-radius:12px; border-left: 5px solid var(--primary);">
-                            <p style="font-size:1.4rem; font-weight:bold; color:white;">Exercise 11.3 (Simplifying)</p>
-                            <p style="color:var(--text-dim);">Questions 1-10 (Odd numbers only)</p>
-                         </div>
-                    </div>
-                     <div class="glass-card delay-2 anim-enter" style="padding:0; overflow:hidden; background:black;">
-                        <iframe width="100%" height="350" src="https://www.youtube.com/embed/6XvS52O60XU?si=simplifying_ratios" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border:none;"></iframe>
-                    </div>
-                </div>
-            </div>
-        `
     }
 ];
 
