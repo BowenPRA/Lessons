@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Investigation: Pig Lungs & Chicken Hearts</title>
+    
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE --- */
+            --bg-deep: #0f172a;    /* Deep Slate */
+            --bg-panel: #1e293b;
+            --primary: #f43f5e;    /* Organ Pink/Red */
+            --primary-hover: #e11d48;
+            --accent: #06b6d4;     /* Air/Oxygen Blue */
+            --warning: #f59e0b;    /* Safety Orange */
+            --danger: #ef4444;     /* Hazard Red */
+            --text-light: #f1f5f9;
+            --text-dim: #94a3b8;
+            
+            --radius: 24px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- BACKGROUND --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.1; /* Subtle texture */
+            pointer-events: none;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1 { font-family: 'Outfit'; font-weight: 900; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; letter-spacing: -2px; }
+        h2 { font-family: 'Outfit'; font-weight: 800; font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1rem; color: white; }
+        h3 { font-family: 'Outfit'; font-weight: 700; font-size: clamp(1.2rem, 2vw, 1.8rem); color: var(--primary); }
+        p, li { font-size: clamp(1rem, 1.5vw, 1.3rem); line-height: 1.6; color: #cbd5e1; }
+        
+        .highlight-accent { color: var(--accent); }
+        .highlight-warn { color: var(--warning); }
+
+        /* --- LAYOUT SHELL --- */
+        header {
+            height: 80px;
+            flex-shrink: 0; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.9);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1.5rem;
+            border-radius: 100px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        main {
+            flex: 1;
+            position: relative;
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1200px; 
+            margin: auto 0; 
+            min-height: min-content;
+        }
+
+        footer {
+            height: 90px;
+            flex-shrink: 0;
+            background: rgba(15, 23, 42, 0.95);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* --- COMPONENT CLASSES --- */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .pedagogical-note {
+            position: relative;
+            background: rgba(30, 41, 59, 0.9);
+            border: 3px solid var(--accent); 
+            border-left-width: 12px; 
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+        }
+        
+        .pedagogical-badge {
+            position: absolute;
+            top: -18px;
+            left: 20px;
+            background: var(--accent);
+            color: #000;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { background: var(--primary); color: white; }
+        
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { background: var(--warning); color: black; }
+
+        .reveal-card {
+            background: var(--bg-panel);
+            border: 2px dashed var(--text-dim);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .reveal-card:hover { border-color: var(--accent); background: rgba(6, 182, 212, 0.1); }
+        .reveal-card.revealed {
+            border-style: solid;
+            border-color: var(--accent);
+            background: var(--bg-panel);
+            cursor: default;
+        }
+        .reveal-content { display: none; animation: popIn 0.3s forwards; }
+        .pre-reveal { display: block; }
+
+        /* Grids */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+
+        /* Buttons */
+        .btn-nav {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); transform: scale(1.1); }
+        .btn-nav:disabled { opacity: 0.2; cursor: not-allowed; }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Outfit';
+            text-transform: uppercase;
+        }
+        .btn-action:hover { transform: translateY(-3px); background: var(--primary-hover); }
+
+        .progress-track {
+            flex: 1; margin: 0 2rem; height: 8px;
+            background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
+
+        /* Animations */
+        @keyframes popIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+        .anim-enter { animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        /* SVG Diagram Styles */
+        .organ-part { cursor: pointer; transition: fill 0.3s, opacity 0.3s; }
+        .organ-part:hover { opacity: 0.8; }
+        .label-text { pointer-events: none; font-weight: bold; text-shadow: 0 0 5px black; }
+
+        @media (max-width: 900px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Subtle Background Texture -->
+    <canvas id="bg-canvas"></canvas>
+
+    <header>
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <i class="fa-solid fa-flask-vial" style="color:var(--primary); font-size:1.5rem;"></i>
+            <span style="font-weight:700; letter-spacing:1px; font-size: 1.2rem;">Investigation 01</span>
+        </div>
+        <div class="tag">Student Lab</div>
+    </header>
+
+    <main>
+        <div id="slide-viewer" class="slide-container" aria-live="polite">
+            <!-- Content Injected via JS -->
+        </div>
+    </main>
+
+    <footer>
+        <button class="btn-nav" id="btn-prev"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="progress-track">
+            <div id="progress-bar" class="progress-fill"></div>
+        </div>
+        <button class="btn-nav" id="btn-next"><i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+
+<script>
+/**
+ * Simple background effect (Subtle floating bubbles)
+ */
+class BackgroundAnimation {
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.createParticles(15);
+        this.animate();
+    }
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    }
+    createParticles(count) {
+        for(let i=0; i<count; i++) {
+            this.particles.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                radius: Math.random() * 5 + 2,
+                speed: Math.random() * 0.5 + 0.1
+            });
+        }
+    }
+    animate() {
+        this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = "rgba(255,255,255,0.05)";
+        this.particles.forEach(p => {
+            p.y -= p.speed;
+            if(p.y < 0) p.y = this.canvas.height;
+            this.ctx.beginPath();
+            this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+            this.ctx.fill();
+        });
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+/**
+ * Slide Manager
+ */
+class LessonController {
+    constructor(slides) {
+        this.slides = slides;
+        this.index = 0;
+        this.container = document.getElementById('slide-viewer');
+        this.progressBar = document.getElementById('progress-bar');
+        this.btnPrev = document.getElementById('btn-prev');
+        this.btnNext = document.getElementById('btn-next');
+        this.currentCleanup = null;
+        
+        this.init();
+    }
+
+    init() {
+        new BackgroundAnimation('bg-canvas');
+        this.btnPrev.addEventListener('click', () => this.prev());
+        this.btnNext.addEventListener('click', () => this.next());
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowRight') this.next();
+            if(e.key === 'ArrowLeft') this.prev();
+        });
+        this.render();
+    }
+
+    render() {
+        if (this.currentCleanup) {
+            this.currentCleanup();
+            this.currentCleanup = null;
+        }
+
+        const slide = this.slides[this.index];
+        this.container.innerHTML = slide.template();
+        this.container.scrollTop = 0;
+        
+        // Update Progress
+        this.progressBar.style.width = `${((this.index + 1) / this.slides.length) * 100}%`;
+        this.btnPrev.disabled = this.index === 0;
+        this.btnNext.disabled = this.index === this.slides.length - 1;
+
+        // Run slide logic
+        requestAnimationFrame(() => {
+            if (slide.script) {
+                this.currentCleanup = slide.script(this.container);
+            }
+        });
+    }
+
+    next() { if(this.index < this.slides.length - 1) { this.index++; this.render(); } }
+    prev() { if(this.index > 0) { this.index--; this.render(); } }
+}
+
+const slides = [
+    // 1. Introduction
+    {
+        template: () => `
+            <div style="text-align: center; padding-top: 5vh;" class="anim-enter">
+                <i class="fa-solid fa-magnifying-glass" style="font-size: 5rem; color: var(--primary); margin-bottom: 2rem;"></i>
+                <h1>Pig Lungs & Chicken Hearts</h1>
+                <p style="font-size: 1.5rem; color: var(--accent); font-weight: 700;">Student-Led Investigation</p>
+                
+                <div class="grid-3 delay-1 anim-enter" style="margin-top: 4rem; text-align: left;">
+                    <div class="glass-card">
+                        <i class="fa-solid fa-eye" style="font-size: 2rem; color: var(--warning); margin-bottom: 1rem;"></i>
+                        <h3>1. Analyze</h3>
+                        <p>Look at the texture, size, and weight before cutting.</p>
+                    </div>
+                    <div class="glass-card">
+                        <i class="fa-solid fa-wind" style="font-size: 2rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                        <h3>2. Inflate</h3>
+                        <p>Locate the trachea and investigate how lungs fill with air.</p>
+                    </div>
+                    <div class="glass-card">
+                        <i class="fa-solid fa-heart" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                        <h3>3. Dissect</h3>
+                        <p>Cut open a chicken heart to see the chambers inside.</p>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // 2. The Warm Up (Sensory Analysis)
+    {
+        template: () => `
+            <div class="anim-enter">
+                <div class="tag" style="background: var(--warning); color: black; display:inline-block; margin-bottom:1rem;">Warm Up</div>
+                <h2>The Sensory Check</h2>
+                <p><strong>Before we touch anything:</strong> Look at the tray. What do you see?</p>
+                
+                <div class="grid-3 delay-1 anim-enter" style="margin-top: 2rem;">
+                    
+                    <!-- Prediction 1 -->
+                    <div class="reveal-card" tabindex="0">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-hand-sparkles" style="font-size: 3rem; color: var(--text-dim);"></i>
+                            <h3 style="margin-top:1rem;">Texture</h3>
+                            <p>Does it look slimy, dry, rough, or smooth?</p>
+                            <div style="margin-top:1rem; font-size:0.9rem; color:var(--accent);">Click to Reveal</div>
+                        </div>
+                        <div class="reveal-content">
+                            <h3 style="color:var(--accent);">Smooth & Spongy</h3>
+                            <p>Healthy lung tissue is soft and smooth. It bounces back when poked.</p>
+                        </div>
+                    </div>
+
+                    <!-- Prediction 2 -->
+                    <div class="reveal-card" tabindex="0">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-weight-hanging" style="font-size: 3rem; color: var(--text-dim);"></i>
+                            <h3 style="margin-top:1rem;">Weight</h3>
+                            <p>Will it be heavy like a steak, or light like a sponge?</p>
+                             <div style="margin-top:1rem; font-size:0.9rem; color:var(--accent);">Click to Reveal</div>
+                        </div>
+                        <div class="reveal-content">
+                            <h3 style="color:var(--accent);">Surprisingly Light</h3>
+                            <p>Lungs are not solid meat. They are full of millions of tiny air bubbles.</p>
+                        </div>
+                    </div>
+
+                    <!-- Prediction 3 -->
+                    <div class="reveal-card" tabindex="0">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-palette" style="font-size: 3rem; color: var(--text-dim);"></i>
+                            <h3 style="margin-top:1rem;">Color</h3>
+                            <p>Why is it pink? What would happen if it was full of blood?</p>
+                             <div style="margin-top:1rem; font-size:0.9rem; color:var(--accent);">Click to Reveal</div>
+                        </div>
+                        <div class="reveal-content">
+                            <h3 style="color:var(--accent);">Pinkish-Grey</h3>
+                            <p>The pink color comes from the remaining blood vessels and the tissue itself.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        `,
+        script: (container) => {
+            const cards = container.querySelectorAll('.reveal-card');
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.add('revealed');
+                    card.querySelector('.pre-reveal').style.display = 'none';
+                    card.querySelector('.reveal-content').style.display = 'block';
+                });
+            });
+            return () => {};
+        }
+    },
+
+    // 3. Safety Rules (Write Down)
+    {
+        template: () => `
+            <div class="anim-enter">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; color: var(--danger);"></i>
+                    <h2>Safety First</h2>
+                </div>
+                
+                <p>We do not start the investigation until these rules are written down.</p>
+
+                <div class="grid-2 delay-1 anim-enter" style="margin-top: 2rem;">
+                    
+                    <div class="glass-card" style="border-left: 5px solid var(--danger);">
+                        <h3 style="color:white; margin-bottom:1rem;">Required Equipment</h3>
+                        <ul style="font-size:1.2rem; line-height:2;">
+                            <li><i class="fa-solid fa-hand-dots" style="color:var(--accent); width:30px;"></i> Nitrile Gloves (At all times)</li>
+                            <li><i class="fa-solid fa-glasses" style="color:var(--accent); width:30px;"></i> Safety Goggles</li>
+                            <li><i class="fa-solid fa-shirt" style="color:var(--accent); width:30px;"></i> Lab Apron</li>
+                        </ul>
+                    </div>
+
+                    <div class="pedagogical-note note-write">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Student Task</div>
+                        <p style="font-size:1.2rem; margin-bottom:1rem;">Write these <strong>3 Safety Rules</strong> in your book now:</p>
+                        <ol style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; margin-left: 1.5rem;">
+                            <li style="margin-bottom:10px;"><strong>Respect the specimen:</strong> It was a living creature.</li>
+                            <li style="margin-bottom:10px;"><strong>Sharps Safety:</strong> Always cut <em>away</em> from fingers.</li>
+                            <li><strong>Hygiene:</strong> Do not touch your face, phone, or pen with dirty gloves.</li>
+                        </ol>
+                    </div>
+
+                </div>
+            </div>
+        `
+    },
+
+    // 3.5 NEW SLIDE: Video Guide
+    {
+        template: () => `
+            <div class="anim-enter">
+                <div class="tag" style="background:var(--accent); color:black; display:inline-block; margin-bottom:1rem;">Video Briefing</div>
+                <h2>Technique Guide: Inflation</h2>
+                <p>Watch how to insert the tube correctly. Note: Real biology is messier than the video.</p>
+
+                <div class="grid-2 delay-1 anim-enter" style="margin-top: 2rem;">
+                    
+                    <!-- Video Container -->
+                    <div class="glass-card" style="padding: 0; overflow: hidden; aspect-ratio: 16/9; background: black; border: 2px solid var(--text-dim);">
+                        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/8L7RUhW9Huo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border:none;"></iframe>
+                    </div>
+
+                    <!-- Discussion Points -->
+                    <div class="pedagogical-note note-task" style="margin:0; height:100%; display:flex; flex-direction:column; justify-content:center;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-users"></i> Class Discussion</div>
+                        
+                        <div style="margin-bottom:2rem;">
+                            <h3 style="color:white; font-size:1.3rem; margin-bottom:0.5rem;">1. The Technique</h3>
+                            <p>Why do they secure the tube? (Air leaks = No inflation).</p>
+                        </div>
+
+                        <div>
+                            <h3 style="color:var(--warning); font-size:1.3rem; margin-bottom:0.5rem;">2. The "Butcher" Factor</h3>
+                            <p>Our lungs are from a butcher, not a medical lab.</p>
+                            <ul style="margin-top:0.5rem; margin-left:1rem; list-style-type:circle;">
+                                <li>They might have <strong>nicks or cuts</strong> (leaks).</li>
+                                <li>They might be <strong>slippery/bloody</strong>.</li>
+                                <li>We must be patient if it doesn't inflate perfectly.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // 4. Pig Lung Investigation (Diagram + Identification)
+    {
+        template: () => `
+            <div class="anim-enter">
+                <h2>Phase 1: Pig Lung Anatomy</h2>
+                <p>Use the interactive diagram to help identify the parts on the real specimen.</p>
+
+                <div class="grid-2 delay-1 anim-enter">
+                    
+                    <!-- Interactive SVG Diagram -->
+                    <div class="glass-card" style="display:flex; flex-direction:column; align-items:center;">
+                        <h3><i class="fa-solid fa-arrow-pointer"></i> Touch to Identify</h3>
+                        <svg viewBox="0 0 300 300" style="width:100%; max-width:300px; margin-top:1rem;">
+                            <!-- Trachea -->
+                            <path id="part-trachea" class="organ-part" d="M130 10 L130 80 L170 80 L170 10 Z" fill="#e2e8f0" stroke="white" stroke-width="2"/>
+                            <text x="150" y="50" text-anchor="middle" font-size="12" fill="#0f172a" pointer-events="none">Trachea</text>
+                            
+                            <!-- Left Lung -->
+                            <path id="part-lung-l" class="organ-part" d="M130 80 Q90 90 80 150 Q70 220 120 250 L140 200 Z" fill="#f43f5e" opacity="0.7"/>
+                            
+                            <!-- Right Lung -->
+                            <path id="part-lung-r" class="organ-part" d="M170 80 Q210 90 220 150 Q230 220 180 250 L160 200 Z" fill="#f43f5e" opacity="0.7"/>
+                            
+                            <!-- Bronchi (Hidden inside) -->
+                            <path d="M150 80 L150 110 L120 150 M150 110 L180 150" stroke="white" stroke-width="2" fill="none" stroke-dasharray="4 4"/>
+                        </svg>
+                        <div id="diagram-label" style="height: 30px; margin-top:1rem; font-weight:bold; color:var(--accent); font-size:1.2rem;">Select a part...</div>
+                    </div>
+
+                    <!-- Identification List -->
+                    <div>
+                        <div class="pedagogical-note note-task">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-list-check"></i> Checklist</div>
+                            <p>Find these 3 parts on your pig lung:</p>
+                            <ul style="margin-top:1rem; line-height:1.8;">
+                                <li>
+                                    <strong>The Trachea (Windpipe):</strong> 
+                                    <br><span style="color:var(--text-dim); font-size:0.9rem;">The big white tube with ridges.</span>
+                                </li>
+                                <li>
+                                    <strong>The Bronchi:</strong> 
+                                    <br><span style="color:var(--text-dim); font-size:0.9rem;">Where the tube splits into two.</span>
+                                </li>
+                                <li>
+                                    <strong>The Lobes:</strong> 
+                                    <br><span style="color:var(--text-dim); font-size:0.9rem;">The separate sections of the lung. Count them.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        script: (container) => {
+            const label = container.querySelector('#diagram-label');
+            
+            container.querySelector('#part-trachea').addEventListener('click', () => {
+                label.innerText = "Trachea: Hard cartilage rings.";
+            });
+            container.querySelector('#part-lung-l').addEventListener('click', () => {
+                label.innerText = "Left Lung: Soft and spongy.";
+            });
+            container.querySelector('#part-lung-r').addEventListener('click', () => {
+                label.innerText = "Right Lung: Usually has more lobes.";
+            });
+
+            return () => {};
+        }
+    },
+
+    // 5. Trachea & Inflation
+    {
+        template: () => `
+            <div class="anim-enter">
+                <h2>Phase 2: Inflation Investigation</h2>
+                <div class="grid-2">
+                    
+                    <div class="delay-1 anim-enter">
+                        <div class="glass-card">
+                            <h3><i class="fa-solid fa-fingerprint"></i> The Trachea Test</h3>
+                            <p style="margin-bottom:1rem;">Feel the white tube at the top.</p>
+                            <ul style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px;">
+                                <li><strong>Feel:</strong> It has hard rings like a vacuum hose.</li>
+                                <li><strong>Shape:</strong> Are they full circles? Feel the back.</li>
+                            </ul>
+                            <div style="margin-top:1rem; font-size:0.9rem; color:var(--text-dim);">
+                                <em>(Note: The rings are C-shaped to allow the food pipe behind it to expand!)</em>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="delay-2 anim-enter">
+                        <div class="pedagogical-note note-task">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-wind"></i> The Inflation</div>
+                            <p><strong>Goal:</strong> Make the lungs expand.</p>
+                            <ol style="margin-left:1.5rem; margin-top:1rem; line-height:1.8;">
+                                <li>Insert the plastic tube into the Trachea.</li>
+                                <li>Gently blow (or use the pump).</li>
+                                <li><strong>Observe:</strong> Watch the volume change and color change.</li>
+                            </ol>
+                            <p style="margin-top:1rem; color:var(--accent); font-weight:bold;">Does it get lighter or darker when full of air?</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        `
+    },
+
+    // 6. Chicken Heart Investigation
+    {
+        template: () => `
+            <div class="anim-enter">
+                <div class="tag" style="background:var(--primary); color:white; display:inline-block; margin-bottom:1rem;">New Specimen</div>
+                <h2>Phase 3: Chicken Hearts</h2>
+                <p>Move the lungs to the side. Bring the chicken hearts to the center.</p>
+
+                <div class="grid-2 delay-1 anim-enter">
+                    
+                    <div class="glass-card">
+                        <h3><i class="fa-solid fa-heart-pulse"></i> External View</h3>
+                        <p>These are much smaller than pig hearts, but the structure is similar.</p>
+                        <ul style="margin-top:1rem;">
+                            <li><strong>Top (Atria):</strong> Darker, fatty area.</li>
+                            <li><strong>Bottom (Ventricles):</strong> The pointy, muscular part.</li>
+                        </ul>
+                    </div>
+
+                    <div class="pedagogical-note note-write">
+                         <div class="pedagogical-badge"><i class="fa-solid fa-scalpel"></i> Dissection Task</div>
+                         <p><strong>Step 1:</strong> Place the heart flat on the tray.</p>
+                         <p><strong>Step 2:</strong> Cut the heart in half length-ways (from top to bottom).</p>
+                         <p><strong>Step 3:</strong> Open it like a book.</p>
+                         <hr style="border-color:rgba(255,255,255,0.1); margin:1rem 0;">
+                         <p><strong>Look for:</strong> The chambers inside. Is one side thicker than the other?</p>
+                    </div>
+
+                </div>
+            </div>
+        `
+    },
+
+    // 7. Conclusion
+    {
+        template: () => `
+            <div class="anim-enter" style="text-align:center;">
+                <h2>Investigation Complete</h2>
+                <p>Well done scientists. Time to clean up.</p>
+
+                <div class="glass-card delay-1 anim-enter" style="max-width:600px; margin:2rem auto; text-align:left;">
+                    <h3 style="color:var(--accent); margin-bottom:1rem;"><i class="fa-solid fa-list-check"></i> Clean Up Checklist</h3>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <label style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; display:flex; gap:10px; align-items:center;">
+                            <input type="checkbox" style="width:20px; height:20px;">
+                            <span>Place all tissue in the Biohazard Bag.</span>
+                        </label>
+                        <label style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; display:flex; gap:10px; align-items:center;">
+                            <input type="checkbox" style="width:20px; height:20px;">
+                            <span>Put razor blades in the Sharps Container.</span>
+                        </label>
+                        <label style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; display:flex; gap:10px; align-items:center;">
+                            <input type="checkbox" style="width:20px; height:20px;">
+                            <span>Wipe tray and table with disinfectant.</span>
+                        </label>
+                         <label style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; display:flex; gap:10px; align-items:center;">
+                            <input type="checkbox" style="width:20px; height:20px;">
+                            <span>Wash your hands thoroughly.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        `
+    }
+];
+
+// Start
+document.addEventListener('DOMContentLoaded', () => {
+    new LessonController(slides);
+});
+</script>
+</body>
+</html>
