@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED Social Studies: The U.S. Constitution (ESL Support)</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Premium Federal Slate Theme */
+            --bg-deep: #0b1120;        
+            --bg-card: rgba(30, 41, 59, 0.65); 
+            
+            --federal-blue: #3b82f6;    
+            --federal-blue-glow: rgba(59, 130, 246, 0.4);
+            --constitution-gold: #fbbf24; 
+            --constitution-gold-glow: rgba(251, 191, 36, 0.3);
+            
+            --text-main: #f8fafc;        
+            --text-muted: #94a3b8;       
+            --text-vn: #cbd5e1;         
+
+            --header-h: 75px;
+            --footer-h: 85px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 6vw, 4.5rem);
+            --fs-h2: clamp(1.8rem, 4vw, 2.8rem);
+            
+            /* Font Families */
+            --font-heading: 'Libre Baskerville', serif; 
+            --font-ui: 'Outfit', sans-serif;           
+            --font-body: 'Plus Jakarta Sans', sans-serif; 
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-body);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(59, 130, 246, 0.08), transparent 30%), 
+                radial-gradient(circle at 85% 75%, rgba(251, 191, 36, 0.06), transparent 30%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e293b' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2.5rem;
+            background: rgba(11, 17, 32, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            z-index: 50;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--federal-blue), #1d4ed8);
+            padding: 0.5rem 1.4rem;
+            border-radius: 50px;
+            font-family: var(--font-ui);
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: white;
+            box-shadow: 0 4px 20px var(--federal-blue-glow);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .slide-center { justify-content: center; }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(11, 17, 32, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2.5rem;
+            backdrop-filter: blur(16px);
+            z-index: 50;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.3rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--federal-blue);
+            box-shadow: 0 0 20px var(--federal-blue-glow);
+            transform: scale(1.08);
+            border-color: rgba(255,255,255,0.3);
+        }
+        .btn-nav:disabled { opacity: 0.2; cursor: not-allowed; transform: scale(0.95); }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 3rem;
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--federal-blue), var(--constitution-gold));
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 15px var(--constitution-gold-glow);
+            border-radius: 10px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            backdrop-filter: blur(16px);
+        }
+
+        /* --- NOTEBOOK PEDAGOGY --- */
+        .notebook-alert {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05));
+            border: 2px solid var(--constitution-gold);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            box-shadow: 0 8px 30px rgba(251, 191, 36, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .notebook-alert::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%;
+            background: var(--constitution-gold);
+        }
+        .alert-icon {
+            font-size: 2.5rem;
+            color: var(--constitution-gold);
+            text-shadow: 0 0 15px var(--constitution-gold-glow);
+        }
+        .alert-title {
+            font-family: var(--font-ui);
+            font-weight: 800;
+            color: var(--constitution-gold);
+            letter-spacing: 2px;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        .alert-text-en { font-size: 1.15rem; font-weight: 500; margin-bottom: 0.8rem; line-height: 1.5; color: white; }
+        .alert-text-vn { font-size: 1.05rem; font-style: italic; color: var(--text-vn); line-height: 1.5; font-family: 'Times New Roman', serif;}
+
+        .copy-prompt {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--constitution-gold);
+            border: 1px dashed var(--constitution-gold);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            animation: float-prompt 3s ease-in-out infinite;
+        }
+        @keyframes float-prompt {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* --- DIAGRAMS (Sketch-Friendly) --- */
+        .diagram-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+            padding: 1rem 0;
+            margin-top: 1rem;
+        }
+        .diagram-level {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        .diagram-box {
+            background: rgba(11, 17, 32, 0.7);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px; /* Sharper corners for drawing */
+            padding: 1.5rem;
+            text-align: center;
+            min-width: 220px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .box-root {
+            border-color: var(--constitution-gold);
+            border-width: 3px;
+            width: 60%;
+            background: rgba(30, 41, 59, 0.9);
+        }
+        .box-branch {
+            flex: 1;
+            border-top-color: var(--federal-blue);
+            border-top-width: 4px;
+        }
+        .box-outcome {
+            border-color: #10b981;
+            border-width: 3px;
+            width: 80%;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .diagram-connector {
+            width: 3px;
+            height: 30px;
+            background: var(--text-muted);
+            margin: -0.5rem 0;
+            opacity: 0.5;
+        }
+        .diagram-connector-horizontal {
+            height: 3px;
+            width: 30px;
+            background: var(--text-muted);
+            opacity: 0.5;
+            align-self: center;
+        }
+        .diagram-label {
+            font-family: var(--font-heading);
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .diagram-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+        .amend-group {
+            display: inline-block;
+            background: rgba(251, 191, 36, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--constitution-gold);
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            margin-top: 1rem;
+            font-weight: 700;
+        }
+
+        /* --- READING LAYOUT --- */
+        .reading-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+        .col-en { font-size: 1.25rem; line-height: 1.8; color: var(--text-main); font-weight: 400; }
+        .col-en p { margin-bottom: 1.8rem; }
+        
+        .col-vn {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            color: var(--text-vn);
+            font-size: 1.25rem;
+            line-height: 1.8;
+            border-left: 2px solid rgba(255,255,255,0.08);
+            padding-left: 2.5rem;
+        }
+        .col-vn p { margin-bottom: 1.8rem; }
+
+        /* Interactive Keywords (Animated Pulse) */
+        .keyword {
+            color: var(--constitution-gold);
+            font-weight: 700;
+            border-bottom: 2px dashed rgba(251, 191, 36, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0 2px;
+            animation: pulse-keyword 2.5s infinite;
+        }
+        @keyframes pulse-keyword {
+            0% { text-shadow: 0 0 2px rgba(251, 191, 36, 0.1); }
+            50% { text-shadow: 0 0 10px rgba(251, 191, 36, 0.8); }
+            100% { text-shadow: 0 0 2px rgba(251, 191, 36, 0.1); }
+        }
+        .keyword:hover {
+            background: rgba(251, 191, 36, 0.15);
+            border-bottom-style: solid;
+            border-radius: 4px;
+            animation: none;
+            text-shadow: 0 0 10px var(--constitution-gold);
+        }
+
+        /* Definition Dock */
+        .def-dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(11, 17, 32, 0.98);
+            border-top: 3px solid var(--constitution-gold);
+            padding: 2rem;
+            backdrop-filter: blur(24px);
+            transform: translateY(110%);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+        }
+        .def-dock.active { transform: translateY(0); }
+        .def-content { max-width: 1000px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+        
+        /* Quiz */
+        .quiz-option {
+            width: 100%;
+            padding: 1.4rem;
+            margin-bottom: 1rem;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text-main);
+            text-align: left;
+            cursor: pointer;
+            font-size: 1.15rem;
+            font-family: var(--font-ui);
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .quiz-option:hover:not(:disabled) { 
+            background: rgba(255,255,255,0.08); 
+            border-color: var(--federal-blue); 
+            transform: translateX(5px);
+        }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: white; }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: white; }
+        .explanation-box {
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            border-left: 4px solid;
+        }
+
+        /* Typography & Utilities */
+        .text-center { text-align: center; }
+        .text-gold { color: var(--constitution-gold); font-weight: 700; }
+        h1 { font-family: var(--font-heading); font-size: var(--fs-h1); font-weight: 700; letter-spacing: -1px; margin-bottom: 0.5rem; }
+        h2 { font-family: var(--font-heading); font-size: var(--fs-h2); font-weight: 700; color: white; margin-bottom: 1.5rem; letter-spacing: -0.5px;}
+        .fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
+        .slide-up { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(30px); animation-delay: 0.2s; }
+        
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 900px) {
+            .reading-layout { grid-template-columns: 1fr; gap: 2rem; }
+            .col-vn { border-left: none; border-top: 1px dashed rgba(255,255,255,0.2); padding-left: 0; padding-top: 2rem; }
+            .diagram-level { flex-direction: column; }
+            .box-root, .box-outcome { width: 100%; }
+            .card { padding: 2rem; }
+            .notebook-alert { flex-direction: column; gap: 1rem; padding: 1.5rem; }
+            .alert-icon { font-size: 2rem; }
+            .diagram-connector-horizontal { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">GED Civics</div>
+            <span style="font-weight: 600; color: var(--text-muted); font-size: 1rem; font-family: var(--font-ui); display: none; margin-left: 0.5rem; @media(min-width:600px){display:inline;}">The U.S. Constitution</span>
+        </div>
+        <div style="color: var(--constitution-gold); font-size: 1.5rem; text-shadow: 0 0 10px rgba(251,191,36,0.5);">
+            <i class="fa-solid fa-landmark-dome"></i>
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Content injected via JS -->
+        </div>
+        <div style="height: 60px;"></div>
+    </main>
+    
+    <div id="def-dock" class="def-dock">
+        <div class="def-content">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                <div>
+                    <span style="color: var(--federal-blue); font-size: 0.9rem; font-family: var(--font-ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Vocabulary Defintion</span>
+                    <h3 id="dock-term" style="color: var(--constitution-gold); font-size: 2.2rem; font-family: var(--font-heading); margin: 0.2rem 0 0 0;">Term</h3>
+                </div>
+                <button onclick="hideDock()" style="background:transparent; border:none; color: white; font-size: 1.5rem; cursor:pointer; opacity: 0.7; transition: opacity 0.2s;"><i class="fa-solid fa-times"></i></button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0.5rem;">
+                <div>
+                    <span style="display: inline-block; background: rgba(255,255,255,0.1); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 0.5rem;">ENG</span>
+                    <p id="dock-def" style="color: white; font-size: 1.3rem; margin: 0; line-height: 1.5;"></p>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--text-vn);">
+                    <span style="display: inline-block; background: var(--federal-blue); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 0.5rem;">VIE</span>
+                    <p id="dock-vn" style="color: var(--text-vn); font-size: 1.2rem; font-weight: 700; margin: 0 0 0.2rem 0;"></p>
+                    <p id="dock-vn-def" style="color: var(--text-vn); font-size: 1.15rem; margin: 0; font-style: italic; line-height: 1.5;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="progress-container"><div class="progress-fill" id="progress-fill"></div></div>
+        <button class="btn-nav" id="btn-next"><i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+</div>
+
+<script>
+    const glossary = {
+        "articles of confederation": {
+            def: "The first constitution of the United States, which created a weak central government and gave most power to the states.",
+            vn: "Các Điều khoản Hợp bang",
+            vn_def: "Hiến pháp đầu tiên của Hoa Kỳ, tạo ra một chính quyền trung ương yếu kém và trao phần lớn quyền lực cho các tiểu bang."
+        },
+        "constitutional convention": {
+            def: "The gathering in Philadelphia in 1787 where delegates wrote the U.S. Constitution.",
+            vn: "Hội nghị Lập hiến",
+            vn_def: "Cuộc họp mặt tại Philadelphia năm 1787, nơi các đại biểu đã soạn thảo Hiến pháp Hoa Kỳ."
+        },
+        "compromise": {
+            def: "An agreement reached by each side making concessions (giving something up).",
+            vn: "Sự thỏa hiệp",
+            vn_def: "Một thỏa thuận đạt được bằng cách mỗi bên nhượng bộ (từ bỏ một điều gì đó)."
+        },
+        "preamble": {
+            def: "The introduction to the Constitution, beginning with 'We the People,' outlining the goals of the document.",
+            vn: "Lời nói đầu",
+            vn_def: "Phần mở đầu của Hiến pháp, bắt đầu bằng 'Chúng tôi, Nhân dân,' phác thảo các mục tiêu của văn kiện này."
+        },
+        "articles": {
+            def: "The seven main sections of the Constitution that establish the structure of the U.S. government.",
+            vn: "Các Điều khoản (của Hiến pháp)",
+            vn_def: "Bảy phần chính của Hiến pháp thiết lập cấu trúc của chính phủ Hoa Kỳ."
+        },
+        "amendments": {
+            def: "Official changes, additions, or corrections made to the Constitution.",
+            vn: "Các Tu chính án",
+            vn_def: "Những thay đổi, bổ sung hoặc sửa đổi chính thức đối với Hiến pháp."
+        },
+        "federalism": {
+            def: "A system of government in which power is divided and shared between a central (national) government and state governments.",
+            vn: "Chủ nghĩa liên bang",
+            vn_def: "Hệ thống chính trị trong đó quyền lực được phân chia và chia sẻ giữa chính quyền trung ương (quốc gia) và các chính quyền tiểu bang."
+        },
+        "republic": {
+            def: "A state in which supreme power is held by the people and their elected representatives.",
+            vn: "Nền cộng hòa",
+            vn_def: "Một quốc gia nơi quyền lực tối cao được nắm giữ bởi nhân dân và các đại diện do họ bầu ra."
+        },
+        "ratification": {
+            def: "The official way to confirm something, usually by vote. The formal approval of the Constitution.",
+            vn: "Sự phê chuẩn",
+            vn_def: "Cách thức chính thức để xác nhận một điều gì đó, thường là thông qua bỏ phiếu. Sự chấp thuận chính thức của Hiến pháp."
+        },
+        "popular sovereignty": {
+            def: "The principle that the authority of a state and its government are created and sustained by the consent of its people.",
+            vn: "Chủ quyền nhân dân",
+            vn_def: "Nguyên tắc cho rằng thẩm quyền của một quốc gia và chính phủ của nó được tạo ra và duy trì bởi sự đồng thuận của nhân dân."
+        }
+    };
+
+    const slides = [
+        // SLIDE 1: INTRO
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="text-center fade-in" style="max-width: 900px; margin: 0 auto;">
+                        <div style="font-size: 5rem; color: var(--constitution-gold); margin-bottom: 1.5rem; filter: drop-shadow(0 0 40px rgba(251,191,36,0.4));">
+                            <i class="fa-solid fa-landmark"></i>
+                        </div>
+                        <h1>The U.S. Constitution</h1>
+                        <p style="font-size: 1.5rem; color: var(--text-muted); margin-bottom: 2rem; font-family: var(--font-ui);">
+                            History, Structure, and Key Principles.
+                        </p>
+                        
+                        <div class="notebook-alert slide-up">
+                            <div class="alert-icon"><i class="fa-solid fa-book-open"></i></div>
+                            <div style="text-align: left;">
+                                <div class="alert-title">NOTEBOOK REQUIRED | YÊU CẦU GHI CHÉP</div>
+                                <div class="alert-text-en">As you go through this lesson, copy all <span class="text-gold" style="border-bottom: 1px dashed var(--constitution-gold);">gold vocabulary words</span> and the provided <strong>diagrams</strong> into your physical notebook to help you memorize them for the GED.</div>
+                                <div class="alert-text-vn">Khi học bài này, hãy chép tất cả các <span class="text-gold">từ vựng màu vàng</span> và các <strong>sơ đồ</strong> được cung cấp vào vở của bạn để giúp ghi nhớ tốt hơn cho bài thi GED.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: READING 1 (History - Articles & Convention)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--constitution-gold); color: #0f172a; box-shadow: 0 4px 15px rgba(251,191,36,0.3);">Part 1</span>
+                             <h2 style="margin:0;">The Failed First Try</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>After the American Revolution, the United States needed a government. Their first attempt was a document called the <span class="keyword" data-term="articles of confederation">Articles of Confederation</span>. However, because Americans were terrified of a strong king, they made the new central government extremely weak. It could not collect taxes, it had no president, and it had no national army.</p>
+                                
+                                <p>This system failed. Without money, the country was falling apart. In 1787, leaders like George Washington and James Madison met in Philadelphia for the <span class="keyword" data-term="constitutional convention">Constitutional Convention</span>. Their original goal was to fix the Articles, but they quickly realized they needed to throw them away and write a brand new set of rules.</p>
+                                
+                                <p>They decided to create a <span class="keyword" data-term="republic">republic</span> where the central government was stronger, but still limited by the power of the states and the people.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Sau Cách mạng Mỹ, Hoa Kỳ cần một chính phủ. Nỗ lực đầu tiên của họ là một văn kiện có tên gọi <span class="keyword" data-term="articles of confederation">Các Điều khoản Hợp bang</span>. Tuy nhiên, vì người Mỹ rất sợ hãi một vị vua chuyên quyền, họ đã khiến chính quyền trung ương mới cực kỳ yếu kém. Chính phủ không thể thu thuế, không có tổng thống và không có quân đội quốc gia.</p>
+                                <p>Hệ thống này đã thất bại. Nếu không có tiền, đất nước đứng trên bờ vực sụp đổ. Năm 1787, các nhà lãnh đạo như George Washington và James Madison đã gặp nhau tại Philadelphia trong <span class="keyword" data-term="constitutional convention">Hội nghị Lập hiến</span>. Mục tiêu ban đầu của họ là sửa chữa Các Điều khoản, nhưng họ nhanh chóng nhận ra cần phải vứt bỏ chúng và viết một bộ quy tắc hoàn toàn mới.</p>
+                                <p>Họ quyết định tạo ra một <span class="keyword" data-term="republic">nền cộng hòa</span> nơi chính quyền trung ương mạnh hơn, nhưng vẫn bị giới hạn bởi quyền lực của các tiểu bang và nhân dân.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: DIAGRAM (The Great Compromise)
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="width: 100%;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                            <div class="copy-prompt"><i class="fa-solid fa-pen-nib"></i> Draw this diagram in your notebook / Vẽ sơ đồ này vào vở</div>
+                            <h2 style="margin-top: 0.5rem;">The Great Compromise</h2>
+                            <p>Highly tested on the GED: How states agreed on representation in Congress.</p>
+                        </div>
+
+                        <div class="diagram-container slide-up">
+                            <div class="diagram-level">
+                                <!-- Virginia Plan -->
+                                <div class="diagram-box box-branch">
+                                    <div class="diagram-label"><i class="fa-solid fa-users"></i> The Virginia Plan</div>
+                                    <div class="diagram-desc">Favored <strong>large states</strong>.<br>Representation based on state <strong>population</strong>.</div>
+                                </div>
+                                
+                                <div class="diagram-connector-horizontal"></div>
+                                <div style="font-family: var(--font-heading); font-weight: bold; font-size: 1.5rem; color: var(--constitution-gold); align-self: center;">VS</div>
+                                <div class="diagram-connector-horizontal"></div>
+
+                                <!-- New Jersey Plan -->
+                                <div class="diagram-box box-branch" style="border-top-color: #ef4444;">
+                                    <div class="diagram-label"><i class="fa-solid fa-equals"></i> The New Jersey Plan</div>
+                                    <div class="diagram-desc">Favored <strong>small states</strong>.<br>Representation should be <strong>equal</strong> for every state.</div>
+                                </div>
+                            </div>
+
+                            <div style="display:flex; flex-direction:column; align-items:center;">
+                                <div class="diagram-connector" style="height: 40px; margin: 0;"></div>
+                                <i class="fa-solid fa-arrow-down" style="color: var(--text-muted); margin-bottom: 1rem; opacity: 0.5;"></i>
+                            </div>
+
+                            <!-- The Compromise -->
+                            <div class="diagram-box box-outcome">
+                                <div class="diagram-label" style="color: #10b981; font-size: 1.8rem;">The Great Compromise</div>
+                                <div class="diagram-desc" style="color: white; font-size: 1.1rem; margin-bottom: 1rem;">Created a <strong>Bicameral (Two-House)</strong> Congress to satisfy both sides:</div>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                                    <div>
+                                        <div style="color: var(--federal-blue); font-weight: bold;"><i class="fa-solid fa-building"></i> House of Representatives</div>
+                                        <div style="font-size: 0.9rem; color: #cbd5e1;">Based on Population (Helps Large States)</div>
+                                    </div>
+                                    <div style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 1rem;">
+                                        <div style="color: #ef4444; font-weight: bold;"><i class="fa-solid fa-building-columns"></i> The Senate</div>
+                                        <div style="font-size: 0.9rem; color: #cbd5e1;">2 Senators per State (Helps Small States)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: READING 2 (Structure)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-sitemap text-gold" style="font-size: 2.5rem;"></i>
+                             <h2 style="margin:0;">The Structure of the Document</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>The U.S. Constitution is a relatively short document, acting as an instruction manual for the government. It is divided into three main parts.</p>
+                                
+                                <p>First is the <span class="keyword" data-term="preamble">Preamble</span>. This is the famous introduction starting with "We the People." It does not make laws; instead, it explains the <em>purpose</em> of the new government, such as establishing justice and ensuring peace.</p>
+
+                                <p>Second are the seven <span class="keyword" data-term="articles">Articles</span>. These form the main body of the text. Articles I, II, and III divide the government into three branches: the Legislative (Congress), the Executive (President), and the Judicial (Supreme Court).</p>
+                                
+                                <p>Third are the <span class="keyword" data-term="amendments">Amendments</span>. Because the Framers knew society would change, they included a way to alter the Constitution. There are currently 27 Amendments, including the Bill of Rights.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Hiến pháp Hoa Kỳ là một văn kiện tương đối ngắn, đóng vai trò như một cẩm nang hướng dẫn cho chính phủ. Nó được chia thành ba phần chính.</p>
+                                <p>Đầu tiên là <span class="keyword" data-term="preamble">Lời nói đầu</span>. Đây là phần mở đầu nổi tiếng bắt đầu bằng "Chúng tôi, Nhân dân." Nó không ban hành luật pháp; thay vào đó, nó giải thích <em>mục đích</em> của chính phủ mới, chẳng hạn như thiết lập công lý và đảm bảo hòa bình.</p>
+                                <p>Thứ hai là bảy <span class="keyword" data-term="articles">Điều khoản</span>. Chúng tạo thành phần nội dung chính của văn bản. Các Điều I, II và III chia chính phủ thành ba nhánh: Lập pháp (Quốc hội), Hành pháp (Tổng thống) và Tư pháp (Tòa án Tối cao).</p>
+                                <p>Thứ ba là <span class="keyword" data-term="amendments">Các Tu chính án</span>. Bởi vì những Người soạn thảo biết rằng xã hội sẽ thay đổi, họ đã bao gồm một cách để thay đổi Hiến pháp. Hiện có 27 Tu chính án, bao gồm cả Tuyên ngôn Nhân quyền.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: DIAGRAM (Anatomy)
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="width: 100%;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                            <div class="copy-prompt"><i class="fa-solid fa-pen-nib"></i> Draw this hierarchy map in your notebook / Vẽ sơ đồ này vào vở</div>
+                            <h2 style="margin-top: 0.5rem;">Anatomy of the Constitution</h2>
+                            <p>The 3 distinct sections of the United States Constitution.</p>
+                        </div>
+
+                        <div class="diagram-container slide-up">
+                            <!-- Level 1 -->
+                            <div class="diagram-box box-root">
+                                <div class="diagram-label">1. The Preamble</div>
+                                <div class="diagram-desc">"We the People..."<br>The Introduction & Goals.</div>
+                            </div>
+
+                            <div class="diagram-connector"></div>
+
+                            <!-- Level 2 -->
+                            <div class="diagram-box box-root" style="border-color: var(--federal-blue);">
+                                <div class="diagram-label">2. The Seven Articles</div>
+                                <div class="diagram-desc">The Instruction Manual for the Government.</div>
+                                <div style="display:flex; justify-content:center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                                    <div class="amend-group" style="border-color:var(--federal-blue); color:var(--text-main);">Article I: Legislative</div>
+                                    <div class="amend-group" style="border-color:var(--federal-blue); color:var(--text-main);">Article II: Executive</div>
+                                    <div class="amend-group" style="border-color:var(--federal-blue); color:var(--text-main);">Article III: Judicial</div>
+                                </div>
+                            </div>
+
+                            <div class="diagram-connector"></div>
+
+                            <!-- Level 3 -->
+                            <div class="diagram-box box-root" style="border-color: #10b981;">
+                                <div class="diagram-label" style="color: #10b981;">3. The Amendments</div>
+                                <div class="diagram-desc">Additions and Changes (27 total).</div>
+                                <div style="display:flex; justify-content:center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                                    <div class="amend-group" style="border-color:#10b981; color:#10b981;">Amendments 1-10: Bill of Rights</div>
+                                    <div class="amend-group" style="border-color:#10b981; color:#10b981;">Amendments 11-27: Later Changes</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: READING 3 (Core Principles)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-scale-balanced text-gold" style="font-size: 2.5rem;"></i>
+                             <h2 style="margin:0;">Core Constitutional Principles</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>The Constitution is built on several key ideas to prevent tyranny. The most important is <span class="keyword" data-term="popular sovereignty">popular sovereignty</span>. This means all political power ultimately comes from the people. We show this power by voting for our representatives.</p>
+
+                                <p>To keep the government from becoming a dictatorship, the Framers used <strong>Separation of Powers</strong>. They split the government into three branches so no single person has all the control. To ensure one branch doesn't overpower the others, they built a system of <strong>Checks and Balances</strong> (e.g., Congress passes a law, but the President can veto it).</p>
+
+                                <p>Finally, the system relies on <span class="keyword" data-term="federalism">federalism</span>. Power is split vertically between the National government in Washington D.C., and the State governments (like Texas or California).</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Hiến pháp được xây dựng dựa trên một số ý tưởng cốt lõi để ngăn chặn sự chuyên chế. Quan trọng nhất là <span class="keyword" data-term="popular sovereignty">chủ quyền nhân dân</span>. Điều này có nghĩa là mọi quyền lực chính trị cuối cùng đều đến từ người dân. Chúng ta thể hiện quyền lực này bằng cách bỏ phiếu cho các đại diện của mình.</p>
+                                <p>Để giữ cho chính phủ không trở thành một chế độ độc tài, những Người soạn thảo đã sử dụng <strong>Sự phân chia quyền lực</strong>. Họ chia chính phủ thành ba nhánh để không một cá nhân nào có toàn bộ quyền kiểm soát. Để đảm bảo một nhánh không áp đảo các nhánh khác, họ đã xây dựng một hệ thống <strong>Kiểm soát và Đối trọng</strong> (ví dụ: Quốc hội thông qua một đạo luật, nhưng Tổng thống có thể phủ quyết nó).</p>
+                                <p>Cuối cùng, hệ thống này dựa vào <span class="keyword" data-term="federalism">chủ nghĩa liên bang</span>. Quyền lực được phân chia theo chiều dọc giữa chính quyền Quốc gia ở Washington D.C. và chính quyền các Tiểu bang (như Texas hoặc California).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: READING 4 (Ratification & The Living Document)
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-leaf text-gold" style="font-size: 2.5rem;"></i>
+                             <h2 style="margin:0;">Ratification & The Living Document</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>Once the Constitution was written in 1787, it had to go through <span class="keyword" data-term="ratification">ratification</span>. Nine out of thirteen states had to approve it. <em>Federalists</em> argued for it, while <em>Anti-Federalists</em> opposed it until the Bill of Rights was added.</p>
+                                
+                                <p>Today, we call the Constitution a "Living Document" because it can adapt to modern times through <span class="keyword" data-term="amendments">amendments</span>. However, the Framers purposely made the amendment process very difficult to ensure only widely supported changes become law.</p>
+
+                                <p>To pass an amendment requires a <strong>two-thirds (2/3)</strong> majority vote in both the House and the Senate, followed by the approval of <strong>three-fourths (3/4)</strong> of all state legislatures. Because of this high bar, the Constitution has only been amended 27 times in over 230 years.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Một khi Hiến pháp được soạn thảo vào năm 1787, nó phải trải qua quá trình <span class="keyword" data-term="ratification">phê chuẩn</span>. Chín trên mười ba bang phải chấp thuận nó. Những <em>người ủng hộ Liên bang</em> đã tranh luận bảo vệ nó, trong khi những <em>người chống Liên bang</em> phản đối cho đến khi Tuyên ngôn Nhân quyền được thêm vào.</p>
+                                <p>Ngày nay, chúng ta gọi Hiến pháp là "Văn kiện Sống" vì nó có thể thích ứng với thời hiện đại thông qua các <span class="keyword" data-term="amendments">tu chính án</span>. Tuy nhiên, những Người soạn thảo đã cố ý làm cho quá trình tu chính trở nên rất khó khăn để đảm bảo chỉ những thay đổi được ủng hộ rộng rãi mới trở thành luật.</p>
+                                <p>Để thông qua một tu chính án cần <strong>hai phần ba (2/3)</strong> đa số phiếu bầu ở cả Hạ viện và Thượng viện, tiếp theo là sự chấp thuận của <strong>ba phần tư (3/4)</strong> cơ quan lập pháp các tiểu bang. Vì rào cản cao này, Hiến pháp chỉ mới được tu chính 27 lần trong hơn 230 năm.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: QUIZ
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Constitution Application Quiz</h2>
+                             <p>Test your understanding with these GED-style scenario questions.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- Q1 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">1. Why did the Articles of Confederation fail as the first government of the U.S.?</h3>
+                                <div id="q1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q1')">A. The central government was too weak and lacked the power to collect taxes.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q1')">B. The president had too much tyrannical power over the states.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q1')">C. It gave all political power directly to Great Britain.</button>
+                                </div>
+                                <div id="q1-explain" class="explanation-box" data-explain="The Articles made the national government intentionally weak to avoid a king, meaning it couldn't collect taxes or fund an army."></div>
+                            </div>
+
+                            <!-- Q2 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">2. The "Great Compromise" at the Constitutional Convention solved a major dispute by creating a bicameral (two-house) Congress. What was the dispute about?</h3>
+                                <div id="q2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q2')">A. Whether to ban slavery in the Southern states.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q2')">B. How large and small states would be represented in the legislature.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q2')">C. How the President should be elected.</button>
+                                </div>
+                                <div id="q2-explain" class="explanation-box" data-explain="Large states wanted representation by population (Virginia Plan), small states wanted equal representation (New Jersey Plan). The Great Compromise used both."></div>
+                            </div>
+
+                            <!-- Q3 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">3. The principle of "Popular Sovereignty" is best expressed by which famous phrase from the Constitution?</h3>
+                                <div id="q3-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q3')">A. "To make all Laws which shall be necessary and proper..."</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q3')">B. "The right of the people to keep and bear Arms..."</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q3')">C. "We the People of the United States..."</button>
+                                </div>
+                                <div id="q3-explain" class="explanation-box" data-explain="'We the People' shows that the government's power comes directly from the consent and authority of its citizens (Popular Sovereignty)."></div>
+                            </div>
+
+                            <!-- Q4 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">4. Congress passes a new immigration law, but the President disagrees with it and uses his power to veto the law. This is an example of:</h3>
+                                <div id="q4-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q4')">A. Checks and Balances</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q4')">B. Federalism</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q4')">C. The First Amendment</button>
+                                </div>
+                                <div id="q4-explain" class="explanation-box" data-explain="Checks and Balances allow each branch of government to limit the powers of the other branches, preventing any one from becoming too powerful."></div>
+                            </div>
+
+                            <!-- Q5 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">5. Why has the U.S. Constitution only been amended 27 times in over 200 years?</h3>
+                                <div id="q5-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q5')">A. The Supreme Court forbids changing the Constitution.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'q5')">B. The process requires high majorities (2/3 of Congress and 3/4 of states), making it very difficult.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'q5')">C. Only the President has the power to suggest amendments.</button>
+                                </div>
+                                <div id="q5-explain" class="explanation-box" data-explain="The Framers deliberately made the amendment process difficult so that only changes with overwhelming national support would be added to the Constitution."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 9: EXTENDED RESPONSE (WRITING PROMPT)
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 1100px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: #8b5cf6; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);">Final Assignment</span>
+                             <h2 style="margin-top: 1rem;">GED Extended Response Practice</h2>
+                        </div>
+
+                        <div class="card slide-up" style="padding: 2.5rem; margin-bottom: 2rem;">
+                            
+                            <!-- Strict Rules Box -->
+                            <div class="notebook-alert" style="margin-top: 0; background: rgba(239, 68, 68, 0.1); border-color: #ef4444; box-shadow: 0 8px 30px rgba(239, 68, 68, 0.15);">
+                                <div class="alert-icon" style="color: #ef4444; text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);"><i class="fa-solid fa-stopwatch"></i></div>
+                                <div style="text-align: left; width: 100%;">
+                                    <div class="alert-title" style="color: #ef4444; font-size: 1.3rem;">TESTING RULES | QUY ĐỊNH LÀM BÀI</div>
+                                    <ul style="color: white; margin-left: 1.5rem; line-height: 1.8; font-size: 1.15rem; margin-bottom: 0.5rem; font-family: var(--font-ui);">
+                                        <li>Write this essay in a <strong>Google Doc</strong> only.</li>
+                                        <li><strong>NO AI. NO Google Translate.</strong> <span style="color: var(--text-muted); font-size: 1rem;">(Không dùng AI hoặc công cụ dịch).</span></li>
+                                        <li>Write your <strong>Start Time</strong> and <strong>End Time</strong> at the top of the doc. You have exactly <strong>45 minutes</strong>.</li>
+                                        <li>Email your finished essay to: <span class="text-gold">landon@pra.edu</span> and <span class="text-gold">bowen@pra.edu</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- GED Style Prompt Container -->
+                            <div style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin: 2.5rem 0; overflow: hidden;">
+                                <div style="background: rgba(255,255,255,0.05); padding: 1.5rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <h3 style="font-family: var(--font-heading); color: white; margin: 0;">Analyze the arguments concerning the ratification of the U.S. Constitution.</h3>
+                                </div>
+                                
+                                <div style="padding: 2rem;">
+                                    <!-- Passage 1 -->
+                                    <div style="margin-bottom: 3rem;">
+                                        <h4 style="color: var(--federal-blue); font-family: var(--font-ui); font-size: 1.2rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Passage 1</h4>
+                                        <h3 style="color: white; font-family: var(--font-heading); margin-bottom: 1rem; font-size: 1.6rem;">The Necessity of a Strong National Union</h3>
+                                        <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem;">Adapted from an editorial published by supporters of the Constitution (Federalists), 1787.</p>
+                                        
+                                        <div style="color: var(--text-main); font-size: 1.15rem; line-height: 1.8; padding-left: 1rem; border-left: 3px solid var(--federal-blue);">
+                                            <p style="margin-bottom: 1rem;">The current Articles of Confederation have proven to be a disastrous failure for our young nation. Under this weak system, our national government has no power to collect taxes, regulate commerce, or maintain a standing army. We have witnessed the dangerous consequences of this weakness firsthand during Shays' Rebellion, where the federal government was entirely powerless to assist Massachusetts in putting down an armed citizen uprising. Without a strong central authority and a unified economy, the United States is rapidly falling into bankruptcy and remains highly vulnerable to invasion by European empires.</p>
+                                            
+                                            <p style="margin-bottom: 1rem;">Opponents of this new Constitution argue that it gives too much power to the national government. However, they deliberately ignore the careful system of checks and balances woven directly into the document. The division of power between the Legislative, Executive, and Judicial branches ensures that no single person or group can ever seize absolute control. The President can veto laws, but Congress can override that veto.</p>
+
+                                            <p>Furthermore, a large republic is actually our best defense against tyranny. In a large nation covering multiple states, there will be so many different economic interests and political factions that it will be impossible for any single oppressive majority to form and dominate the minority. We must ratify this Constitution immediately to ensure the economic stability, physical security, and international respect of the United States.</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Passage 2 -->
+                                    <div>
+                                        <h4 style="color: #ef4444; font-family: var(--font-ui); font-size: 1.2rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Passage 2</h4>
+                                        <h3 style="color: white; font-family: var(--font-heading); margin-bottom: 1rem; font-size: 1.6rem;">A Dangerous Consolidation of Power</h3>
+                                        <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem;">Adapted from a pamphlet published by opponents of the Constitution (Anti-Federalists), 1787.</p>
+                                        
+                                        <div style="color: var(--text-main); font-size: 1.15rem; line-height: 1.8; padding-left: 1rem; border-left: 3px solid #ef4444;">
+                                            <p style="margin-bottom: 1rem;">The proposed Constitution is not a framework for protecting liberty; it is a direct blueprint for tyranny. By creating a powerful national government located in a distant capital, this document will eventually obliterate the sovereignty and independence of the individual states. The "Necessary and Proper" clause grants the federal legislature essentially unlimited power to pass any law they see fit, while the Supremacy Clause guarantees that federal laws will always crush state laws and local customs.</p>
+                                            
+                                            <p style="margin-bottom: 1rem;">Most alarmingly, this proposed document entirely lacks a Bill of Rights. Human history teaches us a clear lesson: men entrusted with political power will inevitably seek to expand it at the expense of the people. Without explicit, written protections for freedom of speech, freedom of religion, and the right to trial by jury, the citizens of this country will be left completely at the mercy of the national government.</p>
+
+                                            <p>The Federalists claim that a Bill of Rights is unnecessary because the new government's powers are strictly limited by the text. This is a dangerous and foolish gamble. Only local state governments, which are geographically closer and more accountable to the people, can truly understand and protect the citizens' interests. We must not surrender our hard-won liberties—paid for with blood during the Revolution—to a centralized authority without a strict, written guarantee of our individual rights. The Constitution must not be ratified in its current form.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- The Prompt -->
+                            <div style="background: rgba(139, 92, 246, 0.1); padding: 2rem; border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.4);">
+                                <h3 style="margin-bottom: 1rem; color: #c4b5fd; font-family: var(--font-heading);"><i class="fa-solid fa-pen-nib"></i> Extended Response Prompt</h3>
+                                <p style="font-size: 1.25rem; color: white; font-weight: bold; margin-bottom: 1.5rem; line-height: 1.6;">In your response, analyze both positions presented in the article to determine which one is best supported. Use relevant and specific evidence from the article to support your response.</p>
+                                
+                                <h4 style="color: white; margin-bottom: 0.8rem; font-family: var(--font-ui);">4 Tips for a High GED Score:</h4>
+                                <ul style="color: var(--text-vn); margin-left: 1.5rem; line-height: 1.6; font-size: 1.05rem;">
+                                    <li><strong>Write 4 to 5 paragraphs:</strong> Introduction, 2-3 Body Paragraphs, Conclusion. <br><em style="color: var(--text-muted); font-size: 0.95rem;">(Viết 4-5 đoạn văn: Mở bài, 2-3 đoạn Thân bài, Kết luận).</em></li>
+                                    <li style="margin-top: 0.5rem;"><strong>Focus on the argument, not your opinion:</strong> Explain why one side's logic and evidence is stronger. Do not use "I think" or "I agree." <br><em style="color: var(--text-muted); font-size: 0.95rem;">(Phân tích xem lập luận và bằng chứng nào mạnh hơn. Không dùng "Tôi nghĩ" hay "Tôi đồng ý").</em></li>
+                                    <li style="margin-top: 0.5rem;"><strong>Quote the text:</strong> Pull specific quotes or historical examples (like Shays' Rebellion or the Supremacy Clause) directly from the passages to prove your point. <br><em style="color: var(--text-muted); font-size: 0.95rem;">(Trích dẫn trực tiếp các câu hoặc ví dụ lịch sử từ bài đọc để chứng minh quan điểm của bạn).</em></li>
+                                    <li style="margin-top: 0.5rem;"><strong>Check your mechanics:</strong> Reserve the last 3 minutes to check your capitalization, spelling, and punctuation. <br><em style="color: var(--text-muted); font-size: 0.95rem;">(Dành 3 phút cuối để kiểm tra lỗi viết hoa, chính tả và dấu câu).</em></li>
+                                </ul>
+                            </div>
+
+                            <div class="text-center" style="margin-top: 3rem;">
+                                <button onclick="location.reload()" style="background: transparent; color: var(--text-main); border: 2px solid var(--federal-blue); padding: 1rem 2.5rem; border-radius: 50px; font-weight: bold; cursor: pointer; transition: all 0.3s;">
+                                    <i class="fa-solid fa-rotate-right"></i> Restart Lesson
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- LOGIC ---
+    let currentSlide = 0;
+    const slideContainer = document.getElementById('slide-container');
+    const progressBar = document.getElementById('progress-fill');
+    const btnNext = document.getElementById('btn-next');
+    const btnPrev = document.getElementById('btn-prev');
+    const dock = document.getElementById('def-dock');
+
+    function renderSlide() {
+        // Clear inner HTML to trigger CSS animations on fresh insert
+        slideContainer.innerHTML = ''; 
+        
+        // Small timeout ensures browser registers the DOM clear before adding new content
+        setTimeout(() => {
+            slideContainer.innerHTML = slides[currentSlide].render();
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            btnPrev.disabled = currentSlide === 0;
+            btnNext.disabled = currentSlide === slides.length - 1;
+            document.getElementById('viewport').scrollTop = 0;
+            attachKeywordListeners();
+        }, 50);
+    }
+
+    function changeSlide(direction) {
+        if (direction === 'next' && currentSlide < slides.length - 1) {
+            currentSlide++;
+            hideDock();
+        } else if (direction === 'prev' && currentSlide > 0) {
+            currentSlide--;
+            hideDock();
+        }
+        renderSlide();
+    }
+
+    function attachKeywordListeners() {
+        const keywords = document.querySelectorAll('.keyword');
+        keywords.forEach(el => {
+            const termKey = el.dataset.term.toLowerCase();
+            const data = glossary[termKey];
+            if (!data) return;
+
+            el.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                showDock(termKey, data);
+            });
+        });
+    }
+
+    function showDock(term, data) {
+        document.getElementById('dock-term').innerText = term.replace(/\b\w/g, l => l.toUpperCase()); 
+        document.getElementById('dock-def').innerText = data.def;
+        document.getElementById('dock-vn').innerText = data.vn;
+        document.getElementById('dock-vn-def').innerText = data.vn_def; 
+        dock.classList.add('active');
+    }
+
+    function hideDock() {
+        dock.classList.remove('active');
+    }
+
+    window.handleQuiz = function(btn, isCorrect, qId) {
+        const parent = document.getElementById(qId + '-opts');
+        const explainBox = document.getElementById(qId + '-explain');
+        const options = parent.querySelectorAll('.quiz-option');
+        
+        // Disable all buttons in this question
+        options.forEach(opt => {
+            opt.disabled = true;
+            opt.style.cursor = 'default';
+            opt.style.opacity = '0.5';
+        });
+
+        // Highlight the selected button
+        btn.style.opacity = '1';
+        btn.style.transform = 'none';
+        
+        if (isCorrect) {
+            btn.classList.add('correct');
+            btn.innerHTML += ' <i class="fa-solid fa-check-circle" style="font-size:1.5rem;"></i>';
+        } else {
+            btn.classList.add('incorrect');
+            btn.innerHTML += ' <i class="fa-solid fa-times-circle" style="font-size:1.5rem;"></i>';
+        }
+
+        // Show and style the explanation box dynamically
+        if(explainBox) {
+            explainBox.style.display = 'block';
+            const explanationText = explainBox.getAttribute('data-explain');
+            
+            if (isCorrect) {
+                explainBox.style.borderLeftColor = '#10b981';
+                explainBox.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                explainBox.innerHTML = `<strong style="color: #10b981; font-size: 1.2rem; display: block; margin-bottom: 0.5rem;">Correct!</strong> ${explanationText}`;
+            } else {
+                explainBox.style.borderLeftColor = '#ef4444';
+                explainBox.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                explainBox.innerHTML = `<strong style="color: #ef4444; font-size: 1.2rem; display: block; margin-bottom: 0.5rem;">Incorrect.</strong> ${explanationText}`;
+            }
+        }
+    };
+
+    btnNext.addEventListener('click', () => changeSlide('next'));
+    btnPrev.addEventListener('click', () => changeSlide('prev'));
+    
+    // Close dock when clicking outside of keywords/dock
+    document.getElementById('viewport').addEventListener('click', (e) => {
+        if(!e.target.closest('.keyword') && dock.classList.contains('active')) {
+            hideDock();
+        }
+    });
+
+    // Keyboard nav
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') changeSlide('next');
+        if(e.key === 'ArrowLeft') changeSlide('prev');
+        if(e.key === 'Escape') hideDock();
+    });
+
+    // Init
+    renderSlide();
+</script>
+</body>
+</html>
