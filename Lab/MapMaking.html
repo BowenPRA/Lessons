@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Lab: Direct Proportion & Scale | 4 March 2026</title>
+    
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for formulas (Cambridge Standard Requirement) -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      startup: {
+        ready: () => {
+          MathJax.startup.defaultReady();
+          document.dispatchEvent(new Event('mathjax-ready'));
+        }
+      }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE (Cambridge Standard) --- */
+            --bg-deep: #0f172a;    /* Deep Slate */
+            --bg-panel: #1e293b;   /* Secondary Cards */
+            --primary: #8b5cf6;    /* Chemical Purple */
+            --primary-hover: #7c3aed;
+            --accent: #10b981;     /* Acid Green */
+            --warning: #f59e0b;    /* Hazard Orange */
+            --danger: #ef4444;     /* Heat Red */
+            --text-light: #f1f5f9;
+            --text-dim: #94a3b8;
+            --success: #38b000;
+            
+            /* --- SIZING TOKENS --- */
+            --header-h: 80px;
+            --footer-h: 90px;
+            --radius: 24px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+            
+            /* Blueprint Grid aligned with Cambridge Palette */
+            background-image: 
+                linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 92, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(rgba(16, 185, 129, 0.03) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.03) 2px, transparent 2px);
+            background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+            background-position: -1px -1px, -1px -1px, -2px -2px, -2px -2px;
+        }
+
+        /* Accessibility: Focus Indicators */
+        :focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 4px;
+            border-radius: 4px;
+        }
+
+        /* --- BACKGROUND ANIMATION LAYER --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1 { font-family: 'Outfit'; font-weight: 900; font-size: clamp(2.5rem, 5vw, 5rem); line-height: 1.1; letter-spacing: -2px; }
+        h2 { font-family: 'Outfit'; font-weight: 800; font-size: clamp(2rem, 4vw, 3.5rem); margin-bottom: 1rem; color: white; }
+        h3 { font-family: 'Outfit'; font-weight: 700; font-size: clamp(1.5rem, 2.5vw, 2rem); color: var(--primary); }
+        p, li { font-size: clamp(1.1rem, 1.5vw, 1.4rem); line-height: 1.6; color: #cbd5e1; }
+        
+        .highlight-accent { color: var(--accent); text-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        .highlight-primary { color: var(--primary); }
+        .highlight-warn { color: var(--warning); }
+        .highlight-danger { color: var(--danger); text-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+
+        /* --- LAYOUT SHELL --- */
+        header {
+            height: var(--header-h);
+            flex-shrink: 0; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1.5rem;
+            border-radius: 100px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-light);
+        }
+
+        main {
+            flex: 1;
+            position: relative;
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--bg-deep);
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1400px; 
+            margin: auto 0; 
+            min-height: min-content;
+        }
+
+        footer {
+            height: var(--footer-h);
+            flex-shrink: 0;
+            background: rgba(15, 23, 42, 0.95);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
+        }
+
+        /* --- PEDAGOGICAL NOTE BOX (Cambridge Standard) --- */
+        .pedagogical-note {
+            position: relative;
+            background: rgba(30, 41, 59, 0.8);
+            border: 3px solid var(--accent); 
+            border-left-width: 12px; 
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .pedagogical-badge {
+            position: absolute;
+            top: -18px;
+            left: 20px;
+            background: var(--accent);
+            color: #000;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 1px;
+        }
+
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { background: var(--primary); color: white; }
+
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { background: var(--warning); color: black; }
+
+        .note-success { border-color: var(--accent); }
+        .note-success .pedagogical-badge { background: var(--accent); color: black; }
+        
+        .note-theory { border-color: var(--danger); }
+        .note-theory .pedagogical-badge { background: var(--danger); color: white; }
+
+        /* --- CARDS & GRIDS --- */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        .glass-card:hover { border-color: rgba(255,255,255,0.2); }
+
+        /* --- INTERACTIVE ELEMENTS (Reveal Cards) --- */
+        .reveal-card {
+            background: var(--bg-panel);
+            border: 2px dashed var(--text-dim);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .reveal-card:hover, .reveal-card:focus { border-color: var(--accent); background: rgba(16, 185, 129, 0.1); }
+        .reveal-card.revealed {
+            border-style: solid;
+            border-color: var(--accent);
+            background: var(--bg-panel);
+            cursor: default;
+        }
+        .reveal-content { display: none; animation: popIn 0.3s forwards; }
+        .reveal-icon { font-size: 3rem; margin-bottom: 1rem; color: var(--text-dim); }
+
+        /* --- CONTROLS --- */
+        .btn-nav {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); transform: scale(1.1); }
+        .btn-nav:disabled { opacity: 0.2; cursor: not-allowed; }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+            transition: all 0.2s;
+            font-family: 'Outfit';
+            text-transform: uppercase;
+        }
+        .btn-action:hover, .btn-action:focus { transform: translateY(-3px); box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); background: var(--primary-hover); }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; background: #64748b; }
+
+        .progress-track {
+            flex: 1; margin: 0 2rem; height: 8px;
+            background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+
+        /* --- ANIMATIONS --- */
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        .anim-enter { animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        @media (max-width: 1000px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            h1 { font-size: 3rem; }
+            .pedagogical-note { padding: 1.5rem; }
+            .btn-nav { width: 44px; height: 44px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Canvas Layer -->
+    <canvas id="bg-canvas"></canvas>
+
+    <header>
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <i class="fa-solid fa-compass-drafting" style="color:var(--accent); font-size:1.8rem;"></i>
+            <span style="font-weight:700; font-size: 1.5rem; color: white;">Cambridge Math</span>
+        </div>
+        <div class="tag">
+            <i class="fa-regular fa-calendar" style="margin-right: 5px;"></i> 4 March 2026 | Independence Month
+        </div>
+    </header>
+
+    <main>
+        <div id="slide-viewer" class="slide-container" aria-live="polite">
+            <!-- Content Injected via JS -->
+        </div>
+    </main>
+
+    <footer>
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="progress-track">
+            <div id="progress-bar" class="progress-fill"></div>
+        </div>
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+
+<script>
+/**
+ * @class BackgroundAnimation
+ * @description Engine mandated background animation.
+ */
+class BackgroundAnimation {
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.symbols = ['+', '-', '×', '÷', '=', '%', '📐', 'x:y'];
+        this.width = 0;
+        this.height = 0;
+        this.resize = this.resize.bind(this);
+        this.animate = this.animate.bind(this);
+        this.init();
+    }
+    init() {
+        window.addEventListener('resize', this.resize);
+        this.resize();
+        this.createParticles(20);
+        this.animate();
+    }
+    resize() {
+        this.width = this.canvas.width = window.innerWidth;
+        this.height = this.canvas.height = window.innerHeight;
+    }
+    createParticles(count) {
+        this.particles = [];
+        for (let i = 0; i < count; i++) {
+            this.particles.push({
+                x: Math.random() * this.width,
+                y: Math.random() * this.height,
+                size: Math.random() * 20 + 10,
+                speedY: Math.random() * 0.5 + 0.1,
+                symbol: this.symbols[Math.floor(Math.random() * this.symbols.length)],
+                opacity: Math.random() * 0.15 + 0.05
+            });
+        }
+    }
+    animate() {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.particles.forEach(p => {
+            p.y -= p.speedY;
+            if (p.y < -50) p.y = this.height + 50;
+            this.ctx.fillStyle = `rgba(139, 92, 246, ${p.opacity})`; // Chemical Purple
+            this.ctx.font = `${p.size}px 'Outfit'`;
+            this.ctx.fillText(p.symbol, p.x, p.y);
+        });
+        requestAnimationFrame(this.animate);
+    }
+}
+
+/**
+ * @class LessonController
+ * @description Central logic for slides based on the Bowen Engine standard.
+ */
+class LessonController {
+    constructor(slides) {
+        this.slides = slides;
+        this.index = 0;
+        this.container = document.getElementById('slide-viewer');
+        this.progressBar = document.getElementById('progress-bar');
+        this.btnPrev = document.getElementById('btn-prev');
+        this.btnNext = document.getElementById('btn-next');
+        this.currentCleanup = null;
+        this.init();
+    }
+
+    init() {
+        new BackgroundAnimation('bg-canvas');
+        this.btnPrev.addEventListener('click', () => this.prev());
+        this.btnNext.addEventListener('click', () => this.next());
+        
+        document.addEventListener('mathjax-ready', () => {
+             this.render(); 
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (document.activeElement.tagName === 'INPUT') return;
+            if (e.key === 'ArrowRight' || e.key === ' ') this.next();
+            if (e.key === 'ArrowLeft') this.prev();
+        });
+        this.render();
+    }
+
+    render() {
+        // Enforce cleanup closure execution to stop memory leaks (timers, listeners)
+        if (this.currentCleanup) {
+            this.currentCleanup();
+            this.currentCleanup = null;
+        }
+
+        const slide = this.slides[this.index];
+        this.container.innerHTML = slide.template();
+        
+        // Use engine standard parent container scrolling
+        this.container.parentElement.scrollTop = 0; 
+
+        this.progressBar.style.width = `${((this.index + 1) / this.slides.length) * 100}%`;
+        this.btnPrev.disabled = this.index === 0;
+        this.btnNext.disabled = this.index === this.slides.length - 1;
+
+        if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+            MathJax.typesetPromise([this.container]).catch(err => console.log("MathJax typesetting failed: ", err));
+        }
+
+        requestAnimationFrame(() => {
+            if (slide.script) {
+                this.currentCleanup = slide.script(this.container);
+            }
+        });
+    }
+
+    next() { if (this.index < this.slides.length - 1) { this.index++; this.render(); } }
+    prev() { if (this.index > 0) { this.index--; this.render(); } }
+}
+
+/**
+ * SLIDE DATA
+ */
+const slides = [
+    // 1. Objective (The Hook / Intro)
+    {
+        template: () => `
+            <div style="text-align: center; margin-top: 5vh;" class="anim-enter">
+                <i class="fa-solid fa-ruler-combined" style="font-size: 6rem; color: var(--accent); margin-bottom: 2rem; filter: drop-shadow(0 0 30px rgba(16, 185, 129, 0.4));"></i>
+                <h1 style="color:white; margin-bottom: 0.5rem;">Math Lab</h1>
+                <p style="font-size: 1.5rem; color: var(--warning); font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">Direct Proportion & Scale</p>
+                
+                <div class="pedagogical-note note-success delay-1 anim-enter" style="max-width: 800px; margin: 4rem auto; text-align: left;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Today's Objective</div>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 2.2rem; line-height: 1.8;">
+                        <li>📏 Understand how scale factors work.</li>
+                        <li>🗺️ Apply direct proportion to physical space and environments.</li>
+                    </ul>
+                </div>
+            </div>
+        `
+    },
+
+    // 2. Independence Month
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>Student-Driven Learning ✊</h2>
+                <p style="max-width: 800px; margin: 0 auto;">This month is about learning to be independent and able to function for yourselves.</p>
+                
+                <div class="pedagogical-note note-write delay-1 anim-enter" style="max-width: 800px; margin: 3rem auto; text-align: center;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-book-open"></i> Write This Down</div>
+                    <p style="font-size: 2.5rem; color: white; font-weight: 900; margin: 1.5rem 0; font-family: 'Outfit'; text-transform: uppercase;">
+                        "Golden Rule: Figure it out ourselves."
+                    </p>
+                    <hr style="border-color: rgba(255,255,255,0.1); margin: 1.5rem 0;">
+                    
+                    <h3 style="color: var(--accent); font-size: 1.5rem; margin-bottom: 0.5rem;">Definition:</h3>
+                    <p style="color: white; font-size: 1.5rem; line-height: 1.6;">
+                        <strong>Student-driven learning:</strong> Try to solve problems with your team first. Only ask the teacher if you are completely stuck.
+                    </p>
+                </div>
+            </div>
+        `
+    },
+
+    // 3. What is a Math Lab?
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>What is a Math Lab? 🧪</h2>
+                <p style="max-width: 800px; margin: 0 auto;">Math is more than just answering problems in a workbook.</p>
+                
+                <div class="grid-2 delay-1 anim-enter" style="margin-top: 3rem; text-align: left;">
+                    <div class="pedagogical-note note-write">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Note</div>
+                        <h3><i class="fa-solid fa-drafting-compass"></i> Applied Math</h3>
+                        <p style="font-size: 1.5rem;">Using math to measure and create things in the real world.</p>
+                    </div>
+                    
+                    <div class="pedagogical-note note-write" style="border-color: var(--warning);">
+                        <div class="pedagogical-badge" style="background: var(--warning); color: black;"><i class="fa-solid fa-pencil"></i> Note</div>
+                        <h3 style="color: var(--warning);"><i class="fa-solid fa-puzzle-piece"></i> Active Problem Solving</h3>
+                        <p style="font-size: 1.5rem;">Fixing small problems together as a team without giving up.</p>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // 4. Activity 1: Classroom Map (With managed cleanup timer)
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>Activity 1: Map the Classroom 🗺️</h2>
+                <p>Before the big project, you need a test run.</p>
+                
+                <div class="grid-2 delay-1 anim-enter" style="margin-top: 2rem; text-align: left;">
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div class="pedagogical-note note-task" style="margin-top: 0;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-list-ol"></i> The Only Rules</div>
+                            <ol style="margin-left: 1.5rem; margin-top: 1rem;">
+                                <li>The final map must be drawn on <strong class="highlight-warn">Grid Paper</strong>.</li>
+                                <li>The map must have a clear <strong class="highlight-warn">Scale Distance</strong> <br> (Example: $1\\text{ square} = 0.5\\text{ meters}$).</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="pedagogical-note note-theory" style="margin-top: 0; padding: 1.5rem;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-bolt"></i> Urgency</div>
+                            <p style="font-weight: bold; margin-bottom: 0.5rem;">Move and be quick when the timer starts!</p>
+                            <p>You have exactly 20 minutes to show Mr. Bowen an accurate map. Team Leads need to have a plan to get as much work done as possible as quickly as possible.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <h3 style="color: white;"><i class="fa-solid fa-crown" style="color: var(--warning);"></i> The Managers</h3>
+                        <p style="margin-top: 1rem;">Year 8 Leads: <strong style="color: var(--accent); font-size: 1.3rem;">Angelo & Meelo</strong></p>
+                        <p>Year 9 Leads: <strong style="color: var(--accent); font-size: 1.3rem;">Bao Long & Louis</strong></p>
+                        <hr style="border-color: rgba(255,255,255,0.1); margin: 1rem 0;">
+                        <p style="font-size: 1rem; color: var(--text-dim);">Managers: Organize your team and get to work.</p>
+                    </div>
+
+                    <!-- Functional Timer Section -->
+                    <div class="glass-card text-center" style="grid-column: 1 / -1; padding: 1.5rem; border: 2px dashed var(--accent);">
+                        <h3 style="color: white; margin-bottom: 0.5rem;"><i class="fa-solid fa-stopwatch"></i> Time Limit</h3>
+                        <div id="classroom-timer" style="font-size: 4rem; font-weight: 900; color: var(--accent); font-family: 'Outfit'; margin: 0.5rem 0; line-height: 1;">20:00</div>
+                        <button id="btn-start-timer" class="btn-action" style="margin-top: 1rem;">Start 20 Minutes</button>
+                    </div>
+                </div>
+            </div>
+        `,
+        script: (container) => {
+            const btn = container.querySelector('#btn-start-timer');
+            const display = container.querySelector('#classroom-timer');
+            let timerId = null;
+
+            const startTimer = () => {
+                btn.disabled = true;
+                btn.innerText = "Running...";
+                btn.style.opacity = "0.5";
+                
+                let time = 20 * 60; // 20 minutes
+                
+                if (timerId) clearInterval(timerId);
+                
+                timerId = setInterval(() => {
+                    let m = Math.floor(time / 60);
+                    let s = time % 60;
+                    display.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                    
+                    if (time <= 0) {
+                        clearInterval(timerId);
+                        display.innerText = "TIME'S UP!";
+                        display.style.color = "var(--danger)";
+                        btn.innerText = "Done";
+                    }
+                    time--;
+                }, 1000);
+            };
+
+            btn.addEventListener('click', startTimer);
+
+            // MANDATORY CLEANUP: Stop interval when navigating away
+            return () => {
+                if (timerId) clearInterval(timerId);
+            };
+        }
+    },
+
+    // 5. Reflection
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2 style="color: var(--danger);"><i class="fa-solid fa-bell"></i> Time's Up!</h2>
+                <p>Show your completed map to Mr. Bowen.</p>
+                
+                <div class="pedagogical-note note-write delay-1 anim-enter" style="max-width: 800px; margin: 3rem auto; text-align: left;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-pen"></i> Notebook Reflection</div>
+                    <p style="margin-top: 0.5rem;">Write <strong>2 complete sentences</strong> about this activity:</p>
+                    <ul style="margin-left: 1.5rem; margin-top: 1rem; line-height: 2;">
+                        <li>What is one thing you learned about scale?</li>
+                        <li>What is something you didn't think about at the start? <br>
+                        <span style="font-size: 1rem; color: var(--text-dim);">(E.g., The thickness of walls? Desks blocking the tape measure?)</span></li>
+                    </ul>
+                </div>
+            </div>
+        `
+    },
+
+    // 6. The Big Reveal
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2 style="color: var(--primary); font-size: 3.5rem; text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);">The Math Lab Project</h2>
+                <i class="fa-solid fa-school" style="font-size: 5rem; color: white; margin: 1rem 0;"></i>
+                
+                <div class="pedagogical-note note-write delay-1 anim-enter" style="max-width: 800px; margin: 2rem auto; text-align: left;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write The Goal</div>
+                    <p style="font-size: 1.6rem; font-weight: 700; color: white; text-align: center; margin: 1rem 0; font-family: 'Outfit';">"We will construct a fully functional, highly accurate map of the entire school grounds."</p>
+                </div>
+
+                <div class="pedagogical-note note-write delay-2 anim-enter" style="max-width: 800px; margin: 0 auto; text-align: left; border-color: var(--accent);">
+                    <div class="pedagogical-badge" style="background: var(--accent); color: black;"><i class="fa-solid fa-pencil"></i> Write Parameters</div>
+                    <h3><i class="fa-solid fa-sliders"></i> The Parameters</h3>
+                    <ul style="margin-left: 1.5rem; margin-top: 1rem; font-size: 1.2rem;">
+                        <li>We will draw the map perfectly to scale.</li>
+                        <li>We will include major pathways and main buildings.</li>
+                        <li>We will respect and return the school measuring tape.</li>
+                    </ul>
+                </div>
+            </div>
+        `
+    },
+
+    // 7. Leadership & Tasks
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>Leadership Duties 📋</h2>
+                <p>Angelo, Meelo, Bao Long, and Louis: You are the Project Managers.</p>
+                <div class="pedagogical-note note-theory" style="display: inline-block; padding: 1rem 2rem; margin-bottom: 2rem; margin-top: 1rem;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> Warning</div>
+                    <p style="font-weight: 700; margin: 0; font-size: 1.3rem;">If someone is standing around, that is YOUR responsibility. Assign tasks!</p>
+                </div>
+                
+                <div class="grid-3 delay-1 anim-enter" style="text-align: left;">
+                    <!-- Surveyors -->
+                    <div class="reveal-card" role="button" tabindex="0">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-ruler-combined reveal-icon"></i>
+                            <h3>Surveyors</h3>
+                            <p style="font-size: 0.9rem;">Click to view role</p>
+                        </div>
+                        <div class="reveal-content">
+                            <i class="fa-solid fa-ruler-combined reveal-icon" style="color:var(--accent);"></i>
+                            <h3 style="color: white; margin-bottom: 0.5rem;">Surveyors</h3>
+                            <p>Handle the tapes. Ensure they are straight, tight, and level.</p>
+                        </div>
+                    </div>
+
+                    <!-- Scribes -->
+                    <div class="reveal-card" role="button" tabindex="0">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-pen-clip reveal-icon"></i>
+                            <h3>Scribes</h3>
+                            <p style="font-size: 0.9rem;">Click to view role</p>
+                        </div>
+                        <div class="reveal-content">
+                            <i class="fa-solid fa-pen-clip reveal-icon" style="color:var(--primary);"></i>
+                            <h3 style="color: white; margin-bottom: 0.5rem;">Scribes</h3>
+                            <p>Record the data clearly. Messy writing ruins the final map calculations.</p>
+                        </div>
+                    </div>
+
+                    <!-- Architects -->
+                    <div class="reveal-card" role="button" tabindex="0">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-calculator reveal-icon"></i>
+                            <h3>Architects</h3>
+                            <p style="font-size: 0.9rem;">Click to view role</p>
+                        </div>
+                        <div class="reveal-content">
+                            <i class="fa-solid fa-calculator reveal-icon" style="color:var(--warning);"></i>
+                            <h3 style="color: white; margin-bottom: 0.5rem;">Architects</h3>
+                            <p>Convert the real-world meters into paper centimeters using the decided scale.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        script: (container) => {
+            const cards = container.querySelectorAll('.reveal-card');
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.add('revealed');
+                    card.querySelector('.reveal-content').style.display = 'block';
+                    card.querySelector('.pre-reveal').style.display = 'none';
+                });
+            });
+            return () => {};
+        }
+    },
+
+    // 8. The Action Plan
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>The Master Plan 🧠</h2>
+                <p>Before you run outside, you need a strategy.</p>
+                
+                <div class="grid-2 delay-1 anim-enter" style="margin-top: 2rem; text-align: left;">
+                    <div class="glass-card">
+                        <h3><i class="fa-solid fa-brain"></i> Things to Think About:</h3>
+                        <ul style="margin-left: 1.5rem; margin-top: 1rem; font-size: 1.3rem;">
+                            <li>How will you make sure your measurements are <strong class="highlight-primary">accurate</strong>?</li>
+                            <li>How much <strong class="highlight-accent">detail</strong> will you go into on the map?</li>
+                            <li>Where is your starting point?</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pedagogical-note note-task" style="margin-top: 0;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-file-signature"></i> Written Plan Required</div>
+                        <p style="margin-top: 1rem; font-size: 1.3rem;">Before you leave this room, Team Managers must show Mr. Bowen a <strong>written, step-by-step plan</strong> detailing how you will capture all the distances.</p>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // 9. Final Warm-Up
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>Final Warm-Up 💭</h2>
+                <p>While your managers finalize the Master Plan...</p>
+                
+                <div class="pedagogical-note note-task delay-1 anim-enter" style="max-width: 800px; margin: 3rem auto; text-align: left;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> The Memory Sketch</div>
+                    <p style="font-size: 1.4rem; font-weight: 700; margin-top: 1rem;">Draw a rough map of the school grounds from memory in your notebook right now.</p>
+                    <p style="color: var(--danger); font-weight: 800; font-size: 1.2rem; margin-top: 0.5rem;"><i class="fa-solid fa-stopwatch"></i> You have 5 minutes.</p>
+                    
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.2); margin: 1.5rem 0;">
+                    
+                    <p style="font-size: 1rem; color: var(--text-dim);">
+                        <strong style="color: white;">Why are we doing this?</strong> We do this to identify our spatial biases. We will compare this memory sketch to your mathematically accurate map later!
+                    </p>
+                </div>
+            </div>
+        `
+    },
+
+    // 10. Summary
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>Lesson Summary 📝</h2>
+                <i class="fa-solid fa-check-circle" style="font-size: 5rem; color: var(--accent); margin: 1rem 0; filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.4));"></i>
+                
+                <div class="pedagogical-note note-success delay-1 anim-enter" style="max-width: 800px; margin: 2rem auto; text-align: left;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Objectives Met</div>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 2.2rem; line-height: 1.8;">
+                        <li>📏 Understood how scale factors work.</li>
+                        <li>🗺️ Applied direct proportion to physical space and environments.</li>
+                        <li>🤝 Practiced student-driven learning and active problem-solving.</li>
+                    </ul>
+                </div>
+            </div>
+        `
+    }
+];
+
+// Initialize Application
+document.addEventListener('DOMContentLoaded', () => {
+    new LessonController(slides);
+});
+</script>
+</body>
+</html>
