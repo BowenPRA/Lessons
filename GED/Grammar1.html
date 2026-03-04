@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED RLA: Grammar & Reading (ESL Support)</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            /* Palette - Premium Federal Slate Theme */
+            --bg-deep: #0b1120;        
+            --bg-card: rgba(30, 41, 59, 0.65); 
+            
+            --federal-blue: #3b82f6;    
+            --federal-blue-glow: rgba(59, 130, 246, 0.4);
+            --constitution-gold: #fbbf24; 
+            --constitution-gold-glow: rgba(251, 191, 36, 0.3);
+            
+            --text-main: #f8fafc;        
+            --text-muted: #94a3b8;       
+            --text-vn: #cbd5e1;         
+
+            --header-h: 75px;
+            --footer-h: 85px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 6vw, 4.5rem);
+            --fs-h2: clamp(1.8rem, 4vw, 2.8rem);
+            
+            /* Font Families */
+            --font-heading: 'Libre Baskerville', serif; 
+            --font-ui: 'Outfit', sans-serif;           
+            --font-body: 'Plus Jakarta Sans', sans-serif; 
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-body);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(59, 130, 246, 0.08), transparent 30%), 
+                radial-gradient(circle at 85% 75%, rgba(251, 191, 36, 0.06), transparent 30%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e293b' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2.5rem;
+            background: rgba(11, 17, 32, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            z-index: 50;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--federal-blue), #1d4ed8);
+            padding: 0.5rem 1.4rem;
+            border-radius: 50px;
+            font-family: var(--font-ui);
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: white;
+            box-shadow: 0 4px 20px var(--federal-blue-glow);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .slide-center { justify-content: center; }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(11, 17, 32, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2.5rem;
+            backdrop-filter: blur(16px);
+            z-index: 50;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.3rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--federal-blue);
+            box-shadow: 0 0 20px var(--federal-blue-glow);
+            transform: scale(1.08);
+            border-color: rgba(255,255,255,0.3);
+        }
+        .btn-nav:disabled { opacity: 0.2; cursor: not-allowed; transform: scale(0.95); }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 3rem;
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--federal-blue), var(--constitution-gold));
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 15px var(--constitution-gold-glow);
+            border-radius: 10px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            backdrop-filter: blur(16px);
+        }
+
+        /* --- NOTEBOOK PEDAGOGY --- */
+        .notebook-alert {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05));
+            border: 2px solid var(--constitution-gold);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            box-shadow: 0 8px 30px rgba(251, 191, 36, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .notebook-alert::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%;
+            background: var(--constitution-gold);
+        }
+        .alert-icon {
+            font-size: 2.5rem;
+            color: var(--constitution-gold);
+            text-shadow: 0 0 15px var(--constitution-gold-glow);
+        }
+        .alert-title {
+            font-family: var(--font-ui);
+            font-weight: 800;
+            color: var(--constitution-gold);
+            letter-spacing: 2px;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        .alert-text-en { font-size: 1.15rem; font-weight: 500; margin-bottom: 0.8rem; line-height: 1.5; color: white; }
+        .alert-text-vn { font-size: 1.05rem; font-style: italic; color: var(--text-vn); line-height: 1.5; font-family: 'Times New Roman', serif;}
+
+        .copy-prompt {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--constitution-gold);
+            border: 1px dashed var(--constitution-gold);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            animation: float-prompt 3s ease-in-out infinite;
+        }
+        @keyframes float-prompt {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* --- DIAGRAMS --- */
+        .diagram-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+            padding: 1rem 0;
+            margin-top: 1rem;
+        }
+        .diagram-level {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        .diagram-box {
+            background: rgba(11, 17, 32, 0.7);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px; 
+            padding: 1.5rem;
+            text-align: center;
+            min-width: 220px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .box-root {
+            border-color: var(--constitution-gold);
+            border-width: 3px;
+            width: 60%;
+            background: rgba(30, 41, 59, 0.9);
+        }
+        .box-branch {
+            flex: 1;
+            border-top-color: var(--federal-blue);
+            border-top-width: 4px;
+        }
+        .box-alert {
+            border-color: #ef4444;
+            border-width: 3px;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .diagram-connector {
+            width: 3px;
+            height: 30px;
+            background: var(--text-muted);
+            margin: -0.5rem 0;
+            opacity: 0.5;
+        }
+        .diagram-connector-horizontal {
+            height: 3px;
+            width: 30px;
+            background: var(--text-muted);
+            opacity: 0.5;
+            align-self: center;
+        }
+        .diagram-label {
+            font-family: var(--font-heading);
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .diagram-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+        
+        /* Specific Grammar tags */
+        .grammar-tag {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.15);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--federal-blue);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            margin-top: 0.5rem;
+            font-weight: 700;
+            font-family: var(--font-ui);
+        }
+
+        /* --- READING LAYOUT --- */
+        .reading-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+        .col-en { font-size: 1.25rem; line-height: 1.8; color: var(--text-main); font-weight: 400; }
+        .col-en p { margin-bottom: 1.8rem; }
+        
+        .col-vn {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            color: var(--text-vn);
+            font-size: 1.25rem;
+            line-height: 1.8;
+            border-left: 2px solid rgba(255,255,255,0.08);
+            padding-left: 2.5rem;
+        }
+        .col-vn p { margin-bottom: 1.8rem; }
+
+        /* Interactive Keywords */
+        .keyword {
+            color: var(--constitution-gold);
+            font-weight: 700;
+            border-bottom: 2px dashed rgba(251, 191, 36, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0 2px;
+            animation: pulse-keyword 2.5s infinite;
+        }
+        @keyframes pulse-keyword {
+            0% { text-shadow: 0 0 2px rgba(251, 191, 36, 0.1); }
+            50% { text-shadow: 0 0 10px rgba(251, 191, 36, 0.8); }
+            100% { text-shadow: 0 0 2px rgba(251, 191, 36, 0.1); }
+        }
+        .keyword:hover {
+            background: rgba(251, 191, 36, 0.15);
+            border-bottom-style: solid;
+            border-radius: 4px;
+            animation: none;
+            text-shadow: 0 0 10px var(--constitution-gold);
+        }
+
+        /* Highlight classes for grammar examples */
+        .hl-sub { color: #10b981; font-weight: bold; border-bottom: 2px solid #10b981;} /* Green for Subject */
+        .hl-verb { color: #f43f5e; font-weight: bold; border-bottom: 2px solid #f43f5e;} /* Rose for Verb */
+
+        /* Definition Dock */
+        .def-dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(11, 17, 32, 0.98);
+            border-top: 3px solid var(--constitution-gold);
+            padding: 2rem;
+            backdrop-filter: blur(24px);
+            transform: translateY(110%);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+        }
+        .def-dock.active { transform: translateY(0); }
+        .def-content { max-width: 1000px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+        
+        /* Quiz */
+        .quiz-option {
+            width: 100%;
+            padding: 1.4rem;
+            margin-bottom: 1rem;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text-main);
+            text-align: left;
+            cursor: pointer;
+            font-size: 1.15rem;
+            font-family: var(--font-ui);
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .quiz-option:hover:not(:disabled) { 
+            background: rgba(255,255,255,0.08); 
+            border-color: var(--federal-blue); 
+            transform: translateX(5px);
+        }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: white; }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: white; }
+        .explanation-box {
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            border-left: 4px solid;
+        }
+
+        /* Typography & Utilities */
+        .text-center { text-align: center; }
+        .text-gold { color: var(--constitution-gold); font-weight: 700; }
+        h1 { font-family: var(--font-heading); font-size: var(--fs-h1); font-weight: 700; letter-spacing: -1px; margin-bottom: 0.5rem; }
+        h2 { font-family: var(--font-heading); font-size: var(--fs-h2); font-weight: 700; color: white; margin-bottom: 1.5rem; letter-spacing: -0.5px;}
+        .fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
+        .slide-up { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(30px); animation-delay: 0.2s; }
+        
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 900px) {
+            .reading-layout { grid-template-columns: 1fr; gap: 2rem; }
+            .col-vn { border-left: none; border-top: 1px dashed rgba(255,255,255,0.2); padding-left: 0; padding-top: 2rem; }
+            .diagram-level { flex-direction: column; }
+            .box-root { width: 100%; }
+            .card { padding: 2rem; }
+            .notebook-alert { flex-direction: column; gap: 1rem; padding: 1.5rem; }
+            .alert-icon { font-size: 2rem; }
+            .diagram-connector-horizontal { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">GED RLA</div>
+            <span style="font-weight: 600; color: var(--text-muted); font-size: 1rem; font-family: var(--font-ui); display: none; margin-left: 0.5rem; @media(min-width:600px){display:inline;}">Language Arts & Grammar</span>
+        </div>
+        <div style="color: var(--constitution-gold); font-size: 1.5rem; text-shadow: 0 0 10px rgba(251,191,36,0.5);">
+            <i class="fa-solid fa-spell-check"></i>
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Content injected via JS -->
+        </div>
+        <div style="height: 60px;"></div>
+    </main>
+    
+    <div id="def-dock" class="def-dock">
+        <div class="def-content">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                <div>
+                    <span style="color: var(--federal-blue); font-size: 0.9rem; font-family: var(--font-ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Vocabulary Defintion</span>
+                    <h3 id="dock-term" style="color: var(--constitution-gold); font-size: 2.2rem; font-family: var(--font-heading); margin: 0.2rem 0 0 0;">Term</h3>
+                </div>
+                <button onclick="hideDock()" style="background:transparent; border:none; color: white; font-size: 1.5rem; cursor:pointer; opacity: 0.7; transition: opacity 0.2s;"><i class="fa-solid fa-times"></i></button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0.5rem;">
+                <div>
+                    <span style="display: inline-block; background: rgba(255,255,255,0.1); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 0.5rem;">ENG</span>
+                    <p id="dock-def" style="color: white; font-size: 1.3rem; margin: 0; line-height: 1.5;"></p>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--text-vn);">
+                    <span style="display: inline-block; background: var(--federal-blue); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 0.5rem;">VIE</span>
+                    <p id="dock-vn" style="color: var(--text-vn); font-size: 1.2rem; font-weight: 700; margin: 0 0 0.2rem 0;"></p>
+                    <p id="dock-vn-def" style="color: var(--text-vn); font-size: 1.15rem; margin: 0; font-style: italic; line-height: 1.5;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="progress-container"><div class="progress-fill" id="progress-fill"></div></div>
+        <button class="btn-nav" id="btn-next"><i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+</div>
+
+<script>
+    const glossary = {
+        "surge": {
+            def: "A sudden, powerful forward or upward movement; a rapid increase.",
+            vn: "Sự tăng vọt",
+            vn_def: "Một sự gia tăng đột ngột, mạnh mẽ hoặc nhanh chóng về số lượng."
+        },
+        "alternative": {
+            def: "Another possibility or choice available.",
+            vn: "Sự thay thế / Phương án thay thế",
+            vn_def: "Một khả năng hoặc sự lựa chọn khác có sẵn thay cho cái hiện tại."
+        },
+        "infrastructure": {
+            def: "The basic physical structures and facilities (e.g., buildings, roads, power grids) needed for society to operate.",
+            vn: "Cơ sở hạ tầng",
+            vn_def: "Các cấu trúc và cơ sở vật chất cơ bản (như đường sá, mạng lưới điện) cần thiết để xã hội vận hành."
+        },
+        "subject": {
+            def: "The person, place, thing, or idea that is doing or being something in a sentence.",
+            vn: "Chủ ngữ",
+            vn_def: "Người, nơi chốn, sự vật hoặc ý tưởng đang thực hiện hành động hoặc tồn tại trong câu."
+        },
+        "verb": {
+            def: "A word used to describe an action, state, or occurrence.",
+            vn: "Động từ",
+            vn_def: "Một từ được sử dụng để mô tả một hành động, trạng thái hoặc sự việc đang xảy ra."
+        },
+        "agreement": {
+            def: "In grammar, when a subject and verb match in number (both singular or both plural).",
+            vn: "Sự hòa hợp (Ngữ pháp)",
+            vn_def: "Khi chủ ngữ và động từ khớp với nhau về số lượng (cùng là số ít hoặc cùng là số nhiều)."
+        },
+        "singular": {
+            def: "Referring to just one person, place, or thing.",
+            vn: "Số ít",
+            vn_def: "Chỉ một người, một vật hoặc một địa điểm duy nhất."
+        },
+        "plural": {
+            def: "Referring to more than one person, place, or thing.",
+            vn: "Số nhiều",
+            vn_def: "Nhiều hơn một người, một vật hoặc một địa điểm."
+        },
+        "indefinite pronoun": {
+            def: "A pronoun that does not refer to any specific person or thing (e.g., everyone, nobody, somebody).",
+            vn: "Đại từ bất định",
+            vn_def: "Đại từ không chỉ cụ thể một người hay vật nào (ví dụ: mọi người, không ai)."
+        },
+        "interrupting phrase": {
+            def: "A group of words that comes between the subject and the verb, often confusing the reader.",
+            vn: "Cụm từ xen ngang",
+            vn_def: "Một nhóm từ nằm giữa chủ ngữ và động từ, thường gây nhầm lẫn cho người đọc."
+        },
+        "compound subject": {
+            def: "Two or more subjects joined by 'and', 'or', or 'nor' that share the same verb.",
+            vn: "Chủ ngữ kép",
+            vn_def: "Hai hoặc nhiều chủ ngữ được nối bằng 'and', 'or', hoặc 'nor' cùng chia sẻ một động từ."
+        }
+    };
+
+    const slides = [
+        // SLIDE 1: INTRO
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="text-center fade-in" style="max-width: 900px; margin: 0 auto;">
+                        <div style="font-size: 5rem; color: var(--constitution-gold); margin-bottom: 1.5rem; filter: drop-shadow(0 0 40px rgba(251,191,36,0.4));">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <h1>Reading & Grammar</h1>
+                        <p style="font-size: 1.5rem; color: var(--text-muted); margin-bottom: 2rem; font-family: var(--font-ui);">
+                            Comprehension Practice & Subject-Verb Agreement
+                        </p>
+                        
+                        <div class="notebook-alert slide-up">
+                            <div class="alert-icon"><i class="fa-solid fa-pen-nib"></i></div>
+                            <div style="text-align: left;">
+                                <div class="alert-title">NOTEBOOK REQUIRED | YÊU CẦU GHI CHÉP</div>
+                                <div class="alert-text-en">As you go through this lesson, copy all <span class="text-gold" style="border-bottom: 1px dashed var(--constitution-gold);">gold vocabulary words</span> and the grammar rules into your physical notebook to help you memorize them for the GED.</div>
+                                <div class="alert-text-vn">Khi học bài này, hãy chép tất cả các <span class="text-gold">từ vựng màu vàng</span> và các quy tắc ngữ pháp vào vở của bạn để giúp ghi nhớ tốt hơn cho bài thi GED.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: READING PASSAGE
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--constitution-gold); color: #0f172a; box-shadow: 0 4px 15px rgba(251,191,36,0.3);">Reading</span>
+                             <h2 style="margin:0;">The Rise of Renewable Energy</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>Over the past decade, renewable energy sources such as solar and wind power have seen a massive <span class="keyword" data-term="surge">surge</span> in investment. Unlike fossil fuels, which release harmful greenhouse gases into the atmosphere, renewable energy provides a clean <span class="keyword" data-term="alternative">alternative</span> to power our modern cities.</p>
+                                
+                                <p>However, the transition is not without serious challenges. Wind and solar power are inconsistent; the wind does not always blow, and the sun does not always shine. Therefore, storing this energy requires massive, expensive batteries. Furthermore, upgrading the current power grid <span class="keyword" data-term="infrastructure">infrastructure</span> to handle these new sources will cost billions of dollars.</p>
+                                
+                                <p>Despite these high initial costs, environmental scientists and economists argue that ignoring climate change will ultimately be far more expensive for global society in the long run.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Trong thập kỷ qua, các nguồn năng lượng tái tạo như năng lượng mặt trời và gió đã chứng kiến sự <span class="keyword" data-term="surge">tăng vọt</span> khổng lồ về đầu tư. Không giống như nhiên liệu hóa thạch thải khí nhà kính độc hại vào khí quyển, năng lượng tái tạo cung cấp một <span class="keyword" data-term="alternative">phương án thay thế</span> sạch sẽ để cung cấp năng lượng cho các thành phố hiện đại.</p>
+                                <p>Tuy nhiên, quá trình chuyển đổi không phải là không có những thách thức nghiêm trọng. Năng lượng gió và mặt trời không ổn định; gió không phải lúc nào cũng thổi và mặt trời không phải lúc nào cũng chiếu sáng. Do đó, việc lưu trữ năng lượng này đòi hỏi những loại pin khổng lồ, đắt tiền. Hơn nữa, việc nâng cấp <span class="keyword" data-term="infrastructure">cơ sở hạ tầng</span> mạng lưới điện hiện tại để xử lý các nguồn năng lượng mới này sẽ tiêu tốn hàng tỷ đô la.</p>
+                                <p>Bất chấp chi phí ban đầu cao này, các nhà khoa học môi trường và các nhà kinh tế lập luận rằng việc phớt lờ biến đổi khí hậu cuối cùng sẽ tốn kém hơn rất nhiều cho xã hội toàn cầu về lâu dài.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: READING QUIZ
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Reading Comprehension Quiz</h2>
+                             <p>Based on the passage you just read.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- Q1 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">1. What is the main idea of the passage?</h3>
+                                <div id="rq1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'rq1')">A. Fossil fuels are cheaper and more reliable than solar power.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'rq1')">B. Renewable energy is a growing, clean alternative, but it faces high costs and storage challenges.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'rq1')">C. Scientists believe that upgrading the power grid is impossible.</button>
+                                </div>
+                                <div id="rq1-explain" class="explanation-box" data-explain="The passage acknowledges the clean benefits of renewable energy but spends significant time discussing the challenges of storage and infrastructure costs. Option B captures the entire scope."></div>
+                            </div>
+
+                            <!-- Q2 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">2. According to the passage, why does renewable energy require massive, expensive batteries?</h3>
+                                <div id="rq2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'rq2')">A. Because the current power grid is too small.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'rq2')">B. Because fossil fuels release greenhouse gases.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'rq2')">C. Because wind and solar power are inconsistent sources of energy.</button>
+                                </div>
+                                <div id="rq2-explain" class="explanation-box" data-explain="The text explicitly states: 'Wind and solar power are inconsistent; the wind does not always blow... Therefore, storing this energy requires massive, expensive batteries.'"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: GRAMMAR BASICS
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-puzzle-piece text-gold" style="font-size: 2.5rem;"></i>
+                             <h2 style="margin:0;">Grammar: Subject-Verb Agreement</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>To write correct sentences on the GED essay, you must master <span class="keyword" data-term="agreement">agreement</span>. This means your <span class="keyword" data-term="subject">subject</span> and your <span class="keyword" data-term="verb">verb</span> must match.</p>
+                                
+                                <p><strong>Rule 1:</strong> If the subject is <span class="keyword" data-term="singular">singular</span> (just one), the verb must be singular. In English, a singular verb in the present tense usually <strong>adds an -s or -es</strong>.</p>
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                                    Example: <span class="hl-sub">The dog</span> <span class="hl-verb">runs</span> fast.
+                                </div>
+
+                                <p><strong>Rule 2:</strong> If the subject is <span class="keyword" data-term="plural">plural</span> (more than one), the verb must be plural. Plural verbs do <strong>not</strong> add an -s.</p>
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                                    Example: <span class="hl-sub">The dogs</span> <span class="hl-verb">run</span> fast.
+                                </div>
+                            </div>
+                            <div class="col-vn">
+                                <p>Để viết đúng câu trong bài luận GED, bạn phải nắm vững <span class="keyword" data-term="agreement">sự hòa hợp</span>. Điều này có nghĩa là <span class="keyword" data-term="subject">chủ ngữ</span> và <span class="keyword" data-term="verb">động từ</span> của bạn phải khớp với nhau về số lượng.</p>
+                                <p><strong>Quy tắc 1:</strong> Nếu chủ ngữ là <span class="keyword" data-term="singular">số ít</span> (chỉ một), động từ phải ở số ít. Trong tiếng Anh, động từ số ít ở thì hiện tại thường <strong>thêm -s hoặc -es</strong>.</p>
+                                <div style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.5rem; font-style: normal;">(Lưu ý: Tiếng Việt không chia động từ, nhưng trong tiếng Anh, ngôi thứ 3 số ít phải thêm 's' hoặc 'es').</div>
+                                
+                                <p><strong>Quy tắc 2:</strong> Nếu chủ ngữ là <span class="keyword" data-term="plural">số nhiều</span> (nhiều hơn một), động từ phải ở số nhiều. Động từ số nhiều <strong>không</strong> thêm -s.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: GRAMMAR DIAGRAM
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="width: 100%;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                            <div class="copy-prompt"><i class="fa-solid fa-pen-nib"></i> Draw this map in your notebook / Vẽ sơ đồ này vào vở</div>
+                            <h2 style="margin-top: 0.5rem;">The Golden Rule of Agreement</h2>
+                            <p>Notice the "Opposite 'S'" trick: Usually, if the noun has an 's', the verb doesn't!</p>
+                        </div>
+
+                        <div class="diagram-container slide-up">
+                            <div class="diagram-level">
+                                <!-- Singular -->
+                                <div class="diagram-box box-branch">
+                                    <div class="diagram-label"><i class="fa-solid fa-user"></i> Singular Subject</div>
+                                    <div class="diagram-desc">Just ONE person or thing.<br>(usually NO 's' on the noun)</div>
+                                    <div class="grammar-tag" style="margin-top: 1rem;"><i class="fa-solid fa-plus"></i> Add 's' to Verb</div>
+                                    <div style="margin-top: 1rem; color: white; font-size: 1.2rem;">
+                                        <span class="hl-sub">The cat</span> <span class="hl-verb">sleeps</span>.
+                                    </div>
+                                    <div style="color: var(--text-vn); font-size: 0.9rem; font-style: italic; margin-top: 0.5rem;">(Con mèo ngủ - Chủ ngữ số ít, động từ thêm 's')</div>
+                                </div>
+                                
+                                <div class="diagram-connector-horizontal"></div>
+                                <div style="font-family: var(--font-heading); font-weight: bold; font-size: 1.5rem; color: var(--text-muted); align-self: center;">VS</div>
+                                <div class="diagram-connector-horizontal"></div>
+
+                                <!-- Plural -->
+                                <div class="diagram-box box-branch" style="border-top-color: #f43f5e;">
+                                    <div class="diagram-label"><i class="fa-solid fa-users"></i> Plural Subject</div>
+                                    <div class="diagram-desc">TWO OR MORE things.<br>(usually HAS an 's' on the noun)</div>
+                                    <div class="grammar-tag" style="border-color: #f43f5e; color: #f43f5e; background: rgba(244, 63, 94, 0.1);"><i class="fa-solid fa-minus"></i> No 's' on Verb</div>
+                                    <div style="margin-top: 1rem; color: white; font-size: 1.2rem;">
+                                        <span class="hl-sub">The cats</span> <span class="hl-verb">sleep</span>.
+                                    </div>
+                                    <div style="color: var(--text-vn); font-size: 0.9rem; font-style: italic; margin-top: 0.5rem;">(Những con mèo ngủ - Chủ ngữ số nhiều, động từ giữ nguyên)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: TRICKY RULES
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-triangle-exclamation text-gold" style="font-size: 2.5rem;"></i>
+                             <h2 style="margin:0;">GED Tricks: The "Trap" Rules</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>The GED test will try to trick you with sentences where the subject and verb are separated. Ignore any <span class="keyword" data-term="interrupting phrase">interrupting phrase</span> that comes between them.</p>
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                                    <p style="margin: 0;"><strong>TRICK 1: Interrupting Phrases</strong><br>
+                                    <span class="hl-sub">The box</span> <span style="text-decoration: line-through; color: var(--text-muted);">of chocolates</span> <span class="hl-verb">is</span> empty.<br>
+                                    <span style="font-size: 0.9rem; color: var(--text-muted);">*The verb matches "box", not "chocolates".</span></p>
+                                </div>
+
+                                <p>Next, watch out for <span class="keyword" data-term="indefinite pronoun">indefinite pronouns</span> like <em>everyone, nobody, someone, anything</em>. These are ALWAYS singular.</p>
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                                    <p style="margin: 0;"><strong>TRICK 2: Indefinite Pronouns</strong><br>
+                                    <span class="hl-sub">Everyone</span> in the class <span class="hl-verb">wants</span> to pass.<br>
+                                    <span style="font-size: 0.9rem; color: var(--text-muted);">*Even though "everyone" means many people, grammar treats it as a single group.</span></p>
+                                </div>
+                                
+                                <p>Finally, a <span class="keyword" data-term="compound subject">compound subject</span> using "AND" is always plural.</p>
+                            </div>
+                            <div class="col-vn">
+                                <p>Bài thi GED sẽ cố đánh lừa bạn bằng các câu mà chủ ngữ và động từ bị tách rời. Hãy bỏ qua bất kỳ <span class="keyword" data-term="interrupting phrase">cụm từ xen ngang</span> nào nằm giữa chúng.</p>
+                                <p><strong>Lưu ý 1:</strong> Động từ phải chia theo chủ ngữ chính "box" (số ít), chứ không chia theo danh từ đứng ngay trước nó là "chocolates" (nằm trong cụm từ xen ngang).</p>
+                                
+                                <p>Tiếp theo, hãy cẩn thận với <span class="keyword" data-term="indefinite pronoun">đại từ bất định</span> như <em>everyone (mọi người), nobody (không ai)</em>. Trong ngữ pháp tiếng Anh, chúng LUÔN LUÔN là số ít.</p>
+                                <p><strong>Lưu ý 2:</strong> Mặc dù "everyone" có nghĩa là nhiều người, nhưng ngữ pháp coi đó là một khối thống nhất (số ít), nên động từ phải thêm 's' (wants).</p>
+                                
+                                <p>Cuối cùng, một <span class="keyword" data-term="compound subject">chủ ngữ kép</span> sử dụng từ "AND" (và) luôn luôn là số nhiều.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: GRAMMAR QUIZ 1
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment 1</span>
+                             <h2 style="margin-top: 1rem;">Grammar Application Quiz</h2>
+                             <p>Apply the rules to find the correct verb.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- GQ1 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">1. The stack of books on the desk _____ to be returned to the library.</h3>
+                                <div id="gq1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'gq1')">A. needs</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'gq1')">B. need</button>
+                                </div>
+                                <div id="gq1-explain" class="explanation-box" data-explain="The subject is 'stack' (singular). The phrase 'of books on the desk' is an interrupting phrase. Singular subjects take a verb with an 's' -> needs."></div>
+                            </div>
+
+                            <!-- GQ2 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">2. Everyone in the office _____ very hard on Fridays.</h3>
+                                <div id="gq2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'gq2')">A. work</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'gq2')">B. works</button>
+                                </div>
+                                <div id="gq2-explain" class="explanation-box" data-explain="'Everyone' is an indefinite pronoun, which is always singular. Singular verb -> works."></div>
+                            </div>
+
+                            <!-- GQ3 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">3. My brother and his friend _____ studying for the GED together.</h3>
+                                <div id="gq3-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'gq3')">A. is</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'gq3')">B. are</button>
+                                </div>
+                                <div id="gq3-explain" class="explanation-box" data-explain="This is a compound subject joined by 'and' (brother AND friend = 2 people). Plural subject -> are."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: GRAMMAR QUIZ 2
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment 2</span>
+                             <h2 style="margin-top: 1rem;">Grammar Quiz: Part 2</h2>
+                             <p>More practice with singular/plural subjects and interrupting phrases.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- GQ4 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">4. The bag of fresh apples _____ left on the kitchen counter.</h3>
+                                <div id="gq4-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'gq4')">A. was</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'gq4')">B. were</button>
+                                </div>
+                                <div id="gq4-explain" class="explanation-box" data-explain="The subject is 'bag' (singular). The phrase 'of fresh apples' is an interrupting phrase. Singular subject 'bag' -> was."></div>
+                            </div>
+
+                            <!-- GQ5 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">5. The loud dogs in my neighborhood always _____ at the mailman.</h3>
+                                <div id="gq5-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'gq5')">A. bark</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'gq5')">B. barks</button>
+                                </div>
+                                <div id="gq5-explain" class="explanation-box" data-explain="The subject is 'dogs' (plural). Plural subjects take verbs WITHOUT an 's' -> bark."></div>
+                            </div>
+
+                            <!-- GQ6 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">6. Someone in the massive crowd _____ my missing wallet!</h3>
+                                <div id="gq6-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'gq6')">A. has</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'gq6')">B. have</button>
+                                </div>
+                                <div id="gq6-explain" class="explanation-box" data-explain="'Someone' is an indefinite pronoun, which is always singular. Singular verb -> has."></div>
+                            </div>
+
+                            <!-- GQ7 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">7. The teacher, along with the students, _____ excited for the upcoming holidays.</h3>
+                                <div id="gq7-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'gq7')">A. is</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'gq7')">B. are</button>
+                                </div>
+                                <div id="gq7-explain" class="explanation-box" data-explain="The main subject is 'teacher' (singular). The commas around 'along with the students' show it is an interrupting phrase. Singular -> is."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 9: GRAMMAR QUIZ 3
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment 3</span>
+                             <h2 style="margin-top: 1rem;">Grammar Quiz: Part 3</h2>
+                             <p>Final check! Watch out for all the GED trap rules.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- GQ8 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">8. Both the apple and the banana _____ excellent nutrients for your brain.</h3>
+                                <div id="gq8-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'gq8')">A. provide</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'gq8')">B. provides</button>
+                                </div>
+                                <div id="gq8-explain" class="explanation-box" data-explain="This is a compound subject joined by 'and' (apple + banana = 2 items). Plural verbs do not end in 's' -> provide."></div>
+                            </div>
+
+                            <!-- GQ9 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">9. Nobody in the entire office building _____ the new wifi password.</h3>
+                                <div id="gq9-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'gq9')">A. know</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'gq9')">B. knows</button>
+                                </div>
+                                <div id="gq9-explain" class="explanation-box" data-explain="'Nobody' is an indefinite pronoun and is ALWAYS singular. Singular verbs take an 's' -> knows."></div>
+                            </div>
+
+                            <!-- GQ10 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">10. The list of complicated rules for the board game _____ too long to read tonight.</h3>
+                                <div id="gq10-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'gq10')">A. seem</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'gq10')">B. seems</button>
+                                </div>
+                                <div id="gq10-explain" class="explanation-box" data-explain="The subject is 'list' (singular). Ignore the interrupting phrase 'of complicated rules for the board game'. Singular -> seems."></div>
+                            </div>
+
+                            <!-- GQ11 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">11. The heavy truck and the sports car _____ parked illegally in the driveway.</h3>
+                                <div id="gq11-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'gq11')">A. is</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'gq11')">B. are</button>
+                                </div>
+                                <div id="gq11-explain" class="explanation-box" data-explain="'Truck and car' forms a compound subject (plural). Plural verb -> are."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 10: EXTENDED RESPONSE
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 1100px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: #8b5cf6; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);">Final Assignment</span>
+                             <h2 style="margin-top: 1rem;">GED Extended Response Practice</h2>
+                        </div>
+
+                        <div class="card slide-up" style="padding: 2.5rem; margin-bottom: 2rem;">
+                            
+                            <!-- Strict Rules Box -->
+                            <div class="notebook-alert" style="margin-top: 0; background: rgba(239, 68, 68, 0.1); border-color: #ef4444; box-shadow: 0 8px 30px rgba(239, 68, 68, 0.15);">
+                                <div class="alert-icon" style="color: #ef4444; text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);"><i class="fa-solid fa-stopwatch"></i></div>
+                                <div style="text-align: left; width: 100%;">
+                                    <div class="alert-title" style="color: #ef4444; font-size: 1.3rem;">TESTING RULES | QUY ĐỊNH LÀM BÀI</div>
+                                    <ul style="color: white; margin-left: 1.5rem; line-height: 1.8; font-size: 1.15rem; margin-bottom: 0.5rem; font-family: var(--font-ui);">
+                                        <li>Write this essay in a <strong>Google Doc</strong> only.</li>
+                                        <li><strong>NO AI. NO Google Translate.</strong> <span style="color: var(--text-muted); font-size: 1rem;">(Không dùng AI hoặc công cụ dịch).</span></li>
+                                        <li>Write your <strong>Start Time</strong> and <strong>End Time</strong> at the top of the doc. You have exactly <strong>45 minutes</strong>.</li>
+                                        <li>Email your finished essay to: <span class="text-gold">landon@pra.edu</span> and <span class="text-gold">bowen@pra.edu</span></li>
+                                        <li><em>Bonus: Focus on having perfect Subject-Verb Agreement in your writing!</em></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- GED Style Prompt Container -->
+                            <div style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin: 2.5rem 0; overflow: hidden;">
+                                <div style="background: rgba(255,255,255,0.05); padding: 1.5rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <h3 style="font-family: var(--font-heading); color: white; margin: 0;">Analyze the arguments concerning the implementation of a 4-day workweek.</h3>
+                                </div>
+                                
+                                <div style="padding: 2rem;">
+                                    <!-- Passage 1 -->
+                                    <div style="margin-bottom: 3rem;">
+                                        <h4 style="color: var(--federal-blue); font-family: var(--font-ui); font-size: 1.2rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Passage 1</h4>
+                                        <h3 style="color: white; font-family: var(--font-heading); margin-bottom: 1rem; font-size: 1.6rem;">The Future is the Four-Day Workweek</h3>
+                                        <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem;">Adapted from an article by the Institute for Workplace Innovation.</p>
+                                        
+                                        <div style="color: var(--text-main); font-size: 1.15rem; line-height: 1.8; padding-left: 1rem; border-left: 3px solid var(--federal-blue);">
+                                            <p style="margin-bottom: 1rem;">The traditional five-day, 40-hour workweek is an outdated relic of the Industrial Revolution. Modern businesses that have transitioned to a four-day workweek with no cut in pay have reported overwhelmingly positive results. Studies conducted in Iceland and the UK show that reducing hours actually leads to a significant increase in employee productivity. When employees know they have a three-day weekend to look forward to, they waste less time in the office, eliminate unnecessary meetings, and focus harder on their core tasks.</p>
+                                            
+                                            <p>Furthermore, the four-day workweek drastically improves mental health. Employee burnout costs companies billions of dollars every year in healthcare costs and employee turnover. An extra day off allows workers to rest, spend time with their families, and handle personal errands without sacrificing their weekend recovery time. Companies adopting this model report happier employees, lower absentee rates, and a massive advantage in hiring top talent. It is time for society to embrace a model that prioritizes human well-being alongside corporate profits.</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Passage 2 -->
+                                    <div>
+                                        <h4 style="color: #ef4444; font-family: var(--font-ui); font-size: 1.2rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Passage 2</h4>
+                                        <h3 style="color: white; font-family: var(--font-heading); margin-bottom: 1rem; font-size: 1.6rem;">The Four-Day Fantasy</h3>
+                                        <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem;">Adapted from an editorial in the National Business Review.</p>
+                                        
+                                        <div style="color: var(--text-main); font-size: 1.15rem; line-height: 1.8; padding-left: 1rem; border-left: 3px solid #ef4444;">
+                                            <p style="margin-bottom: 1rem;">While the idea of a four-day workweek sounds appealing on paper, it is completely impractical for the vast majority of the economy. Advocates for the four-day week often point to small tech companies or office environments. However, they ignore industries like healthcare, manufacturing, retail, and education, which require continuous coverage. If a hospital or a shipping company cuts employee hours by 20%, they must hire significantly more staff to cover the gaps, leading to a massive spike in operational costs that will ultimately be passed on to the consumer as higher prices.</p>
+                                            
+                                            <p>Moreover, trying to cram 40 hours of work into four days creates a high-pressure environment. Instead of reducing stress, workers face longer 10-hour daily shifts, leaving them exhausted by the time they get home. Parents will struggle to find and afford extended childcare to cover these longer daily hours. The five-day workweek provides a balanced, steady pace that allows businesses to meet customer demands reliably without pushing their staff to the breaking point on a daily basis. The four-day workweek is a luxury that our economy simply cannot afford to mandate.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- The Prompt -->
+                            <div style="background: rgba(139, 92, 246, 0.1); padding: 2rem; border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.4);">
+                                <h3 style="margin-bottom: 1rem; color: #c4b5fd; font-family: var(--font-heading);"><i class="fa-solid fa-pen-nib"></i> Extended Response Prompt</h3>
+                                <p style="font-size: 1.25rem; color: white; font-weight: bold; margin-bottom: 1.5rem; line-height: 1.6;">In your response, analyze both positions presented in the article to determine which one is best supported. Use relevant and specific evidence from the article to support your response.</p>
+                                
+                                <h4 style="color: white; margin-bottom: 0.8rem; font-family: var(--font-ui);">4 Tips for a High GED Score:</h4>
+                                <ul style="color: var(--text-vn); margin-left: 1.5rem; line-height: 1.6; font-size: 1.05rem;">
+                                    <li><strong>Write 4 to 5 paragraphs:</strong> Introduction, 2-3 Body Paragraphs, Conclusion. <br><em style="color: var(--text-muted); font-size: 0.95rem;">(Viết 4-5 đoạn văn: Mở bài, 2-3 đoạn Thân bài, Kết luận).</em></li>
+                                    <li style="margin-top: 0.5rem;"><strong>Focus on the argument, not your opinion:</strong> Explain why one side's logic and evidence is stronger. Do not use "I think" or "I agree." <br><em style="color: var(--text-muted); font-size: 0.95rem;">(Phân tích xem lập luận và bằng chứng nào mạnh hơn. Không dùng "Tôi nghĩ" hay "Tôi đồng ý").</em></li>
+                                    <li style="margin-top: 0.5rem;"><strong>Quote the text:</strong> Pull specific quotes or examples (like the study in Iceland or the healthcare industry gap) directly from the passages to prove your point. <br><em style="color: var(--text-muted); font-size: 0.95rem;">(Trích dẫn trực tiếp các câu hoặc ví dụ từ bài đọc để chứng minh quan điểm của bạn).</em></li>
+                                    <li style="margin-top: 0.5rem;"><strong>Check your Grammar:</strong> Reserve the last 3 minutes to check your Subject-Verb Agreement, spelling, and punctuation. <br><em style="color: var(--text-muted); font-size: 0.95rem;">(Dành 3 phút cuối để kiểm tra Sự hòa hợp Chủ-Vị, chính tả và dấu câu).</em></li>
+                                </ul>
+                            </div>
+
+                            <div class="text-center" style="margin-top: 3rem;">
+                                <button onclick="location.reload()" style="background: transparent; color: var(--text-main); border: 2px solid var(--federal-blue); padding: 1rem 2.5rem; border-radius: 50px; font-weight: bold; cursor: pointer; transition: all 0.3s;">
+                                    <i class="fa-solid fa-rotate-right"></i> Restart Lesson
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- LOGIC ---
+    let currentSlide = 0;
+    const slideContainer = document.getElementById('slide-container');
+    const progressBar = document.getElementById('progress-fill');
+    const btnNext = document.getElementById('btn-next');
+    const btnPrev = document.getElementById('btn-prev');
+    const dock = document.getElementById('def-dock');
+
+    function renderSlide() {
+        // Clear inner HTML to trigger CSS animations on fresh insert
+        slideContainer.innerHTML = ''; 
+        
+        // Small timeout ensures browser registers the DOM clear before adding new content
+        setTimeout(() => {
+            slideContainer.innerHTML = slides[currentSlide].render();
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            btnPrev.disabled = currentSlide === 0;
+            btnNext.disabled = currentSlide === slides.length - 1;
+            document.getElementById('viewport').scrollTop = 0;
+            attachKeywordListeners();
+        }, 50);
+    }
+
+    function changeSlide(direction) {
+        if (direction === 'next' && currentSlide < slides.length - 1) {
+            currentSlide++;
+            hideDock();
+        } else if (direction === 'prev' && currentSlide > 0) {
+            currentSlide--;
+            hideDock();
+        }
+        renderSlide();
+    }
+
+    function attachKeywordListeners() {
+        const keywords = document.querySelectorAll('.keyword');
+        keywords.forEach(el => {
+            const termKey = el.dataset.term.toLowerCase();
+            const data = glossary[termKey];
+            if (!data) return;
+
+            el.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                showDock(termKey, data);
+            });
+        });
+    }
+
+    function showDock(term, data) {
+        document.getElementById('dock-term').innerText = term.replace(/\b\w/g, l => l.toUpperCase()); 
+        document.getElementById('dock-def').innerText = data.def;
+        document.getElementById('dock-vn').innerText = data.vn;
+        document.getElementById('dock-vn-def').innerText = data.vn_def; 
+        dock.classList.add('active');
+    }
+
+    function hideDock() {
+        dock.classList.remove('active');
+    }
+
+    window.handleQuiz = function(btn, isCorrect, qId) {
+        const parent = document.getElementById(qId + '-opts');
+        const explainBox = document.getElementById(qId + '-explain');
+        const options = parent.querySelectorAll('.quiz-option');
+        
+        // Disable all buttons in this question
+        options.forEach(opt => {
+            opt.disabled = true;
+            opt.style.cursor = 'default';
+            opt.style.opacity = '0.5';
+        });
+
+        // Highlight the selected button
+        btn.style.opacity = '1';
+        btn.style.transform = 'none';
+        
+        if (isCorrect) {
+            btn.classList.add('correct');
+            btn.innerHTML += ' <i class="fa-solid fa-check-circle" style="font-size:1.5rem;"></i>';
+        } else {
+            btn.classList.add('incorrect');
+            btn.innerHTML += ' <i class="fa-solid fa-times-circle" style="font-size:1.5rem;"></i>';
+        }
+
+        // Show and style the explanation box dynamically
+        if(explainBox) {
+            explainBox.style.display = 'block';
+            const explanationText = explainBox.getAttribute('data-explain');
+            
+            if (isCorrect) {
+                explainBox.style.borderLeftColor = '#10b981';
+                explainBox.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                explainBox.innerHTML = `<strong style="color: #10b981; font-size: 1.2rem; display: block; margin-bottom: 0.5rem;">Correct!</strong> ${explanationText}`;
+            } else {
+                explainBox.style.borderLeftColor = '#ef4444';
+                explainBox.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                explainBox.innerHTML = `<strong style="color: #ef4444; font-size: 1.2rem; display: block; margin-bottom: 0.5rem;">Incorrect.</strong> ${explanationText}`;
+            }
+        }
+    };
+
+    btnNext.addEventListener('click', () => changeSlide('next'));
+    btnPrev.addEventListener('click', () => changeSlide('prev'));
+    
+    // Close dock when clicking outside of keywords/dock
+    document.getElementById('viewport').addEventListener('click', (e) => {
+        if(!e.target.closest('.keyword') && dock.classList.contains('active')) {
+            hideDock();
+        }
+    });
+
+    // Keyboard nav
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') changeSlide('next');
+        if(e.key === 'ArrowLeft') changeSlide('prev');
+        if(e.key === 'Escape') hideDock();
+    });
+
+    // Init
+    renderSlide();
+</script>
+</body>
+</html>
