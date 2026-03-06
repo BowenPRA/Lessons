@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Lab: Phase 2 - Map Scale | 6 March 2026</title>
+    
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for formulas (Cambridge Standard Requirement) -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      startup: {
+        ready: () => {
+          MathJax.startup.defaultReady();
+          document.dispatchEvent(new Event('mathjax-ready'));
+        }
+      }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE (Cambridge Standard) --- */
+            --bg-deep: #0f172a;    /* Deep Slate */
+            --bg-panel: #1e293b;   /* Secondary Cards */
+            --primary: #8b5cf6;    /* Chemical Purple */
+            --primary-hover: #7c3aed;
+            --accent: #10b981;     /* Acid Green */
+            --warning: #f59e0b;    /* Hazard Orange */
+            --danger: #ef4444;     /* Heat Red */
+            --text-light: #f1f5f9;
+            --text-dim: #94a3b8;
+            --success: #38b000;
+            
+            /* --- SIZING TOKENS --- */
+            --header-h: 80px;
+            --footer-h: 90px;
+            --radius: 24px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+            
+            /* Blueprint Grid aligned with Cambridge Palette */
+            background-image: 
+                linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 92, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(rgba(16, 185, 129, 0.03) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.03) 2px, transparent 2px);
+            background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+            background-position: -1px -1px, -1px -1px, -2px -2px, -2px -2px;
+        }
+
+        :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+
+        /* --- BACKGROUND ANIMATION LAYER --- */
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; pointer-events: none; }
+
+        /* --- TYPOGRAPHY --- */
+        h1 { font-family: 'Outfit'; font-weight: 900; font-size: clamp(2.5rem, 5vw, 5rem); line-height: 1.1; letter-spacing: -2px; }
+        h2 { font-family: 'Outfit'; font-weight: 800; font-size: clamp(2rem, 4vw, 3.5rem); margin-bottom: 1rem; color: white; }
+        h3 { font-family: 'Outfit'; font-weight: 700; font-size: clamp(1.5rem, 2.5vw, 2rem); color: var(--primary); margin-bottom: 1rem; }
+        p, li { font-size: clamp(1.1rem, 1.5vw, 1.4rem); line-height: 1.6; color: #cbd5e1; }
+        
+        .highlight-accent { color: var(--accent); text-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        .highlight-primary { color: var(--primary); }
+        .highlight-warn { color: var(--warning); }
+        .highlight-danger { color: var(--danger); text-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+        .text-center { text-align: center; }
+
+        /* --- LAYOUT SHELL --- */
+        header { height: var(--header-h); flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 100; }
+        .tag { background: rgba(255,255,255,0.1); padding: 0.5rem 1.5rem; border-radius: 100px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 1rem; border: 1px solid rgba(255,255,255,0.2); color: var(--text-light); }
+        main { flex: 1; position: relative; padding: 1rem 2rem; display: flex; flex-direction: column; align-items: center; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--primary) var(--bg-deep); }
+        .slide-container { width: 100%; max-width: 1400px; margin: auto 0; min-height: min-content; padding-bottom: 2rem; }
+        footer { height: var(--footer-h); flex-shrink: 0; background: rgba(15, 23, 42, 0.95); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100; }
+
+        /* --- PEDAGOGICAL NOTE BOX (Cambridge Standard) --- */
+        .pedagogical-note { position: relative; background: rgba(30, 41, 59, 0.8); border: 3px solid var(--accent); border-left-width: 12px; border-radius: 16px; padding: 2rem; margin: 1.5rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: left; }
+        .pedagogical-badge { position: absolute; top: -18px; left: 20px; background: var(--accent); color: #000; padding: 0.4rem 1.2rem; border-radius: 50px; font-weight: 900; text-transform: uppercase; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px; letter-spacing: 1px; }
+        .note-write { border-color: var(--primary); } .note-write .pedagogical-badge { background: var(--primary); color: white; }
+        .note-task { border-color: var(--warning); } .note-task .pedagogical-badge { background: var(--warning); color: black; }
+        .note-success { border-color: var(--accent); } .note-success .pedagogical-badge { background: var(--accent); color: black; }
+        .note-theory { border-color: var(--danger); } .note-theory .pedagogical-badge { background: var(--danger); color: white; }
+
+        /* --- CARDS & GRIDS --- */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: stretch; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        
+        .glass-card { background: rgba(30, 41, 59, 0.7); border: 2px solid rgba(255,255,255,0.08); border-radius: var(--radius); padding: 2rem; box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5); transition: transform 0.3s ease, border-color 0.3s ease; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
+        .glass-card:hover { border-color: rgba(255,255,255,0.2); }
+
+        /* --- INTERACTIVE ELEMENTS --- */
+        /* Reveal Cards */
+        .reveal-card { background: var(--bg-panel); border: 2px dashed var(--text-dim); padding: 2rem; text-align: center; cursor: pointer; border-radius: 16px; transition: all 0.3s ease; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .reveal-card:hover, .reveal-card:focus { border-color: var(--accent); background: rgba(16, 185, 129, 0.1); }
+        .reveal-card.revealed { border-style: solid; border-color: var(--accent); background: var(--bg-panel); cursor: default; }
+        .reveal-content { display: none; animation: popIn 0.3s forwards; }
+        .reveal-icon { font-size: 3rem; margin-bottom: 1rem; color: var(--text-dim); }
+
+        /* Inputs & Quizzes */
+        .calc-input { background: rgba(15, 23, 42, 0.8); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 1rem; color: white; font-size: 1.5rem; width: 100%; margin-bottom: 1rem; font-family: 'Outfit'; text-align: center;}
+        .calc-input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); }
+        .calc-result { font-size: 2.5rem; font-family: 'Outfit'; font-weight: 800; color: var(--accent); text-align: center; margin-top: 1.5rem; display: none; }
+        
+        .quiz-option { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.2s; font-size: 1.3rem; }
+        .quiz-option:hover { background: rgba(255,255,255,0.1); border-color: var(--text-dim); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--accent); color: white; font-weight: bold; }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); opacity: 0.7; }
+        .quiz-feedback { margin-top: 1rem; font-weight: bold; font-size: 1.2rem; display: none; }
+
+        /* Videos */
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* --- CONTROLS --- */
+        .btn-nav { background: rgba(255,255,255,0.1); border: none; color: white; width: 50px; height: 50px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); transform: scale(1.1); }
+        .btn-nav:disabled { opacity: 0.2; cursor: not-allowed; }
+
+        .btn-action { background: var(--primary); color: white; border: none; padding: 1rem 2rem; font-size: 1.2rem; font-weight: 800; border-radius: 12px; cursor: pointer; box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); transition: all 0.2s; font-family: 'Outfit'; text-transform: uppercase; width: 100%; }
+        .btn-action:hover, .btn-action:focus { transform: translateY(-3px); box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); background: var(--primary-hover); }
+
+        .progress-track { flex: 1; margin: 0 2rem; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+
+        /* --- ANIMATIONS --- */
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        .anim-enter { animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        @media (max-width: 1000px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 2rem; }
+            h1 { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <header>
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <i class="fa-solid fa-map" style="color:var(--accent); font-size:1.8rem;"></i>
+            <span style="font-weight:700; font-size: 1.5rem; color: white;">Cambridge Math: Project Phase 2</span>
+        </div>
+        <div class="tag">
+            <i class="fa-solid fa-square-root-variable" style="margin-right: 5px;"></i> Scale Factor Lab
+        </div>
+    </header>
+
+    <main>
+        <div id="slide-viewer" class="slide-container" aria-live="polite">
+            <!-- Content Injected via JS -->
+        </div>
+    </main>
+
+    <footer>
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="progress-track">
+            <div id="progress-bar" class="progress-fill"></div>
+        </div>
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+
+<script>
+/**
+ * @class BackgroundAnimation
+ * @description Engine mandated background animation. Updated symbols for maps.
+ */
+class BackgroundAnimation {
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.symbols = ['🗺️', '📏', '📐', 'x:y', '1:100', 'm', 'cm', '÷', '×'];
+        this.width = 0;
+        this.height = 0;
+        this.resize = this.resize.bind(this);
+        this.animate = this.animate.bind(this);
+        this.init();
+    }
+    init() {
+        window.addEventListener('resize', this.resize);
+        this.resize();
+        this.createParticles(15);
+        this.animate();
+    }
+    resize() {
+        this.width = this.canvas.width = window.innerWidth;
+        this.height = this.canvas.height = window.innerHeight;
+    }
+    createParticles(count) {
+        this.particles = [];
+        for (let i = 0; i < count; i++) {
+            this.particles.push({
+                x: Math.random() * this.width,
+                y: Math.random() * this.height,
+                size: Math.random() * 20 + 10,
+                speedY: Math.random() * 0.5 + 0.1,
+                symbol: this.symbols[Math.floor(Math.random() * this.symbols.length)],
+                opacity: Math.random() * 0.15 + 0.05
+            });
+        }
+    }
+    animate() {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.particles.forEach(p => {
+            p.y -= p.speedY;
+            if (p.y < -50) p.y = this.height + 50;
+            this.ctx.fillStyle = `rgba(139, 92, 246, ${p.opacity})`; 
+            this.ctx.font = `${p.size}px 'Outfit'`;
+            this.ctx.fillText(p.symbol, p.x, p.y);
+        });
+        requestAnimationFrame(this.animate);
+    }
+}
+
+/**
+ * @class LessonController
+ * @description Central logic for slides based on the Bowen Engine standard.
+ */
+class LessonController {
+    constructor(slides) {
+        this.slides = slides;
+        this.index = 0;
+        this.container = document.getElementById('slide-viewer');
+        this.progressBar = document.getElementById('progress-bar');
+        this.btnPrev = document.getElementById('btn-prev');
+        this.btnNext = document.getElementById('btn-next');
+        this.currentCleanup = null;
+        this.init();
+    }
+
+    init() {
+        new BackgroundAnimation('bg-canvas');
+        this.btnPrev.addEventListener('click', () => this.prev());
+        this.btnNext.addEventListener('click', () => this.next());
+        
+        document.addEventListener('mathjax-ready', () => { this.render(); });
+
+        document.addEventListener('keydown', (e) => {
+            if (document.activeElement.tagName === 'INPUT') return;
+            if (e.key === 'ArrowRight' || e.key === ' ') this.next();
+            if (e.key === 'ArrowLeft') this.prev();
+        });
+        this.render();
+    }
+
+    render() {
+        if (this.currentCleanup) {
+            this.currentCleanup();
+            this.currentCleanup = null;
+        }
+
+        const slide = this.slides[this.index];
+        this.container.innerHTML = slide.template();
+        this.container.parentElement.scrollTop = 0; 
+
+        this.progressBar.style.width = `${((this.index + 1) / this.slides.length) * 100}%`;
+        this.btnPrev.disabled = this.index === 0;
+        this.btnNext.disabled = this.index === this.slides.length - 1;
+
+        if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+            MathJax.typesetPromise([this.container]).catch(err => console.log("MathJax error: ", err));
+        }
+
+        requestAnimationFrame(() => {
+            if (slide.script) {
+                this.currentCleanup = slide.script(this.container);
+            }
+        });
+    }
+
+    next() { if (this.index < this.slides.length - 1) { this.index++; this.render(); } }
+    prev() { if (this.index > 0) { this.index--; this.render(); } }
+}
+
+/**
+ * SLIDE DATA (The Lesson Arc)
+ */
+const slides = [
+    // 1. Hook (Engage)
+    {
+        template: () => `
+            <div class="text-center anim-enter" style="margin-top: 5vh;">
+                <i class="fa-solid fa-map-location-dot" style="font-size: 6rem; color: var(--accent); margin-bottom: 2rem; filter: drop-shadow(0 0 30px rgba(16, 185, 129, 0.4));"></i>
+                <h1 style="color:white; margin-bottom: 0.5rem;">The Blueprint</h1>
+                <p style="font-size: 1.5rem; color: var(--warning); font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">Phase 2: Calculating Map Scale</p>
+                
+                <div class="pedagogical-note note-success delay-1 anim-enter" style="max-width: 800px; margin: 4rem auto;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Your Mission Today</div>
+                    <p style="font-size: 1.5rem; line-height: 1.6; margin-top: 1rem;">
+                        You have measured the real world. You have sheets of raw data.<br><br>
+                        Today, you learn the mathematics of shrinking a massive campus perfectly onto a single sheet of paper without distorting it.
+                    </p>
+                </div>
+            </div>
+        `
+    },
+
+    // 2. Warm-Up Part 1 (Explore) - Real World Footprint
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>Warm-Up Part 1: The Real World 🌍</h2>
+                <p>Architects need to know the bounds of their project.</p>
+                
+                <div class="grid-2 delay-1 anim-enter" style="margin-top: 3rem;">
+                    <div class="pedagogical-note note-task" style="margin-top: 0;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-magnifying-glass"></i> Analyze Your Data</div>
+                        <h3><i class="fa-solid fa-clipboard-list"></i> Look at your Survey Notes</h3>
+                        <p style="margin-bottom: 1rem;">Work with your Scribes and Surveyors right now.</p>
+                        <ol style="margin-left: 1.5rem; font-size: 1.3rem; line-height: 2;">
+                            <li>What is the absolute <strong class="highlight-primary">longest distance</strong> you measured from one end of the campus to the other?</li>
+                            <li>What is the absolute <strong class="highlight-accent">widest distance</strong>?</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="glass-card text-center" style="display:flex; flex-direction:column; justify-content:center;">
+                        <i class="fa-solid fa-ruler-horizontal" style="font-size: 4rem; color: var(--text-dim); margin-bottom: 1rem;"></i>
+                        <h3 style="color: white;">Identify the Maximums</h3>
+                        <p style="font-size: 1.2rem; color: var(--warning); margin-top: 1rem; font-weight: bold;">
+                            Write your Maximum Length and Width in meters ($m$) in your notebook, drawing a box around them.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // 3. Warm-Up Part 2 (Explore) - The Paper Constraint
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>Warm-Up Part 2: The Constraint 📄</h2>
+                <p>Now, let's look at the canvas we have to work with.</p>
+                
+                <div class="grid-2 delay-1 anim-enter" style="margin-top: 3rem;">
+                    <div class="glass-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"><rect width=\"20\" height=\"20\" fill=\"none\" stroke=\"%238b5cf6\" stroke-width=\"1\" opacity=\"0.2\"/></svg>');">
+                        <div style="background: var(--bg-deep); padding: 1rem 2rem; border-radius: 12px; border: 2px solid var(--primary);">
+                            <h3 style="margin-bottom:0; text-align:center;">The Grid Paper</h3>
+                        </div>
+                    </div>
+
+                    <div class="pedagogical-note note-task" style="margin-top: 0;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-calculator"></i> Grid Capacity</div>
+                        <h3>Count the Squares</h3>
+                        <p>Look at the A3/A4 grid paper your Managers collected.</p>
+                        <ul style="margin-left: 1.5rem; font-size: 1.3rem; line-height: 2; margin-top: 1rem;">
+                            <li>How many squares fit along the <strong>long edge</strong>?</li>
+                            <li>How many squares fit along the <strong>short edge</strong>?</li>
+                        </ul>
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(239, 68, 68, 0.2); border-left: 4px solid var(--danger); border-radius: 4px;">
+                            <p style="font-weight: 700; color: white; margin: 0; font-size: 1.2rem;"><i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i> The Problem:</p>
+                            <p style="margin:0; font-size:1.1rem;">How do we make sure our Max Campus Length fits perfectly into our Max Paper Squares?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // 4. Theory (Explain) - What is Map Scale
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>The Mathematics of Scale 📏</h2>
+                <p>To fit reality onto paper, we use direct proportion.</p>
+                
+                <div class="pedagogical-note note-write delay-1 anim-enter" style="max-width: 900px; margin: 3rem auto;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                    <h3><i class="fa-solid fa-book-open"></i> Definitions</h3>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <p style="font-size: 1.4rem; color: white; margin-bottom: 0.5rem;"><strong>1. Map Scale:</strong></p>
+                        <p style="padding-left: 1.5rem; border-left: 2px solid rgba(255,255,255,0.2);">
+                            A mathematical ratio comparing the distance on a map to the actual distance in the real world.
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <p style="font-size: 1.4rem; color: white; margin-bottom: 0.5rem;"><strong>2. Scale Factor:</strong></p>
+                        <p style="padding-left: 1.5rem; border-left: 2px solid rgba(255,255,255,0.2);">
+                            The multiplier (or divisor) used to scale down the real world to the paper size. <br>
+                            <span style="color: var(--accent); font-weight: bold;">Example:</span> $1 \\text{ cm on map} = 5 \\text{ m in real life.}$
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // 5. Theory (Explain) - Calculating the Factor
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>The Golden Rule of Map Making 🧠</h2>
+                <p>How Architects convert measurements accurately.</p>
+                
+                <div class="pedagogical-note note-write delay-1 anim-enter" style="max-width: 900px; margin: 2rem auto; border-color: var(--accent);">
+                    <div class="pedagogical-badge" style="background: var(--accent); color: black;"><i class="fa-solid fa-star"></i> Core Formula</div>
+                    
+                    <div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px dashed var(--accent);">
+                        <p style="font-size: 2rem; color: white; margin: 0; font-family: 'Outfit', sans-serif;">
+                            $$ \\text{Map Distance} = \\frac{\\text{Real World Distance}}{\\text{Scale Factor}} $$
+                        </p>
+                    </div>
+
+                    <div class="grid-2" style="gap: 2rem; margin-top: 2rem;">
+                        <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                            <h4 style="color: var(--warning); margin-bottom: 0.5rem;"><i class="fa-solid fa-arrow-right-to-bracket"></i> Going from World to Map</h4>
+                            <p style="font-size: 1.1rem;"><strong>Divide</strong> by the scale factor.<br><em>E.g., Reality is 20m. Scale is 1sq = 2m. Map = 20 ÷ 2 = 10 squares.</em></p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                            <h4 style="color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Going from Map to World</h4>
+                            <p style="font-size: 1.1rem;"><strong>Multiply</strong> by the scale factor.<br><em>E.g., You count 5 squares on the map. Scale is 1sq = 2m. Reality = 5 × 2 = 10m.</em></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // 6. Elaborate (Calculation Tool)
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>The Architect's Calculator 🧮</h2>
+                <p>Test out different scales before drawing. Find what fits your paper best!</p>
+                
+                <div class="grid-2 delay-1 anim-enter" style="margin-top: 2rem; max-width: 1000px; margin-left: auto; margin-right: auto;">
+                    <div class="pedagogical-note note-task" style="margin-top: 0;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-gear"></i> Testing Tool</div>
+                        <p style="margin-bottom: 1rem;">Use this to check if your Max Campus Length will fit on your paper squares.</p>
+                        <p style="font-size: 1.1rem; color: var(--text-dim);">1. Enter a real measured distance (e.g., 85 meters).</p>
+                        <p style="font-size: 1.1rem; color: var(--text-dim);">2. Guess a scale (e.g., 1 square represents 3 meters).</p>
+                        <p style="font-size: 1.1rem; color: var(--text-dim);">3. See how many paper squares it will take up.</p>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <h3 style="text-align: center; margin-bottom: 1.5rem;"><i class="fa-solid fa-calculator"></i> Maths Check</h3>
+                        
+                        <label style="display:block; margin-bottom:0.5rem; color: var(--text-dim);">Real World Distance (Meters):</label>
+                        <input id="input-real" class="calc-input" type="number" placeholder="e.g., 85">
+                        
+                        <label style="display:block; margin-bottom:0.5rem; color: var(--text-dim);">Scale: 1 Square represents how many Meters?</label>
+                        <input id="input-scale" class="calc-input" type="number" placeholder="e.g., 2">
+                        
+                        <button id="btn-calc" class="btn-action" style="margin-top: 1rem;">Calculate Map Size</button>
+                        
+                        <div id="result" class="calc-result"></div>
+                    </div>
+                </div>
+            </div>
+        `,
+        script: (container) => {
+            const btn = container.querySelector('#btn-calc');
+            const inReal = container.querySelector('#input-real');
+            const inScale = container.querySelector('#input-scale');
+            const outResult = container.querySelector('#result');
+
+            const calculate = () => {
+                const real = parseFloat(inReal.value);
+                const scale = parseFloat(inScale.value);
+
+                if (isNaN(real) || isNaN(scale) || scale === 0) {
+                    outResult.innerHTML = `<span style="color: var(--danger); font-size: 1.5rem;">Error: Invalid Input</span>`;
+                    outResult.style.display = 'block';
+                    return;
+                }
+
+                const mapSquares = (real / scale).toFixed(1);
+                outResult.innerHTML = `${mapSquares} Squares`;
+                outResult.style.display = 'block';
+                outResult.style.animation = 'none';
+                void outResult.offsetWidth; // trigger reflow
+                outResult.style.animation = 'popIn 0.3s forwards';
+            };
+
+            btn.addEventListener('click', calculate);
+            
+            // Allow enter key triggering
+            const handleEnter = (e) => { if (e.key === 'Enter') calculate(); };
+            inReal.addEventListener('keydown', handleEnter);
+            inScale.addEventListener('keydown', handleEnter);
+
+            return () => {
+                btn.removeEventListener('click', calculate);
+                inReal.removeEventListener('keydown', handleEnter);
+                inScale.removeEventListener('keydown', handleEnter);
+            };
+        }
+    },
+
+    // 7. Elaborate (Strategies & Video)
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>Drawing Strategies ✍️</h2>
+                <p>Professional tips for Drafting your Map.</p>
+                
+                <div class="grid-2 delay-1 anim-enter" style="margin-top: 2rem;">
+                    
+                    <!-- Video Embed inside Glass Card -->
+                    <div class="glass-card" style="padding: 1.5rem;">
+                        <h3 style="font-size: 1.4rem;"><i class="fa-solid fa-play"></i> Scale Drawing Visualized</h3>
+                        <div class="video-container" style="margin-top: 1rem;">
+                            <!-- Using a generic safe educational YouTube embed about Scale Drawings -->
+                            <iframe src="https://www.youtube.com/embed/XjmOKKhlJ2k?rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <!-- Tips using Reveal Cards -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div class="reveal-card" role="button" tabindex="0">
+                            <div class="pre-reveal">
+                                <i class="fa-solid fa-crosshairs reveal-icon"></i>
+                                <h3 style="font-size: 1.5rem;">Tip 1: The Anchor Point</h3>
+                                <p style="font-size: 1rem;">Click to reveal strategy</p>
+                            </div>
+                            <div class="reveal-content">
+                                <i class="fa-solid fa-crosshairs reveal-icon" style="color:var(--accent);"></i>
+                                <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.5rem;">Pick a Baseline</h3>
+                                <p>Start at a corner of the campus. Draw your longest straight wall first. Let all other measurements branch off this single line.</p>
+                            </div>
+                        </div>
+
+                        <div class="reveal-card" role="button" tabindex="0">
+                            <div class="pre-reveal">
+                                <i class="fa-solid fa-eraser reveal-icon"></i>
+                                <h3 style="font-size: 1.5rem;">Tip 2: Drafting Protocol</h3>
+                                <p style="font-size: 1rem;">Click to reveal strategy</p>
+                            </div>
+                            <div class="reveal-content">
+                                <i class="fa-solid fa-eraser reveal-icon" style="color:var(--warning);"></i>
+                                <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.5rem;">Draw Lightly</h3>
+                                <p>You WILL make mistakes. Use an HB pencil. Only ink the lines when the Architects and Managers have verified the map mathematically closes.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        `,
+        script: (container) => {
+            const cards = container.querySelectorAll('.reveal-card');
+            cards.forEach(card => {
+                const handler = () => {
+                    card.classList.add('revealed');
+                    card.querySelector('.reveal-content').style.display = 'block';
+                    card.querySelector('.pre-reveal').style.display = 'none';
+                };
+                card.addEventListener('click', handler);
+                // Accessibility: Enter to click
+                card.addEventListener('keydown', (e) => { if (e.key === 'Enter') handler(); });
+            });
+            // Cleanup not strictly necessary for simple toggles on removed DOM, but adhering to Bible
+            return () => {}; 
+        }
+    },
+
+    // 8. Assessment (Evaluate - Quiz)
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>Knowledge Check 🎯</h2>
+                <p>Are you ready to draft? Answer this scenario to prove it.</p>
+                
+                <div class="glass-card delay-1 anim-enter" style="max-width: 800px; margin: 3rem auto; text-align: left;">
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: white;"><i class="fa-solid fa-clipboard-question"></i> The Architect's Dilemma</h3>
+                        <p style="font-size: 1.3rem; margin-top: 1rem;">
+                            Your paper is 40 squares wide. The school building is 80 meters wide.<br>
+                            Which of the following Scale Factors should you choose to make the building fit perfectly across the whole width of the paper?
+                        </p>
+                    </div>
+
+                    <div id="quiz-container">
+                        <div class="quiz-option" role="button" tabindex="0" data-correct="false">
+                            A) $1 \\text{ square} = 1 \\text{ meter}$
+                        </div>
+                        <div class="quiz-option" role="button" tabindex="0" data-correct="true">
+                            B) $1 \\text{ square} = 2 \\text{ meters}$
+                        </div>
+                        <div class="quiz-option" role="button" tabindex="0" data-correct="false">
+                            C) $1 \\text{ square} = 0.5 \\text{ meters}$
+                        </div>
+                    </div>
+
+                    <div id="quiz-feedback" class="quiz-feedback"></div>
+                </div>
+            </div>
+        `,
+        script: (container) => {
+            const options = container.querySelectorAll('.quiz-option');
+            const feedback = container.querySelector('#quiz-feedback');
+            let answered = false;
+
+            const handleOptionClick = (e) => {
+                if (answered) return;
+                const opt = e.currentTarget;
+                const isCorrect = opt.getAttribute('data-correct') === 'true';
+                
+                answered = true;
+
+                // Highlight chosen
+                if (isCorrect) {
+                    opt.classList.add('correct');
+                    feedback.style.color = 'var(--accent)';
+                    feedback.innerHTML = '<i class="fa-solid fa-check-circle"></i> Correct! 80m ÷ 2 = 40 squares.';
+                } else {
+                    opt.classList.add('incorrect');
+                    // Find and highlight correct answer
+                    options.forEach(o => {
+                        if(o.getAttribute('data-correct') === 'true') {
+                            o.classList.add('correct');
+                        }
+                    });
+                    feedback.style.color = 'var(--danger)';
+                    feedback.innerHTML = '<i class="fa-solid fa-xmark-circle"></i> Incorrect. Using 1 square = 2m gives exactly 40 squares (80 / 2 = 40).';
+                }
+                
+                feedback.style.display = 'block';
+                feedback.style.animation = 'popIn 0.3s forwards';
+            };
+
+            options.forEach(opt => {
+                opt.addEventListener('click', handleOptionClick);
+                opt.addEventListener('keydown', (e) => { if(e.key === 'Enter') handleOptionClick(e); });
+            });
+
+            return () => {
+                options.forEach(opt => opt.removeEventListener('click', handleOptionClick));
+            };
+        }
+    },
+
+    // 9. Assessment / Conclusion (Evaluate)
+    {
+        template: () => `
+            <div class="anim-enter text-center">
+                <h2>Deploy to Drafting Teams 🚀</h2>
+                <i class="fa-solid fa-compass-drafting" style="font-size: 5rem; color: var(--accent); margin: 1rem 0; filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.4));"></i>
+                
+                <div class="pedagogical-note note-success delay-1 anim-enter" style="max-width: 800px; margin: 2rem auto; text-align: left;">
+                    <div class="pedagogical-badge"><i class="fa-solid fa-list-check"></i> Final Checklist</div>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 1.6rem; line-height: 2;">
+                        <li><i class="fa-solid fa-check" style="color: var(--success);"></i> Discuss the Max Measurements.</li>
+                        <li><i class="fa-solid fa-check" style="color: var(--success);"></i> Count the Paper Squares.</li>
+                        <li><i class="fa-solid fa-check" style="color: var(--success);"></i> <strong>Managers & Architects:</strong> Agree on a Scale Factor.</li>
+                        <li><i class="fa-solid fa-check" style="color: var(--success);"></i> Write the chosen scale clearly at the bottom of your map.</li>
+                    </ul>
+                </div>
+
+                <p style="font-size: 1.5rem; font-weight: bold; margin-top: 2rem; color: white;">You have the rest of the period to construct your maps. <br><span class="highlight-primary">Good luck.</span></p>
+            </div>
+        `
+    }
+];
+
+// Initialize Application
+document.addEventListener('DOMContentLoaded', () => {
+    new LessonController(slides);
+});
+</script>
+</body>
+</html>
