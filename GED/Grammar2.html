@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED RLA: Grammar Level 2 (ESL Support)</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --bg-deep: #0b1120;        
+            --bg-card: rgba(30, 41, 59, 0.65); 
+            
+            --federal-blue: #3b82f6;    
+            --federal-blue-glow: rgba(59, 130, 246, 0.4);
+            --constitution-gold: #fbbf24; 
+            --constitution-gold-glow: rgba(251, 191, 36, 0.3);
+            
+            --text-main: #f8fafc;        
+            --text-muted: #94a3b8;       
+            --text-vn: #cbd5e1;         
+
+            --header-h: 75px;
+            --footer-h: 85px;
+            --border-radius: 16px;
+            
+            --fs-h1: clamp(2.5rem, 6vw, 4.5rem);
+            --fs-h2: clamp(1.8rem, 4vw, 2.8rem);
+            
+            /* Font Families */
+            --font-heading: 'Libre Baskerville', serif; 
+            --font-ui: 'Outfit', sans-serif;           
+            --font-body: 'Plus Jakarta Sans', sans-serif; 
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-body);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(59, 130, 246, 0.08), transparent 30%), 
+                radial-gradient(circle at 85% 75%, rgba(251, 191, 36, 0.06), transparent 30%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e293b' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2.5rem;
+            background: rgba(11, 17, 32, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            z-index: 50;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--federal-blue), #1d4ed8);
+            padding: 0.5rem 1.4rem;
+            border-radius: 50px;
+            font-family: var(--font-ui);
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: white;
+            box-shadow: 0 4px 20px var(--federal-blue-glow);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .slide-center { justify-content: center; }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(11, 17, 32, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2.5rem;
+            backdrop-filter: blur(16px);
+            z-index: 50;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn-nav {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.3rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--federal-blue);
+            box-shadow: 0 0 20px var(--federal-blue-glow);
+            transform: scale(1.08);
+            border-color: rgba(255,255,255,0.3);
+        }
+        .btn-nav:disabled { opacity: 0.2; cursor: not-allowed; transform: scale(0.95); }
+
+        .progress-container {
+            flex: 1;
+            margin: 0 3rem;
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--federal-blue), var(--constitution-gold));
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 15px var(--constitution-gold-glow);
+            border-radius: 10px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            backdrop-filter: blur(16px);
+        }
+
+        /* --- NOTEBOOK PEDAGOGY --- */
+        .notebook-alert {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05));
+            border: 2px solid var(--constitution-gold);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            box-shadow: 0 8px 30px rgba(251, 191, 36, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .notebook-alert::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%;
+            background: var(--constitution-gold);
+        }
+        .alert-icon {
+            font-size: 2.5rem;
+            color: var(--constitution-gold);
+            text-shadow: 0 0 15px var(--constitution-gold-glow);
+        }
+        .alert-title {
+            font-family: var(--font-ui);
+            font-weight: 800;
+            color: var(--constitution-gold);
+            letter-spacing: 2px;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        .alert-text-en { font-size: 1.15rem; font-weight: 500; margin-bottom: 0.8rem; line-height: 1.5; color: white; }
+        .alert-text-vn { font-size: 1.05rem; font-style: italic; color: var(--text-vn); line-height: 1.5; font-family: 'Times New Roman', serif;}
+
+        .copy-prompt {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--constitution-gold);
+            border: 1px dashed var(--constitution-gold);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            animation: float-prompt 3s ease-in-out infinite;
+        }
+        @keyframes float-prompt {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* --- DIAGRAMS --- */
+        .diagram-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+            padding: 1rem 0;
+            margin-top: 1rem;
+        }
+        .diagram-level {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        .diagram-box {
+            background: rgba(11, 17, 32, 0.7);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px; 
+            padding: 1.5rem;
+            text-align: center;
+            min-width: 220px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .box-root {
+            border-color: var(--constitution-gold);
+            border-width: 3px;
+            width: 60%;
+            background: rgba(30, 41, 59, 0.9);
+        }
+        .box-branch {
+            flex: 1;
+            border-top-color: var(--federal-blue);
+            border-top-width: 4px;
+        }
+        .box-alert {
+            border-color: #ef4444;
+            border-width: 3px;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .diagram-label {
+            font-family: var(--font-heading);
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .diagram-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* --- READING LAYOUT --- */
+        .reading-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+        .col-en { font-size: 1.25rem; line-height: 1.8; color: var(--text-main); font-weight: 400; }
+        .col-en p { margin-bottom: 1.8rem; }
+        
+        .col-vn {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            color: var(--text-vn);
+            font-size: 1.25rem;
+            line-height: 1.8;
+            border-left: 2px solid rgba(255,255,255,0.08);
+            padding-left: 2.5rem;
+        }
+        .col-vn p { margin-bottom: 1.8rem; }
+
+        /* Interactive Keywords */
+        .keyword {
+            color: var(--constitution-gold);
+            font-weight: 700;
+            border-bottom: 2px dashed rgba(251, 191, 36, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0 2px;
+            animation: pulse-keyword 2.5s infinite;
+        }
+        @keyframes pulse-keyword {
+            0% { text-shadow: 0 0 2px rgba(251, 191, 36, 0.1); }
+            50% { text-shadow: 0 0 10px rgba(251, 191, 36, 0.8); }
+            100% { text-shadow: 0 0 2px rgba(251, 191, 36, 0.1); }
+        }
+        .keyword:hover {
+            background: rgba(251, 191, 36, 0.15);
+            border-bottom-style: solid;
+            border-radius: 4px;
+            animation: none;
+            text-shadow: 0 0 10px var(--constitution-gold);
+        }
+
+        /* Highlight classes for grammar examples */
+        .hl-correct { color: #10b981; font-weight: bold; } /* Green */
+        .hl-wrong { color: #f43f5e; font-weight: bold; text-decoration: line-through; } /* Rose */
+        .hl-sub { color: #3b82f6; font-weight: bold; border-bottom: 2px solid #3b82f6;} /* Blue for Subject/Noun */
+        .hl-verb { color: #8b5cf6; font-weight: bold; border-bottom: 2px solid #8b5cf6;} /* Purple for Verb/Pronoun */
+
+        /* Definition Dock */
+        .def-dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(11, 17, 32, 0.98);
+            border-top: 3px solid var(--constitution-gold);
+            padding: 2rem;
+            backdrop-filter: blur(24px);
+            transform: translateY(110%);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+        }
+        .def-dock.active { transform: translateY(0); }
+        .def-content { max-width: 1000px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+        
+        /* Quiz */
+        .quiz-option {
+            width: 100%;
+            padding: 1.4rem;
+            margin-bottom: 1rem;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text-main);
+            text-align: left;
+            cursor: pointer;
+            font-size: 1.15rem;
+            font-family: var(--font-ui);
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .quiz-option:hover:not(:disabled) { 
+            background: rgba(255,255,255,0.08); 
+            border-color: var(--federal-blue); 
+            transform: translateX(5px);
+        }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: white; }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: white; }
+        .explanation-box {
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            border-left: 4px solid;
+        }
+
+        /* Typography & Utilities */
+        .text-center { text-align: center; }
+        .text-gold { color: var(--constitution-gold); font-weight: 700; }
+        h1 { font-family: var(--font-heading); font-size: var(--fs-h1); font-weight: 700; letter-spacing: -1px; margin-bottom: 0.5rem; }
+        h2 { font-family: var(--font-heading); font-size: var(--fs-h2); font-weight: 700; color: white; margin-bottom: 1.5rem; letter-spacing: -0.5px;}
+        .fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
+        .slide-up { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(30px); animation-delay: 0.2s; }
+        
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 900px) {
+            .reading-layout { grid-template-columns: 1fr; gap: 2rem; }
+            .col-vn { border-left: none; border-top: 1px dashed rgba(255,255,255,0.2); padding-left: 0; padding-top: 2rem; }
+            .diagram-level { flex-direction: column; }
+            .box-root { width: 100%; }
+            .card { padding: 2rem; }
+            .notebook-alert { flex-direction: column; gap: 1rem; padding: 1.5rem; }
+            .alert-icon { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">GED RLA</div>
+            <span style="font-weight: 600; color: var(--text-muted); font-size: 1rem; font-family: var(--font-ui); display: none; margin-left: 0.5rem; @media(min-width:600px){display:inline;}">Level 2: Advanced Grammar</span>
+        </div>
+        <div style="color: var(--constitution-gold); font-size: 1.5rem; text-shadow: 0 0 10px rgba(251,191,36,0.5);">
+            <i class="fa-solid fa-spell-check"></i>
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Content injected via JS -->
+        </div>
+        <div style="height: 60px;"></div>
+    </main>
+    
+    <div id="def-dock" class="def-dock">
+        <div class="def-content">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                <div>
+                    <span style="color: var(--federal-blue); font-size: 0.9rem; font-family: var(--font-ui); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Vocabulary Definition</span>
+                    <h3 id="dock-term" style="color: var(--constitution-gold); font-size: 2.2rem; font-family: var(--font-heading); margin: 0.2rem 0 0 0;">Term</h3>
+                </div>
+                <button onclick="hideDock()" style="background:transparent; border:none; color: white; font-size: 1.5rem; cursor:pointer; opacity: 0.7; transition: opacity 0.2s;"><i class="fa-solid fa-times"></i></button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0.5rem;">
+                <div>
+                    <span style="display: inline-block; background: rgba(255,255,255,0.1); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 0.5rem;">ENG</span>
+                    <p id="dock-def" style="color: white; font-size: 1.3rem; margin: 0; line-height: 1.5;"></p>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--text-vn);">
+                    <span style="display: inline-block; background: var(--federal-blue); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 0.5rem;">VIE</span>
+                    <p id="dock-vn" style="color: var(--text-vn); font-size: 1.2rem; font-weight: 700; margin: 0 0 0.2rem 0;"></p>
+                    <p id="dock-vn-def" style="color: var(--text-vn); font-size: 1.15rem; margin: 0; font-style: italic; line-height: 1.5;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="progress-container"><div class="progress-fill" id="progress-fill"></div></div>
+        <button class="btn-nav" id="btn-next"><i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+</div>
+
+<script>
+    const glossary = {
+        "consistency": {
+            def: "Staying the same; acting or done in the same way over time.",
+            vn: "Sự nhất quán",
+            vn_def: "Giữ nguyên một trạng thái; không thay đổi (ví dụ: giữ nguyên thì quá khứ trong suốt câu chuyện)."
+        },
+        "tense": {
+            def: "A form of a verb that shows the time when an action happened (past, present, or future).",
+            vn: "Thì của động từ",
+            vn_def: "Hình thức của động từ cho biết thời điểm xảy ra hành động (quá khứ, hiện tại, hoặc tương lai)."
+        },
+        "pronoun": {
+            def: "A word that takes the place of a noun (e.g., he, she, it, they, everyone).",
+            vn: "Đại từ",
+            vn_def: "Từ dùng để thay thế cho một danh từ để tránh lặp lại (ví dụ: anh ấy, cô ấy, nó, họ, mọi người)."
+        },
+        "antecedent": {
+            def: "The original noun that a pronoun refers back to.",
+            vn: "Từ tiền đề / Tiền ngữ",
+            vn_def: "Danh từ gốc xuất hiện trước đó mà đại từ thay thế."
+        },
+        "fragment": {
+            def: "An incomplete sentence. It is missing either a subject, a verb, or a complete thought.",
+            vn: "Câu không hoàn chỉnh (Câu cụt)",
+            vn_def: "Một câu thiếu chủ ngữ, động từ, hoặc không diễn đạt một ý trọn vẹn."
+        },
+        "run-on": {
+            def: "Two or more complete sentences joined together incorrectly without proper punctuation.",
+            vn: "Câu chạy dài (Lỗi dính câu)",
+            vn_def: "Hai hoặc nhiều câu hoàn chỉnh bị ghép lại với nhau sai cách mà không có dấu câu phù hợp."
+        },
+        "comma splice": {
+            def: "A specific type of run-on error where two complete sentences are joined only by a comma.",
+            vn: "Lỗi dấu phẩy",
+            vn_def: "Một lỗi ngữ pháp khi hai câu hoàn chỉnh được nối với nhau chỉ bằng một dấu phẩy (thay vì dấu chấm hoặc liên từ)."
+        },
+        "conjunction": {
+            def: "A word used to connect clauses or sentences (e.g., and, but, if, because).",
+            vn: "Liên từ",
+            vn_def: "Từ dùng để nối các mệnh đề hoặc các câu lại với nhau (ví dụ: và, nhưng, nếu, bởi vì)."
+        }
+    };
+
+    const slides = [
+        // SLIDE 1: INTRO
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="text-center fade-in" style="max-width: 900px; margin: 0 auto;">
+                        <div style="font-size: 5rem; color: var(--constitution-gold); margin-bottom: 1.5rem; filter: drop-shadow(0 0 40px rgba(251,191,36,0.4));">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h1>Grammar Level 2</h1>
+                        <p style="font-size: 1.5rem; color: var(--text-muted); margin-bottom: 2rem; font-family: var(--font-ui);">
+                            Tenses, Pronouns, and Sentence Structure
+                        </p>
+                        
+                        <div class="notebook-alert slide-up">
+                            <div class="alert-icon"><i class="fa-solid fa-pen-nib"></i></div>
+                            <div style="text-align: left;">
+                                <div class="alert-title">NOTEBOOK REQUIRED | YÊU CẦU GHI CHÉP</div>
+                                <div class="alert-text-en">Copy the <span class="text-gold" style="border-bottom: 1px dashed var(--constitution-gold);">gold vocabulary words</span> and new grammar rules into your physical notebook to help you memorize them for the GED.</div>
+                                <div class="alert-text-vn">Hãy tiếp tục chép các <span class="text-gold">từ vựng màu vàng</span> và các quy tắc ngữ pháp mới vào vở của bạn để ghi nhớ tốt hơn cho bài thi GED.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: REVIEW PART 1
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: #ef4444;">Review</span>
+                             <h2 style="margin-top: 1rem;">Subject-Verb Agreement (Part 1)</h2>
+                             <p>Let's review the rules from our previous lesson.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- Rev Q1 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">1. The group of new international students _____ attending the orientation today.</h3>
+                                <div id="rev1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'rev1')">A. is</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'rev1')">B. are</button>
+                                </div>
+                                <div id="rev1-explain" class="explanation-box" data-explain="The subject is 'group' (singular). 'Of new international students' is an interrupting phrase. Singular subject -> is."></div>
+                            </div>
+
+                            <!-- Rev Q2 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">2. Everyone in the building _____ to evacuate during the fire alarm.</h3>
+                                <div id="rev2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'rev2')">A. need</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'rev2')">B. needs</button>
+                                </div>
+                                <div id="rev2-explain" class="explanation-box" data-explain="'Everyone' is an indefinite pronoun, which is ALWAYS singular. Singular verbs take an 's' -> needs."></div>
+                            </div>
+                            
+                            <!-- Rev Q3 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">3. The principal and the math teacher _____ standing in the hallway.</h3>
+                                <div id="rev3-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'rev3')">A. was</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'rev3')">B. were</button>
+                                </div>
+                                <div id="rev3-explain" class="explanation-box" data-explain="This is a compound subject joined by 'and' (principal + teacher = 2 people). Plural subject -> were."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: REVIEW PART 2
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: #ef4444;">Review</span>
+                             <h2 style="margin-top: 1rem;">Subject-Verb Agreement (Part 2)</h2>
+                             <p>Two more review questions to test your memory.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- Rev Q4 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">4. The box of old family photographs _____ hidden in the attic.</h3>
+                                <div id="rev4-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'rev4')">A. was</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'rev4')">B. were</button>
+                                </div>
+                                <div id="rev4-explain" class="explanation-box" data-explain="The subject is 'box' (singular). Ignore the plural word 'photographs' because it is inside the interrupting phrase. Singular -> was."></div>
+                            </div>
+
+                            <!-- Rev Q5 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">5. Nobody in the entire company _____ the passcode to the vault.</h3>
+                                <div id="rev5-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'rev5')">A. know</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'rev5')">B. knows</button>
+                                </div>
+                                <div id="rev5-explain" class="explanation-box" data-explain="'Nobody' is an indefinite pronoun, which is ALWAYS singular. Singular verbs take an 's' -> knows."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: TOPIC 1 - TENSES
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-clock-rotate-left text-gold" style="font-size: 2.5rem;"></i>
+                             <h2 style="margin:0;">Topic 1: Verb Tense Consistency</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>On the GED, a very common error is failing to maintain <span class="keyword" data-term="consistency">consistency</span> with your verb <span class="keyword" data-term="tense">tense</span>.</p>
+                                
+                                <p><strong>The Rule:</strong> If a paragraph starts in the past tense, it must stay in the past tense. Do not shift back and forth between past and present unless the time frame of the story actually changes.</p>
+                                
+                                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                                    <strong><i class="fa-solid fa-xmark" style="color:#ef4444;"></i> Incorrect (Tense Shift):</strong><br>
+                                    Yesterday, John <span class="hl-correct">walked</span> to the store, <span class="hl-wrong">buys</span> a gallon of milk, and <span class="hl-correct">drove</span> home.
+                                </div>
+
+                                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1rem; border-radius: 8px;">
+                                    <strong><i class="fa-solid fa-check" style="color:#10b981;"></i> Correct (Consistent Past):</strong><br>
+                                    Yesterday, John <span class="hl-correct">walked</span> to the store, <span class="hl-correct">bought</span> a gallon of milk, and <span class="hl-correct">drove</span> home.
+                                </div>
+                            </div>
+                            <div class="col-vn">
+                                <p>Trong bài thi GED, một lỗi rất phổ biến là không duy trì <span class="keyword" data-term="consistency">sự nhất quán</span> của <span class="keyword" data-term="tense">thì động từ</span>.</p>
+                                <p><strong>Sự khác biệt lớn với tiếng Việt:</strong> Trong tiếng Việt, chúng ta chỉ cần thêm các từ như "đã", "đang", hoặc "sẽ" để chỉ thời gian, và bản thân động từ không thay đổi. Nhưng trong tiếng Anh, bản thân động từ phải thay đổi hình thức (ví dụ: walk -> walked, buy -> bought).</p>
+                                
+                                <p><strong>Quy tắc cốt lõi:</strong> Nếu một đoạn văn bắt đầu ở thì quá khứ (past tense), nó phải giữ nguyên ở thì quá khứ. Không nhảy qua nhảy lại giữa quá khứ và hiện tại (present tense).</p>
+                                <p style="font-size: 1.1rem; color: var(--text-muted);">(Ví dụ sai ở bên trái: "walked" và "drove" là quá khứ, nhưng "buys" lại bị nhảy sang hiện tại một cách vô lý).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: TENSE QUIZ 1
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Verb Tense Quiz (Part 1)</h2>
+                             <p>Choose the correct verb to keep the sentence consistent.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- T1Q1 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">1. Last summer, Maria traveled to Europe, visited many museums, and _____ a lot of delicious food.</h3>
+                                <div id="t1q1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 't1q1')">A. eats</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 't1q1')">B. ate</button>
+                                </div>
+                                <div id="t1q1-explain" class="explanation-box" data-explain="The sentence is established in the past tense ('traveled', 'visited'). Therefore, the final verb must also be in the past tense -> ate."></div>
+                            </div>
+
+                            <!-- T1Q2 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">2. The alarm clock rings at 6:00 AM, but David usually _____ in bed for another twenty minutes.</h3>
+                                <div id="t1q2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 't1q2')">A. stays</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 't1q2')">B. stayed</button>
+                                </div>
+                                <div id="t1q2-explain" class="explanation-box" data-explain="The first verb 'rings' is present tense, indicating a daily habit. The second verb must remain consistent in the present tense -> stays."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: TENSE QUIZ 2 (Paragraph style)
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Verb Tense Quiz (Part 2)</h2>
+                             <p>GED Style: Find the error in the paragraph.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <p style="font-size: 1.3rem; line-height: 1.8; margin-bottom: 2rem; padding: 1.5rem; background: rgba(0,0,0,0.3); border-left: 4px solid var(--constitution-gold);">
+                                    "(1) When the manager arrived at the office, he noticed that the front door was unlocked. (2) He cautiously entered the dark building and <strong>turns</strong> on the lights. (3) Fortunately, nothing was missing from the register."
+                                </p>
+                                
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">3. Which revision should be made to Sentence 2?</h3>
+                                <div id="t1q3-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 't1q3')">A. Change <em>entered</em> to <em>enters</em></button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 't1q3')">B. Change <em>turns</em> to <em>turned</em></button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 't1q3')">C. No correction is necessary.</button>
+                                </div>
+                                <div id="t1q3-explain" class="explanation-box" data-explain="The entire story happened in the past (arrived, noticed, was, entered). 'Turns' is present tense and creates a tense shift. It must be changed to 'turned' to be consistent."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: TOPIC 2 - PRONOUNS
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-people-arrows text-gold" style="font-size: 2.5rem;"></i>
+                             <h2 style="margin:0;">Topic 2: Pronoun-Antecedent Agreement</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>This is the "sister" rule to Subject-Verb Agreement. A <span class="keyword" data-term="pronoun">pronoun</span> (like he, she, it, they) must match the noun it replaces, which is called the <span class="keyword" data-term="antecedent">antecedent</span>.</p>
+                                
+                                <p><strong>Rule 1: Number Match.</strong> If the noun is singular, the pronoun must be singular (he/she/it). If plural, use "they/them/their".</p>
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                                    <span class="hl-sub">The student</span> finished <span class="hl-verb">his or her</span> homework.<br>
+                                    <span style="font-size: 0.9rem; color: var(--text-muted);">*In casual speech, people say "their", but on the formal GED test, a singular student needs a singular pronoun.</span>
+                                </div>
+
+                                <p><strong>Rule 2: The "Tricky" Singulars.</strong> Collective nouns (team, company, government) are singular. Use "IT". Indefinite pronouns (everyone, nobody) are singular. Use "HIS or HER".</p>
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                                    <span class="hl-sub">The company</span> announced <span class="hl-verb">its</span> new product.<br>
+                                    <span class="hl-sub">Everyone</span> must bring <span class="hl-verb">his or her</span> own lunch.
+                                </div>
+                            </div>
+                            <div class="col-vn">
+                                <p>Đây là quy tắc "chị em" với Sự hòa hợp Chủ-Vị. Một <span class="keyword" data-term="pronoun">đại từ</span> phải khớp chính xác về số lượng (số ít / số nhiều) với <span class="keyword" data-term="antecedent">danh từ gốc</span> mà nó thay thế.</p>
+                                
+                                <p><strong>Tại sao điều này khó với người Việt?</strong> Trong tiếng Việt, đại từ (anh, chị, chú, bác) phụ thuộc vào quan hệ xã hội. Nhưng trong tiếng Anh, đại từ hoàn toàn phụ thuộc vào Số lượng và Giới tính.</p>
+                                
+                                <p><strong>Lưu ý quan trọng cho bài thi GED:</strong> Trong văn nói hàng ngày, người Mỹ thường dùng "their" (của họ - số nhiều) cho một học sinh (student). Tuy nhiên, trong bài thi viết học thuật GED, "student" là số ít, nên đại từ ĐÚNG phải là "his or her".</p>
+                                
+                                <p>Các danh từ tập hợp (công ty, đội nhóm, chính phủ) được coi là MỘT thực thể duy nhất (số ít). Phải dùng "IT" hoặc "ITS", không dùng "THEY".</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: PRONOUN QUIZ 1
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Pronoun Agreement Quiz (Part 1)</h2>
+                             <p>Match the pronoun to its antecedent.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- P1Q1 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">1. The hospital board announced that _____ will increase wages for all nurses next year.</h3>
+                                <div id="p1q1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'p1q1')">A. it</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'p1q1')">B. they</button>
+                                </div>
+                                <div id="p1q1-explain" class="explanation-box" data-explain="'Hospital board' is a collective noun acting as a single unit. Therefore, it requires the singular pronoun 'it'."></div>
+                            </div>
+
+                            <!-- P1Q2 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">2. If a passenger wishes to board the flight, _____ must show a valid passport at the gate.</h3>
+                                <div id="p1q2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'p1q2')">A. they</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'p1q2')">B. he or she</button>
+                                </div>
+                                <div id="p1q2-explain" class="explanation-box" data-explain="'A passenger' is strictly singular. In formal English required by the GED, you must use 'he or she' rather than the plural 'they'."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 9: PRONOUN QUIZ 2
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Pronoun Agreement Quiz (Part 2)</h2>
+                             <p>Watch out for the tricky indefinite pronouns!</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- P2Q1 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">3. Everyone who attends the conference will receive _____ certification on Friday.</h3>
+                                <div id="p2q1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'p2q1')">A. their</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'p2q1')">B. his or her</button>
+                                </div>
+                                <div id="p2q1-explain" class="explanation-box" data-explain="'Everyone' is an indefinite pronoun and is ALWAYS treated as singular in formal grammar. Therefore, 'his or her' is the correct choice."></div>
+                            </div>
+
+                            <!-- P2Q2 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">4. The mechanics at the auto shop left _____ tools on the floor overnight.</h3>
+                                <div id="p2q2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 'p2q2')">A. his</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 'p2q2')">B. their</button>
+                                </div>
+                                <div id="p2q2-explain" class="explanation-box" data-explain="The antecedent is 'mechanics' (plural with an 's'). Plural nouns correctly use the plural pronoun 'their'."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 10: TOPIC 3 - FRAGMENTS & RUN-ONS
+        {
+            render: () => `
+                <div class="slide-wrapper">
+                    <div class="fade-in">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                             <i class="fa-solid fa-link-slash text-gold" style="font-size: 2.5rem;"></i>
+                             <h2 style="margin:0;">Topic 3: Sentence Fragments & Run-ons</h2>
+                        </div>
+
+                        <div class="card reading-layout slide-up">
+                            <div class="col-en">
+                                <p>To have a complete sentence in English, you need three things: a Subject, a Verb, and a Complete Thought.</p>
+                                
+                                <p><strong>Error 1: The <span class="keyword" data-term="fragment">Fragment</span>.</strong> This is an incomplete piece of a sentence.</p>
+                                <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; padding: 1rem; margin-bottom: 1.5rem;">
+                                    <em>Incorrect:</em> Because I was very tired.<br>
+                                    <span style="font-size: 0.9rem;">(What happened because you were tired? The thought is unfinished.)</span><br>
+                                    <em>Correct:</em> Because I was very tired, I went to sleep early.
+                                </div>
+
+                                <p><strong>Error 2: The <span class="keyword" data-term="run-on">Run-on</span> / <span class="keyword" data-term="comma splice">Comma Splice</span>.</strong> This happens when two complete sentences crash into each other without the proper "brakes". You cannot join two full sentences with just a comma.</p>
+                                <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; padding: 1rem;">
+                                    <em>Incorrect (Comma Splice):</em> I love studying grammar, it is my favorite subject.<br>
+                                    <span style="font-size: 0.9rem;">("I love studying grammar" is a full sentence. "It is my favorite subject" is also a full sentence. A comma is too weak to hold them together.)</span>
+                                </div>
+                            </div>
+                            <div class="col-vn">
+                                <p>Để có một câu hoàn chỉnh trong tiếng Anh, bạn cần ba điều kiện: Có Chủ ngữ, có Động từ, và diễn đạt một Ý trọn vẹn.</p>
+                                
+                                <p><strong>Lỗi 1: <span class="keyword" data-term="fragment">Fragment</span> (Câu cụt).</strong> Đây là một phần câu chưa hoàn chỉnh. ESL học sinh thường mắc lỗi này khi bắt đầu câu bằng từ "Because" (Bởi vì) nhưng không đưa ra vế kết quả.</p>
+                                
+                                <p><strong>Lỗi 2: <span class="keyword" data-term="comma splice">Comma Splice</span> (Lỗi dấu phẩy dính câu).</strong> Đây là lỗi rất nặng trong bài thi GED! Người Việt thường có thói quen viết các câu dài và nối chúng với nhau chỉ bằng dấu phẩy.</p>
+                                <p><strong>Quy tắc:</strong> Dấu phẩy (,) quá yếu để nối hai câu ĐỘC LẬP hoàn chỉnh. Bạn cần sử dụng "phanh" mạnh hơn (như dấu chấm hoặc liên từ).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 11: HOW TO FIX RUN ONS
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="width: 100%;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                            <div class="copy-prompt"><i class="fa-solid fa-pen-nib"></i> Copy this chart into your notebook / Chép biểu đồ này vào vở</div>
+                            <h2 style="margin-top: 0.5rem;">How to Fix a Run-On Sentence</h2>
+                            <p>Three ways to correctly join or separate complete thoughts.</p>
+                        </div>
+
+                        <div class="diagram-container slide-up">
+                            <!-- Bad Sentence Base -->
+                            <div style="background: rgba(239, 68, 68, 0.1); border: 2px dashed #ef4444; padding: 1rem 2rem; border-radius: 8px; font-size: 1.2rem; margin-bottom: 1rem;">
+                                <span style="color:#ef4444;">[Full Sentence A]</span> <strong>,</strong> <span style="color:#ef4444;">[Full Sentence B]</span> = <i class="fa-solid fa-bomb text-red-500"></i> COMMA SPLICE
+                            </div>
+                            
+                            <div style="width: 2px; height: 30px; background: white; opacity: 0.3;"></div>
+                            
+                            <div class="diagram-level">
+                                <!-- Fix 1: Period -->
+                                <div class="diagram-box box-branch" style="border-top-color: #10b981;">
+                                    <div class="diagram-label">1. Period ( . )</div>
+                                    <div class="diagram-desc">Separate into two totally different sentences.</div>
+                                    <div style="margin-top: 1rem; color: white; font-size: 1.1rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px;">
+                                        I love grammar<strong>.</strong> It is fun.
+                                    </div>
+                                    <div style="color: var(--text-vn); font-size: 0.85rem; font-style: italic; margin-top: 0.5rem;">Dấu chấm: Cắt thành hai câu riêng biệt.</div>
+                                </div>
+                                
+                                <!-- Fix 2: Conjunction -->
+                                <div class="diagram-box box-branch" style="border-top-color: #3b82f6;">
+                                    <div class="diagram-label">2. Comma + <span class="keyword" data-term="conjunction" style="border-bottom:none;">FANBOYS</span></div>
+                                    <div class="diagram-desc">Use a comma AND a conjunction (For, And, Nor, But, Or, Yet, So).</div>
+                                    <div style="margin-top: 1rem; color: white; font-size: 1.1rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px;">
+                                        I love grammar<strong>, and</strong> it is fun.
+                                    </div>
+                                    <div style="color: var(--text-vn); font-size: 0.85rem; font-style: italic; margin-top: 0.5rem;">Dấu phẩy + Liên từ: Nối bằng từ nối.</div>
+                                </div>
+
+                                <!-- Fix 3: Semicolon -->
+                                <div class="diagram-box box-branch" style="border-top-color: #8b5cf6;">
+                                    <div class="diagram-label">3. Semicolon ( ; )</div>
+                                    <div class="diagram-desc">Joins two sentences that are closely related in meaning.</div>
+                                    <div style="margin-top: 1rem; color: white; font-size: 1.1rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px;">
+                                        I love grammar<strong>;</strong> it is fun.
+                                    </div>
+                                    <div style="color: var(--text-vn); font-size: 0.85rem; font-style: italic; margin-top: 0.5rem;">Dấu chấm phẩy: Dùng khi 2 ý rất liên quan.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 12: STRUCTURE QUIZ 1
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Sentence Structure Quiz (Part 1)</h2>
+                             <p>Identify the error type.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- S1Q1 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">1. "Even though the weather forecast predicted a massive snowstorm in the evening."</h3>
+                                <p style="margin-bottom: 1rem; color: var(--text-muted);">What grammatical error is present in the sentence above?</p>
+                                <div id="s1q1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 's1q1')">A. It is a sentence fragment.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 's1q1')">B. It is a run-on sentence.</button>
+                                </div>
+                                <div id="s1q1-explain" class="explanation-box" data-explain="This is a fragment. 'Even though' sets up an expectation for an outcome (e.g., 'Even though it snowed, we still went to work.'). Without the second half, the thought is incomplete."></div>
+                            </div>
+
+                            <!-- S1Q2 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">2. "The company lost a lot of money last quarter, they decided to lay off fifty workers."</h3>
+                                <p style="margin-bottom: 1rem; color: var(--text-muted);">What grammatical error is present in the sentence above?</p>
+                                <div id="s1q2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 's1q2')">A. It is a sentence fragment.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 's1q2')">B. It is a comma splice (Run-on).</button>
+                                </div>
+                                <div id="s1q2-explain" class="explanation-box" data-explain="This is a comma splice. You have two complete sentences joined only by a comma. It should be fixed with a period, a semicolon, or ', so they decided...'"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 13: STRUCTURE QUIZ 2
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 900px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: var(--federal-blue);">Assessment</span>
+                             <h2 style="margin-top: 1rem;">Sentence Structure Quiz (Part 2)</h2>
+                             <p>Choose the correct way to fix the sentence.</p>
+                        </div>
+
+                        <div class="slide-up">
+                            <!-- S2Q1 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <p style="font-size: 1.3rem; line-height: 1.8; margin-bottom: 2rem; padding: 1.5rem; background: rgba(0,0,0,0.3); border-left: 4px solid var(--constitution-gold);">
+                                    "Learning a new language is difficult it requires months of daily practice."
+                                </p>
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">3. Choose the best way to revise the run-on sentence above:</h3>
+                                <div id="s2q1-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 's2q1')">A. Learning a new language is difficult, it requires months of daily practice.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 's2q1')">B. Learning a new language is difficult; it requires months of daily practice.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 's2q1')">C. Learning a new language is difficult and it requires.</button>
+                                </div>
+                                <div id="s2q1-explain" class="explanation-box" data-explain="Option B correctly uses a semicolon to separate two complete, closely related thoughts. Option A creates a comma splice."></div>
+                            </div>
+
+                            <!-- S2Q2 -->
+                            <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+                                <p style="font-size: 1.3rem; line-height: 1.8; margin-bottom: 2rem; padding: 1.5rem; background: rgba(0,0,0,0.3); border-left: 4px solid var(--constitution-gold);">
+                                    "The chef forgot to set the oven timer, the expensive cake burned completely."
+                                </p>
+                                <h3 style="margin-bottom: 1.5rem; font-family: var(--font-heading); color: var(--constitution-gold);">4. Choose the best way to revise the comma splice above:</h3>
+                                <div id="s2q2-opts">
+                                    <button class="quiz-option" onclick="handleQuiz(this, true, 's2q2')">A. The chef forgot to set the oven timer, so the expensive cake burned completely.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 's2q2')">B. The chef forgot to set the oven timer the expensive cake burned completely.</button>
+                                    <button class="quiz-option" onclick="handleQuiz(this, false, 's2q2')">C. The chef forgot to set the oven timer, because the expensive cake burned completely.</button>
+                                </div>
+                                <div id="s2q2-explain" class="explanation-box" data-explain="Option A fixes the comma splice by adding the conjunction 'so' after the comma, logically showing cause and effect (FANBOYS rule)."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 14: EXTENDED RESPONSE
+        {
+            render: () => `
+                <div class="slide-wrapper slide-center">
+                    <div class="fade-in" style="max-width: 1100px; width: 100%; margin: 0 auto;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                             <span class="brand-pill" style="background: #8b5cf6; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);">Final Assignment</span>
+                             <h2 style="margin-top: 1rem;">GED Extended Response Practice 2</h2>
+                        </div>
+
+                        <div class="card slide-up" style="padding: 2.5rem; margin-bottom: 2rem;">
+                            
+                            <!-- Strict Rules Box -->
+                            <div class="notebook-alert" style="margin-top: 0; background: rgba(239, 68, 68, 0.1); border-color: #ef4444; box-shadow: 0 8px 30px rgba(239, 68, 68, 0.15);">
+                                <div class="alert-icon" style="color: #ef4444; text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);"><i class="fa-solid fa-stopwatch"></i></div>
+                                <div style="text-align: left; width: 100%;">
+                                    <div class="alert-title" style="color: #ef4444; font-size: 1.3rem;">TESTING RULES | QUY ĐỊNH LÀM BÀI</div>
+                                    <ul style="color: white; margin-left: 1.5rem; line-height: 1.8; font-size: 1.15rem; margin-bottom: 0.5rem; font-family: var(--font-ui);">
+                                        <li>Write this essay in a <strong>Google Doc</strong> only.</li>
+                                        <li><strong>NO AI. NO Google Translate.</strong> <span style="color: var(--text-muted); font-size: 1rem;">(Không dùng AI hoặc công cụ dịch).</span></li>
+                                        <li>Write your <strong>Start Time</strong> and <strong>End Time</strong> at the top of the doc. You have exactly <strong>45 minutes</strong>.</li>
+                                        <li>Email your finished essay to your instructor.</li>
+                                        <li><em>Bonus: Focus on avoiding Comma Splices and maintaining Tense Consistency!</em></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- GED Style Prompt Container -->
+                            <div style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin: 2.5rem 0; overflow: hidden;">
+                                <div style="background: rgba(255,255,255,0.05); padding: 1.5rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <h3 style="font-family: var(--font-heading); color: white; margin: 0;">Analyze the arguments concerning mandatory financial literacy classes in high schools.</h3>
+                                </div>
+                                
+                                <div style="padding: 2rem;">
+                                    <!-- Passage 1 -->
+                                    <div style="margin-bottom: 3rem;">
+                                        <h4 style="color: var(--federal-blue); font-family: var(--font-ui); font-size: 1.2rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Passage 1</h4>
+                                        <h3 style="color: white; font-family: var(--font-heading); margin-bottom: 1rem; font-size: 1.6rem;">Money Management Must Be Taught</h3>
+                                        <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem;">Adapted from an article by the Coalition for Economic Education.</p>
+                                        
+                                        <div style="color: var(--text-main); font-size: 1.15rem; line-height: 1.8; padding-left: 1rem; border-left: 3px solid var(--federal-blue);">
+                                            <p style="margin-bottom: 1rem;">The current education system successfully prepares students for college academics, but it severely fails to prepare them for the realities of adulthood. As a result, millions of young adults graduate high school lacking basic knowledge of how credit cards work, how to file taxes, or how to budget a monthly salary. A recent study by the National Financial Educators Council found that lack of financial literacy cost Americans an average of $1,819 per person last year due to high-interest debt and overdraft fees.</p>
+                                            
+                                            <p>Implementing a mandatory financial literacy class in all high schools is the only effective solution. Waiting for parents to teach these skills is a flawed strategy, as many parents themselves struggle with debt and lack proper financial training. By standardizing economic education, we ensure that every student, regardless of their family background or income level, starts adulthood with the tools necessary to build a secure financial future and avoid predatory lending traps.</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Passage 2 -->
+                                    <div>
+                                        <h4 style="color: #ef4444; font-family: var(--font-ui); font-size: 1.2rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Passage 2</h4>
+                                        <h3 style="color: white; font-family: var(--font-heading); margin-bottom: 1rem; font-size: 1.6rem;">The Burden on Schools is Already Too High</h3>
+                                        <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem;">Adapted from an editorial in the Teachers' Advocate Journal.</p>
+                                        
+                                        <div style="color: var(--text-main); font-size: 1.15rem; line-height: 1.8; padding-left: 1rem; border-left: 3px solid #ef4444;">
+                                            <p style="margin-bottom: 1rem;">While the goal of teaching financial literacy is noble, making it a mandatory graduation requirement is an impractical burden on an already strained public school system. High school curriculums are heavily congested with state-mandated testing subjects like advanced math, sciences, and language arts. Forcing schools to add another required class means they will have to cut funding and time from vital elective programs, such as the arts, music, and vocational training, which are crucial for student creativity and alternative career paths.</p>
+                                            
+                                            <p>Furthermore, research indicates that standalone high school financial classes are highly ineffective. A comprehensive 2014 study by the University of Chicago found that students who took mandatory personal finance courses showed no improvement in long-term financial behavior compared to those who did not. Teenagers are simply too disconnected from the reality of mortgages and retirement funds for the lessons to stick. Instead of burdening schools, financial education should be integrated into community programs and bank-sponsored workshops when young adults are actually opening accounts and applying for loans.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- The Prompt -->
+                            <div style="background: rgba(139, 92, 246, 0.1); padding: 2rem; border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.4);">
+                                <h3 style="margin-bottom: 1rem; color: #c4b5fd; font-family: var(--font-heading);"><i class="fa-solid fa-pen-nib"></i> Extended Response Prompt</h3>
+                                <p style="font-size: 1.25rem; color: white; font-weight: bold; margin-bottom: 1.5rem; line-height: 1.6;">In your response, analyze both positions presented in the article to determine which one is best supported. Use relevant and specific evidence from the article to support your response.</p>
+                                
+                                <h4 style="color: white; margin-bottom: 0.8rem; font-family: var(--font-ui);">Reminders from this lesson:</h4>
+                                <ul style="color: var(--text-vn); margin-left: 1.5rem; line-height: 1.6; font-size: 1.05rem;">
+                                    <li><strong>Review your Tenses:</strong> Don't jump between past and present tense unexpectedly. <br><em style="color: var(--text-muted); font-size: 0.95rem;">(Kiểm tra thì động từ: Không chuyển đổi đột ngột giữa quá khứ và hiện tại).</em></li>
+                                    <li style="margin-top: 0.5rem;"><strong>Watch out for Run-ons:</strong> Do not join two full sentences with just a comma! Use a period or a conjunction. <br><em style="color: var(--text-muted); font-size: 0.95rem;">(Cẩn thận lỗi Run-on: Không nối hai câu hoàn chỉnh chỉ bằng một dấu phẩy! Hãy dùng dấu chấm hoặc từ nối).</em></li>
+                                </ul>
+                            </div>
+
+                            <div class="text-center" style="margin-top: 3rem;">
+                                <button onclick="location.reload()" style="background: transparent; color: var(--text-main); border: 2px solid var(--federal-blue); padding: 1rem 2.5rem; border-radius: 50px; font-weight: bold; cursor: pointer; transition: all 0.3s;">
+                                    <i class="fa-solid fa-rotate-right"></i> Restart Lesson
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // --- LOGIC ---
+    let currentSlide = 0;
+    const slideContainer = document.getElementById('slide-container');
+    const progressBar = document.getElementById('progress-fill');
+    const btnNext = document.getElementById('btn-next');
+    const btnPrev = document.getElementById('btn-prev');
+    const dock = document.getElementById('def-dock');
+
+    function renderSlide() {
+        slideContainer.innerHTML = ''; 
+        setTimeout(() => {
+            slideContainer.innerHTML = slides[currentSlide].render();
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            btnPrev.disabled = currentSlide === 0;
+            btnNext.disabled = currentSlide === slides.length - 1;
+            document.getElementById('viewport').scrollTop = 0;
+            attachKeywordListeners();
+        }, 50);
+    }
+
+    function changeSlide(direction) {
+        if (direction === 'next' && currentSlide < slides.length - 1) {
+            currentSlide++;
+            hideDock();
+        } else if (direction === 'prev' && currentSlide > 0) {
+            currentSlide--;
+            hideDock();
+        }
+        renderSlide();
+    }
+
+    function attachKeywordListeners() {
+        const keywords = document.querySelectorAll('.keyword');
+        keywords.forEach(el => {
+            const termKey = el.dataset.term.toLowerCase();
+            const data = glossary[termKey];
+            if (!data) return;
+
+            el.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                showDock(termKey, data);
+            });
+        });
+    }
+
+    function showDock(term, data) {
+        document.getElementById('dock-term').innerText = term.replace(/\b\w/g, l => l.toUpperCase()); 
+        document.getElementById('dock-def').innerText = data.def;
+        document.getElementById('dock-vn').innerText = data.vn;
+        document.getElementById('dock-vn-def').innerText = data.vn_def; 
+        dock.classList.add('active');
+    }
+
+    function hideDock() {
+        dock.classList.remove('active');
+    }
+
+    window.handleQuiz = function(btn, isCorrect, qId) {
+        const parent = document.getElementById(qId + '-opts');
+        const explainBox = document.getElementById(qId + '-explain');
+        const options = parent.querySelectorAll('.quiz-option');
+        
+        options.forEach(opt => {
+            opt.disabled = true;
+            opt.style.cursor = 'default';
+            opt.style.opacity = '0.5';
+        });
+
+        btn.style.opacity = '1';
+        btn.style.transform = 'none';
+        
+        if (isCorrect) {
+            btn.classList.add('correct');
+            btn.innerHTML += ' <i class="fa-solid fa-check-circle" style="font-size:1.5rem;"></i>';
+        } else {
+            btn.classList.add('incorrect');
+            btn.innerHTML += ' <i class="fa-solid fa-times-circle" style="font-size:1.5rem;"></i>';
+        }
+
+        if(explainBox) {
+            explainBox.style.display = 'block';
+            const explanationText = explainBox.getAttribute('data-explain');
+            
+            if (isCorrect) {
+                explainBox.style.borderLeftColor = '#10b981';
+                explainBox.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                explainBox.innerHTML = `<strong style="color: #10b981; font-size: 1.2rem; display: block; margin-bottom: 0.5rem;">Correct!</strong> ${explanationText}`;
+            } else {
+                explainBox.style.borderLeftColor = '#ef4444';
+                explainBox.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                explainBox.innerHTML = `<strong style="color: #ef4444; font-size: 1.2rem; display: block; margin-bottom: 0.5rem;">Incorrect.</strong> ${explanationText}`;
+            }
+        }
+    };
+
+    btnNext.addEventListener('click', () => changeSlide('next'));
+    btnPrev.addEventListener('click', () => changeSlide('prev'));
+    
+    document.getElementById('viewport').addEventListener('click', (e) => {
+        if(!e.target.closest('.keyword') && dock.classList.contains('active')) {
+            hideDock();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') changeSlide('next');
+        if(e.key === 'ArrowLeft') changeSlide('prev');
+        if(e.key === 'Escape') hideDock();
+    });
+
+    // Init
+    renderSlide();
+</script>
+</body>
+</html>
