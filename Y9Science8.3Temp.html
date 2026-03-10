@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8.3 Temperature and the Rate of Reaction - Year 9 Science</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax -->
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Bible Standard) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Secondary Background */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Success/Acid Green */
+            --warning: #f59e0b;        /* Hazard Orange */
+            --danger: #ef4444;         /* Heat Red */
+            --text-light: #f1f5f9;     /* Main Text */
+            --text-dim: #94a3b8;       /* Subtitles */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.15rem; line-height: 1.6; color: var(--text-dim); }
+
+        strong { color: var(--text-light); }
+        
+        .text-center { text-align: center; }
+        .text-accent { color: var(--accent); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Signposting System (Pedagogical Framework) */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            animation: slideIn 0.5s ease;
+        }
+        .pedagogical-badge {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { background: rgba(139, 92, 246, 0.1); border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { background: rgba(16, 185, 129, 0.1); border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Reveal Card */
+        .reveal-card {
+            background: var(--bg-panel);
+            border: 2px dashed var(--primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .reveal-card:hover { background: rgba(139, 92, 246, 0.1); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .reveal-card.revealed .pre-reveal { display: none; }
+        .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
+
+        /* Quiz Options */
+        .quiz-option {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.1); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--accent); color: white; }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Canvas/Simulation styling */
+        canvas {
+            background: #000;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.1);
+            width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 1rem;
+        }
+        
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--danger);
+            cursor: pointer;
+        }
+
+        /* SVG Graph Styling */
+        .graph-line { fill: none; stroke-width: 4; stroke-linecap: round; }
+        .graph-axis { stroke: rgba(255,255,255,0.5); stroke-width: 2; }
+        .graph-text { fill: var(--text-dim); font-family: 'Outfit'; font-size: 14px; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        /* Specific Diagram Blocks for Slide 4 */
+        .sa-diagram { display: flex; gap: 2rem; align-items: center; justify-content: center; padding: 2rem 0; }
+        .block-large { width: 120px; height: 120px; background: var(--bg-panel); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; color: white; border-radius: 8px; font-weight: bold;}
+        .block-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+        .block-small { width: 36px; height: 36px; background: rgba(139, 92, 246, 0.3); border: 1px solid var(--primary); border-radius: 4px; }
+        
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 9 Science</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">8.3 Temperature and Rate of Reaction</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; color: var(--accent);">
+            10 March 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Title & Objectives
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-fire-flame-curved delay-1" style="font-size: 4rem; color: var(--danger); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1">Temperature and the<br>Rate of Reaction</h1>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 600px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objectives</div>
+                        <ul style="margin-left: 1.5rem; display: grid; gap: 0.8rem;">
+                            <li>Understand how temperature affects the rate of a chemical reaction.</li>
+                            <li>Plan an investigation to test the effect of temperature safely.</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        
+        // SLIDE 2: Hook / Getting Started
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>What is meant by rate of reaction?</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-comments"></i> Partner Discussion</div>
+                        <p style="margin-bottom: 1rem;">1. Write your answers in your notebook.<br>2. Discuss your thoughts with the person next to you.</p>
+                        
+                        <div style="display: grid; gap: 1rem;">
+                            <div style="border: 2px dashed rgba(255,255,255,0.3); padding: 1.5rem; border-radius: 8px; background: rgba(0,0,0,0.2);">
+                                <strong style="color: white; font-size: 1.2rem;">Q1: What is meant by the rate of reaction?</strong>
+                            </div>
+                            <div style="border: 2px dashed rgba(255,255,255,0.3); padding: 1.5rem; border-radius: 8px; background: rgba(0,0,0,0.2);">
+                                <strong style="color: white; font-size: 1.2rem;">Q2: How does the rate of reaction change as a reaction goes on?</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="reveal-card delay-2" id="hook-reveal" role="button" tabindex="0">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-eye" style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary);"></i>
+                            <h3>Click to reveal answer</h3>
+                        </div>
+                        <div class="reveal-content text-left">
+                            <h3 style="color: var(--accent);"><i class="fa-solid fa-check-circle"></i> The Answer</h3>
+                            <p style="margin-bottom: 1rem;"><strong>Rate of Reaction</strong> is a measure of how quickly the reactants are used up, or how quickly the products are formed.</p>
+                            <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
+                                $$ Rate = \\frac{\\text{Change in Volume or Mass}}{\\text{Time taken}} $$
+                            </div>
+                            <p style="margin-top: 1rem;">Reactions usually start fast, slow down as reactants are used up, and eventually stop when a reactant runs out.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCard = container.querySelector('#hook-reveal');
+                const handler = () => { revealCard.classList.add('revealed'); };
+                revealCard.addEventListener('click', handler);
+                
+                // Trigger MathJax render for this slide
+                if(window.MathJax) MathJax.typesetPromise([container]);
+
+                return () => revealCard.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 3: The 3 Main Factors
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Changing the Rate</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">There are several ways we can speed up or slow down a reaction.</p>
+                    
+                    <div class="pedagogical-note note-write delay-2" style="max-width: 700px; margin: 0 auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Copy to Notebook</div>
+                        <h3 style="color: var(--text-light); margin-bottom: 1rem;">The 3 Main Factors that affect Reaction Rate:</h3>
+                        
+                        <div style="display: grid; gap: 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem; background: var(--bg-deep); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                                <i class="fa-solid fa-flask" style="font-size: 2rem; color: var(--primary); width: 40px; text-align: center;"></i>
+                                <div>
+                                    <strong style="font-size: 1.2rem;">1. Concentration</strong>
+                                    <p style="font-size: 0.9rem; margin: 0;">How crowded the particles are in a solution.</p>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 1rem; background: var(--bg-deep); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                                <i class="fa-solid fa-cubes" style="font-size: 2rem; color: var(--accent); width: 40px; text-align: center;"></i>
+                                <div>
+                                    <strong style="font-size: 1.2rem;">2. Surface Area</strong>
+                                    <p style="font-size: 0.9rem; margin: 0;">How much solid is exposed to the liquid/gas.</p>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 1rem; background: var(--bg-deep); padding: 1rem; border-radius: 8px; border: 1px solid var(--danger);">
+                                <i class="fa-solid fa-temperature-arrow-up" style="font-size: 2rem; color: var(--danger); width: 40px; text-align: center;"></i>
+                                <div>
+                                    <strong style="font-size: 1.2rem; color: var(--danger);">3. Temperature</strong>
+                                    <p style="font-size: 0.9rem; margin: 0;">How much kinetic energy the particles have.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: Surface Area Review
+        {
+            template: () => `
+                <div class="anim-enter grid-2">
+                    <div>
+                        <h2>Focus on Surface Area</h2>
+                        
+                        <div class="pedagogical-note note-write delay-1">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Note</div>
+                            <p>When a solid reacts with a liquid or gas, the reaction only happens on the <strong>surface</strong> of the solid.</p>
+                            <p style="margin-top: 1rem;">If we break the solid into smaller pieces (like <strong>powders</strong> instead of lumps), we <strong>increase the surface area</strong>.</p>
+                        </div>
+                        
+                        <div class="glass-card delay-2">
+                            <h3 style="margin-bottom:0;"><i class="fa-solid fa-bolt"></i> Powders vs. Solids</h3>
+                            <p style="color: var(--text-dim); margin-top: 0.5rem;">Powders have many more particles exposed to the other reactant than solid lumps do. <br><br><strong>More exposed particles = More frequent successful collisions = Faster reaction.</strong></p>
+                        </div>
+                    </div>
+                    
+                    <div class="delay-3 text-center">
+                        <div class="glass-card" style="padding: 2rem 1rem;">
+                            <div class="sa-diagram" style="padding: 0; gap: 1rem;">
+                                <div style="text-align: center; flex: 1;">
+                                    <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+                                        <div class="block-large">Solid Lump</div>
+                                    </div>
+                                    <span style="background: rgba(239, 68, 68, 0.2); color: var(--danger); padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.85rem; font-weight: bold;">Low Surface Area</span>
+                                </div>
+                                <i class="fa-solid fa-arrow-right" style="font-size: 2rem; color: var(--text-dim);"></i>
+                                <div style="text-align: center; flex: 1;">
+                                    <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+                                        <div class="block-grid">
+                                            <div class="block-small"></div><div class="block-small"></div><div class="block-small"></div>
+                                            <div class="block-small"></div><div class="block-small"></div><div class="block-small"></div>
+                                            <div class="block-small"></div><div class="block-small"></div><div class="block-small"></div>
+                                        </div>
+                                    </div>
+                                    <span style="background: rgba(16, 185, 129, 0.2); color: var(--accent); padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.85rem; font-weight: bold;">High Surface Area</span>
+                                </div>
+                            </div>
+                            <p style="margin-top: 1.5rem; font-size: 0.9rem; color: white;">The inside particles of the lump cannot react until the outside particles are used up. In a powder, almost all particles can react immediately!</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: Temperature Simulation (Mandatory Interactive)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Explaining the Effect of Temperature</h2>
+                    
+                    <div class="grid-2">
+                        <div class="pedagogical-note note-theory delay-1">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-magnifying-glass"></i> Particle Theory</div>
+                            <p>Particles move all the time. When the temperature of the reaction is increased:</p>
+                            <ul style="margin-top: 1rem; margin-left: 1.5rem; color: white;">
+                                <li>The particles move faster (more kinetic energy).</li>
+                                <li>They collide <strong>more often</strong>.</li>
+                                <li>They collide with <strong>more energy</strong>.</li>
+                            </ul>
+                            <p style="margin-top: 1rem; font-weight: bold; color: var(--danger);">Result: The higher the temperature, the faster the rate of reaction.</p>
+                        </div>
+
+                        <div class="glass-card delay-2 text-center">
+                            <h3><i class="fa-solid fa-flask"></i> Virtual Lab</h3>
+                            <canvas id="particle-sim" width="400" height="200"></canvas>
+                            
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1rem;">
+                                <i class="fa-solid fa-snowflake" style="color: var(--accent);"></i>
+                                <input type="range" id="temp-slider" min="1" max="10" value="2">
+                                <i class="fa-solid fa-fire" style="color: var(--danger);"></i>
+                            </div>
+                            <p id="temp-readout" style="margin-top: 0.5rem; font-weight: bold;">Temp: 20°C</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const canvas = container.querySelector('#particle-sim');
+                const ctx = canvas.getContext('2d');
+                const slider = container.querySelector('#temp-slider');
+                const readout = container.querySelector('#temp-readout');
+                
+                let particles = [];
+                // Create particles
+                for(let i=0; i<30; i++) {
+                    particles.push({
+                        x: Math.random() * (canvas.width - 20) + 10,
+                        y: Math.random() * (canvas.height - 20) + 10,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2
+                    });
+                }
+
+                let rafId;
+
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    let speedMult = parseFloat(slider.value) * 0.8;
+                    readout.innerText = `Temp: ${parseFloat(slider.value) * 10}°C`;
+                    
+                    // Update & Draw
+                    particles.forEach(p => {
+                        p.x += p.vx * speedMult;
+                        p.y += p.vy * speedMult;
+                        
+                        // Bounce off walls
+                        if(p.x < 5 || p.x > canvas.width - 5) p.vx *= -1;
+                        if(p.y < 5 || p.y > canvas.height - 5) p.vy *= -1;
+                        
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                        
+                        // Color changes based on heat
+                        if(slider.value > 7) {
+                            ctx.fillStyle = '#ef4444'; // Red
+                            // Add 'energy trails' for high heat
+                            ctx.shadowBlur = 10;
+                            ctx.shadowColor = '#ef4444';
+                        } else if (slider.value > 4) {
+                            ctx.fillStyle = '#f59e0b'; // Orange
+                            ctx.shadowBlur = 5;
+                            ctx.shadowColor = '#f59e0b';
+                        } else {
+                            ctx.fillStyle = '#3b82f6'; // Blue
+                            ctx.shadowBlur = 0;
+                        }
+                        
+                        ctx.fill();
+                    });
+                    
+                    rafId = requestAnimationFrame(draw);
+                }
+                
+                draw();
+
+                return () => {
+                    cancelAnimationFrame(rafId);
+                };
+            }
+        },
+        
+        // SLIDE 6: Video Embed (Mandatory per Bible) + Context setup
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>🎥 Effect of Temperature on Rate</h2>
+                    <p style="margin-bottom: 2rem;">Watch how temperature affects the speed of the reaction.</p>
+                    
+                    <div class="glass-card delay-1" style="max-width: 800px; margin: 0 auto; padding: 1rem;">
+                        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
+                            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                                    src="https://www.youtube.com/embed/JK7yPzO9POU" 
+                                    title="Rates of Reaction" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                    <p class="delay-2" style="margin-top: 1rem; font-size: 0.9rem;">Observe the difference in the rate of reaction between the cold and hot water setups.</p>
+                </div>
+            `
+        },
+
+        // SLIDE 7: The Lab Investigation
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>The Investigation</h2>
+                    
+                    <div class="grid-2">
+                        <div class="delay-1">
+                            <p style="margin-bottom: 1rem;">We will be conducting a reaction at different temperatures to measure the effect on the rate.</p>
+                            <p style="margin-bottom: 1rem;">To do this fairly, we must make sure only the <strong>temperature</strong> is changed, while keeping all other variables (like concentration and volume) the same.</p>
+                            
+                            <div class="pedagogical-note note-task">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-users"></i> Group Activity</div>
+                                <p style="color: white; font-weight: bold;">Open your textbooks to Page 287.</p>
+                                <p style="margin-top: 0.5rem;">As a group, discuss and write down an outline plan for the preliminary work. Consider:</p>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                    <li>How large a temperature change is needed?</li>
+                                    <li>Will you use a water bath?</li>
+                                    <li>What equipment do you need?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card delay-2 text-center" style="border: 2px dashed rgba(255,255,255,0.2);">
+                            <h3 style="color: white; margin-bottom: 1rem;">The Setup</h3>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                                <!-- Meaningful Water Bath Diagram -->
+                                <svg width="200" height="150" viewBox="0 0 200 150">
+                                    <!-- Beaker (Water Bath) -->
+                                    <path d="M 50,20 L 50,130 C 50,140 60,140 60,140 L 140,140 C 140,140 150,140 150,130 L 150,20" fill="none" stroke="white" stroke-width="4"/>
+                                    <!-- Water in Beaker -->
+                                    <path d="M 52,60 L 148,60 L 148,130 C 148,138 140,138 140,138 L 60,138 C 60,138 52,138 52,130 Z" fill="rgba(59, 130, 246, 0.4)"/>
+                                    <!-- Test Tube -->
+                                    <path d="M 85,10 L 85,120 C 85,130 115,130 115,120 L 115,10" fill="none" stroke="#f1f5f9" stroke-width="3"/>
+                                    <!-- Reactant in Test tube -->
+                                    <path d="M 87,70 L 113,70 L 113,120 C 113,128 87,128 87,120 Z" fill="rgba(255, 255, 255, 0.7)"/>
+                                    <!-- Thermometer -->
+                                    <line x1="100" y1="5" x2="100" y2="115" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+                                    <circle cx="100" cy="115" r="5" fill="#ef4444"/>
+                                    <line x1="100" y1="5" x2="100" y2="40" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                                </svg>
+                                
+                                <p style="font-size: 0.95rem;"><strong>Water Bath Method:</strong> Place the test tube in a beaker of warm water. Use a thermometer to accurately monitor the reaction temperature.</p>
+                                
+                                <div style="background: rgba(239, 68, 68, 0.2); padding: 0.5rem 1rem; border-radius: 50px; border: 1px solid var(--danger);">
+                                    <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i> Safety: Wear goggles & ventilate!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: Graph Analysis
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Looking at Typical Results</h2>
+                    <p class="delay-1" style="margin-bottom: 2rem;">Here is a graph showing the reaction of marble chips and acid at two temperatures.</p>
+                    
+                    <div class="glass-card delay-2" style="max-width: 800px; margin: 0 auto; position: relative; padding: 2rem 1rem;">
+                        <!-- SVG Interactive Graph Engine -->
+                        <svg width="100%" height="300" viewBox="0 0 500 300" style="overflow: visible;">
+                            <!-- Axes -->
+                            <line x1="50" y1="250" x2="480" y2="250" class="graph-axis" />
+                            <line x1="50" y1="250" x2="50" y2="20" class="graph-axis" />
+                            
+                            <!-- Labels -->
+                            <text x="250" y="290" class="graph-text" text-anchor="middle">Time</text>
+                            <text x="20" y="150" class="graph-text" transform="rotate(-90 20,150)" text-anchor="middle">Volume of gas produced</text>
+                            
+                            <!-- 30C Line (Slow) -->
+                            <path d="M 50,250 C 200,240 300,100 450,50" class="graph-line" stroke="#3b82f6" id="path-30" />
+                            <text x="320" y="130" class="graph-text" fill="#3b82f6" style="font-weight:bold;">30°C</text>
+
+                            <!-- 40C Line (Fast) -->
+                            <path d="M 50,250 C 100,100 200,50 450,50" class="graph-line" stroke="#ef4444" id="path-40" />
+                            <text x="170" y="70" class="graph-text" fill="#ef4444" style="font-weight:bold;">40°C</text>
+                            
+                            <!-- Grid lines (Dotted) -->
+                            <line x1="50" y1="50" x2="480" y2="50" stroke="rgba(255,255,255,0.2)" stroke-dasharray="5,5" />
+                        </svg>
+                        
+                        <div class="pedagogical-note note-write text-left" style="margin-top: 2rem;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-chart-line"></i> Graph Analysis</div>
+                            <p><strong>Notice:</strong> At 40°C, the curve is much steeper at the start. It reaches the maximum volume of gas (levels off) in <strong>less time</strong>.</p>
+                            <p style="margin-top: 0.5rem; color: var(--warning);">Note: You do not get <em>more</em> gas at a higher temperature, you just get the same amount <em>faster</em>.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 9: Summary & Assessment
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Lesson Review & Assessment</h2>
+                    
+                    <div class="grid-2">
+                        <div class="glass-card delay-1">
+                            <h3 style="color: white; margin-bottom: 1rem;"><i class="fa-solid fa-list-check"></i> True or False Quiz</h3>
+                            
+                            <div id="quiz-container">
+                                <div class="quiz-option" data-correct="false">
+                                    1. Higher temperatures decrease the rate of a chemical reaction.
+                                </div>
+                                <div class="quiz-option" data-correct="true">
+                                    2. Increasing temperature gives particles more kinetic energy.
+                                </div>
+                                <div class="quiz-option" data-correct="true">
+                                    3. At higher temperatures, there are more frequent successful collisions.
+                                </div>
+                                <div class="quiz-option" data-correct="false">
+                                    4. A hot reaction produces more product overall than a cold reaction.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="delay-2">
+                            <div class="pedagogical-note note-success" style="margin-bottom: 2rem;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> Objectives Met</div>
+                                <ul>
+                                    <li><strong>Objective 1:</strong> Understand how temperature affects the rate of a chemical reaction. <br><em style="color: var(--text-dim); font-size: 0.9rem;">(We explained how temperature increases kinetic energy and collision frequency.)</em></li>
+                                    <li style="margin-top: 0.5rem;"><strong>Objective 2:</strong> Plan an investigation to test the effect of temperature safely. <br><em style="color: var(--text-dim); font-size: 0.9rem;">(We planned out a water bath setup for our preliminary work.)</em></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="pedagogical-note note-task" style="background: rgba(139, 92, 246, 0.2); border-color: var(--primary);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-house"></i> Homework</div>
+                                <p style="color: white; font-weight: 600; font-size: 1.2rem; margin-bottom: 0.5rem;">Topic 8.3 Assignments</p>
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Complete textbook pages 8.3 (posted on Google Classroom).</li>
+                                    <li><strong>Submit:</strong> Email your completed outline and graph to Mr. Bowen by Thursday.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const options = container.querySelectorAll('.quiz-option');
+                const handlers = [];
+                
+                options.forEach(opt => {
+                    const handler = () => {
+                        const isCorrect = opt.dataset.correct === 'true';
+                        opt.classList.remove('correct', 'incorrect');
+                        // Force reflow
+                        void opt.offsetWidth;
+                        opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                        
+                        // Icon injection based on answer
+                        if(isCorrect && !opt.innerHTML.includes('fa-check')) {
+                             opt.innerHTML += ' <i class="fa-solid fa-check" style="float: right;"></i>';
+                        } else if (!isCorrect && !opt.innerHTML.includes('fa-xmark')) {
+                             opt.innerHTML += ' <i class="fa-solid fa-xmark" style="float: right;"></i>';
+                        }
+                    };
+                    handlers.push({ element: opt, fn: handler });
+                    opt.addEventListener('click', handler);
+                });
+
+                return () => {
+                    handlers.forEach(h => h.element.removeEventListener('click', h.fn));
+                };
+            }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        // Execute cleanup from previous slide if it exists
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        // Render HTML
+        container.innerHTML = slide.template();
+        
+        // Execute script and store cleanup
+        if (slide.script) {
+            // slight delay to ensure DOM is ready
+            setTimeout(() => {
+                state.cleanupFn = slide.script(container);
+            }, 50);
+        }
+        
+        // Update UI
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
