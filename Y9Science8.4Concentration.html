@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8.4 Concentration and the Rate of Reaction - Year 9 Science</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax -->
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Bible Standard) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Secondary Background */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Success/Acid Green */
+            --warning: #f59e0b;        /* Hazard Orange */
+            --danger: #ef4444;         /* Heat Red */
+            --text-light: #f1f5f9;     /* Main Text */
+            --text-dim: #94a3b8;       /* Subtitles */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.15rem; line-height: 1.6; color: var(--text-dim); }
+
+        strong { color: var(--text-light); }
+        
+        .text-center { text-align: center; }
+        .text-accent { color: var(--accent); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Signposting System */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            animation: slideIn 0.5s ease;
+        }
+        .pedagogical-badge {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { background: rgba(139, 92, 246, 0.1); border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { background: rgba(16, 185, 129, 0.1); border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Reveal Card */
+        .reveal-card {
+            background: var(--bg-panel);
+            border: 2px dashed var(--primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .reveal-card:hover { background: rgba(139, 92, 246, 0.1); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .reveal-card.revealed .pre-reveal { display: none; }
+        .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
+
+        /* Quiz Options */
+        .quiz-option {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.1); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--accent); color: white; }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); }
+
+        /* Lab Table */
+        .lab-table { width: 100%; border-collapse: collapse; margin-top: 1rem; text-align: center; }
+        .lab-table th { background: var(--primary); color: white; padding: 0.8rem; border: 1px solid rgba(255,255,255,0.2); }
+        .lab-table td { padding: 0.8rem; border: 1px solid rgba(255,255,255,0.1); color: var(--text-light); }
+        .lab-table tr:nth-child(even) { background: rgba(255,255,255,0.05); }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Canvas/Simulation styling */
+        canvas {
+            background: #000;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.1);
+            width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 1rem;
+        }
+        
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* SVG Graph Styling */
+        .graph-line { fill: none; stroke-width: 4; stroke-linecap: round; }
+        .graph-axis { stroke: rgba(255,255,255,0.5); stroke-width: 2; }
+        .graph-text { fill: var(--text-dim); font-family: 'Outfit'; font-size: 14px; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 9 Science</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">8.4 Concentration and Rate of Reaction</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; color: var(--primary);">
+            11 March 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Title & Objectives
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-flask-vial delay-1" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1">Concentration and the<br>Rate of Reaction</h1>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 650px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objectives</div>
+                        <ul style="margin-left: 1.5rem; display: grid; gap: 0.8rem;">
+                            <li>Define <strong>concentration</strong> and understand how it is controlled in the lab.</li>
+                            <li>Explain the effect of changes in concentration on the rate of reaction using particle theory.</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        
+        // SLIDE 2: Hook / Getting Started
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>What does "Concentration" mean?</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-comments"></i> Partner Discussion</div>
+                        <p style="margin-bottom: 1rem;">Discuss these everyday and scientific examples with the person next to you:</p>
+                        
+                        <div style="display: grid; gap: 1rem;">
+                            <div style="border: 2px dashed rgba(255,255,255,0.3); padding: 1.5rem; border-radius: 8px; background: rgba(0,0,0,0.2);">
+                                <strong style="color: var(--warning); font-size: 1.2rem;">Everyday Life:</strong>
+                                <p style="margin-top: 0.5rem;">If you are making orange squash/cordial to drink, and it tastes "too weak", what do you do to fix it? What does that mean for the "concentration" of orange flavour?</p>
+                            </div>
+                            <div style="border: 2px dashed rgba(255,255,255,0.3); padding: 1.5rem; border-radius: 8px; background: rgba(0,0,0,0.2);">
+                                <strong style="color: var(--primary); font-size: 1.2rem;">Science Lab:</strong>
+                                <p style="margin-top: 0.5rem;">What do you think would happen if you carried out an experiment with marble chips (calcium carbonate) using different concentrations of acid, but kept the mass and temperature exactly the same?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="reveal-card delay-2" id="hook-reveal" role="button" tabindex="0">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-lightbulb" style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary);"></i>
+                            <h3>Click to reveal the scientific concept</h3>
+                        </div>
+                        <div class="reveal-content text-left">
+                            <h3 style="color: var(--accent);"><i class="fa-solid fa-check-circle"></i> The Core Idea</h3>
+                            <p>To fix "weak" squash, you add more syrup. You are putting <strong>more particles</strong> of flavour into the same space.</p>
+                            <p style="margin-top: 0.5rem;">In the lab, a more concentrated acid has more acid particles in it, meaning it will react with the marble chips much <strong>faster</strong>!</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCard = container.querySelector('#hook-reveal');
+                const handler = () => { revealCard.classList.add('revealed'); };
+                revealCard.addEventListener('click', handler);
+                return () => revealCard.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 3: Defining Concentration (Write This Down)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Defining Concentration</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Copy to Notebook</div>
+                        
+                        <div style="display: flex; gap: 2rem; align-items: center; background: var(--bg-deep); padding: 2rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <div style="flex: 1;">
+                                <h3 style="color: var(--text-light); margin-bottom: 1rem;">Concentration</h3>
+                                <p style="font-size: 1.2rem; color: white;">Concentration is a measure of the <strong>number of particles</strong> of a substance in a given <strong>volume</strong>.</p>
+                                
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-top: 1.5rem; text-align: center;">
+                                    $$ \\text{Concentration} = \\frac{\\text{Amount of Solute}}{\\text{Volume of Solution}} $$
+                                </div>
+                            </div>
+                            
+                            <div style="flex: 1; text-align: center;">
+                                <div style="display: flex; justify-content: space-around; gap: 1rem;">
+                                    <div>
+                                        <div style="width: 80px; height: 100px; border: 3px solid #ccc; border-top: none; border-radius: 0 0 10px 10px; position: relative; background: rgba(59, 130, 246, 0.2); margin: 0 auto;">
+                                            <!-- Low particles -->
+                                            <div style="position: absolute; top: 70%; left: 30%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 40%; left: 60%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 80%; left: 50%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 50%; left: 20%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                        </div>
+                                        <p style="margin-top: 0.5rem; font-weight: bold; color: var(--text-dim);">Dilute</p>
+                                    </div>
+                                    <div>
+                                        <div style="width: 80px; height: 100px; border: 3px solid #ccc; border-top: none; border-radius: 0 0 10px 10px; position: relative; background: rgba(59, 130, 246, 0.2); margin: 0 auto;">
+                                            <!-- High particles -->
+                                            <div style="position: absolute; top: 70%; left: 30%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 40%; left: 60%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 80%; left: 50%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 50%; left: 20%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 30%; left: 30%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 90%; left: 70%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 60%; left: 80%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 20%; left: 50%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 75%; left: 15%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                            <div style="position: absolute; top: 45%; left: 40%; width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></div>
+                                        </div>
+                                        <p style="margin-top: 0.5rem; font-weight: bold; color: var(--primary);">Concentrated</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                if(window.MathJax) MathJax.typesetPromise([container]);
+            }
+        },
+
+        // SLIDE 4: Controlling Concentration in the Lab
+        {
+            template: () => `
+                <div class="anim-enter grid-2">
+                    <div>
+                        <h2>Making Dilutions</h2>
+                        <p style="margin-bottom: 1rem;">When we plan an investigation, we must control the concentration of our acid.</p>
+                        <p style="margin-bottom: 1rem;">We do this by taking a strong stock acid and <strong>diluting</strong> it with water. Notice how the <strong>Total Volume</strong> must stay exactly the same ($50\\text{ cm}^3$) to keep it a fair test.</p>
+                        
+                        <div class="pedagogical-note note-theory delay-1">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> Lab Safety</div>
+                            <p>Corrosive liquids are highly dangerous. Wearing safety glasses is essential when making different concentrations of acid.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card delay-2">
+                        <h3 style="text-align: center; margin-bottom: 0;">Dilution Table</h3>
+                        <p style="text-align: center; font-size: 0.9rem; margin-bottom: 1rem;">(Target total volume: 50 cm³)</p>
+                        
+                        <table class="lab-table">
+                            <thead>
+                                <tr>
+                                    <th>Solution</th>
+                                    <th>Acid (cm³)</th>
+                                    <th>Water (cm³)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>A</td><td>10</td><td>40</td></tr>
+                                <tr><td>B</td><td>20</td><td>30</td></tr>
+                                <tr><td>C</td><td>30</td><td>20</td></tr>
+                                <tr><td>D</td><td>40</td><td>10</td></tr>
+                                <tr style="background: rgba(139, 92, 246, 0.2);">
+                                    <td style="font-weight: bold; color: white;">E</td>
+                                    <td style="font-weight: bold; color: white;">50</td>
+                                    <td style="font-weight: bold; color: white;">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.85rem; font-weight: bold; color: var(--text-dim);">
+                            <span>← Least Concentrated</span>
+                            <span style="color: var(--primary);">Most Concentrated (Pure) →</span>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                if(window.MathJax) MathJax.typesetPromise([container]);
+            }
+        },
+
+        // SLIDE 5: Virtual Lab Simulation (Mandatory Interactive)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Virtual Lab: Particle Collisions</h2>
+                    
+                    <div class="grid-2">
+                        <div class="pedagogical-note note-task delay-1">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-magnifying-glass"></i> Observation</div>
+                            <p>Adjust the slider to change the concentration of the acid particles.</p>
+                            <ul style="margin-top: 1rem; margin-left: 1.5rem; color: white;">
+                                <li>The grey blocks represent a <strong>solid marble chip</strong>.</li>
+                                <li>The purple dots represent <strong>acid particles</strong>.</li>
+                            </ul>
+                            <p style="margin-top: 1rem; font-weight: bold; color: var(--primary);">Watch what happens to the frequency of collisions as the concentration increases!</p>
+                        </div>
+
+                        <div class="glass-card delay-2 text-center">
+                            <h3><i class="fa-solid fa-microscope"></i> Particle Collision Simulator</h3>
+                            <div style="position: relative;">
+                                <canvas id="concentration-sim" width="400" height="220"></canvas>
+                                <!-- Visual Flash on Collision -->
+                                <div id="collision-flash" style="position:absolute; top:0; left:0; width:100%; height:100%; background:var(--primary); opacity:0; pointer-events:none; border-radius:8px; transition: opacity 0.1s;"></div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                                <span style="font-size: 0.9rem; font-weight: bold;">Dilute</span>
+                                <input type="range" id="conc-slider" min="5" max="150" value="20">
+                                <span style="font-size: 0.9rem; font-weight: bold; color: var(--primary);">Concentrated</span>
+                            </div>
+                            <p id="conc-readout" style="margin-top: 0.5rem; font-weight: bold;">Acid Particles: 20</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const canvas = container.querySelector('#concentration-sim');
+                const ctx = canvas.getContext('2d');
+                const slider = container.querySelector('#conc-slider');
+                const readout = container.querySelector('#conc-readout');
+                const flash = container.querySelector('#collision-flash');
+                
+                let particles = [];
+                let solidY = canvas.height - 40;
+                
+                function createParticle() {
+                    return {
+                        x: Math.random() * (canvas.width - 10) + 5,
+                        y: Math.random() * (solidY - 10) + 5,
+                        vx: (Math.random() - 0.5) * 3,
+                        vy: (Math.random() - 0.5) * 3
+                    };
+                }
+
+                // Initial particles
+                for(let i=0; i<20; i++) particles.push(createParticle());
+
+                let rafId;
+
+                slider.addEventListener('input', (e) => {
+                    const targetNum = parseInt(e.target.value);
+                    readout.innerText = `Acid Particles: ${targetNum}`;
+                    
+                    if (targetNum > particles.length) {
+                        for(let i = particles.length; i < targetNum; i++) particles.push(createParticle());
+                    } else if (targetNum < particles.length) {
+                        particles.length = targetNum; // Truncate array
+                    }
+                });
+
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Draw Solid (Marble Chip layer at bottom)
+                    ctx.fillStyle = '#64748b'; // Slate 500
+                    ctx.fillRect(0, solidY, canvas.width, 40);
+                    // Draw grid lines to make it look like a solid lattice
+                    ctx.strokeStyle = '#334155';
+                    ctx.lineWidth = 2;
+                    for(let x=0; x<=canvas.width; x+=20) {
+                        ctx.beginPath(); ctx.moveTo(x, solidY); ctx.lineTo(x, canvas.height); ctx.stroke();
+                    }
+                    for(let y=solidY; y<=canvas.height; y+=20) {
+                        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                    }
+                    
+                    let collisionHappened = false;
+
+                    // Update & Draw Particles
+                    ctx.fillStyle = '#8b5cf6'; // Primary Purple
+                    particles.forEach(p => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        
+                        // Bounce off walls (X)
+                        if(p.x <= 3 || p.x >= canvas.width - 3) p.vx *= -1;
+                        
+                        // Bounce off ceiling
+                        if(p.y <= 3) p.vy *= -1;
+                        
+                        // Bounce off Solid Floor!
+                        if(p.y >= solidY - 3) {
+                            p.vy *= -1;
+                            p.y = solidY - 3; // prevent getting stuck
+                            collisionHappened = true;
+                        }
+                        
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+                    
+                    // Visual feedback for high collision rates
+                    if(collisionHappened && particles.length > 80) {
+                         flash.style.opacity = '0.3';
+                         setTimeout(() => { flash.style.opacity = '0'; }, 50);
+                    }
+
+                    rafId = requestAnimationFrame(draw);
+                }
+                
+                draw();
+
+                return () => {
+                    cancelAnimationFrame(rafId);
+                };
+            }
+        },
+
+        // SLIDE 6: Video Embed
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>🎥 Effect of Concentration in Action</h2>
+                    <p style="margin-bottom: 2rem;">Watch this real-world demonstration of concentration affecting reaction speed.</p>
+                    
+                    <div class="glass-card delay-1" style="max-width: 800px; margin: 0 auto; padding: 1rem;">
+                        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
+                            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                                    src="https://www.youtube.com/embed/tEHOgrMeqK4" 
+                                    title="Rates of Reaction" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                    <p class="delay-2" style="margin-top: 1rem; font-size: 0.9rem;">The acid with a higher concentration reacts violently and finishes much quicker.</p>
+                </div>
+            `
+        },
+
+        // SLIDE 7: Graph Analysis (Elaborate)
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Analysing Typical Results</h2>
+                    <p class="delay-1" style="margin-bottom: 1.5rem;">Below are typical results for measuring the volume of $CO_2$ gas produced over time.</p>
+                    
+                    <div class="glass-card delay-2" style="max-width: 800px; margin: 0 auto; position: relative; padding: 2rem 1rem;">
+                        <!-- SVG Interactive Graph Engine -->
+                        <svg width="100%" height="280" viewBox="0 0 500 280" style="overflow: visible;">
+                            <!-- Axes -->
+                            <line x1="50" y1="230" x2="480" y2="230" class="graph-axis" />
+                            <line x1="50" y1="230" x2="50" y2="20" class="graph-axis" />
+                            
+                            <!-- Labels -->
+                            <text x="250" y="270" class="graph-text" text-anchor="middle">Time (seconds)</text>
+                            <text x="20" y="125" class="graph-text" transform="rotate(-90 20,125)" text-anchor="middle">Volume of gas (cm³)</text>
+                            
+                            <!-- Low Conc Line -->
+                            <path d="M 50,230 C 180,200 280,70 420,40 L 480,40" class="graph-line" stroke="#3b82f6" id="path-low" />
+                            <text x="350" y="80" class="graph-text" fill="#3b82f6" style="font-weight:bold;">Low concentration</text>
+
+                            <!-- High Conc Line -->
+                            <path d="M 50,230 C 100,80 150,40 250,40 L 480,40" class="graph-line" stroke="#8b5cf6" id="path-high" />
+                            <text x="130" y="60" class="graph-text" fill="#8b5cf6" style="font-weight:bold;">High concentration</text>
+                            
+                            <!-- Max Volume Line (Dotted) -->
+                            <line x1="50" y1="40" x2="480" y2="40" stroke="var(--warning)" stroke-dasharray="5,5" stroke-width="2"/>
+                            <text x="400" y="30" class="graph-text" fill="var(--warning)" style="font-size: 12px;">Maximum Volume</text>
+                        </svg>
+                        
+                        <div class="pedagogical-note note-theory text-left" style="margin-top: 1.5rem; padding: 1rem;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-chart-line"></i> Graph Key Takeaways</div>
+                            <ul style="color: white; font-size: 1.05rem; margin-left: 1.5rem;">
+                                <li>The higher concentration curve is <strong>steeper</strong> (faster rate).</li>
+                                <li style="color: var(--warning);"><strong>Crucial Point:</strong> Both lines level off at the <em>exact same final volume</em> of gas.</li>
+                            </ul>
+                            <p style="margin-top: 0.5rem; font-size: 0.95rem;">You do not get more product at a higher concentration (if the other reactant is the limiting factor). You just get the same amount, but <strong>more quickly</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                if(window.MathJax) MathJax.typesetPromise([container]);
+            }
+        },
+
+        // SLIDE 8: Explaining the effect (Particle Theory)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Explaining the Effect</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Particle Theory Note</div>
+                        <p style="font-size: 1.2rem; color: white;">The higher the concentration of the acid, the more acid particles there are in a given volume of space.</p>
+                        <p style="margin-top: 1rem; font-size: 1.2rem; color: var(--accent);">This means there will be <strong>more frequent collisions</strong> between the acid particles and the solid particles.</p>
+                        <p style="margin-top: 1rem; font-size: 1.2rem; color: white;">More frequent successful collisions = A faster rate of reaction.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 700px; margin: 2rem auto; text-align: center;">
+                        <div class="glass-card" style="padding: 1.5rem;">
+                            <div style="width: 120px; height: 120px; border: 3px solid #ccc; border-top: none; margin: 0 auto; position: relative; background: rgba(59, 130, 246, 0.1);">
+                                <div style="position:absolute; bottom:0; left:20px; right:20px; height:30px; background:#64748b; border-radius:4px 4px 0 0;"></div>
+                                <!-- Acid particles -->
+                                <div style="position:absolute; top:40%; left:30%; font-size:0.5rem; color:var(--primary);"><i class="fa-solid fa-circle"></i></div>
+                                <div style="position:absolute; top:60%; left:60%; font-size:0.5rem; color:var(--primary);"><i class="fa-solid fa-circle"></i></div>
+                                <div style="position:absolute; top:20%; left:50%; font-size:0.5rem; color:var(--primary);"><i class="fa-solid fa-circle"></i></div>
+                                
+                                <!-- Collision arrows -->
+                                <div style="position:absolute; bottom:35px; left:40px; color:var(--danger); transform:rotate(45deg);"><i class="fa-solid fa-arrow-down"></i></div>
+                            </div>
+                            <h4 style="margin-top: 1rem; color: white;">Dilute Acid</h4>
+                            <p style="font-size: 0.9rem;">Fewer collisions per second</p>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.5rem; border-color: var(--primary);">
+                            <div style="width: 120px; height: 120px; border: 3px solid #ccc; border-top: none; margin: 0 auto; position: relative; background: rgba(139, 92, 246, 0.1);">
+                                <div style="position:absolute; bottom:0; left:20px; right:20px; height:30px; background:#64748b; border-radius:4px 4px 0 0;"></div>
+                                <!-- Acid particles -->
+                                <div style="position:absolute; top:40%; left:30%; font-size:0.5rem; color:var(--primary);"><i class="fa-solid fa-circle"></i></div>
+                                <div style="position:absolute; top:60%; left:60%; font-size:0.5rem; color:var(--primary);"><i class="fa-solid fa-circle"></i></div>
+                                <div style="position:absolute; top:20%; left:50%; font-size:0.5rem; color:var(--primary);"><i class="fa-solid fa-circle"></i></div>
+                                <div style="position:absolute; top:30%; left:80%; font-size:0.5rem; color:var(--primary);"><i class="fa-solid fa-circle"></i></div>
+                                <div style="position:absolute; top:70%; left:20%; font-size:0.5rem; color:var(--primary);"><i class="fa-solid fa-circle"></i></div>
+                                <div style="position:absolute; top:10%; left:30%; font-size:0.5rem; color:var(--primary);"><i class="fa-solid fa-circle"></i></div>
+                                
+                                <!-- Collision arrows -->
+                                <div style="position:absolute; bottom:35px; left:30px; color:var(--danger); transform:rotate(45deg);"><i class="fa-solid fa-arrow-down"></i></div>
+                                <div style="position:absolute; bottom:35px; left:60px; color:var(--danger); transform:rotate(10deg);"><i class="fa-solid fa-arrow-down"></i></div>
+                                <div style="position:absolute; bottom:35px; left:80px; color:var(--danger); transform:rotate(-20deg);"><i class="fa-solid fa-arrow-down"></i></div>
+                            </div>
+                            <h4 style="margin-top: 1rem; color: var(--primary);">Twice as Concentrated</h4>
+                            <p style="font-size: 0.9rem;">More frequent collisions</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 9: Summary & Assessment
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Lesson Review & Checkpoint Quiz</h2>
+                    
+                    <div class="grid-2">
+                        <div class="glass-card delay-1">
+                            <h3 style="color: white; margin-bottom: 1rem;"><i class="fa-solid fa-list-check"></i> True or False Quiz</h3>
+                            
+                            <div id="quiz-container">
+                                <div class="quiz-option" data-correct="true">
+                                    1. Higher concentration means more particles in a given volume.
+                                </div>
+                                <div class="quiz-option" data-correct="false">
+                                    2. Diluting an acid with water increases its concentration.
+                                </div>
+                                <div class="quiz-option" data-correct="true">
+                                    3. More concentrated acids lead to more frequent successful collisions.
+                                </div>
+                                <div class="quiz-option" data-correct="false">
+                                    4. A lower concentration acid will produce a lower final volume of gas.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="delay-2">
+                            <div class="pedagogical-note note-success" style="margin-bottom: 2rem;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> Objectives Met</div>
+                                <ul>
+                                    <li><strong>Defined Concentration:</strong> Explored how it's calculated and controlled using dilution tables in the lab.</li>
+                                    <li style="margin-top: 0.5rem;"><strong>Particle Theory:</strong> Demonstrated that higher concentration equals more frequent collisions, which equals a faster rate of reaction.</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="pedagogical-note note-task" style="background: rgba(139, 92, 246, 0.2); border-color: var(--primary);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-house"></i> Cambridge Checkpoint Prep</div>
+                                <p style="color: white; font-weight: 600; font-size: 1.2rem; margin-bottom: 0.5rem;">Topic 8.4 Assignments</p>
+                                <ul style="margin-left: 1.5rem;">
+                                    <li>Answer Questions 2-7 on page 294 of the textbook.</li>
+                                    <li><strong>Challenge:</strong> Sketch the graph for an acid that is <em>half</em> the concentration of the "low concentration" curve.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const options = container.querySelectorAll('.quiz-option');
+                const handlers = [];
+                
+                options.forEach(opt => {
+                    const handler = () => {
+                        const isCorrect = opt.dataset.correct === 'true';
+                        opt.classList.remove('correct', 'incorrect');
+                        // Force reflow
+                        void opt.offsetWidth;
+                        opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                        
+                        // Icon injection based on answer
+                        if(isCorrect && !opt.innerHTML.includes('fa-check')) {
+                             opt.innerHTML += ' <i class="fa-solid fa-check" style="float: right;"></i>';
+                        } else if (!isCorrect && !opt.innerHTML.includes('fa-xmark')) {
+                             opt.innerHTML += ' <i class="fa-solid fa-xmark" style="float: right;"></i>';
+                        }
+                    };
+                    handlers.push({ element: opt, fn: handler });
+                    opt.addEventListener('click', handler);
+                });
+
+                return () => {
+                    handlers.forEach(h => h.element.removeEventListener('click', h.fn));
+                };
+            }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        // Execute cleanup from previous slide if it exists
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        // Render HTML
+        container.innerHTML = slide.template();
+        
+        // Execute script and store cleanup
+        if (slide.script) {
+            // slight delay to ensure DOM is ready
+            setTimeout(() => {
+                state.cleanupFn = slide.script(container);
+            }, 50);
+        }
+        
+        // Update UI
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
