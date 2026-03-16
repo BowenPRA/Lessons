@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circuits: Series vs Parallel - Year 9 Science</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Bible Standard) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Secondary Background */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Success/Acid Green */
+            --warning: #f59e0b;        /* Hazard Orange */
+            --danger: #ef4444;         /* Heat Red */
+            --cold: #0ea5e9;           /* Cold Blue */
+            --text-light: #f1f5f9;     /* Main Text */
+            --text-dim: #94a3b8;       /* Subtitles */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.15rem; line-height: 1.6; color: var(--text-dim); }
+
+        strong { color: var(--text-light); font-weight: 700; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Signposting System (Pedagogical Framework) */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            animation: slideIn 0.5s ease;
+        }
+        .pedagogical-badge {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { background: rgba(139, 92, 246, 0.1); border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { background: rgba(16, 185, 129, 0.1); border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Reveal Card */
+        .reveal-card {
+            background: var(--bg-panel);
+            border: 2px dashed var(--primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .reveal-card:hover { background: rgba(139, 92, 246, 0.1); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .reveal-card.revealed { border-style: solid; background: rgba(16, 185, 129, 0.1); border-color: var(--accent); cursor: default; }
+        .reveal-card.revealed .pre-reveal { display: none; }
+        .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+        }
+        .btn-action:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+        }
+
+        /* Circuit Diagrams */
+        .circuit-svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--text-light);
+            stroke-width: 4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            display: block;
+        }
+        .circuit-label {
+            fill: var(--text-light);
+            stroke: none;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .circuit-highlight { stroke: var(--warning); }
+        
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-lightbulb"></i> Year 9 Science</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">9.1 Circuits</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; color: var(--primary);">
+            16 March 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    // Helper function to re-render MathJax formulas on new slides
+    const renderMath = () => {
+        if (window.MathJax) {
+            window.MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+        }
+    };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Title & Objectives
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-bolt delay-1" style="font-size: 4rem; color: var(--warning); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Circuits: Series vs Parallel</h1>
+                    <h2 class="delay-1" style="color: var(--accent);">Cambridge Science</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 700px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objectives</div>
+                        <ul style="margin-left: 1rem; display: grid; gap: 1rem; list-style-type: none; padding: 0; margin-top: 0.5rem;">
+                            <li style="font-size: 1.2rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>📝</span>
+                                <span style="color: white; font-weight: 500;">Define <strong>Series</strong> and <strong>Parallel</strong> circuits.</span>
+                            </li>
+                            <li style="font-size: 1.2rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>⚖️</span>
+                                <span style="color: white; font-weight: 500;">Explain the rule for current in a parallel circuit.</span>
+                            </li>
+                            <li style="font-size: 1.2rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>🧮</span>
+                                <span style="color: white; font-weight: 500;">Calculate missing current values in a circuit.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 2: What is a Series Circuit?
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">1. Series Circuits (A Quick Review)</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <div>
+                            <div class="pedagogical-note note-write">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Series Circuit</h3>
+                                <p style="color: white;">A circuit where components are connected end-to-end. There is only <strong>one path</strong> for the current to flow.</p>
+                            </div>
+
+                            <div class="pedagogical-note note-theory delay-2">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> Warning</div>
+                                <p style="color: white;">Because there is only one path, if one lamp breaks or the switch is opened, <strong>all components stop working</strong>!</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card text-center delay-3">
+                            <h3 style="color: var(--text-dim); font-size: 1.2rem;">Diagram of a Series Circuit</h3>
+                            <div style="position: relative; width: 100%; max-width: 300px; aspect-ratio: 300/200; margin: 1rem auto 0 auto;">
+                                <svg class="circuit-svg" viewBox="0 0 300 200">
+                                    <!-- Wires -->
+                                    <path d="M 120 40 L 50 40 L 50 160 L 250 160 L 250 40 L 180 40" stroke="var(--text-light)" stroke-width="4" fill="none"/>
+                                    
+                                    <!-- Closed Switch -->
+                                    <circle cx="200" cy="40" r="3" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="2"/>
+                                    <line x1="200" y1="40" x2="230" y2="40" stroke="var(--text-light)" stroke-width="4" />
+                                    <circle cx="230" cy="40" r="3" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="2"/>
+
+                                    <!-- Cell (Battery) -->
+                                    <line x1="120" y1="20" x2="120" y2="60" stroke="var(--text-light)" stroke-width="2"/>
+                                    <line x1="140" y1="30" x2="140" y2="50" stroke="var(--text-light)" stroke-width="6"/>
+                                    <line x1="140" y1="40" x2="180" y2="40" stroke="var(--text-light)" stroke-width="4" />
+                                    <text x="130" y="15" class="circuit-label" text-anchor="middle" font-size="14px">Cell</text>
+
+                                    <!-- Lamp 1 -->
+                                    <circle cx="100" cy="160" r="15" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="89" y1="149" x2="111" y2="171" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="111" y1="149" x2="89" y2="171" stroke="var(--text-light)" stroke-width="3"/>
+                                    
+                                    <!-- Lamp 2 -->
+                                    <circle cx="200" cy="160" r="15" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="189" y1="149" x2="211" y2="171" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="211" y1="149" x2="189" y2="171" stroke="var(--text-light)" stroke-width="3"/>
+
+                                    <!-- Flow Arrows (Conventional Current: + to -) -->
+                                    <polygon points="90,35 80,40 90,45" fill="var(--warning)" stroke="none" /> <!-- Top, flowing left -->
+                                    <polygon points="45,100 55,100 50,110" fill="var(--warning)" stroke="none" /> <!-- Left, flowing down -->
+                                    <polygon points="145,155 155,160 145,165" fill="var(--warning)" stroke="none" /> <!-- Bottom, flowing right -->
+                                    <polygon points="245,100 255,100 250,90" fill="var(--warning)" stroke="none" /> <!-- Right, flowing up -->
+                                </svg>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 3: What is a Parallel Circuit?
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">2. Parallel Circuits</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <div>
+                            <div class="pedagogical-note note-write">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                                <h3 style="color: var(--accent); margin-bottom: 0.5rem;">Parallel Circuit</h3>
+                                <p style="color: white;">A circuit where there is <strong>more than one path</strong> for the current to flow.</p>
+                                <p style="color: var(--text-dim); margin-top: 0.5rem;">These different paths are called <strong>branches</strong>.</p>
+                            </div>
+
+                            <p style="color: white; font-size: 1.1rem; padding: 1rem;">
+                                Look at the diagram. The current flows from the cell and then <strong>divides</strong> at the branch. It shares the electricity between the lamps.
+                            </p>
+                        </div>
+
+                        <div class="glass-card text-center delay-2">
+                            <h3 style="color: var(--text-dim); font-size: 1.2rem;">Diagram of a Parallel Circuit</h3>
+                            <div style="position: relative; width: 100%; max-width: 300px; aspect-ratio: 300/220; margin: 1rem auto 0 auto;">
+                                <svg class="circuit-svg" viewBox="0 0 300 220">
+                                    <!-- Wires -->
+                                    <path d="M 120 40 L 50 40 L 50 180 L 250 180 L 250 40 L 140 40" stroke="var(--text-light)" stroke-width="4" fill="none" />
+                                    <line x1="50" y1="110" x2="250" y2="110" stroke="var(--text-light)" stroke-width="4" class="circuit-highlight" />
+                                    
+                                    <!-- Cell (Battery) -->
+                                    <line x1="120" y1="20" x2="120" y2="60" stroke="var(--text-light)" stroke-width="2"/>
+                                    <line x1="140" y1="30" x2="140" y2="50" stroke="var(--text-light)" stroke-width="6"/>
+                                    <text x="130" y="15" class="circuit-label" text-anchor="middle" font-size="14px">Cell</text>
+
+                                    <!-- Branch 1 Lamp -->
+                                    <circle cx="150" cy="110" r="15" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3" class="circuit-highlight"/>
+                                    <line x1="139" y1="99" x2="161" y2="121" stroke="var(--warning)" stroke-width="3"/>
+                                    <line x1="161" y1="99" x2="139" y2="121" stroke="var(--warning)" stroke-width="3"/>
+                                    <text x="150" y="85" class="circuit-label" text-anchor="middle" font-size="12px" fill="var(--warning)">Branch 1</text>
+
+                                    <!-- Branch 2 Lamp -->
+                                    <circle cx="150" cy="180" r="15" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="139" y1="169" x2="161" y2="191" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="161" y1="169" x2="139" y2="191" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="150" y="155" class="circuit-label" text-anchor="middle" font-size="12px">Branch 2</text>
+
+                                    <!-- Flow Arrows -->
+                                    <polygon points="90,35 80,40 90,45" fill="var(--warning)" stroke="none" /> <!-- Top, flowing left -->
+                                    <polygon points="45,70 55,70 50,80" fill="var(--warning)" stroke="none" /> <!-- Left, flowing down -->
+                                    <polygon points="95,105 105,110 95,115" fill="var(--warning)" stroke="none" /> <!-- Branch 1, flowing right -->
+                                    <polygon points="95,175 105,180 95,185" fill="var(--warning)" stroke="none" /> <!-- Branch 2, flowing right -->
+                                    <polygon points="245,70 255,70 250,60" fill="var(--warning)" stroke="none" /> <!-- Right, flowing up -->
+                                </svg>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 4: NEW - Interactive Animated Flow
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2 style="margin-bottom: 0.5rem;">Visualizing Current Flow</h2>
+                    <p class="delay-1" style="color: var(--text-dim); margin-bottom: 2rem;">Notice how the current (yellow dots) splits at the junction and joins back together.</p>
+                    
+                    <div class="glass-card delay-2" style="position: relative; max-width: 600px; margin: 0 auto; padding: 2rem;">
+                        <div style="position: relative; width: 100%; max-width: 400px; aspect-ratio: 400/250; margin: 0 auto;">
+                            <!-- Base SVG -->
+                            <svg viewBox="0 0 400 250" style="position: absolute; top:0; left:0; width: 100%; height: 100%;">
+                                <!-- Wires -->
+                                <path d="M 170 40 L 80 40 L 80 180 L 320 180 L 320 40 L 190 40" stroke="var(--text-dim)" stroke-width="4" fill="none" opacity="0.5"/>
+                                <line x1="80" y1="110" x2="320" y2="110" stroke="var(--text-dim)" stroke-width="4" opacity="0.5"/>
+                                
+                                <!-- Cell (Battery) -->
+                                <line x1="170" y1="20" x2="170" y2="60" stroke="var(--text-light)" stroke-width="2"/>
+                                <line x1="190" y1="30" x2="190" y2="50" stroke="var(--text-light)" stroke-width="6"/>
+                                <text x="180" y="15" class="circuit-label" text-anchor="middle" font-size="14px">Cell</text>
+
+                                <!-- Lamps -->
+                                <circle cx="200" cy="110" r="15" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="189" y1="99" x2="211" y2="121" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="211" y1="99" x2="189" y2="121" stroke="var(--text-light)" stroke-width="3"/>
+                                
+                                <circle cx="200" cy="180" r="15" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="189" y1="169" x2="211" y2="191" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="211" y1="169" x2="189" y2="191" stroke="var(--text-light)" stroke-width="3"/>
+                            </svg>
+
+                            <!-- Animated Canvas -->
+                            <canvas id="flow-canvas" width="400" height="250" style="position: absolute; top:0; left:0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const canvas = container.querySelector('#flow-canvas');
+                const ctx = canvas.getContext('2d');
+                let animationId;
+                let particles = [];
+                let frameCount = 0;
+                
+                // Coordinates strictly match SVG geometry
+                const N = {
+                    A: {x: 170, y: 40},  // Cell Pos (+)
+                    B: {x: 80, y: 40},   // Top Left
+                    C: {x: 80, y: 110},  // Mid Left (Junction 1)
+                    D: {x: 80, y: 180},  // Bot Left
+                    E: {x: 320, y: 180}, // Bot Right
+                    F: {x: 320, y: 110}, // Mid Right (Junction 2)
+                    G: {x: 320, y: 40},  // Top Right
+                    H: {x: 190, y: 40}   // Cell Neg (-)
+                };
+
+                // Define routes
+                const innerBranch = [N.A, N.B, N.C, N.F, N.G, N.H];
+                const outerBranch = [N.A, N.B, N.C, N.D, N.E, N.F, N.G, N.H];
+
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Spawn new current particles
+                    if (frameCount % 25 === 0) {
+                        particles.push({
+                            x: N.A.x, y: N.A.y,
+                            path: Math.random() > 0.5 ? innerBranch : outerBranch,
+                            targetIdx: 1,
+                            active: true
+                        });
+                    }
+
+                    // Update & Draw particles
+                    const speed = 2.5;
+                    for (let i = 0; i < particles.length; i++) {
+                        let p = particles[i];
+                        if (!p.active) continue;
+
+                        let target = p.path[p.targetIdx];
+                        let dx = target.x - p.x;
+                        let dy = target.y - p.y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+
+                        if (dist < speed) {
+                            p.x = target.x;
+                            p.y = target.y;
+                            p.targetIdx++;
+                            if (p.targetIdx >= p.path.length) p.active = false;
+                        } else {
+                            p.x += (dx / dist) * speed;
+                            p.y += (dy / dist) * speed;
+                        }
+
+                        if (p.active) {
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                            ctx.fillStyle = '#fde047'; // Bright yellow core
+                            ctx.shadowBlur = 10;
+                            ctx.shadowColor = '#f59e0b'; // Orange glow
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
+                        }
+                    }
+
+                    // Remove finished particles
+                    for (let i = particles.length - 1; i >= 0; i--) {
+                        if (!particles[i].active) particles.splice(i, 1);
+                    }
+
+                    frameCount++;
+                    animationId = requestAnimationFrame(draw);
+                }
+                
+                draw(); // start loop
+                renderMath();
+                
+                // Must return cleanup function!
+                return () => cancelAnimationFrame(animationId);
+            }
+        },
+
+        // SLIDE 5: Advantages of Parallel
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Why do we use Parallel Circuits?</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 800px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-house"></i> Real Life Think</div>
+                        <p style="text-align: center; font-size: 1.3rem; color: white; padding: 0.5rem 0;">Think about the lights in your house. They are connected in parallel. Why is this important?</p>
+                    </div>
+
+                    <div class="reveal-card delay-2" id="advantage-reveal" role="button" tabindex="0" style="max-width: 800px; margin: 0 auto;">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-hand-pointer" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary);"></i>
+                            <h3 style="color: white;">Click to reveal the Advantages</h3>
+                        </div>
+                        <div class="reveal-content text-left">
+                            <div class="pedagogical-badge" style="color: var(--accent); margin-bottom: 1rem;"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                            <h3 style="color: var(--accent); font-size: 1.5rem; margin-bottom: 1rem;">Two Big Advantages:</h3>
+                            <ul style="margin-left: 2rem; color: white; font-size: 1.2rem; display: flex; flex-direction: column; gap: 1rem;">
+                                <li><strong>Independent Control:</strong> Components can be switched on and off separately. (You can turn off the kitchen light without turning off the bedroom light!)</li>
+                                <li><strong>Reliability:</strong> If a component in one branch stops working (e.g., a bulb breaks), the other branches <strong>keep working</strong>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCard = container.querySelector('#advantage-reveal');
+                const handler = () => { revealCard.classList.add('revealed'); };
+                revealCard.addEventListener('click', handler);
+                renderMath();
+                return () => revealCard.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 6: The Current Rule
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">The Rule for Parallel Circuits</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 900px; margin: 0 auto 2rem auto; text-align: center;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-ruler"></i> The Golden Rule</div>
+                        <p style="color: white; font-size: 1.4rem; padding: 1rem 0;">
+                            The current through the cell is equal to the <strong>total</strong> of the current in all the branches.
+                        </p>
+                        <div style="background: rgba(0,0,0,0.4); padding: 1rem; border-radius: 8px; display: inline-block;">
+                            <span style="font-size: 1.5rem; color: var(--accent);">$$\\text{Total Current} = \\text{Branch}_1 + \\text{Branch}_2 + \\text{Branch}_3$$</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-card text-center delay-2" style="max-width: 600px; margin: 0 auto;">
+                        <div style="position: relative; width: 100%; max-width: 400px; aspect-ratio: 400/250; margin: 0 auto;">
+                            <svg class="circuit-svg" viewBox="0 0 400 250">
+                                <!-- Wires -->
+                                <path d="M 130 40 L 80 40 L 80 210 L 320 210 L 320 40 L 150 40" stroke="var(--text-light)" stroke-width="4" fill="none" />
+                                <line x1="80" y1="96" x2="320" y2="96" stroke="var(--text-light)" stroke-width="4" />
+                                <line x1="80" y1="153" x2="320" y2="153" stroke="var(--text-light)" stroke-width="4" />
+
+                                <!-- Cell -->
+                                <line x1="130" y1="20" x2="130" y2="60" stroke="var(--text-light)" stroke-width="2"/>
+                                <line x1="150" y1="30" x2="150" y2="50" stroke="var(--text-light)" stroke-width="6"/>
+
+                                <!-- Total Ammeter -->
+                                <circle cx="210" cy="40" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                <text x="210" y="40" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                <text x="210" y="15" class="circuit-label" fill="var(--warning)" font-weight="800" text-anchor="middle">6 A</text>
+
+                                <!-- Branch Ammeters & Labels -->
+                                <circle cx="280" cy="96" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                <text x="280" y="96" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                <text x="315" y="85" class="circuit-label" fill="var(--accent)" font-size="14px">2 A</text>
+
+                                <circle cx="280" cy="153" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                <text x="280" y="153" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                <text x="315" y="142" class="circuit-label" fill="var(--accent)" font-size="14px">2 A</text>
+
+                                <circle cx="280" cy="210" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                <text x="280" y="210" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                <text x="315" y="199" class="circuit-label" fill="var(--accent)" font-size="14px">2 A</text>
+                                
+                                <!-- Lamps -->
+                                <circle cx="160" cy="96" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="150" y1="86" x2="170" y2="106" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="170" y1="86" x2="150" y2="106" stroke="var(--text-light)" stroke-width="3"/>
+                                
+                                <circle cx="160" cy="153" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="150" y1="143" x2="170" y2="163" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="170" y1="143" x2="150" y2="163" stroke="var(--text-light)" stroke-width="3"/>
+
+                                <circle cx="160" cy="210" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="150" y1="200" x2="170" y2="220" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="170" y1="200" x2="150" y2="220" stroke="var(--text-light)" stroke-width="3"/>
+
+                                <!-- Direction Arrows -->
+                                <polygon points="110,35 100,40 110,45" fill="var(--warning)" stroke="none" />
+                                <polygon points="75,60 85,60 80,70" fill="var(--warning)" stroke="none" />
+                                <polygon points="230,91 240,96 230,101" fill="var(--warning)" stroke="none" />
+                                <polygon points="230,148 240,153 230,158" fill="var(--warning)" stroke="none" />
+                                <polygon points="230,205 240,210 230,215" fill="var(--warning)" stroke="none" />
+                                <polygon points="315,60 325,60 320,50" fill="var(--warning)" stroke="none" />
+                            </svg>
+                        </div>
+                        <p style="color: var(--text-dim); margin-top: 1rem;">Notice how the <strong>6 A</strong> from the cell splits equally into <strong>2 A</strong> for each branch!</p>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 7: Calculation Example 1 (Slow Paced)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Example 1: Finding the Total Current</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem; color: var(--text-dim);">Let's take it step by step. Copy this example into your notebook.</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; align-items: center;">
+                        
+                        <div class="glass-card text-center">
+                            <div style="position: relative; width: 100%; max-width: 300px; aspect-ratio: 300/200; margin: 0 auto;">
+                                <svg class="circuit-svg" viewBox="0 0 300 200">
+                                    <!-- Wires -->
+                                    <path d="M 120 40 L 50 40 L 50 160 L 250 160 L 250 40 L 140 40" stroke="var(--text-light)" stroke-width="4" fill="none" />
+                                    <line x1="50" y1="100" x2="250" y2="100" stroke="var(--text-light)" stroke-width="4" />
+                                    
+                                    <!-- Cell -->
+                                    <line x1="120" y1="20" x2="120" y2="60" stroke="var(--text-light)" stroke-width="2"/>
+                                    <line x1="140" y1="30" x2="140" y2="50" stroke="var(--text-light)" stroke-width="6"/>
+
+                                    <!-- Total Ammeter (Unknown) -->
+                                    <circle cx="80" cy="40" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="80" y="40" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="80" y="15" class="circuit-label" fill="var(--warning)" font-weight="800" text-anchor="middle">? A</text>
+
+                                    <!-- Branch 1 Ammeter -->
+                                    <circle cx="210" cy="100" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="210" y="100" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="210" y="75" class="circuit-label" fill="var(--cold)" font-weight="800" text-anchor="middle">1.0 A</text>
+
+                                    <!-- Branch 2 Ammeter -->
+                                    <circle cx="210" cy="160" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="210" y="160" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="210" y="135" class="circuit-label" fill="var(--cold)" font-weight="800" text-anchor="middle">2.0 A</text>
+
+                                    <!-- Lamps -->
+                                    <circle cx="140" cy="100" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="130" y1="90" x2="150" y2="110" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="150" y1="90" x2="130" y2="110" stroke="var(--text-light)" stroke-width="3"/>
+                                    
+                                    <circle cx="140" cy="160" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="130" y1="150" x2="150" y2="170" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="150" y1="150" x2="130" y2="170" stroke="var(--text-light)" stroke-width="3"/>
+
+                                    <!-- Directional Arrows -->
+                                    <polygon points="105,35 95,40 105,45" fill="var(--warning)" stroke="none" />
+                                    <polygon points="45,60 55,60 50,70" fill="var(--warning)" stroke="none" />
+                                    <polygon points="175,95 185,100 175,105" fill="var(--warning)" stroke="none" />
+                                    <polygon points="175,155 185,160 175,165" fill="var(--warning)" stroke="none" />
+                                    <polygon points="245,65 255,65 250,55" fill="var(--warning)" stroke="none" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="pedagogical-note note-write">
+                                <h3 style="color: var(--primary);">Step 1: Write the Rule</h3>
+                                <p style="color: white; margin-bottom: 1rem;">$$I_{total} = I_1 + I_2$$</p>
+                                
+                                <h3 style="color: var(--primary);">Step 2: Put in the numbers</h3>
+                                <p style="color: white; margin-bottom: 1rem;">$$I_{total} = 1.0\\text{ A} + 2.0\\text{ A}$$</p>
+                                
+                                <h3 style="color: var(--primary);">Step 3: Calculate</h3>
+                                <div style="background: rgba(16, 185, 129, 0.2); padding: 0.5rem; border-radius: 8px; text-align: center; border: 1px solid var(--accent);">
+                                    <p style="color: var(--accent); font-weight: bold; font-size: 1.3rem;">Total Current = 3.0 A</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 8: Calculation Example 2 (Finding X)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Example 2: Finding a Missing Branch (X)</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem; color: var(--text-dim);">Sometimes we know the total, but a branch is missing.</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; align-items: center;">
+                        
+                        <div class="glass-card text-center">
+                            <div style="position: relative; width: 100%; max-width: 300px; aspect-ratio: 300/230; margin: 0 auto;">
+                                <svg class="circuit-svg" viewBox="0 0 300 230">
+                                    <!-- Wires -->
+                                    <path d="M 120 40 L 50 40 L 50 200 L 250 200 L 250 40 L 140 40" stroke="var(--text-light)" stroke-width="4" fill="none" />
+                                    <line x1="50" y1="90" x2="250" y2="90" stroke="var(--text-light)" stroke-width="4" />
+                                    <line x1="50" y1="145" x2="250" y2="145" stroke="var(--text-light)" stroke-width="4" />
+                                    
+                                    <!-- Cell -->
+                                    <line x1="120" y1="20" x2="120" y2="60" stroke="var(--text-light)" stroke-width="2"/>
+                                    <line x1="140" y1="30" x2="140" y2="50" stroke="var(--text-light)" stroke-width="6"/>
+
+                                    <!-- Total Ammeter (Known) -->
+                                    <circle cx="80" cy="40" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="80" y="40" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="80" y="15" class="circuit-label" fill="var(--warning)" font-weight="800" text-anchor="middle">5.5 A</text>
+
+                                    <!-- Branch 1 (Buzzer - Cambridge Dome style) -->
+                                    <path d="M 130 90 A 15 15 0 0 1 170 90 Z" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="140" y1="90" x2="140" y2="105" stroke="var(--text-light)" stroke-width="3" />
+                                    <line x1="160" y1="90" x2="160" y2="105" stroke="var(--text-light)" stroke-width="3" />
+                                    <line x1="130" y1="105" x2="170" y2="105" stroke="var(--text-light)" stroke-width="3" />
+                                    
+                                    <circle cx="210" cy="90" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="210" y="90" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="210" y="65" class="circuit-label" fill="var(--danger)" font-weight="800" text-anchor="middle">X A</text>
+
+                                    <!-- Branch 2 -->
+                                    <circle cx="150" cy="145" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="140" y1="135" x2="160" y2="155" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="160" y1="135" x2="140" y2="155" stroke="var(--text-light)" stroke-width="3"/>
+                                    
+                                    <circle cx="210" cy="145" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="210" y="145" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="210" y="120" class="circuit-label" fill="var(--cold)" font-weight="800" text-anchor="middle">3.0 A</text>
+
+                                    <!-- Branch 3 -->
+                                    <circle cx="150" cy="200" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="140" y1="190" x2="160" y2="210" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="160" y1="190" x2="140" y2="210" stroke="var(--text-light)" stroke-width="3"/>
+                                    
+                                    <circle cx="210" cy="200" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="210" y="200" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="210" y="175" class="circuit-label" fill="var(--cold)" font-weight="800" text-anchor="middle">1.5 A</text>
+                                    
+                                    <!-- Directional Arrows -->
+                                    <polygon points="105,35 95,40 105,45" fill="var(--warning)" stroke="none" />
+                                    <polygon points="45,60 55,60 50,70" fill="var(--warning)" stroke="none" />
+                                    <polygon points="90,85 100,90 90,95" fill="var(--warning)" stroke="none" />
+                                    <polygon points="90,140 100,145 90,150" fill="var(--warning)" stroke="none" />
+                                    <polygon points="90,195 100,200 90,205" fill="var(--warning)" stroke="none" />
+                                    <polygon points="245,60 255,60 250,50" fill="var(--warning)" stroke="none" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="pedagogical-note note-write">
+                                <h3 style="color: var(--primary);">Step 1: Write the Equation</h3>
+                                <p style="color: white; margin-bottom: 0.5rem; font-size:1rem;">$$5.5 = X + 3.0 + 1.5$$</p>
+                                
+                                <h3 style="color: var(--primary);">Step 2: Add known branches</h3>
+                                <p style="color: white; margin-bottom: 0.5rem; font-size:1rem;">$$5.5 = X + 4.5$$</p>
+                                
+                                <h3 style="color: var(--primary);">Step 3: Subtract to find X</h3>
+                                <p style="color: white; margin-bottom: 0.5rem; font-size:1rem;">$$X = 5.5 - 4.5$$</p>
+                                <div style="background: rgba(16, 185, 129, 0.2); padding: 0.5rem; border-radius: 8px; text-align: center; border: 1px solid var(--accent);">
+                                    <p style="color: var(--accent); font-weight: bold; font-size: 1.3rem;">X = 1.0 A</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 9: Practice Example
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Your Turn: Practice Example</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem; color: var(--text-dim);">Work out the missing current (X) in your notebook.</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; align-items: center;">
+                        <div class="glass-card text-center">
+                            <div style="position: relative; width: 100%; max-width: 300px; aspect-ratio: 300/200; margin: 0 auto;">
+                                <svg class="circuit-svg" viewBox="0 0 300 200">
+                                    <!-- Wires -->
+                                    <path d="M 120 40 L 50 40 L 50 160 L 250 160 L 250 40 L 140 40" stroke="var(--text-light)" stroke-width="4" fill="none" />
+                                    <line x1="50" y1="100" x2="250" y2="100" stroke="var(--text-light)" stroke-width="4" />
+                                    
+                                    <!-- Cell -->
+                                    <line x1="120" y1="20" x2="120" y2="60" stroke="var(--text-light)" stroke-width="2"/>
+                                    <line x1="140" y1="30" x2="140" y2="50" stroke="var(--text-light)" stroke-width="6"/>
+
+                                    <!-- Total -->
+                                    <circle cx="80" cy="40" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="80" y="40" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="80" y="15" class="circuit-label" fill="var(--warning)" font-weight="800" text-anchor="middle">4.0 A</text>
+
+                                    <!-- Branch 1 -->
+                                    <circle cx="210" cy="100" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="210" y="100" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="210" y="75" class="circuit-label" fill="var(--cold)" font-weight="800" text-anchor="middle">1.5 A</text>
+
+                                    <!-- Branch 2 -->
+                                    <circle cx="210" cy="160" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="210" y="160" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="210" y="135" class="circuit-label" fill="var(--danger)" font-weight="800" text-anchor="middle">X A</text>
+
+                                    <!-- Lamps -->
+                                    <circle cx="140" cy="100" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="130" y1="90" x2="150" y2="110" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="150" y1="90" x2="130" y2="110" stroke="var(--text-light)" stroke-width="3"/>
+                                    
+                                    <circle cx="140" cy="160" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="130" y1="150" x2="150" y2="170" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="150" y1="150" x2="130" y2="170" stroke="var(--text-light)" stroke-width="3"/>
+
+                                    <!-- Directional Arrows -->
+                                    <polygon points="105,35 95,40 105,45" fill="var(--warning)" stroke="none" />
+                                    <polygon points="45,60 55,60 50,70" fill="var(--warning)" stroke="none" />
+                                    <polygon points="90,95 100,100 90,105" fill="var(--warning)" stroke="none" />
+                                    <polygon points="90,155 100,160 90,165" fill="var(--warning)" stroke="none" />
+                                    <polygon points="245,65 255,65 250,55" fill="var(--warning)" stroke="none" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button id="btn-reveal-1" class="btn-action" style="margin-bottom: 1.5rem;"><i class="fa-solid fa-eye"></i> Reveal Answer</button>
+                            <div id="ans-box-1" style="display: none; background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                                <h3 style="color: var(--primary);">Step 1</h3>
+                                <p style="color: white; margin-bottom: 1rem;">$$4.0 = 1.5 + X$$</p>
+                                <h3 style="color: var(--primary);">Step 2</h3>
+                                <p style="color: white; margin-bottom: 1rem;">$$X = 4.0 - 1.5$$</p>
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">X = 2.5 A</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-reveal-1');
+                const box = container.querySelector('#ans-box-1');
+                const handler = () => {
+                    box.style.display = 'block';
+                    box.classList.add('anim-enter');
+                    btn.style.display = 'none';
+                };
+                btn.addEventListener('click', handler);
+                renderMath();
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 10: Challenge Example
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Challenge Example</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem; color: var(--text-dim);">Can you solve a circuit with <strong>three</strong> branches?</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; align-items: center;">
+                        <div class="glass-card text-center">
+                            <div style="position: relative; width: 100%; max-width: 300px; aspect-ratio: 300/230; margin: 0 auto;">
+                                <svg class="circuit-svg" viewBox="0 0 300 230">
+                                    <!-- Wires -->
+                                    <path d="M 120 40 L 50 40 L 50 200 L 250 200 L 250 40 L 140 40" stroke="var(--text-light)" stroke-width="4" fill="none" />
+                                    <line x1="50" y1="90" x2="250" y2="90" stroke="var(--text-light)" stroke-width="4" />
+                                    <line x1="50" y1="145" x2="250" y2="145" stroke="var(--text-light)" stroke-width="4" />
+                                    
+                                    <!-- Cell -->
+                                    <line x1="120" y1="20" x2="120" y2="60" stroke="var(--text-light)" stroke-width="2"/>
+                                    <line x1="140" y1="30" x2="140" y2="50" stroke="var(--text-light)" stroke-width="6"/>
+
+                                    <!-- Total -->
+                                    <circle cx="80" cy="40" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="80" y="40" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="80" y="15" class="circuit-label" fill="var(--warning)" font-weight="800" text-anchor="middle">9.0 A</text>
+
+                                    <!-- Branch 1 -->
+                                    <circle cx="140" cy="90" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="130" y1="80" x2="150" y2="100" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="150" y1="80" x2="130" y2="100" stroke="var(--text-light)" stroke-width="3"/>
+                                    
+                                    <circle cx="210" cy="90" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="210" y="90" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="210" y="65" class="circuit-label" fill="var(--cold)" font-weight="800" text-anchor="middle">2.0 A</text>
+
+                                    <!-- Branch 2 -->
+                                    <circle cx="140" cy="145" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="130" y1="135" x2="150" y2="155" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="150" y1="135" x2="130" y2="155" stroke="var(--text-light)" stroke-width="3"/>
+                                    
+                                    <circle cx="210" cy="145" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="210" y="145" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="210" y="120" class="circuit-label" fill="var(--cold)" font-weight="800" text-anchor="middle">3.5 A</text>
+
+                                    <!-- Branch 3 -->
+                                    <circle cx="140" cy="200" r="14" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="130" y1="190" x2="150" y2="210" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="150" y1="190" x2="130" y2="210" stroke="var(--text-light)" stroke-width="3"/>
+                                    
+                                    <circle cx="210" cy="200" r="16" fill="var(--bg-deep)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <text x="210" y="200" class="circuit-label" text-anchor="middle" dominant-baseline="central">A</text>
+                                    <text x="210" y="175" class="circuit-label" fill="var(--danger)" font-weight="800" text-anchor="middle">X A</text>
+
+                                    <!-- Directional Arrows -->
+                                    <polygon points="105,35 95,40 105,45" fill="var(--warning)" stroke="none" />
+                                    <polygon points="45,60 55,60 50,70" fill="var(--warning)" stroke="none" />
+                                    <polygon points="90,85 100,90 90,95" fill="var(--warning)" stroke="none" />
+                                    <polygon points="90,140 100,145 90,150" fill="var(--warning)" stroke="none" />
+                                    <polygon points="90,195 100,200 90,205" fill="var(--warning)" stroke="none" />
+                                    <polygon points="245,60 255,60 250,50" fill="var(--warning)" stroke="none" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button id="btn-reveal-2" class="btn-action" style="margin-bottom: 1.5rem;"><i class="fa-solid fa-eye"></i> Reveal Answer</button>
+                            <div id="ans-box-2" style="display: none; background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                                <h3 style="color: var(--primary);">Equation</h3>
+                                <p style="color: white; margin-bottom: 1rem;">$$9.0 = 2.0 + 3.5 + X$$</p>
+                                <h3 style="color: var(--primary);">Solve</h3>
+                                <p style="color: white; margin-bottom: 1rem;">$$9.0 = 5.5 + X$$</p>
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">X = 3.5 A</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-reveal-2');
+                const box = container.querySelector('#ans-box-2');
+                const handler = () => {
+                    box.style.display = 'block';
+                    box.classList.add('anim-enter');
+                    btn.style.display = 'none';
+                };
+                btn.addEventListener('click', handler);
+                renderMath();
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 11: Video Review
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2 style="margin-bottom: 1rem;">Video Review: Series & Parallel</h2>
+                    
+                    <div class="glass-card delay-1" style="max-width: 800px; margin: 0 auto; padding: 1rem;">
+                        <div style="position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                                    src="https://www.youtube.com/embed/Hk4JEB5DITw" 
+                                    title="YouTube video player" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <div class="pedagogical-note note-task delay-2" style="max-width: 800px; margin: 2rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-eye"></i> Watch & Think</div>
+                        <p style="color: white; font-size: 1.15rem;">As you watch the video, pay close attention to what happens to the brightness of the bulbs when a new branch is added in parallel compared to adding one in series.</p>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 12: Summary & Homework
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-flag-checkered delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h2 class="delay-1" style="font-size: 2.5rem; color: white;">Lesson Complete!</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 700px; margin: 2rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> Summary</div>
+                        <p style="color: white; margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Series:</strong> One path. If one breaks, all stop.</p>
+                        <p style="color: white; margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Parallel:</strong> Multiple branches. They work independently.</p>
+                        <p style="color: white;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Math Rule:</strong> Cell Current = Branch 1 + Branch 2 + ...</p>
+                    </div>
+
+                    <div class="pedagogical-note note-task delay-3" style="max-width: 700px; margin: 2rem auto; text-align: left; background: rgba(245, 158, 11, 0.15); border: 2px solid var(--warning);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-book-open"></i> Homework Assignment</div>
+                        <h3 style="color: var(--warning); margin-bottom: 0.5rem;">Review & Questions</h3>
+                        <p style="color: white; font-size: 1.15rem; margin-bottom: 1rem;">
+                            Please read the slides posted to <strong>Google Classroom</strong> and answer <strong>questions 1-5</strong>.
+                        </p>
+                        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                            <p style="color: var(--text-dim); font-size: 1rem;">
+                                <i class="fa-solid fa-hand-holding-hand"></i> Make sure to give your completed answers directly to <strong>Mr. Bowen</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        // Execute cleanup from previous slide if it exists
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        // Render HTML synchronously
+        container.innerHTML = slide.template();
+        
+        // Execute script immediately
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        // Update UI
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
