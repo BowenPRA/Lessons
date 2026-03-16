@@ -450,19 +450,19 @@
             script: () => { renderMath(); return () => {}; }
         },
 
-        // SLIDE 4: NEW - Interactive Animated Flow
+        // SLIDE 4: UPDATED - Interactive Animated Flow with Switch
         {
             template: () => `
                 <div class="anim-enter text-center">
                     <h2 style="margin-bottom: 0.5rem;">Visualizing Current Flow</h2>
-                    <p class="delay-1" style="color: var(--text-dim); margin-bottom: 2rem;">Notice how the current (yellow dots) splits at the junction and joins back together.</p>
+                    <p class="delay-1" style="color: var(--text-dim); margin-bottom: 1.5rem;">Click the button below to flip the switch. Notice how the current stops everywhere instantly!</p>
                     
                     <div class="glass-card delay-2" style="position: relative; max-width: 600px; margin: 0 auto; padding: 2rem;">
                         <div style="position: relative; width: 100%; max-width: 400px; aspect-ratio: 400/250; margin: 0 auto;">
                             <!-- Base SVG -->
                             <svg viewBox="0 0 400 250" style="position: absolute; top:0; left:0; width: 100%; height: 100%;">
-                                <!-- Wires -->
-                                <path d="M 170 40 L 80 40 L 80 180 L 320 180 L 320 40 L 190 40" stroke="var(--text-dim)" stroke-width="4" fill="none" opacity="0.5"/>
+                                <!-- Wires (with gap for switch on the top path) -->
+                                <path d="M 170 40 L 140 40 M 100 40 L 80 40 L 80 180 L 320 180 L 320 40 L 190 40" stroke="var(--text-dim)" stroke-width="4" fill="none" opacity="0.5"/>
                                 <line x1="80" y1="110" x2="320" y2="110" stroke="var(--text-dim)" stroke-width="4" opacity="0.5"/>
                                 
                                 <!-- Cell (Battery) -->
@@ -470,18 +470,28 @@
                                 <line x1="190" y1="30" x2="190" y2="50" stroke="var(--text-light)" stroke-width="6"/>
                                 <text x="180" y="15" class="circuit-label" text-anchor="middle" font-size="14px">Cell</text>
 
+                                <!-- Switch Element -->
+                                <circle cx="140" cy="40" r="4" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="2"/>
+                                <circle cx="100" cy="40" r="4" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="2"/>
+                                <line id="anim-switch-lever" x1="140" y1="40" x2="100" y2="40" stroke="var(--text-light)" stroke-width="4" style="transition: all 0.3s ease;"/>
+
                                 <!-- Lamps -->
-                                <circle cx="200" cy="110" r="15" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                <circle id="anim-lamp-1" cx="200" cy="110" r="15" fill="#fde047" stroke="var(--text-light)" stroke-width="3" style="transition: fill 0.3s ease;"/>
                                 <line x1="189" y1="99" x2="211" y2="121" stroke="var(--text-light)" stroke-width="3"/>
                                 <line x1="211" y1="99" x2="189" y2="121" stroke="var(--text-light)" stroke-width="3"/>
                                 
-                                <circle cx="200" cy="180" r="15" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                <circle id="anim-lamp-2" cx="200" cy="180" r="15" fill="#fde047" stroke="var(--text-light)" stroke-width="3" style="transition: fill 0.3s ease;"/>
                                 <line x1="189" y1="169" x2="211" y2="191" stroke="var(--text-light)" stroke-width="3"/>
                                 <line x1="211" y1="169" x2="189" y2="191" stroke="var(--text-light)" stroke-width="3"/>
                             </svg>
 
-                            <!-- Animated Canvas -->
+                            <!-- Animated Canvas overlay for current -->
                             <canvas id="flow-canvas" width="400" height="250" style="position: absolute; top:0; left:0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+                        </div>
+                        
+                        <!-- Control Button -->
+                        <div style="margin-top: 1.5rem;">
+                            <button id="btn-toggle-flow" class="btn-action" style="background-color: var(--primary);"><i class="fa-solid fa-toggle-on"></i> Open Switch</button>
                         </div>
                     </div>
                 </div>
@@ -489,10 +499,48 @@
             script: (container) => {
                 const canvas = container.querySelector('#flow-canvas');
                 const ctx = canvas.getContext('2d');
+                const btnToggle = container.querySelector('#btn-toggle-flow');
+                const switchLever = container.querySelector('#anim-switch-lever');
+                const lamp1 = container.querySelector('#anim-lamp-1');
+                const lamp2 = container.querySelector('#anim-lamp-2');
+                
                 let animationId;
                 let particles = [];
                 let frameCount = 0;
-                
+                let isSwitchClosed = true;
+
+                // Event Listener for the Switch toggle
+                const toggleSwitch = () => {
+                    isSwitchClosed = !isSwitchClosed;
+                    
+                    if (isSwitchClosed) {
+                        // Close the switch physically (lever down)
+                        switchLever.setAttribute('x2', '100');
+                        switchLever.setAttribute('y2', '40');
+                        // Turn on lamps
+                        lamp1.setAttribute('fill', '#fde047');
+                        lamp2.setAttribute('fill', '#fde047');
+                        // Update button UI
+                        btnToggle.innerHTML = '<i class="fa-solid fa-toggle-on"></i> Open Switch';
+                        btnToggle.style.backgroundColor = 'var(--primary)';
+                    } else {
+                        // Open the switch physically (lever up)
+                        switchLever.setAttribute('x2', '115');
+                        switchLever.setAttribute('y2', '20');
+                        // Turn off lamps
+                        lamp1.setAttribute('fill', 'var(--bg-panel)');
+                        lamp2.setAttribute('fill', 'var(--bg-panel)');
+                        // Update button UI
+                        btnToggle.innerHTML = '<i class="fa-solid fa-toggle-off"></i> Close Switch';
+                        btnToggle.style.backgroundColor = 'var(--text-dim)';
+                        // Instantly stop all current particles
+                        particles = [];
+                        ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                    }
+                };
+
+                btnToggle.addEventListener('click', toggleSwitch);
+
                 // Coordinates strictly match SVG geometry
                 const N = {
                     A: {x: 170, y: 40},  // Cell Pos (+)
@@ -512,51 +560,53 @@
                 function draw() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                    // Spawn new current particles
-                    if (frameCount % 25 === 0) {
-                        particles.push({
-                            x: N.A.x, y: N.A.y,
-                            path: Math.random() > 0.5 ? innerBranch : outerBranch,
-                            targetIdx: 1,
-                            active: true
-                        });
-                    }
-
-                    // Update & Draw particles
-                    const speed = 2.5;
-                    for (let i = 0; i < particles.length; i++) {
-                        let p = particles[i];
-                        if (!p.active) continue;
-
-                        let target = p.path[p.targetIdx];
-                        let dx = target.x - p.x;
-                        let dy = target.y - p.y;
-                        let dist = Math.sqrt(dx*dx + dy*dy);
-
-                        if (dist < speed) {
-                            p.x = target.x;
-                            p.y = target.y;
-                            p.targetIdx++;
-                            if (p.targetIdx >= p.path.length) p.active = false;
-                        } else {
-                            p.x += (dx / dist) * speed;
-                            p.y += (dy / dist) * speed;
+                    if (isSwitchClosed) {
+                        // Spawn new current particles
+                        if (frameCount % 25 === 0) {
+                            particles.push({
+                                x: N.A.x, y: N.A.y,
+                                path: Math.random() > 0.5 ? innerBranch : outerBranch,
+                                targetIdx: 1,
+                                active: true
+                            });
                         }
 
-                        if (p.active) {
-                            ctx.beginPath();
-                            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-                            ctx.fillStyle = '#fde047'; // Bright yellow core
-                            ctx.shadowBlur = 10;
-                            ctx.shadowColor = '#f59e0b'; // Orange glow
-                            ctx.fill();
-                            ctx.shadowBlur = 0;
-                        }
-                    }
+                        // Update & Draw particles
+                        const speed = 2.5;
+                        for (let i = 0; i < particles.length; i++) {
+                            let p = particles[i];
+                            if (!p.active) continue;
 
-                    // Remove finished particles
-                    for (let i = particles.length - 1; i >= 0; i--) {
-                        if (!particles[i].active) particles.splice(i, 1);
+                            let target = p.path[p.targetIdx];
+                            let dx = target.x - p.x;
+                            let dy = target.y - p.y;
+                            let dist = Math.sqrt(dx*dx + dy*dy);
+
+                            if (dist < speed) {
+                                p.x = target.x;
+                                p.y = target.y;
+                                p.targetIdx++;
+                                if (p.targetIdx >= p.path.length) p.active = false;
+                            } else {
+                                p.x += (dx / dist) * speed;
+                                p.y += (dy / dist) * speed;
+                            }
+
+                            if (p.active) {
+                                ctx.beginPath();
+                                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                                ctx.fillStyle = '#fde047'; // Bright yellow core
+                                ctx.shadowBlur = 10;
+                                ctx.shadowColor = '#f59e0b'; // Orange glow
+                                ctx.fill();
+                                ctx.shadowBlur = 0;
+                            }
+                        }
+
+                        // Remove finished particles
+                        for (let i = particles.length - 1; i >= 0; i--) {
+                            if (!particles[i].active) particles.splice(i, 1);
+                        }
                     }
 
                     frameCount++;
@@ -566,8 +616,11 @@
                 draw(); // start loop
                 renderMath();
                 
-                // Must return cleanup function!
-                return () => cancelAnimationFrame(animationId);
+                // Must return cleanup function to prevent memory leaks!
+                return () => {
+                    cancelAnimationFrame(animationId);
+                    btnToggle.removeEventListener('click', toggleSwitch);
+                };
             }
         },
 
