@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intro to Circuits - Year 9 Science</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Bible Standard) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Secondary Background */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Success/Acid Green */
+            --warning: #f59e0b;        /* Hazard Orange */
+            --danger: #ef4444;         /* Heat Red */
+            --cold: #0ea5e9;           /* Cold Blue */
+            --text-light: #f1f5f9;     /* Main Text */
+            --text-dim: #94a3b8;       /* Subtitles */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-dim); }
+
+        strong { color: var(--text-light); font-weight: 700; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Signposting System (Pedagogical Framework) */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            animation: slideIn 0.5s ease;
+        }
+        .pedagogical-badge {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { background: rgba(139, 92, 246, 0.1); border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { background: rgba(16, 185, 129, 0.1); border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Reveal Card */
+        .reveal-card {
+            background: var(--bg-panel);
+            border: 2px dashed var(--primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .reveal-card:hover { background: rgba(139, 92, 246, 0.1); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .reveal-card.revealed { border-style: solid; background: rgba(16, 185, 129, 0.1); border-color: var(--accent); cursor: default; }
+        .reveal-card.revealed .pre-reveal { display: none; }
+        .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+        }
+        .btn-action:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+        }
+
+        /* Circuit Diagrams */
+        .circuit-svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--text-light);
+            stroke-width: 4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            display: block;
+        }
+        .circuit-label {
+            fill: var(--text-light);
+            stroke: none;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        @media (max-width: 1024px) {
+            .grid-4 { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-bolt"></i> Year 9 Science</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">9.0 Intro to Circuits</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; color: var(--primary);">
+            Mr. Bowen
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    // Helper function to re-render MathJax formulas on new slides
+    const renderMath = () => {
+        if (window.MathJax) {
+            window.MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+        }
+    };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Title & Objectives
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-plug-circle-bolt delay-1" style="font-size: 5rem; color: var(--warning); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Introduction to Circuits</h1>
+                    <h2 class="delay-1" style="color: var(--accent);">How do things turn on?</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objectives</div>
+                        <ul style="margin-left: 1rem; display: grid; gap: 1rem; list-style-type: none; padding: 0; margin-top: 0.5rem;">
+                            <li style="font-size: 1.3rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>⚡</span>
+                                <span style="color: white; font-weight: 500;">Define <strong>Electricity</strong>, <strong>Current</strong>, <strong>Voltage</strong>, and <strong>Resistance</strong>.</span>
+                            </li>
+                            <li style="font-size: 1.3rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>🔄</span>
+                                <span style="color: white; font-weight: 500;">Understand how moving electrons create light and power devices.</span>
+                            </li>
+                            <li style="font-size: 1.3rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>✍️</span>
+                                <span style="color: white; font-weight: 500;">Learn the 12 scientific symbols to draw a circuit.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 2: What is Electricity?
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">The Big Question</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 800px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-brain"></i> Think about it</div>
+                        <p style="text-align: center; font-size: 1.5rem; color: white; padding: 1rem 0;">What actually is "Electricity"? What is flowing inside the wire?</p>
+                    </div>
+
+                    <div class="reveal-card delay-2" id="electricity-reveal" role="button" tabindex="0" style="max-width: 800px; margin: 0 auto;">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-hand-pointer" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary);"></i>
+                            <h3 style="color: white;">Click to reveal the answer</h3>
+                            <p style="font-size: 0.95rem; color: var(--text-dim);">(Be ready to write this in your notebook!)</p>
+                        </div>
+                        <div class="reveal-content text-left">
+                            <div class="pedagogical-badge" style="color: var(--accent); margin-bottom: 1rem;"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                            <h3 style="color: var(--accent); font-size: 1.8rem; margin-bottom: 1rem;">Electricity is moving Electrons.</h3>
+                            <p style="font-size: 1.3rem; color: white; line-height: 1.6;">Electricity is simply the flow of tiny particles called <strong>electrons</strong> traveling through a wire.</p>
+                            <br>
+                            <p style="color: var(--text-dim); font-size: 1.1rem;">Remember Chemistry? Atoms have electrons on the outside. In metals (like copper wires), these electrons are free to move and push each other along!</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCard = container.querySelector('#electricity-reveal');
+                const handler = () => { revealCard.classList.add('revealed'); };
+                revealCard.addEventListener('click', handler);
+                return () => revealCard.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 3: Are Electrons Used Up?
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">A Very Common Mistake</h2>
+                    
+                    <div class="pedagogical-note note-theory delay-1" style="max-width: 800px; margin: 0 auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> Big Rule</div>
+                        <h3 style="color: var(--danger); margin-bottom: 0.5rem;">Electrons are NEVER used up.</h3>
+                        <p style="color: white; font-size: 1.3rem; margin-bottom: 1rem;">When a lightbulb turns on, it does not "eat" or destroy the electrons.</p>
+                        <p style="color: white; font-size: 1.3rem;">The exact same number of electrons that leave the battery will return to the battery.</p>
+                    </div>
+                    
+                    <p class="text-center delay-2" style="margin-top: 2rem; color: var(--text-dim); font-size: 1.3rem;">If they aren't used up, how do they power things?</p>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 4: Visualizing Energy Flow + Explanation
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">How do things turn on?</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1100px; margin: 0 auto; align-items: stretch;">
+                        
+                        <!-- Left Side: Animation -->
+                        <div class="glass-card" style="position: relative; padding: 1rem; display: flex; flex-direction: column; justify-content: center;">
+                            <p style="color: var(--text-dim); margin-bottom: 1rem; font-size: 1.1rem; text-align: center;">
+                                Watch the electrons. They are <strong style="color: var(--warning);">Yellow</strong> when full of energy, and <strong style="color: #64748b;">Grey</strong> when empty.
+                            </p>
+                            <div style="position: relative; width: 100%; aspect-ratio: 500/300;">
+                                <!-- Base SVG -->
+                                <svg viewBox="0 0 500 300" style="position: absolute; top:0; left:0; width: 100%; height: 100%;">
+                                    <path d="M 270 50 L 400 50 L 400 250 L 100 250 L 100 50 L 230 50" stroke="var(--text-dim)" stroke-width="6" fill="none" opacity="0.3"/>
+                                    <!-- Cell -->
+                                    <line x1="250" y1="20" x2="250" y2="80" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line x1="270" y1="35" x2="270" y2="65" stroke="var(--text-light)" stroke-width="8"/>
+                                    <text x="260" y="15" class="circuit-label" text-anchor="middle" font-size="16px">Battery</text>
+                                    <!-- Lamp -->
+                                    <circle id="anim-lamp" cx="250" cy="250" r="25" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="4" style="transition: fill 0.3s ease;"/>
+                                    <line x1="232" y1="232" x2="268" y2="268" stroke="var(--text-light)" stroke-width="4"/>
+                                    <line x1="268" y1="232" x2="232" y2="268" stroke="var(--text-light)" stroke-width="4"/>
+                                    <text x="250" y="295" class="circuit-label" text-anchor="middle" font-size="16px">Bulb</text>
+                                    <!-- Switch -->
+                                    <circle cx="100" cy="150" r="5" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <circle cx="100" cy="100" r="5" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                    <line id="anim-switch-lever" x1="100" y1="150" x2="100" y2="100" stroke="var(--text-light)" stroke-width="5" style="transition: all 0.3s ease;"/>
+                                    <text x="40" y="130" class="circuit-label" text-anchor="middle" font-size="16px">Switch</text>
+                                </svg>
+                                <!-- Animated Canvas -->
+                                <canvas id="flow-canvas" width="500" height="300" style="position: absolute; top:0; left:0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+                            </div>
+                            <button id="btn-toggle-flow" class="btn-action" style="background-color: var(--primary); font-size: 1.1rem; padding: 0.8rem; margin-top: 1rem;"><i class="fa-solid fa-toggle-on"></i> Turn OFF</button>
+                        </div>
+
+                        <!-- Right Side: Explanation -->
+                        <div>
+                            <div class="pedagogical-note note-write" style="margin-top: 0;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                                <h3 style="color: var(--warning);"><i class="fa-solid fa-lightbulb"></i> The Energy Transfer</h3>
+                                <p style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">If the electrons aren't used up, how does the bulb glow?</p>
+                                
+                                <ol style="margin-left: 1.5rem; color: var(--text-dim); font-size: 1.15rem; line-height: 1.6;">
+                                    <li>Moving electrons carry <strong>electrical energy</strong> from the battery.</li>
+                                    <li style="margin-top: 0.5rem;">Inside the bulb, the wire gets extremely thin.</li>
+                                    <li style="margin-top: 0.5rem;">The electrons squeeze through, creating <strong>friction</strong>.</li>
+                                    <li style="margin-top: 0.5rem;">This friction turns their electrical energy into <strong>heat and light</strong>!</li>
+                                </ol>
+                            </div>
+                            <div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--accent);">
+                                <p style="color: white; font-size: 1.1rem;"><strong>Summary:</strong> The electrons drop off their energy at the bulb, and return to the battery empty to get more.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const canvas = container.querySelector('#flow-canvas');
+                const ctx = canvas.getContext('2d');
+                const btnToggle = container.querySelector('#btn-toggle-flow');
+                const switchLever = container.querySelector('#anim-switch-lever');
+                const lamp = container.querySelector('#anim-lamp');
+                
+                let animationId;
+                let particles = [];
+                let frameCount = 0;
+                let isSwitchClosed = true;
+
+                const toggleSwitch = () => {
+                    isSwitchClosed = !isSwitchClosed;
+                    if (isSwitchClosed) {
+                        switchLever.setAttribute('x2', '100');
+                        switchLever.setAttribute('y2', '100');
+                        lamp.setAttribute('fill', 'rgba(253, 224, 71, 0.8)');
+                        btnToggle.innerHTML = '<i class="fa-solid fa-toggle-on"></i> Turn OFF';
+                        btnToggle.style.backgroundColor = 'var(--primary)';
+                    } else {
+                        switchLever.setAttribute('x2', '60');
+                        switchLever.setAttribute('y2', '110');
+                        lamp.setAttribute('fill', 'var(--bg-panel)');
+                        btnToggle.innerHTML = '<i class="fa-solid fa-toggle-off"></i> Turn ON';
+                        btnToggle.style.backgroundColor = 'var(--text-dim)';
+                        particles = [];
+                        ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                    }
+                };
+
+                lamp.setAttribute('fill', 'rgba(253, 224, 71, 0.8)');
+                btnToggle.addEventListener('click', toggleSwitch);
+
+                const N = {
+                    Start: {x: 270, y: 50},  TR: {x: 400, y: 50},     
+                    BR: {x: 400, y: 250},    LampIn: {x: 275, y: 250},
+                    LampOut: {x: 225, y: 250},BL: {x: 100, y: 250},    
+                    TL: {x: 100, y: 50},     End: {x: 250, y: 50}     
+                };
+                const path = [N.Start, N.TR, N.BR, N.LampIn, N.LampOut, N.BL, N.TL, N.End];
+
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    if (isSwitchClosed) {
+                        if (frameCount % 20 === 0) {
+                            particles.push({x: N.Start.x, y: N.Start.y, targetIdx: 1, active: true, hasEnergy: true});
+                        }
+                        const speed = 3;
+                        for (let i = 0; i < particles.length; i++) {
+                            let p = particles[i];
+                            if (!p.active) continue;
+                            let target = path[p.targetIdx];
+                            let dx = target.x - p.x; let dy = target.y - p.y;
+                            let dist = Math.sqrt(dx*dx + dy*dy);
+
+                            if (dist < speed) {
+                                p.x = target.x; p.y = target.y; p.targetIdx++;
+                                if (p.targetIdx === 5) p.hasEnergy = false;
+                                if (p.targetIdx >= path.length) p.active = false;
+                            } else {
+                                p.x += (dx / dist) * speed; p.y += (dy / dist) * speed;
+                            }
+
+                            if (p.active) {
+                                ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+                                if (p.hasEnergy) {
+                                    ctx.fillStyle = '#fde047'; ctx.shadowBlur = 12; ctx.shadowColor = '#f59e0b';
+                                } else {
+                                    ctx.fillStyle = '#64748b'; ctx.shadowBlur = 0;
+                                }
+                                ctx.fill(); ctx.shadowBlur = 0; 
+                            }
+                        }
+                        for (let i = particles.length - 1; i >= 0; i--) {
+                            if (!particles[i].active) particles.splice(i, 1);
+                        }
+                    }
+                    frameCount++;
+                    animationId = requestAnimationFrame(draw);
+                }
+                draw();
+                return () => { cancelAnimationFrame(animationId); btnToggle.removeEventListener('click', toggleSwitch); };
+            }
+        },
+
+        // SLIDE 5: Voltage
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Voltage: The Push</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Voltage (V)</h3>
+                        <p style="color: white; font-size: 1.3rem;">Voltage is the electrical "push" or pressure that forces the electrons to move through the wire.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; text-align: left;">
+                        <div class="glass-card">
+                            <h3 style="color: var(--accent);"><i class="fa-solid fa-water"></i> Potential Difference</h3>
+                            <p style="color: white; margin-bottom: 0.5rem; font-size: 1.15rem;">Electricity flows from <strong>High Pressure</strong> to <strong>Low Pressure</strong>.</p>
+                            <p style="color: var(--text-dim); font-size: 1.15rem;">We call this difference in pressure a <strong>Differential</strong>. The bigger the difference, the stronger the push!</p>
+                        </div>
+                        <div class="glass-card" style="border-top: 4px solid var(--warning);">
+                            <h3 style="color: var(--warning);"><i class="fa-solid fa-tag"></i> The Unit</h3>
+                            <p style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Measured in <strong>Volts (V)</strong>.</p>
+                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                                <p style="color: var(--text-dim); font-size: 1rem;">Named after <strong>Alessandro Volta</strong>, the Italian scientist who invented the first electrical battery.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 6: Current
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Current: The Flow</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Current</h3>
+                        <p style="color: white; font-size: 1.3rem;">Current is the <strong>rate of flow</strong>. It measures exactly how many electrons are passing a single point every second.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; text-align: left;">
+                        <div class="glass-card" style="border-top: 4px solid var(--cold);">
+                            <h3 style="color: var(--cold);"><i class="fa-solid fa-ruler"></i> The Unit: Amperes</h3>
+                            <p style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Measured in <strong>Amperes</strong> or <strong>Amps (A)</strong>.</p>
+                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                                <p style="color: var(--text-dim); font-size: 1rem;">Named after <strong>André-Marie Ampère</strong>, a French mathematician and physicist.</p>
+                            </div>
+                        </div>
+                        <div class="glass-card" style="border-top: 4px solid var(--danger);">
+                            <h3 style="color: var(--danger);"><i class="fa-solid fa-font"></i> The Symbol: I</h3>
+                            <p style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">In math equations, we use the letter <strong>I</strong> for Current.</p>
+                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                                <p style="color: var(--text-dim); font-size: 1rem;">Why? It stands for <em>"Intensité du courant"</em> (which means "Intensity of current" in French!).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 7: Resistance
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Resistance: The Push Back</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Resistance (R)</h3>
+                        <p style="color: white; font-size: 1.3rem;">Resistance is a measure of how hard it is for electrons to flow through a material.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; text-align: left;">
+                        <div class="glass-card">
+                            <h3 style="color: var(--warning);"><i class="fa-solid fa-person-walking"></i> The Hallway Analogy</h3>
+                            <p style="color: white; margin-bottom: 0.5rem; font-size: 1.1rem;"><strong>Low Resistance:</strong> Walking down an empty hallway. (Easy flow! Like a thick copper wire).</p>
+                            <p style="color: var(--text-dim); font-size: 1.1rem;"><strong>High Resistance:</strong> Walking down a hallway packed full of people. (Hard to move! Like a lightbulb filament).</p>
+                        </div>
+                        <div class="glass-card" style="border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--accent);"><i class="fa-solid fa-omega"></i> The Unit</h3>
+                            <p style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Measured in <strong>Ohms ($$\\Omega$$)</strong>.</p>
+                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                                <p style="color: var(--text-dim); font-size: 1rem;">Named after <strong>Georg Ohm</strong>. The symbol is the Greek letter Omega.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 8: Cells and Batteries
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Cells & Batteries</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Cell / Battery</h3>
+                        <p style="color: white; font-size: 1.3rem;">The power source that provides the <strong>Voltage</strong> (the push) to make the circuit work.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; text-align: left;">
+                        <div class="glass-card">
+                            <h3 style="color: var(--accent);"><i class="fa-solid fa-flask"></i> How do they work?</h3>
+                            <p style="color: white; font-size: 1.15rem; margin-bottom: 0.5rem;">Inside a battery, a <strong>chemical reaction</strong> separates positive and negative charges.</p>
+                            <p style="color: var(--text-dim); font-size: 1.15rem;">This creates the "high pressure" and "low pressure" sides (the Potential Differential).</p>
+                        </div>
+                        <div class="pedagogical-note note-theory" style="margin: 0; display: flex; flex-direction: column; justify-content: center;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> Remember!</div>
+                            <p style="color: white; font-size: 1.2rem; margin-top: 0.5rem;">Batteries <strong>do NOT</strong> create electrons.</p>
+                            <p style="color: var(--text-dim); font-size: 1.1rem; margin-top: 0.5rem;">The electrons are already inside the copper wires. The battery simply acts as a pump to push them along!</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 9: The Definition of a Circuit
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">What is a Circuit?</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 900px; margin: 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Circuit</h3>
+                        <p style="color: white; font-size: 1.3rem;">A circuit is a <strong>complete, unbroken loop</strong> that allows electricity to flow.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: stretch;">
+                        <div class="glass-card text-center" style="border: 2px solid var(--danger); background: rgba(239, 68, 68, 0.05);">
+                            <i class="fa-solid fa-link-slash" style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--danger);">Broken Circuit</h3>
+                            <p style="color: white; font-size: 1.1rem;">If there is a gap or a break in the wire, the electrons <strong>cannot jump</strong> across. The flow stops instantly everywhere.</p>
+                        </div>
+
+                        <div class="glass-card text-center" style="border: 2px solid var(--accent); background: rgba(16, 185, 129, 0.05);">
+                            <i class="fa-solid fa-link" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--accent);">Complete Circuit</h3>
+                            <p style="color: white; font-size: 1.1rem;">The path goes perfectly from the battery, through the devices, and back to the battery. Everything works!</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 10: Circuit Symbols Grid (12 Symbols)
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>The Secret Language of Circuits</h2>
+                    <p class="delay-1" style="color: var(--text-dim); margin-bottom: 1rem;">Scientists don't draw real pictures. We use special symbols!</p>
+                    
+                    <div class="grid-4 delay-2" style="max-width: 1100px; margin: 0 auto;">
+                        
+                        <!-- 1. Wire -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Wire</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4;">
+                                <line x1="10" y1="20" x2="90" y2="20" />
+                            </svg>
+                        </div>
+
+                        <!-- 2. Cell -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Cell</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4;">
+                                <line x1="10" y1="20" x2="45" y2="20" />
+                                <line x1="45" y1="5" x2="45" y2="35" stroke-width="2"/>
+                                <line x1="55" y1="10" x2="55" y2="30" stroke-width="6"/>
+                                <line x1="55" y1="20" x2="90" y2="20" />
+                            </svg>
+                        </div>
+
+                        <!-- 3. Battery -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Battery</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4;">
+                                <line x1="5" y1="20" x2="25" y2="20" />
+                                <line x1="25" y1="5" x2="25" y2="35" stroke-width="2"/>
+                                <line x1="35" y1="10" x2="35" y2="30" stroke-width="6"/>
+                                <line x1="45" y1="20" x2="55" y2="20" stroke-width="2" stroke-dasharray="2,2"/>
+                                <line x1="65" y1="5" x2="65" y2="35" stroke-width="2"/>
+                                <line x1="75" y1="10" x2="75" y2="30" stroke-width="6"/>
+                                <line x1="75" y1="20" x2="95" y2="20" />
+                            </svg>
+                        </div>
+
+                        <!-- 4. Lamp/Bulb -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Lamp (Bulb)</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                                <line x1="10" y1="20" x2="35" y2="20" />
+                                <circle cx="50" cy="20" r="15" />
+                                <line x1="40" y1="10" x2="60" y2="30" />
+                                <line x1="60" y1="10" x2="40" y2="30" />
+                                <line x1="65" y1="20" x2="90" y2="20" />
+                            </svg>
+                        </div>
+
+                        <!-- 5. Open Switch -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Open Switch</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: var(--bg-panel);">
+                                <line x1="10" y1="20" x2="35" y2="20" />
+                                <circle cx="35" cy="20" r="3" />
+                                <line x1="35" y1="20" x2="55" y2="5" />
+                                <circle cx="65" cy="20" r="3" />
+                                <line x1="65" y1="20" x2="90" y2="20" />
+                            </svg>
+                        </div>
+
+                        <!-- 6. Closed Switch -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Closed Switch</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: var(--bg-panel);">
+                                <line x1="10" y1="20" x2="35" y2="20" />
+                                <circle cx="35" cy="20" r="3" />
+                                <line x1="35" y1="20" x2="65" y2="20" />
+                                <circle cx="65" cy="20" r="3" />
+                                <line x1="65" y1="20" x2="90" y2="20" />
+                            </svg>
+                        </div>
+
+                        <!-- 7. Resistor -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Resistor</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                                <line x1="5" y1="20" x2="25" y2="20" />
+                                <rect x="25" y="10" width="50" height="20" />
+                                <line x1="75" y1="20" x2="95" y2="20" />
+                            </svg>
+                        </div>
+
+                        <!-- 8. Variable Resistor -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Var. Resistor</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                                <line x1="5" y1="20" x2="25" y2="20" />
+                                <rect x="25" y="10" width="50" height="20" />
+                                <line x1="75" y1="20" x2="95" y2="20" />
+                                <!-- Arrow -->
+                                <line x1="15" y1="35" x2="85" y2="5" />
+                                <polygon points="85,5 75,5 82,12" fill="var(--primary)" stroke="none" />
+                            </svg>
+                        </div>
+
+                        <!-- 9. Ammeter -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Ammeter</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                                <line x1="10" y1="20" x2="35" y2="20" />
+                                <circle cx="50" cy="20" r="15" />
+                                <text x="50" y="25" text-anchor="middle" stroke="none" fill="var(--primary)" font-family="Outfit" font-size="14px" font-weight="bold">A</text>
+                                <line x1="65" y1="20" x2="90" y2="20" />
+                            </svg>
+                        </div>
+
+                        <!-- 10. Voltmeter -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Voltmeter</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                                <line x1="10" y1="20" x2="35" y2="20" />
+                                <circle cx="50" cy="20" r="15" />
+                                <text x="50" y="25" text-anchor="middle" stroke="none" fill="var(--primary)" font-family="Outfit" font-size="14px" font-weight="bold">V</text>
+                                <line x1="65" y1="20" x2="90" y2="20" />
+                            </svg>
+                        </div>
+
+                        <!-- 11. Motor -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Motor</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                                <line x1="10" y1="20" x2="35" y2="20" />
+                                <circle cx="50" cy="20" r="15" />
+                                <text x="50" y="25" text-anchor="middle" stroke="none" fill="var(--primary)" font-family="Outfit" font-size="14px" font-weight="bold">M</text>
+                                <line x1="65" y1="20" x2="90" y2="20" />
+                            </svg>
+                        </div>
+
+                        <!-- 12. Buzzer -->
+                        <div class="glass-card" style="padding: 1rem;">
+                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Buzzer</h3>
+                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                                <line x1="10" y1="20" x2="35" y2="20" />
+                                <path d="M 35 20 A 15 15 0 0 1 65 20 Z" fill="none" />
+                                <line x1="40" y1="20" x2="40" y2="30" />
+                                <line x1="60" y1="20" x2="60" y2="30" />
+                                <line x1="65" y1="20" x2="90" y2="20" />
+                            </svg>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 11: How to Draw Good Diagrams
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Drawing Circuit Diagrams</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">When we draw a diagram, we must follow the rules so any scientist in the world can read it.</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto;">
+                        
+                        <div class="pedagogical-note note-theory" style="margin-top: 0;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-list-check"></i> The 3 Golden Rules</div>
+                            <ul style="margin-left: 1.5rem; display: flex; flex-direction: column; gap: 1rem; color: white; margin-top: 1rem;">
+                                <li><strong>Use a ruler.</strong> Wires must be perfectly straight lines.</li>
+                                <li><strong>No gaps.</strong> Ensure the lines touch the symbols perfectly. Don't leave empty spaces.</li>
+                                <li><strong>Right angles only.</strong> Draw the wires as rectangles or squares, not messy circles or curves.</li>
+                            </ul>
+                        </div>
+
+                        <div class="glass-card text-center" style="display: flex; flex-direction: column; justify-content: center;">
+                            <h3 style="color: var(--accent); margin-bottom: 1rem;">A Perfect Diagram Example:</h3>
+                            <svg class="circuit-svg" viewBox="0 0 300 200" style="max-width: 100%; max-height: 200px; margin: 0 auto;">
+                                <!-- Wires -->
+                                <path d="M 120 40 L 50 40 L 50 160 L 135 160 M 165 160 L 250 160 L 250 40 L 190 40" stroke="var(--text-light)" stroke-width="4" fill="none"/>
+                                
+                                <!-- Cell (Battery) -->
+                                <line x1="120" y1="20" x2="120" y2="60" stroke="var(--text-light)" stroke-width="2"/>
+                                <line x1="140" y1="30" x2="140" y2="50" stroke="var(--text-light)" stroke-width="6"/>
+                                <line x1="140" y1="40" x2="160" y2="40" stroke="var(--text-light)" stroke-width="4" />
+                                
+                                <!-- Closed Switch -->
+                                <circle cx="160" cy="40" r="3" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="2"/>
+                                <line x1="160" y1="40" x2="190" y2="40" stroke="var(--text-light)" stroke-width="4" />
+                                <circle cx="190" cy="40" r="3" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="2"/>
+
+                                <!-- Lamp 1 -->
+                                <circle cx="150" cy="160" r="15" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="139" y1="149" x2="161" y2="171" stroke="var(--text-light)" stroke-width="3"/>
+                                <line x1="161" y1="149" x2="139" y2="171" stroke="var(--text-light)" stroke-width="3"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 12: AC vs DC
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Real World Power: AC vs DC</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">In real life, electricity comes in two different flavors.</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: stretch;">
+                        
+                        <!-- DC -->
+                        <div class="glass-card text-center" style="border-top: 4px solid var(--primary);">
+                            <i class="fa-solid fa-battery-full" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--primary);">Direct Current (DC)</h3>
+                            <p style="color: white; font-size: 1.15rem; margin-bottom: 1rem;">Electrons flow smoothly in <strong>one direction</strong> only.</p>
+                            
+                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                                <p style="color: var(--text-dim); font-size: 1.1rem;"><i class="fa-solid fa-mobile-screen"></i> <strong>Where do we see it?</strong></p>
+                                <p style="color: white; font-size: 1rem;">Batteries, phones, and laptops. Anything portable uses DC!</p>
+                            </div>
+                        </div>
+
+                        <!-- AC -->
+                        <div class="glass-card text-center" style="border-top: 4px solid var(--warning);">
+                            <i class="fa-solid fa-plug" style="font-size: 3rem; color: var(--warning); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--warning);">Alternating Current (AC)</h3>
+                            <p style="color: white; font-size: 1.15rem; margin-bottom: 1rem;">Electrons rapidly wiggle <strong>back and forth</strong> continuously.</p>
+                            
+                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                                <p style="color: var(--text-dim); font-size: 1.1rem;"><i class="fa-solid fa-house"></i> <strong>Where do we see it?</strong></p>
+                                <p style="color: white; font-size: 1rem;">Wall sockets and large power lines. Used to power houses and TVs!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 13: Video Review
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2 style="margin-bottom: 1rem;">Video Review: Circuits & Power</h2>
+                    <p class="delay-1" style="color: var(--text-dim); margin-bottom: 2rem;">Watch these two quick videos to review what we've learned today!</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 1100px; margin: 0 auto; align-items: stretch;">
+                        
+                        <!-- Video 1 -->
+                        <div class="glass-card" style="padding: 1rem; display: flex; flex-direction: column;">
+                            <div style="position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                                <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                                        src="https://www.youtube.com/embed/Wm75XgbqHBY" 
+                                        title="AC vs DC Power" frameborder="0" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowfullscreen></iframe>
+                            </div>
+                            <h3 style="color: var(--primary); margin-top: 1.5rem; font-size: 1.2rem;">AC vs DC Power Differences</h3>
+                        </div>
+
+                        <!-- Video 2 -->
+                        <div class="glass-card" style="padding: 1rem; display: flex; flex-direction: column;">
+                            <div style="position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                                <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                                        src="https://www.youtube.com/embed/b1lKwZTtzIY" 
+                                        title="YouTube video player" frameborder="0" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowfullscreen></iframe>
+                            </div>
+                            <h3 style="color: var(--accent); margin-top: 1.5rem; font-size: 1.2rem;">How Circuits Work</h3>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 14: Summary & Homework
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-flag-checkered delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h2 class="delay-1" style="font-size: 2.5rem; color: white;">Lesson Complete!</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 700px; margin: 2rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> Quick Summary</div>
+                        <p style="color: white; margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Voltage (V)</strong> is the push. <strong>Current (I)</strong> is the speed of the flow.</p>
+                        <p style="color: white; margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Electrons</strong> squeeze through resistance, turning energy into heat & light.</p>
+                        <p style="color: white;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>DC</strong> flows one way (batteries). <strong>AC</strong> flows back-and-forth (walls).</p>
+                    </div>
+
+                    <div class="pedagogical-note note-task delay-3" style="max-width: 700px; margin: 2rem auto; text-align: left; background: rgba(245, 158, 11, 0.15); border: 2px solid var(--warning);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Your Task Now</div>
+                        <h3 style="color: var(--warning); margin-bottom: 0.5rem;">Drawing Practice</h3>
+                        <p style="color: white; font-size: 1.15rem; margin-bottom: 1rem;">
+                            In your notebooks, use a ruler to draw a complete circuit that includes:
+                        </p>
+                        <ul style="margin-left: 2rem; color: white; font-size: 1.15rem; margin-bottom: 1rem;">
+                            <li>One Battery</li>
+                            <li>Two Lamps (Bulbs)</li>
+                            <li>One Closed Switch</li>
+                        </ul>
+                        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                            <p style="color: var(--text-dim); font-size: 1rem;">
+                                <i class="fa-solid fa-hand-holding-hand"></i> Show your drawing to Mr. Bowen when you are finished!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        // Execute cleanup from previous slide if it exists
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        // Render HTML synchronously
+        container.innerHTML = slide.template();
+        
+        // Execute script immediately
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        // Update UI
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
