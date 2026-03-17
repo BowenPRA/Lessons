@@ -8,7 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -18,21 +18,21 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-        /* --- DESIGN TOKENS (Cambridge Bible Standard) --- */
+        /* --- DESIGN TOKENS (Notebook Edutech Standard) --- */
         :root {
-            --bg-deep: #0f172a;        /* Deep Slate */
-            --bg-panel: #1e293b;       /* Secondary Background */
-            --primary: #8b5cf6;        /* Chemical Purple */
-            --accent: #10b981;         /* Success/Acid Green */
-            --warning: #f59e0b;        /* Hazard Orange */
-            --danger: #ef4444;         /* Heat Red */
-            --cold: #0ea5e9;           /* Cold Blue */
-            --text-light: #f1f5f9;     /* Main Text */
-            --text-dim: #94a3b8;       /* Subtitles */
+            --bg-paper: #fdfbf7;       /* Warm paper white */
+            --bg-panel: #ffffff;       /* Pure white for cards */
+            --primary: #2563eb;        /* Blue Ink */
+            --accent: #16a34a;         /* Green Ink */
+            --warning: #ea580c;        /* Orange Highlighter */
+            --danger: #dc2626;         /* Red Pen */
+            --cold: #0284c7;           /* Light Blue */
+            --text-main: #334155;      /* Dark slate text */
+            --text-dim: #64748b;       /* Secondary text */
             
             --header-h: 70px;
             --footer-h: 80px;
-            --border-radius: 16px;
+            --border-radius: 12px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
@@ -41,18 +41,18 @@
             height: 100%;
             width: 100%;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-deep);
-            color: var(--text-light);
+            background-color: var(--bg-paper);
+            color: var(--text-main);
             overflow: hidden;
         }
 
-        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-main); }
         h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; }
         h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
-        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-dim); }
+        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-main); }
 
-        strong { color: var(--text-light); font-weight: 700; }
+        strong { color: var(--text-main); font-weight: 800; }
         
         .text-center { text-align: center; }
         .text-left { text-align: left; }
@@ -69,13 +69,13 @@
             justify-content: space-between;
             align-items: center;
             padding: 0 2rem;
-            background: rgba(15, 23, 42, 0.95);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: #ffffff;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
             z-index: 10;
         }
 
         .brand-pill {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+            background: var(--primary);
             padding: 0.4rem 1.2rem;
             border-radius: 50px;
             font-family: 'Outfit', sans-serif;
@@ -84,7 +84,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             color: white;
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+            box-shadow: 2px 2px 0px rgba(37, 99, 235, 0.3);
         }
 
         .viewport {
@@ -92,6 +92,12 @@
             position: relative;
             overflow-y: auto;
             scroll-behavior: smooth;
+            /* Notebook Paper Effect */
+            background-image:
+                linear-gradient(90deg, transparent 60px, rgba(220, 38, 38, 0.2) 60px, rgba(220, 38, 38, 0.2) 62px, transparent 62px),
+                linear-gradient(rgba(37, 99, 235, 0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 32px;
+            background-attachment: local;
         }
 
         .slide-wrapper {
@@ -99,15 +105,15 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 2rem;
+            padding: 2rem 2rem 2rem 80px; /* Offset for margin line */
             max-width: 1200px;
             margin: 0 auto;
         }
 
         .footer {
             height: var(--footer-h);
-            background: rgba(15, 23, 42, 0.95);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: #ffffff;
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -118,11 +124,10 @@
         /* --- UI COMPONENTS --- */
         .glass-card {
             background: var(--bg-panel);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(0, 0, 0, 0.08);
             border-radius: var(--border-radius);
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
         }
 
         /* Signposting System (Pedagogical Framework) */
@@ -131,36 +136,43 @@
             border-radius: 12px;
             margin: 1.5rem 0;
             border-left: 5px solid;
+            background: #ffffff;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
             animation: slideIn 0.5s ease;
+            font-family: 'Kalam', cursive; /* Hand-written feel */
+            font-size: 1.3rem;
+        }
+        .pedagogical-note p, .pedagogical-note li, .pedagogical-note h3 {
+            font-family: 'Kalam', cursive;
         }
         .pedagogical-badge {
-            font-weight: 800;
+            font-weight: 700;
             margin-bottom: 0.5rem;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             text-transform: uppercase;
-            font-size: 0.85rem;
+            font-size: 1rem;
             letter-spacing: 1px;
             font-family: 'Outfit', sans-serif;
         }
         
-        .note-write { background: rgba(139, 92, 246, 0.1); border-color: var(--primary); }
+        .note-write { border-color: var(--primary); }
         .note-write .pedagogical-badge { color: var(--primary); }
         
-        .note-task { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .note-task { border-color: var(--warning); }
         .note-task .pedagogical-badge { color: var(--warning); }
         
-        .note-theory { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+        .note-theory { border-color: var(--danger); }
         .note-theory .pedagogical-badge { color: var(--danger); }
         
-        .note-success { background: rgba(16, 185, 129, 0.1); border-color: var(--accent); }
+        .note-success { border-color: var(--accent); }
         .note-success .pedagogical-badge { color: var(--accent); }
 
         /* Reveal Card */
         .reveal-card {
-            background: var(--bg-panel);
-            border: 2px dashed var(--primary);
+            background: #ffffff;
+            border: 3px dashed var(--primary);
             border-radius: var(--border-radius);
             padding: 2rem;
             text-align: center;
@@ -168,10 +180,11 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
         }
-        .reveal-card:hover { background: rgba(139, 92, 246, 0.1); }
-        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
-        .reveal-card.revealed { border-style: solid; background: rgba(16, 185, 129, 0.1); border-color: var(--accent); cursor: default; }
+        .reveal-card:hover { transform: translateY(-2px); box-shadow: 6px 6px 0px rgba(0,0,0,0.06); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid rgba(0,0,0,0.05); }
+        .reveal-card.revealed { border-style: solid; border-color: var(--accent); cursor: default; transform: none; box-shadow: 4px 4px 0px rgba(0,0,0,0.06); }
         .reveal-card.revealed .pre-reveal { display: none; }
         .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
 
@@ -186,17 +199,18 @@
             transition: 0.2s;
             font-family: 'Outfit', sans-serif;
             font-size: 1.1rem;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
         }
         .btn-action:hover {
-            background: #7c3aed;
             transform: translateY(-2px);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
         }
 
         /* Circuit Diagrams */
         .circuit-svg {
             width: 100%;
             height: 100%;
-            stroke: var(--text-light);
+            stroke: var(--primary); /* Blue pen style */
             stroke-width: 4;
             fill: none;
             stroke-linecap: round;
@@ -204,9 +218,9 @@
             display: block;
         }
         .circuit-label {
-            fill: var(--text-light);
+            fill: var(--text-main);
             stroke: none;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Kalam', cursive;
             font-weight: 600;
             font-size: 18px;
         }
@@ -216,16 +230,17 @@
             width: 50px;
             height: 50px;
             border-radius: 12px;
-            background: var(--bg-panel);
-            color: var(--text-light);
-            border: 1px solid rgba(255,255,255,0.2);
+            background: #ffffff;
+            color: var(--text-main);
+            border: 2px solid rgba(0,0,0,0.1);
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
         }
-        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
-        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
 
-        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-container { flex: 1; margin: 0 2rem; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
         .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
 
         /* Animations */
@@ -239,10 +254,13 @@
 
         @media (max-width: 1024px) {
             .grid-4 { grid-template-columns: repeat(3, 1fr); }
+            .slide-wrapper { padding-left: 60px; }
         }
         @media (max-width: 768px) {
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 1rem; }
             h1 { font-size: 2rem; }
+            .slide-wrapper { padding-left: 2rem; }
+            .viewport { background-image: none; background-color: var(--bg-paper); } /* remove lines on mobile */
         }
     </style>
 </head>
@@ -252,10 +270,10 @@
     <header class="header">
         <div style="display: flex; align-items: center; gap: 1rem;">
             <div class="brand-pill"><i class="fa-solid fa-bolt"></i> Year 9 Science</div>
-            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">9.0 Intro to Circuits</span>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;">Unit 9 Intro to Electricity</span>
         </div>
-        <div style="font-family: 'Outfit'; font-weight: 700; color: var(--primary);">
-            Mr. Bowen
+        <div style="font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-main); font-size: 1.2rem;">
+            17 March 2026
         </div>
     </header>
 
@@ -305,20 +323,20 @@
                     <h1 class="delay-1" style="font-size: 3.5rem;">Introduction to Circuits</h1>
                     <h2 class="delay-1" style="color: var(--accent);">How do things turn on?</h2>
                     
-                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 3rem auto; text-align: left;">
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 3rem auto; text-align: left; transform: rotate(-1deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objectives</div>
                         <ul style="margin-left: 1rem; display: grid; gap: 1rem; list-style-type: none; padding: 0; margin-top: 0.5rem;">
-                            <li style="font-size: 1.3rem; display: flex; align-items: flex-start; gap: 10px;">
+                            <li style="font-size: 1.4rem; display: flex; align-items: flex-start; gap: 10px; color: var(--text-main);">
                                 <span>⚡</span>
-                                <span style="color: white; font-weight: 500;">Define <strong>Electricity</strong>, <strong>Current</strong>, <strong>Voltage</strong>, and <strong>Resistance</strong>.</span>
+                                <span>Define <strong>Electricity</strong>, <strong>Current</strong>, <strong>Voltage</strong>, and <strong>Resistance</strong>.</span>
                             </li>
-                            <li style="font-size: 1.3rem; display: flex; align-items: flex-start; gap: 10px;">
+                            <li style="font-size: 1.4rem; display: flex; align-items: flex-start; gap: 10px; color: var(--text-main);">
                                 <span>🔄</span>
-                                <span style="color: white; font-weight: 500;">Understand how moving electrons create light and power devices.</span>
+                                <span>Understand how moving electrons create light and power devices.</span>
                             </li>
-                            <li style="font-size: 1.3rem; display: flex; align-items: flex-start; gap: 10px;">
+                            <li style="font-size: 1.4rem; display: flex; align-items: flex-start; gap: 10px; color: var(--text-main);">
                                 <span>✍️</span>
-                                <span style="color: white; font-weight: 500;">Learn the 12 scientific symbols to draw a circuit.</span>
+                                <span>Learn the 12 scientific symbols to draw a circuit.</span>
                             </li>
                         </ul>
                     </div>
@@ -333,23 +351,23 @@
                 <div class="anim-enter">
                     <h2 class="text-center">The Big Question</h2>
                     
-                    <div class="pedagogical-note note-task delay-1" style="max-width: 800px; margin: 0 auto 2rem auto;">
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; transform: rotate(1deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-brain"></i> Think about it</div>
-                        <p style="text-align: center; font-size: 1.5rem; color: white; padding: 1rem 0;">What actually is "Electricity"? What is flowing inside the wire?</p>
+                        <p style="text-align: center; font-size: 1.6rem; color: var(--text-main); padding: 1rem 0;">What actually is "Electricity"? What is flowing inside the wire?</p>
                     </div>
 
                     <div class="reveal-card delay-2" id="electricity-reveal" role="button" tabindex="0" style="max-width: 800px; margin: 0 auto;">
                         <div class="pre-reveal">
                             <i class="fa-solid fa-hand-pointer" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary);"></i>
-                            <h3 style="color: white;">Click to reveal the answer</h3>
-                            <p style="font-size: 0.95rem; color: var(--text-dim);">(Be ready to write this in your notebook!)</p>
+                            <h3>Click to reveal the answer</h3>
+                            <p style="font-size: 0.95rem; color: var(--text-dim); font-family: 'Kalam';">(Be ready to write this in your notebook!)</p>
                         </div>
                         <div class="reveal-content text-left">
                             <div class="pedagogical-badge" style="color: var(--accent); margin-bottom: 1rem;"><i class="fa-solid fa-pencil"></i> Write This Down</div>
                             <h3 style="color: var(--accent); font-size: 1.8rem; margin-bottom: 1rem;">Electricity is moving Electrons.</h3>
-                            <p style="font-size: 1.3rem; color: white; line-height: 1.6;">Electricity is simply the flow of tiny particles called <strong>electrons</strong> traveling through a wire.</p>
+                            <p style="font-size: 1.3rem; line-height: 1.6;">Electricity is simply the flow of tiny particles called <strong>electrons</strong> traveling through a wire.</p>
                             <br>
-                            <p style="color: var(--text-dim); font-size: 1.1rem;">Remember Chemistry? Atoms have electrons on the outside. In metals (like copper wires), these electrons are free to move and push each other along!</p>
+                            <p style="color: var(--text-dim); font-size: 1.1rem; font-family: 'Kalam';">Remember Chemistry? Atoms have electrons on the outside. In metals (like copper wires), these electrons are free to move and push each other along!</p>
                         </div>
                     </div>
                 </div>
@@ -368,14 +386,14 @@
                 <div class="anim-enter">
                     <h2 class="text-center">A Very Common Mistake</h2>
                     
-                    <div class="pedagogical-note note-theory delay-1" style="max-width: 800px; margin: 0 auto;">
+                    <div class="pedagogical-note note-theory delay-1" style="max-width: 800px; margin: 0 auto; transform: rotate(-1deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> Big Rule</div>
-                        <h3 style="color: var(--danger); margin-bottom: 0.5rem;">Electrons are NEVER used up.</h3>
-                        <p style="color: white; font-size: 1.3rem; margin-bottom: 1rem;">When a lightbulb turns on, it does not "eat" or destroy the electrons.</p>
-                        <p style="color: white; font-size: 1.3rem;">The exact same number of electrons that leave the battery will return to the battery.</p>
+                        <h3 style="color: var(--danger); margin-bottom: 0.5rem; font-family: 'Kalam'; font-size: 2rem;">Electrons are NEVER used up.</h3>
+                        <p style="font-size: 1.4rem; margin-bottom: 1rem;">When a lightbulb turns on, it does not "eat" or destroy the electrons.</p>
+                        <p style="font-size: 1.4rem;">The exact same number of electrons that leave the battery will return to the battery.</p>
                     </div>
                     
-                    <p class="text-center delay-2" style="margin-top: 2rem; color: var(--text-dim); font-size: 1.3rem;">If they aren't used up, how do they power things?</p>
+                    <p class="text-center delay-2" style="margin-top: 3rem; color: var(--text-dim); font-size: 1.5rem; font-family: 'Kalam';">If they aren't used up, how do they power things?</p>
                 </div>
             `,
             script: () => { return () => {}; }
@@ -391,26 +409,26 @@
                         
                         <!-- Left Side: Animation -->
                         <div class="glass-card" style="position: relative; padding: 1rem; display: flex; flex-direction: column; justify-content: center;">
-                            <p style="color: var(--text-dim); margin-bottom: 1rem; font-size: 1.1rem; text-align: center;">
-                                Watch the electrons. They are <strong style="color: var(--warning);">Yellow</strong> when full of energy, and <strong style="color: #64748b;">Grey</strong> when empty.
+                            <p style="color: var(--text-dim); margin-bottom: 1rem; font-size: 1.2rem; font-family: 'Kalam'; text-align: center;">
+                                Watch the electrons. They are <strong style="color: var(--warning); font-family: 'Kalam';">Yellow</strong> when full of energy, and <strong style="color: #64748b; font-family: 'Kalam';">Grey</strong> when empty.
                             </p>
                             <div style="position: relative; width: 100%; aspect-ratio: 500/300;">
                                 <!-- Base SVG -->
                                 <svg viewBox="0 0 500 300" style="position: absolute; top:0; left:0; width: 100%; height: 100%;">
-                                    <path d="M 270 50 L 400 50 L 400 250 L 100 250 L 100 50 L 230 50" stroke="var(--text-dim)" stroke-width="6" fill="none" opacity="0.3"/>
+                                    <path d="M 270 50 L 400 50 L 400 250 L 100 250 L 100 50 L 230 50" stroke="rgba(0,0,0,0.1)" stroke-width="6" fill="none" />
                                     <!-- Cell -->
-                                    <line x1="250" y1="20" x2="250" y2="80" stroke="var(--text-light)" stroke-width="3"/>
-                                    <line x1="270" y1="35" x2="270" y2="65" stroke="var(--text-light)" stroke-width="8"/>
+                                    <line x1="250" y1="20" x2="250" y2="80" stroke="var(--primary)" stroke-width="3"/>
+                                    <line x1="270" y1="35" x2="270" y2="65" stroke="var(--primary)" stroke-width="8"/>
                                     <text x="260" y="15" class="circuit-label" text-anchor="middle" font-size="16px">Battery</text>
                                     <!-- Lamp -->
-                                    <circle id="anim-lamp" cx="250" cy="250" r="25" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="4" style="transition: fill 0.3s ease;"/>
-                                    <line x1="232" y1="232" x2="268" y2="268" stroke="var(--text-light)" stroke-width="4"/>
-                                    <line x1="268" y1="232" x2="232" y2="268" stroke="var(--text-light)" stroke-width="4"/>
+                                    <circle id="anim-lamp" cx="250" cy="250" r="25" fill="#ffffff" stroke="var(--primary)" stroke-width="4" style="transition: fill 0.3s ease;"/>
+                                    <line x1="232" y1="232" x2="268" y2="268" stroke="var(--primary)" stroke-width="4"/>
+                                    <line x1="268" y1="232" x2="232" y2="268" stroke="var(--primary)" stroke-width="4"/>
                                     <text x="250" y="295" class="circuit-label" text-anchor="middle" font-size="16px">Bulb</text>
                                     <!-- Switch -->
-                                    <circle cx="100" cy="150" r="5" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
-                                    <circle cx="100" cy="100" r="5" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
-                                    <line id="anim-switch-lever" x1="100" y1="150" x2="100" y2="100" stroke="var(--text-light)" stroke-width="5" style="transition: all 0.3s ease;"/>
+                                    <circle cx="100" cy="150" r="5" fill="#ffffff" stroke="var(--primary)" stroke-width="3"/>
+                                    <circle cx="100" cy="100" r="5" fill="#ffffff" stroke="var(--primary)" stroke-width="3"/>
+                                    <line id="anim-switch-lever" x1="100" y1="150" x2="100" y2="100" stroke="var(--primary)" stroke-width="5" style="transition: all 0.3s ease;"/>
                                     <text x="40" y="130" class="circuit-label" text-anchor="middle" font-size="16px">Switch</text>
                                 </svg>
                                 <!-- Animated Canvas -->
@@ -421,20 +439,20 @@
 
                         <!-- Right Side: Explanation -->
                         <div>
-                            <div class="pedagogical-note note-write" style="margin-top: 0;">
+                            <div class="pedagogical-note note-write" style="margin-top: 0; transform: rotate(1deg);">
                                 <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
-                                <h3 style="color: var(--warning);"><i class="fa-solid fa-lightbulb"></i> The Energy Transfer</h3>
-                                <p style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">If the electrons aren't used up, how does the bulb glow?</p>
+                                <h3 style="color: var(--warning); font-size: 1.8rem;"><i class="fa-solid fa-lightbulb"></i> The Energy Transfer</h3>
+                                <p style="margin-bottom: 1rem; font-size: 1.3rem;">If the electrons aren't used up, how does the bulb glow?</p>
                                 
-                                <ol style="margin-left: 1.5rem; color: var(--text-dim); font-size: 1.15rem; line-height: 1.6;">
+                                <ol style="margin-left: 1.5rem; font-size: 1.2rem; line-height: 1.6;">
                                     <li>Moving electrons carry <strong>electrical energy</strong> from the battery.</li>
                                     <li style="margin-top: 0.5rem;">Inside the bulb, the wire gets extremely thin.</li>
                                     <li style="margin-top: 0.5rem;">The electrons squeeze through, creating <strong>friction</strong>.</li>
                                     <li style="margin-top: 0.5rem;">This friction turns their electrical energy into <strong>heat and light</strong>!</li>
                                 </ol>
                             </div>
-                            <div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--accent);">
-                                <p style="color: white; font-size: 1.1rem;"><strong>Summary:</strong> The electrons drop off their energy at the bulb, and return to the battery empty to get more.</p>
+                            <div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: 12px; border: 2px dashed var(--accent); margin-top: 1.5rem;">
+                                <p style="font-size: 1.1rem; font-family: 'Kalam';"><strong>Summary:</strong> The electrons drop off their energy at the bulb, and return to the battery empty to get more.</p>
                             </div>
                         </div>
 
@@ -458,13 +476,13 @@
                     if (isSwitchClosed) {
                         switchLever.setAttribute('x2', '100');
                         switchLever.setAttribute('y2', '100');
-                        lamp.setAttribute('fill', 'rgba(253, 224, 71, 0.8)');
+                        lamp.setAttribute('fill', '#fef08a');
                         btnToggle.innerHTML = '<i class="fa-solid fa-toggle-on"></i> Turn OFF';
                         btnToggle.style.backgroundColor = 'var(--primary)';
                     } else {
                         switchLever.setAttribute('x2', '60');
                         switchLever.setAttribute('y2', '110');
-                        lamp.setAttribute('fill', 'var(--bg-panel)');
+                        lamp.setAttribute('fill', '#ffffff');
                         btnToggle.innerHTML = '<i class="fa-solid fa-toggle-off"></i> Turn ON';
                         btnToggle.style.backgroundColor = 'var(--text-dim)';
                         particles = [];
@@ -472,7 +490,7 @@
                     }
                 };
 
-                lamp.setAttribute('fill', 'rgba(253, 224, 71, 0.8)');
+                lamp.setAttribute('fill', '#fef08a'); // Warm yellow fill
                 btnToggle.addEventListener('click', toggleSwitch);
 
                 const N = {
@@ -508,9 +526,9 @@
                             if (p.active) {
                                 ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
                                 if (p.hasEnergy) {
-                                    ctx.fillStyle = '#fde047'; ctx.shadowBlur = 12; ctx.shadowColor = '#f59e0b';
+                                    ctx.fillStyle = '#eab308'; ctx.shadowBlur = 10; ctx.shadowColor = '#f59e0b';
                                 } else {
-                                    ctx.fillStyle = '#64748b'; ctx.shadowBlur = 0;
+                                    ctx.fillStyle = '#94a3b8'; ctx.shadowBlur = 0;
                                 }
                                 ctx.fill(); ctx.shadowBlur = 0; 
                             }
@@ -533,23 +551,23 @@
                 <div class="anim-enter text-center">
                     <h2>Voltage: The Push</h2>
                     
-                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left;">
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left; transform: rotate(-0.5deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
-                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Voltage (V)</h3>
-                        <p style="color: white; font-size: 1.3rem;">Voltage is the electrical "push" or pressure that forces the electrons to move through the wire.</p>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">Voltage (V)</h3>
+                        <p style="font-size: 1.4rem;">Voltage is the electrical "push" or pressure that forces the electrons to move through the wire.</p>
                     </div>
 
                     <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; text-align: left;">
                         <div class="glass-card">
                             <h3 style="color: var(--accent);"><i class="fa-solid fa-water"></i> Potential Difference</h3>
-                            <p style="color: white; margin-bottom: 0.5rem; font-size: 1.15rem;">Electricity flows from <strong>High Pressure</strong> to <strong>Low Pressure</strong>.</p>
+                            <p style="margin-bottom: 0.5rem; font-size: 1.15rem;">Electricity flows from <strong>High Pressure</strong> to <strong>Low Pressure</strong>.</p>
                             <p style="color: var(--text-dim); font-size: 1.15rem;">We call this difference in pressure a <strong>Differential</strong>. The bigger the difference, the stronger the push!</p>
                         </div>
                         <div class="glass-card" style="border-top: 4px solid var(--warning);">
                             <h3 style="color: var(--warning);"><i class="fa-solid fa-tag"></i> The Unit</h3>
-                            <p style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Measured in <strong>Volts (V)</strong>.</p>
-                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
-                                <p style="color: var(--text-dim); font-size: 1rem;">Named after <strong>Alessandro Volta</strong>, the Italian scientist who invented the first electrical battery.</p>
+                            <p style="margin-bottom: 1rem; font-size: 1.2rem;">Measured in <strong>Volts (V)</strong>.</p>
+                            <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; border: 1px dashed rgba(0,0,0,0.1);">
+                                <p style="color: var(--text-dim); font-size: 1rem; font-family: 'Kalam';">Named after <strong>Alessandro Volta</strong>, the Italian scientist who invented the first electrical battery.</p>
                             </div>
                         </div>
                     </div>
@@ -564,25 +582,25 @@
                 <div class="anim-enter text-center">
                     <h2>Current: The Flow</h2>
                     
-                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left;">
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left; transform: rotate(0.5deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
-                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Current</h3>
-                        <p style="color: white; font-size: 1.3rem;">Current is the <strong>rate of flow</strong>. It measures exactly how many electrons are passing a single point every second.</p>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">Current</h3>
+                        <p style="font-size: 1.4rem;">Current is the <strong>rate of flow</strong>. It measures exactly how many electrons are passing a single point every second.</p>
                     </div>
 
                     <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; text-align: left;">
                         <div class="glass-card" style="border-top: 4px solid var(--cold);">
                             <h3 style="color: var(--cold);"><i class="fa-solid fa-ruler"></i> The Unit: Amperes</h3>
-                            <p style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Measured in <strong>Amperes</strong> or <strong>Amps (A)</strong>.</p>
-                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
-                                <p style="color: var(--text-dim); font-size: 1rem;">Named after <strong>André-Marie Ampère</strong>, a French mathematician and physicist.</p>
+                            <p style="margin-bottom: 1rem; font-size: 1.2rem;">Measured in <strong>Amperes</strong> or <strong>Amps (A)</strong>.</p>
+                            <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; border: 1px dashed rgba(0,0,0,0.1);">
+                                <p style="color: var(--text-dim); font-size: 1rem; font-family: 'Kalam';">Named after <strong>André-Marie Ampère</strong>, a French mathematician and physicist.</p>
                             </div>
                         </div>
                         <div class="glass-card" style="border-top: 4px solid var(--danger);">
                             <h3 style="color: var(--danger);"><i class="fa-solid fa-font"></i> The Symbol: I</h3>
-                            <p style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">In math equations, we use the letter <strong>I</strong> for Current.</p>
-                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
-                                <p style="color: var(--text-dim); font-size: 1rem;">Why? It stands for <em>"Intensité du courant"</em> (which means "Intensity of current" in French!).</p>
+                            <p style="margin-bottom: 1rem; font-size: 1.2rem;">In math equations, we use the letter <strong>I</strong> for Current.</p>
+                            <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; border: 1px dashed rgba(0,0,0,0.1);">
+                                <p style="color: var(--text-dim); font-size: 1rem; font-family: 'Kalam';">Why? It stands for <em>"Intensité du courant"</em> (which means "Intensity of current" in French!).</p>
                             </div>
                         </div>
                     </div>
@@ -597,23 +615,23 @@
                 <div class="anim-enter text-center">
                     <h2>Resistance: The Push Back</h2>
                     
-                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left;">
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left; transform: rotate(-0.5deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
-                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Resistance (R)</h3>
-                        <p style="color: white; font-size: 1.3rem;">Resistance is a measure of how hard it is for electrons to flow through a material.</p>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">Resistance (R)</h3>
+                        <p style="font-size: 1.4rem;">Resistance is a measure of how hard it is for electrons to flow through a material.</p>
                     </div>
 
                     <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; text-align: left;">
                         <div class="glass-card">
                             <h3 style="color: var(--warning);"><i class="fa-solid fa-person-walking"></i> The Hallway Analogy</h3>
-                            <p style="color: white; margin-bottom: 0.5rem; font-size: 1.1rem;"><strong>Low Resistance:</strong> Walking down an empty hallway. (Easy flow! Like a thick copper wire).</p>
+                            <p style="margin-bottom: 0.5rem; font-size: 1.1rem;"><strong>Low Resistance:</strong> Walking down an empty hallway. (Easy flow! Like a thick copper wire).</p>
                             <p style="color: var(--text-dim); font-size: 1.1rem;"><strong>High Resistance:</strong> Walking down a hallway packed full of people. (Hard to move! Like a lightbulb filament).</p>
                         </div>
                         <div class="glass-card" style="border-top: 4px solid var(--accent);">
                             <h3 style="color: var(--accent);"><i class="fa-solid fa-omega"></i> The Unit</h3>
-                            <p style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Measured in <strong>Ohms ($$\\Omega$$)</strong>.</p>
-                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
-                                <p style="color: var(--text-dim); font-size: 1rem;">Named after <strong>Georg Ohm</strong>. The symbol is the Greek letter Omega.</p>
+                            <p style="margin-bottom: 1rem; font-size: 1.2rem;">Measured in <strong>Ohms ($$\\Omega$$)</strong>.</p>
+                            <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; border: 1px dashed rgba(0,0,0,0.1);">
+                                <p style="color: var(--text-dim); font-size: 1rem; font-family: 'Kalam';">Named after <strong>Georg Ohm</strong>. The symbol is the Greek letter Omega.</p>
                             </div>
                         </div>
                     </div>
@@ -628,22 +646,22 @@
                 <div class="anim-enter text-center">
                     <h2>Cells & Batteries</h2>
                     
-                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left;">
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left; transform: rotate(1deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
-                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Cell / Battery</h3>
-                        <p style="color: white; font-size: 1.3rem;">The power source that provides the <strong>Voltage</strong> (the push) to make the circuit work.</p>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">Cell / Battery</h3>
+                        <p style="font-size: 1.4rem;">The power source that provides the <strong>Voltage</strong> (the push) to make the circuit work.</p>
                     </div>
 
                     <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; text-align: left;">
                         <div class="glass-card">
                             <h3 style="color: var(--accent);"><i class="fa-solid fa-flask"></i> How do they work?</h3>
-                            <p style="color: white; font-size: 1.15rem; margin-bottom: 0.5rem;">Inside a battery, a <strong>chemical reaction</strong> separates positive and negative charges.</p>
+                            <p style="font-size: 1.15rem; margin-bottom: 0.5rem;">Inside a battery, a <strong>chemical reaction</strong> separates positive and negative charges.</p>
                             <p style="color: var(--text-dim); font-size: 1.15rem;">This creates the "high pressure" and "low pressure" sides (the Potential Differential).</p>
                         </div>
-                        <div class="pedagogical-note note-theory" style="margin: 0; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="pedagogical-note note-theory" style="margin: 0; display: flex; flex-direction: column; justify-content: center; transform: none;">
                             <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> Remember!</div>
-                            <p style="color: white; font-size: 1.2rem; margin-top: 0.5rem;">Batteries <strong>do NOT</strong> create electrons.</p>
-                            <p style="color: var(--text-dim); font-size: 1.1rem; margin-top: 0.5rem;">The electrons are already inside the copper wires. The battery simply acts as a pump to push them along!</p>
+                            <p style="font-size: 1.3rem; margin-top: 0.5rem;">Batteries <strong>do NOT</strong> create electrons.</p>
+                            <p style="color: var(--text-dim); font-size: 1.2rem; margin-top: 0.5rem;">The electrons are already inside the copper wires. The battery simply acts as a pump to push them along!</p>
                         </div>
                     </div>
                 </div>
@@ -657,23 +675,23 @@
                 <div class="anim-enter">
                     <h2 class="text-center">What is a Circuit?</h2>
                     
-                    <div class="pedagogical-note note-write delay-1" style="max-width: 900px; margin: 2rem auto;">
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 900px; margin: 2rem auto; transform: rotate(-0.5deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
-                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Circuit</h3>
-                        <p style="color: white; font-size: 1.3rem;">A circuit is a <strong>complete, unbroken loop</strong> that allows electricity to flow.</p>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">Circuit</h3>
+                        <p style="font-size: 1.4rem;">A circuit is a <strong>complete, unbroken loop</strong> that allows electricity to flow.</p>
                     </div>
 
                     <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: stretch;">
-                        <div class="glass-card text-center" style="border: 2px solid var(--danger); background: rgba(239, 68, 68, 0.05);">
+                        <div class="glass-card text-center" style="border: 3px solid var(--danger); background: rgba(239, 68, 68, 0.05);">
                             <i class="fa-solid fa-link-slash" style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;"></i>
                             <h3 style="color: var(--danger);">Broken Circuit</h3>
-                            <p style="color: white; font-size: 1.1rem;">If there is a gap or a break in the wire, the electrons <strong>cannot jump</strong> across. The flow stops instantly everywhere.</p>
+                            <p style="font-size: 1.1rem;">If there is a gap or a break in the wire, the electrons <strong>cannot jump</strong> across. The flow stops instantly everywhere.</p>
                         </div>
 
-                        <div class="glass-card text-center" style="border: 2px solid var(--accent); background: rgba(16, 185, 129, 0.05);">
+                        <div class="glass-card text-center" style="border: 3px solid var(--accent); background: rgba(16, 185, 129, 0.05);">
                             <i class="fa-solid fa-link" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i>
                             <h3 style="color: var(--accent);">Complete Circuit</h3>
-                            <p style="color: white; font-size: 1.1rem;">The path goes perfectly from the battery, through the devices, and back to the battery. Everything works!</p>
+                            <p style="font-size: 1.1rem;">The path goes perfectly from the battery, through the devices, and back to the battery. Everything works!</p>
                         </div>
                     </div>
                 </div>
@@ -692,16 +710,16 @@
                         
                         <!-- 1. Wire -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Wire</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Wire</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px;">
                                 <line x1="10" y1="20" x2="90" y2="20" />
                             </svg>
                         </div>
 
                         <!-- 2. Cell -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Cell</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Cell</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px;">
                                 <line x1="10" y1="20" x2="45" y2="20" />
                                 <line x1="45" y1="5" x2="45" y2="35" stroke-width="2"/>
                                 <line x1="55" y1="10" x2="55" y2="30" stroke-width="6"/>
@@ -711,8 +729,8 @@
 
                         <!-- 3. Battery -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Battery</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Battery</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px;">
                                 <line x1="5" y1="20" x2="25" y2="20" />
                                 <line x1="25" y1="5" x2="25" y2="35" stroke-width="2"/>
                                 <line x1="35" y1="10" x2="35" y2="30" stroke-width="6"/>
@@ -725,8 +743,8 @@
 
                         <!-- 4. Lamp/Bulb -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Lamp (Bulb)</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Lamp (Bulb)</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px;">
                                 <line x1="10" y1="20" x2="35" y2="20" />
                                 <circle cx="50" cy="20" r="15" />
                                 <line x1="40" y1="10" x2="60" y2="30" />
@@ -737,8 +755,8 @@
 
                         <!-- 5. Open Switch -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Open Switch</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: var(--bg-panel);">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Open Switch</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px; fill: #ffffff;">
                                 <line x1="10" y1="20" x2="35" y2="20" />
                                 <circle cx="35" cy="20" r="3" />
                                 <line x1="35" y1="20" x2="55" y2="5" />
@@ -749,8 +767,8 @@
 
                         <!-- 6. Closed Switch -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Closed Switch</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: var(--bg-panel);">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Closed Switch</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px; fill: #ffffff;">
                                 <line x1="10" y1="20" x2="35" y2="20" />
                                 <circle cx="35" cy="20" r="3" />
                                 <line x1="35" y1="20" x2="65" y2="20" />
@@ -761,8 +779,8 @@
 
                         <!-- 7. Resistor -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Resistor</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Resistor</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px;">
                                 <line x1="5" y1="20" x2="25" y2="20" />
                                 <rect x="25" y="10" width="50" height="20" />
                                 <line x1="75" y1="20" x2="95" y2="20" />
@@ -771,8 +789,8 @@
 
                         <!-- 8. Variable Resistor -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Var. Resistor</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Var. Resistor</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px;">
                                 <line x1="5" y1="20" x2="25" y2="20" />
                                 <rect x="25" y="10" width="50" height="20" />
                                 <line x1="75" y1="20" x2="95" y2="20" />
@@ -784,43 +802,43 @@
 
                         <!-- 9. Ammeter -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Ammeter</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Ammeter</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px;">
                                 <line x1="10" y1="20" x2="35" y2="20" />
                                 <circle cx="50" cy="20" r="15" />
-                                <text x="50" y="25" text-anchor="middle" stroke="none" fill="var(--primary)" font-family="Outfit" font-size="14px" font-weight="bold">A</text>
+                                <text x="50" y="26" text-anchor="middle" stroke="none" fill="var(--primary)" font-family="Outfit" font-size="16px" font-weight="bold">A</text>
                                 <line x1="65" y1="20" x2="90" y2="20" />
                             </svg>
                         </div>
 
                         <!-- 10. Voltmeter -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Voltmeter</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Voltmeter</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px;">
                                 <line x1="10" y1="20" x2="35" y2="20" />
                                 <circle cx="50" cy="20" r="15" />
-                                <text x="50" y="25" text-anchor="middle" stroke="none" fill="var(--primary)" font-family="Outfit" font-size="14px" font-weight="bold">V</text>
+                                <text x="50" y="26" text-anchor="middle" stroke="none" fill="var(--primary)" font-family="Outfit" font-size="16px" font-weight="bold">V</text>
                                 <line x1="65" y1="20" x2="90" y2="20" />
                             </svg>
                         </div>
 
                         <!-- 11. Motor -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Motor</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Motor</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px;">
                                 <line x1="10" y1="20" x2="35" y2="20" />
                                 <circle cx="50" cy="20" r="15" />
-                                <text x="50" y="25" text-anchor="middle" stroke="none" fill="var(--primary)" font-family="Outfit" font-size="14px" font-weight="bold">M</text>
+                                <text x="50" y="26" text-anchor="middle" stroke="none" fill="var(--primary)" font-family="Outfit" font-size="16px" font-weight="bold">M</text>
                                 <line x1="65" y1="20" x2="90" y2="20" />
                             </svg>
                         </div>
 
                         <!-- 12. Buzzer -->
                         <div class="glass-card" style="padding: 1rem;">
-                            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Buzzer</h3>
-                            <svg viewBox="0 0 100 40" style="width: 100%; height: 40px; stroke: var(--primary); stroke-width: 4; fill: none;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">Buzzer</h3>
+                            <svg class="circuit-svg" viewBox="0 0 100 40" style="width: 100%; height: 40px;">
                                 <line x1="10" y1="20" x2="35" y2="20" />
-                                <path d="M 35 20 A 15 15 0 0 1 65 20 Z" fill="none" />
+                                <path d="M 35 20 A 15 15 0 0 1 65 20 Z" />
                                 <line x1="40" y1="20" x2="40" y2="30" />
                                 <line x1="60" y1="20" x2="60" y2="30" />
                                 <line x1="65" y1="20" x2="90" y2="20" />
@@ -842,9 +860,9 @@
                     
                     <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto;">
                         
-                        <div class="pedagogical-note note-theory" style="margin-top: 0;">
+                        <div class="pedagogical-note note-theory" style="margin-top: 0; transform: rotate(1deg);">
                             <div class="pedagogical-badge"><i class="fa-solid fa-list-check"></i> The 3 Golden Rules</div>
-                            <ul style="margin-left: 1.5rem; display: flex; flex-direction: column; gap: 1rem; color: white; margin-top: 1rem;">
+                            <ul style="margin-left: 1.5rem; display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
                                 <li><strong>Use a ruler.</strong> Wires must be perfectly straight lines.</li>
                                 <li><strong>No gaps.</strong> Ensure the lines touch the symbols perfectly. Don't leave empty spaces.</li>
                                 <li><strong>Right angles only.</strong> Draw the wires as rectangles or squares, not messy circles or curves.</li>
@@ -852,25 +870,25 @@
                         </div>
 
                         <div class="glass-card text-center" style="display: flex; flex-direction: column; justify-content: center;">
-                            <h3 style="color: var(--accent); margin-bottom: 1rem;">A Perfect Diagram Example:</h3>
+                            <h3 style="color: var(--accent); margin-bottom: 1rem; font-family: 'Kalam'; font-size: 1.8rem;">A Perfect Diagram Example:</h3>
                             <svg class="circuit-svg" viewBox="0 0 300 200" style="max-width: 100%; max-height: 200px; margin: 0 auto;">
                                 <!-- Wires -->
-                                <path d="M 120 40 L 50 40 L 50 160 L 135 160 M 165 160 L 250 160 L 250 40 L 190 40" stroke="var(--text-light)" stroke-width="4" fill="none"/>
+                                <path d="M 120 40 L 50 40 L 50 160 L 135 160 M 165 160 L 250 160 L 250 40 L 190 40" stroke="var(--primary)" stroke-width="4" fill="none"/>
                                 
                                 <!-- Cell (Battery) -->
-                                <line x1="120" y1="20" x2="120" y2="60" stroke="var(--text-light)" stroke-width="2"/>
-                                <line x1="140" y1="30" x2="140" y2="50" stroke="var(--text-light)" stroke-width="6"/>
-                                <line x1="140" y1="40" x2="160" y2="40" stroke="var(--text-light)" stroke-width="4" />
+                                <line x1="120" y1="20" x2="120" y2="60" stroke="var(--primary)" stroke-width="2"/>
+                                <line x1="140" y1="30" x2="140" y2="50" stroke="var(--primary)" stroke-width="6"/>
+                                <line x1="140" y1="40" x2="160" y2="40" stroke="var(--primary)" stroke-width="4" />
                                 
                                 <!-- Closed Switch -->
-                                <circle cx="160" cy="40" r="3" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="2"/>
-                                <line x1="160" y1="40" x2="190" y2="40" stroke="var(--text-light)" stroke-width="4" />
-                                <circle cx="190" cy="40" r="3" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="2"/>
+                                <circle cx="160" cy="40" r="3" fill="#ffffff" stroke="var(--primary)" stroke-width="2"/>
+                                <line x1="160" y1="40" x2="190" y2="40" stroke="var(--primary)" stroke-width="4" />
+                                <circle cx="190" cy="40" r="3" fill="#ffffff" stroke="var(--primary)" stroke-width="2"/>
 
                                 <!-- Lamp 1 -->
-                                <circle cx="150" cy="160" r="15" fill="var(--bg-panel)" stroke="var(--text-light)" stroke-width="3"/>
-                                <line x1="139" y1="149" x2="161" y2="171" stroke="var(--text-light)" stroke-width="3"/>
-                                <line x1="161" y1="149" x2="139" y2="171" stroke="var(--text-light)" stroke-width="3"/>
+                                <circle cx="150" cy="160" r="15" fill="#ffffff" stroke="var(--primary)" stroke-width="3"/>
+                                <line x1="139" y1="149" x2="161" y2="171" stroke="var(--primary)" stroke-width="3"/>
+                                <line x1="161" y1="149" x2="139" y2="171" stroke="var(--primary)" stroke-width="3"/>
                             </svg>
                         </div>
                     </div>
@@ -892,11 +910,11 @@
                         <div class="glass-card text-center" style="border-top: 4px solid var(--primary);">
                             <i class="fa-solid fa-battery-full" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
                             <h3 style="color: var(--primary);">Direct Current (DC)</h3>
-                            <p style="color: white; font-size: 1.15rem; margin-bottom: 1rem;">Electrons flow smoothly in <strong>one direction</strong> only.</p>
+                            <p style="font-size: 1.15rem; margin-bottom: 1rem;">Electrons flow smoothly in <strong>one direction</strong> only.</p>
                             
-                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
-                                <p style="color: var(--text-dim); font-size: 1.1rem;"><i class="fa-solid fa-mobile-screen"></i> <strong>Where do we see it?</strong></p>
-                                <p style="color: white; font-size: 1rem;">Batteries, phones, and laptops. Anything portable uses DC!</p>
+                            <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; border: 1px dashed rgba(0,0,0,0.1);">
+                                <p style="color: var(--primary); font-size: 1.2rem; font-family: 'Kalam'; font-weight: bold;"><i class="fa-solid fa-mobile-screen"></i> Where do we see it?</p>
+                                <p style="font-size: 1rem; font-family: 'Kalam';">Batteries, phones, and laptops. Anything portable uses DC!</p>
                             </div>
                         </div>
 
@@ -904,11 +922,11 @@
                         <div class="glass-card text-center" style="border-top: 4px solid var(--warning);">
                             <i class="fa-solid fa-plug" style="font-size: 3rem; color: var(--warning); margin-bottom: 1rem;"></i>
                             <h3 style="color: var(--warning);">Alternating Current (AC)</h3>
-                            <p style="color: white; font-size: 1.15rem; margin-bottom: 1rem;">Electrons rapidly wiggle <strong>back and forth</strong> continuously.</p>
+                            <p style="font-size: 1.15rem; margin-bottom: 1rem;">Electrons rapidly wiggle <strong>back and forth</strong> continuously.</p>
                             
-                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
-                                <p style="color: var(--text-dim); font-size: 1.1rem;"><i class="fa-solid fa-house"></i> <strong>Where do we see it?</strong></p>
-                                <p style="color: white; font-size: 1rem;">Wall sockets and large power lines. Used to power houses and TVs!</p>
+                            <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; border: 1px dashed rgba(0,0,0,0.1);">
+                                <p style="color: var(--warning); font-size: 1.2rem; font-family: 'Kalam'; font-weight: bold;"><i class="fa-solid fa-house"></i> Where do we see it?</p>
+                                <p style="font-size: 1rem; font-family: 'Kalam';">Wall sockets and large power lines. Used to power houses and TVs!</p>
                             </div>
                         </div>
 
@@ -929,7 +947,7 @@
                         
                         <!-- Video 1 -->
                         <div class="glass-card" style="padding: 1rem; display: flex; flex-direction: column;">
-                            <div style="position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                            <div style="position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);">
                                 <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
                                         src="https://www.youtube.com/embed/Wm75XgbqHBY" 
                                         title="AC vs DC Power" frameborder="0" 
@@ -941,7 +959,7 @@
 
                         <!-- Video 2 -->
                         <div class="glass-card" style="padding: 1rem; display: flex; flex-direction: column;">
-                            <div style="position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                            <div style="position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);">
                                 <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
                                         src="https://www.youtube.com/embed/b1lKwZTtzIY" 
                                         title="YouTube video player" frameborder="0" 
@@ -962,28 +980,28 @@
             template: () => `
                 <div class="anim-enter text-center">
                     <i class="fa-solid fa-flag-checkered delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
-                    <h2 class="delay-1" style="font-size: 2.5rem; color: white;">Lesson Complete!</h2>
+                    <h2 class="delay-1" style="font-size: 2.5rem;">Lesson Complete!</h2>
                     
-                    <div class="pedagogical-note note-success delay-2" style="max-width: 700px; margin: 2rem auto; text-align: left;">
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 700px; margin: 2rem auto; text-align: left; transform: rotate(1deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> Quick Summary</div>
-                        <p style="color: white; margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Voltage (V)</strong> is the push. <strong>Current (I)</strong> is the speed of the flow.</p>
-                        <p style="color: white; margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Electrons</strong> squeeze through resistance, turning energy into heat & light.</p>
-                        <p style="color: white;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>DC</strong> flows one way (batteries). <strong>AC</strong> flows back-and-forth (walls).</p>
+                        <p style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Voltage (V)</strong> is the push. <strong>Current (I)</strong> is the speed of the flow.</p>
+                        <p style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Electrons</strong> squeeze through resistance, turning energy into heat & light.</p>
+                        <p><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>DC</strong> flows one way (batteries). <strong>AC</strong> flows back-and-forth (walls).</p>
                     </div>
 
-                    <div class="pedagogical-note note-task delay-3" style="max-width: 700px; margin: 2rem auto; text-align: left; background: rgba(245, 158, 11, 0.15); border: 2px solid var(--warning);">
+                    <div class="pedagogical-note note-task delay-3" style="max-width: 700px; margin: 2rem auto; text-align: left; background: #fffcf2; border: 2px dashed var(--warning); transform: rotate(-1deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Your Task Now</div>
-                        <h3 style="color: var(--warning); margin-bottom: 0.5rem;">Drawing Practice</h3>
-                        <p style="color: white; font-size: 1.15rem; margin-bottom: 1rem;">
+                        <h3 style="color: var(--warning); margin-bottom: 0.5rem; font-size: 1.8rem;">Drawing Practice</h3>
+                        <p style="font-size: 1.4rem; margin-bottom: 1rem;">
                             In your notebooks, use a ruler to draw a complete circuit that includes:
                         </p>
-                        <ul style="margin-left: 2rem; color: white; font-size: 1.15rem; margin-bottom: 1rem;">
+                        <ul style="margin-left: 2rem; font-size: 1.4rem; margin-bottom: 1rem;">
                             <li>One Battery</li>
                             <li>Two Lamps (Bulbs)</li>
                             <li>One Closed Switch</li>
                         </ul>
-                        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
-                            <p style="color: var(--text-dim); font-size: 1rem;">
+                        <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+                            <p style="color: var(--warning); font-size: 1.2rem; font-weight: bold;">
                                 <i class="fa-solid fa-hand-holding-hand"></i> Show your drawing to Mr. Bowen when you are finished!
                             </p>
                         </div>
