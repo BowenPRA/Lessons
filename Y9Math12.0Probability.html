@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 12.1 Probability - Year 9 Math</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Notebook Edutech Standard) --- */
+        :root {
+            --bg-paper: #fdfbf7;       /* Warm paper white */
+            --bg-panel: #ffffff;       /* Pure white for cards */
+            --primary: #2563eb;        /* Blue Ink */
+            --accent: #16a34a;         /* Green Ink */
+            --warning: #ea580c;        /* Orange Highlighter */
+            --danger: #dc2626;         /* Red Pen */
+            --cold: #0284c7;           /* Light Blue */
+            --text-main: #334155;      /* Dark slate text */
+            --text-dim: #64748b;       /* Secondary text */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-main); }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-main); }
+
+        strong { color: var(--text-main); font-weight: 800; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: #ffffff;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: var(--primary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 2px 2px 0px rgba(37, 99, 235, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            /* Notebook Paper Effect */
+            background-image:
+                linear-gradient(90deg, transparent 60px, rgba(220, 38, 38, 0.2) 60px, rgba(220, 38, 38, 0.2) 62px, transparent 62px),
+                linear-gradient(rgba(37, 99, 235, 0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 32px;
+            background-attachment: local;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 2rem 2rem 80px; /* Offset for margin line */
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+        }
+
+        /* Signposting System (Pedagogical Framework) */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            background: #ffffff;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+            animation: slideIn 0.5s ease;
+            font-family: 'Kalam', cursive;
+            font-size: 1.3rem;
+        }
+        .pedagogical-note p, .pedagogical-note li, .pedagogical-note h3 {
+            font-family: 'Kalam', cursive;
+        }
+        .pedagogical-badge {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Reveal Card */
+        .reveal-card {
+            background: #ffffff;
+            border: 3px dashed var(--primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+        }
+        .reveal-card:hover { transform: translateY(-2px); box-shadow: 6px 6px 0px rgba(0,0,0,0.06); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid rgba(0,0,0,0.05); }
+        .reveal-card.revealed { border-style: solid; border-color: var(--accent); cursor: default; transform: none; box-shadow: 4px 4px 0px rgba(0,0,0,0.06); }
+        .reveal-card.revealed .pre-reveal { display: none; }
+        .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+        .btn-action:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+        }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+        .btn-secondary { background: #ffffff; color: var(--text-main); border: 2px solid rgba(0,0,0,0.1); }
+        .btn-secondary:hover:not(:disabled) { background: #f8fafc; border-color: var(--text-dim); }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: var(--text-main);
+            border: 2px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cold), var(--primary)); transition: width 0.3s ease; }
+
+        /* Sorting List - Light Theme */
+        .sort-list { list-style: none; padding: 0; counter-reset: sort-counter; font-family: 'Kalam', cursive; font-size: 1.2rem; }
+        .sort-item {
+            background: #ffffff;
+            border: 2px solid rgba(0,0,0,0.08);
+            margin-bottom: 0.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.04);
+        }
+        .sort-item::before {
+            counter-increment: sort-counter;
+            content: counter(sort-counter);
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+        }
+
+        /* 3D Coin */
+        .coin-scene { width: 150px; height: 150px; perspective: 600px; margin: 0 auto; }
+        .coin-wrapper {
+            width: 100%; height: 100%; position: relative;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .coin-face {
+            position: absolute; width: 100%; height: 100%;
+            border-radius: 50%; backface-visibility: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; font-weight: 800; font-family: 'Outfit'; border: 6px solid #fbbf24;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .coin-front { background: linear-gradient(135deg, #fcd34d, #f59e0b); color: #78350f; }
+        .coin-back { background: linear-gradient(135deg, #e2e8f0, #94a3b8); color: #1e293b; transform: rotateY(180deg); border-color: #cbd5e1; }
+        .is-flipping { animation: flipAnim 0.6s linear infinite; }
+        @keyframes flipAnim { 0% { transform: rotateY(0); } 100% { transform: rotateY(360deg); } }
+
+        /* 3D Dice */
+        .dice-scene { width: 120px; height: 120px; perspective: 600px; margin: 0 auto; }
+        .dice {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d; transition: transform 0.5s;
+            transform: translateZ(-60px) rotateX(-20deg) rotateY(-20deg);
+        }
+        .dice-face {
+            position: absolute; width: 120px; height: 120px;
+            background: white; border: 2px solid #cbd5e1; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; font-weight: bold; color: var(--text-main);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.1), 2px 2px 5px rgba(0,0,0,0.1);
+        }
+        .front  { transform: rotateY(0deg) translateZ(60px); }
+        .back   { transform: rotateY(180deg) translateZ(60px); }
+        .right  { transform: rotateY(90deg) translateZ(60px); }
+        .left   { transform: rotateY(-90deg) translateZ(60px); }
+        .top    { transform: rotateX(90deg) translateZ(60px); }
+        .bottom { transform: rotateX(-90deg) translateZ(60px); }
+        
+        .dice.rolling { animation: rollAnim 0.4s linear infinite; }
+        @keyframes rollAnim {
+            0% { transform: translateZ(-60px) rotateX(0deg) rotateY(0deg); }
+            100% { transform: translateZ(-60px) rotateX(360deg) rotateY(360deg); }
+        }
+
+        /* Light Theme Tables */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; color: var(--text-main); }
+        .data-table th, .data-table td { border: 2px solid rgba(0,0,0,0.1); padding: 0.8rem; text-align: center; }
+        .data-table th { background: rgba(37,99,235,0.05); color: var(--primary); font-family: 'Outfit'; }
+        .data-table tr.highlight { background: rgba(22, 163, 74, 0.1); font-weight: bold; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        @media (max-width: 1024px) {
+            .slide-wrapper { padding-left: 60px; }
+        }
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+            .slide-wrapper { padding-left: 2rem; }
+            .viewport { background-image: none; background-color: var(--bg-paper); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-dice"></i> Year 9 Math</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;">Unit 12.1 Probability</span>
+        </div>
+        <div style="font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-main); font-size: 1.2rem;">
+            17 March 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    const renderMath = () => {
+        if (window.MathJax) {
+            window.MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+        }
+    };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Title & Objectives
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-dice delay-1" style="font-size: 5rem; color: var(--cold); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Probability & Experiments</h1>
+                    <h2 class="delay-1" style="color: var(--primary);">Cambridge Mathematics</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 3rem auto; text-align: left; transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objectives</div>
+                        <ul style="margin-left: 1rem; display: grid; gap: 1rem; list-style-type: none; padding: 0; margin-top: 0.5rem;">
+                            <li style="font-size: 1.4rem; display: flex; align-items: flex-start; gap: 10px; color: var(--text-main);">
+                                <span>⚖️</span>
+                                <span>Learn the probability scale (from Impossible to Certain).</span>
+                            </li>
+                            <li style="font-size: 1.4rem; display: flex; align-items: flex-start; gap: 10px; color: var(--text-main);">
+                                <span>📝</span>
+                                <span>Order events from most likely to least likely.</span>
+                            </li>
+                            <li style="font-size: 1.4rem; display: flex; align-items: flex-start; gap: 10px; color: var(--text-main);">
+                                <span>🎲</span>
+                                <span>Do probability experiments and write results as fractions.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 2: Homework Review
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Homework Review</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem; color: var(--text-dim);">Let's check our answers from yesterday's assignment.</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 1050px; margin: 0 auto; align-items: start;">
+                        
+                        <!-- Problem 1 -->
+                        <div class="glass-card" style="border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary); font-size: 1.3rem; margin-bottom: 1rem;">Question 4: Fractions</h3>
+                            <p style="font-size: 1.1rem; line-height: 1.5; margin-bottom: 1.5rem;">A large cake is cut into 24 equal slices. Alex eats $$\\frac{3}{8}$$of the cake, and Bella eats$$\\frac{5}{12}$$ of the cake. How many slices of cake are left over?</p>
+                            
+                            <button class="btn-action hw-btn" data-target="ans-1" style="width: 100%;"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            
+                            <div id="ans-1" style="display: none; background: rgba(37, 99, 235, 0.05); padding: 1.5rem; border-radius: 8px; border: 1px dashed var(--primary); margin-top: 1rem;">
+                                <p style="margin-bottom: 0.5rem; font-family: 'Kalam'; font-size: 1.2rem;"><strong>Step 1:</strong> Find how many slices Alex ate.</p>
+                                <p style="color: var(--text-dim); margin-bottom: 1rem;">$$\\frac{3}{8} \\times 24 = 9 \\text{ slices}$$</p>
+                                
+                                <p style="margin-bottom: 0.5rem; font-family: 'Kalam'; font-size: 1.2rem;"><strong>Step 2:</strong> Find how many slices Bella ate.</p>
+                                <p style="color: var(--text-dim); margin-bottom: 1rem;">$$\\frac{5}{12} \\times 24 = 10 \\text{ slices}$$</p>
+
+                                <p style="margin-bottom: 0.5rem; font-family: 'Kalam'; font-size: 1.2rem;"><strong>Step 3:</strong> Find what is left.</p>
+                                <p style="color: var(--text-dim); margin-bottom: 1rem;">$$24 - (9 + 10) = 5 \\text{ slices}$$</p>
+
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-top: 0.5rem; text-align: center; font-family: 'Kalam';">Answer: 5 slices</p>
+                            </div>
+                        </div>
+
+                        <!-- Problem 2 -->
+                        <div class="glass-card" style="border-top: 4px solid var(--warning);">
+                            <h3 style="color: var(--warning); font-size: 1.3rem; margin-bottom: 1rem;">Question 12: HCF</h3>
+                            <p style="font-size: 1.1rem; line-height: 1.5; margin-bottom: 1rem;">A florist has 48 red roses, 84 white roses, and 108 pink roses. She wants to make identical bouquets using all the flowers, with no flowers left over.</p>
+                            <ul style="font-size: 1.05rem; margin-left: 1.5rem; margin-bottom: 1.5rem;">
+                                <li><strong>(a)</strong> What is the maximum number of identical bouquets she can make?</li>
+                                <li style="margin-top: 0.5rem;"><strong>(b)</strong> How many white roses will be in each of these bouquets?</li>
+                            </ul>
+                            
+                            <button class="btn-action hw-btn" data-target="ans-2" style="width: 100%; background: var(--warning);"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            
+                            <div id="ans-2" style="display: none; background: rgba(234, 88, 12, 0.05); padding: 1.5rem; border-radius: 8px; border: 1px dashed var(--warning); margin-top: 1rem;">
+                                <p style="margin-bottom: 0.5rem; font-family: 'Kalam'; font-size: 1.2rem;"><strong>Step 1:</strong> Find the Highest Common Factor (HCF) of 48, 84, and 108.</p>
+                                <p style="color: var(--text-dim); margin-bottom: 1rem;">The HCF is 12.</p>
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.3rem; margin-bottom: 1.5rem; font-family: 'Kalam';">(a) Answer: 12 bouquets</p>
+                                
+                                <p style="margin-bottom: 0.5rem; font-family: 'Kalam'; font-size: 1.2rem;"><strong>Step 2:</strong> Divide the white roses by the number of bouquets.</p>
+                                <p style="color: var(--text-dim); margin-bottom: 1rem;">$$84 \\div 12 = 7$$</p>
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.3rem; font-family: 'Kalam';">(b) Answer: 7 white roses</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btns = container.querySelectorAll('.hw-btn');
+                const handlers = [];
+                btns.forEach(btn => {
+                    const handler = () => {
+                        const targetId = btn.getAttribute('data-target');
+                        const target = container.querySelector('#' + targetId);
+                        target.style.display = 'block';
+                        target.style.animation = 'fadeIn 0.4s ease';
+                        btn.style.display = 'none';
+                    };
+                    handlers.push({ el: btn, fn: handler });
+                    btn.addEventListener('click', handler);
+                });
+                renderMath();
+                return () => handlers.forEach(h => h.el.removeEventListener('click', h.fn));
+            }
+        },
+
+        // SLIDE 3: What is Probability? & Sorting
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">What is Probability?</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        <div>
+                            <div class="pedagogical-note note-write" style="transform: rotate(1deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Probability</h3>
+                                <p style="margin-bottom: 1rem; font-size: 1.4rem;">Probability tells us how likely something is to happen.</p>
+                                <p style="font-size: 1.4rem;">We measure it on a scale from <strong>0 (Impossible)</strong> to <strong>1 (Certain)</strong>.</p>
+                            </div>
+
+                            <div class="pedagogical-note note-task delay-2" style="transform: rotate(-0.5deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-list-ol"></i> Notebook Task</div>
+                                <p style="font-size: 1.3rem;">Write these 4 events in your notebook. Put the <strong>most likely</strong> at the top and the <strong>least likely</strong> at the bottom.</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card delay-3" style="position: relative;">
+                            <h3 style="color: var(--text-dim); font-size: 1.2rem; text-align: center; margin-bottom: 1rem; font-family: 'Kalam';">Unsorted Events</h3>
+                            
+                            <ul class="sort-list" id="unsorted-list">
+                                <li class="sort-item"><i class="fa-solid fa-person-arrow-up-from-line" style="color: var(--danger);"></i> Kim Long grows two feet taller by tomorrow</li>
+                                <li class="sort-item"><i class="fa-solid fa-cloud-rain" style="color: var(--cold);"></i> It's going to rain today</li>
+                                <li class="sort-item"><i class="fa-solid fa-sun" style="color: var(--warning);"></i> The sun comes up tomorrow</li>
+                                <li class="sort-item"><i class="fa-solid fa-money-bill-wave" style="color: var(--accent);"></i> Mr. Bowen wins the lottery</li>
+                            </ul>
+
+                            <div id="solution-box" style="display: none; margin-top: 1rem;">
+                                <h3 style="color: var(--accent); font-size: 1.2rem; text-align: center; margin-bottom: 1rem; font-family: 'Outfit';"><i class="fa-solid fa-check"></i> Correct Order</h3>
+                                <ul class="sort-list">
+                                    <li class="sort-item" style="border-left: 4px solid var(--warning);">1. The sun comes up tomorrow (Certain)</li>
+                                    <li class="sort-item" style="border-left: 4px solid var(--cold);">2. It's going to rain today (Possible/Likely)</li>
+                                    <li class="sort-item" style="border-left: 4px solid var(--accent);">3. Mr. Bowen wins the lottery (Highly Unlikely)</li>
+                                    <li class="sort-item" style="border-left: 4px solid var(--danger);">4. Kim Long grows two feet taller by tomorrow (Impossible)</li>
+                                </ul>
+                            </div>
+
+                            <div class="text-center" style="margin-top: 1.5rem;">
+                                <button id="btn-reveal-sort" class="btn-action"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-reveal-sort');
+                const unsorted = container.querySelector('#unsorted-list');
+                const solution = container.querySelector('#solution-box');
+                
+                const handler = () => {
+                    unsorted.style.display = 'none';
+                    solution.style.display = 'block';
+                    solution.classList.add('anim-enter');
+                    btn.style.display = 'none';
+                };
+                
+                btn.addEventListener('click', handler);
+                renderMath();
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 4: Experiment 1 - Coin Flip
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Experiment 1: The Coin Flip</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 900px; margin: 0 auto;">
+                        
+                        <div class="glass-card text-center">
+                            <h3 style="color: var(--text-dim); margin-bottom: 2rem; font-family: 'Kalam'; font-size: 1.4rem;">Theory (What we expect): $$P(\\text{Heads}) = \\frac{1}{2}$$</h3>
+                            
+                            <!-- 3D Coin -->
+                            <div class="coin-scene">
+                                <div class="coin-wrapper" id="coin">
+                                    <div class="coin-face coin-front">H</div>
+                                    <div class="coin-face coin-back">T</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+                                <button id="btn-flip" class="btn-action"><i class="fa-solid fa-arrow-rotate-right"></i> Flip Coin</button>
+                                <button id="btn-reset-coin" class="btn-action btn-secondary"><i class="fa-solid fa-trash"></i> Reset</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="pedagogical-note note-task" style="margin-top: 0; transform: rotate(0.5deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-flask"></i> Investigation</div>
+                                <p style="font-size: 1.3rem;">Flip the coin at least 10 times. Write down the total flips and how many Heads you get.</p>
+                            </div>
+
+                            <table class="data-table">
+                                <tr><th>Total Trials</th><td id="td-trials" style="font-size: 1.5rem; font-weight: bold; font-family: 'Kalam';">0</td></tr>
+                                <tr><th>Heads Count</th><td id="td-heads" style="font-size: 1.5rem; font-weight: bold; color: var(--warning); font-family: 'Kalam';">0</td></tr>
+                                <tr><th>Tails Count</th><td id="td-tails" style="font-size: 1.5rem; font-weight: bold; color: var(--text-dim); font-family: 'Kalam';">0</td></tr>
+                            </table>
+
+                            <div style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(37, 99, 235, 0.05); border: 2px dashed var(--primary); border-radius: 8px; text-align: center;">
+                                <p style="color: var(--text-dim); margin-bottom: 0.5rem; font-family: 'Kalam'; font-size: 1.2rem;">Our Result as a Fraction:</p>
+                                <div id="math-coin-result" style="font-size: 1.8rem; color: var(--primary);">$$\\frac{0}{0}$$</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnFlip = container.querySelector('#btn-flip');
+                const btnReset = container.querySelector('#btn-reset-coin');
+                const coin = container.querySelector('#coin');
+                const tdTrials = container.querySelector('#td-trials');
+                const tdHeads = container.querySelector('#td-heads');
+                const tdTails = container.querySelector('#td-tails');
+                const mathResult = container.querySelector('#math-coin-result');
+                
+                let trials = 0; let heads = 0; let tails = 0; let isFlipping = false;
+
+                const updateUI = () => {
+                    tdTrials.textContent = trials; tdHeads.textContent = heads; tdTails.textContent = tails;
+                    if (trials > 0) { mathResult.innerHTML = `$$\\frac{${heads}}{${trials}}$$`; } 
+                    else { mathResult.innerHTML = `$$\\frac{0}{0}$$`; }
+                    renderMath();
+                };
+
+                const flipCoin = () => {
+                    if (isFlipping) return;
+                    isFlipping = true; btnFlip.disabled = true;
+                    coin.classList.add('is-flipping');
+                    const resultIsHeads = Math.random() < 0.5;
+
+                    setTimeout(() => {
+                        coin.classList.remove('is-flipping');
+                        const currentRot = parseInt(coin.getAttribute('data-rot') || '0');
+                        const spins = 5 * 360; 
+                        let newRot = currentRot + spins;
+                        if (!resultIsHeads) { newRot += 180; } 
+                        else if (newRot % 360 !== 0) { newRot += 180; }
+                        
+                        coin.style.transform = `rotateY(${newRot}deg)`;
+                        coin.setAttribute('data-rot', newRot.toString());
+
+                        trials++;
+                        if (resultIsHeads) heads++; else tails++;
+                        updateUI();
+                        
+                        isFlipping = false; btnFlip.disabled = false;
+                    }, 600);
+                };
+
+                const resetData = () => {
+                    trials = 0; heads = 0; tails = 0;
+                    coin.style.transform = `rotateY(0deg)`; coin.setAttribute('data-rot', '0');
+                    updateUI();
+                };
+
+                btnFlip.addEventListener('click', flipCoin);
+                btnReset.addEventListener('click', resetData);
+                renderMath();
+                return () => { btnFlip.removeEventListener('click', flipCoin); btnReset.removeEventListener('click', resetData); };
+            }
+        },
+
+        // SLIDE 5: Experiment 2 - Rolling a Die
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Experiment 2: Rolling a '6'</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 1.5rem; font-family: 'Kalam'; font-size: 1.3rem;">Theory (What we expect): $$P(6) = \\frac{1}{6} \\approx 16.7\\%$$</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <div class="glass-card text-center" style="padding-bottom: 1rem;">
+                            <!-- 3D Dice Container -->
+                            <div class="dice-scene" style="margin-bottom: 2rem;">
+                                <div class="dice" id="dice">
+                                    <div class="dice-face front">1</div>
+                                    <div class="dice-face back">6</div>
+                                    <div class="dice-face right">3</div>
+                                    <div class="dice-face left">4</div>
+                                    <div class="dice-face top">2</div>
+                                    <div class="dice-face bottom">5</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 0.8rem; align-items: center;">
+                                <button id="btn-roll-1" class="btn-action" style="width: 100%;"><i class="fa-solid fa-dice-one"></i> Roll Once</button>
+                                <button id="btn-roll-100" class="btn-action" style="background: var(--cold); width: 100%;"><i class="fa-solid fa-forward-fast"></i> Simulate 100 Rolls</button>
+                                <button id="btn-reset-dice" class="btn-action btn-secondary" style="width: 100%;"><i class="fa-solid fa-trash"></i> Reset Data</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <table class="data-table" style="margin-top: 0;">
+                                <tr><th>Result</th><th>Tally / Count</th></tr>
+                                <tr><td>1</td><td id="count-1" style="font-family: 'Kalam'; font-size: 1.2rem;">0</td></tr>
+                                <tr><td>2</td><td id="count-2" style="font-family: 'Kalam'; font-size: 1.2rem;">0</td></tr>
+                                <tr><td>3</td><td id="count-3" style="font-family: 'Kalam'; font-size: 1.2rem;">0</td></tr>
+                                <tr><td>4</td><td id="count-4" style="font-family: 'Kalam'; font-size: 1.2rem;">0</td></tr>
+                                <tr><td>5</td><td id="count-5" style="font-family: 'Kalam'; font-size: 1.2rem;">0</td></tr>
+                                <tr class="highlight"><td style="color: var(--accent);">6</td><td id="count-6" style="color: var(--accent); font-family: 'Kalam'; font-size: 1.2rem; font-weight: bold;">0</td></tr>
+                            </table>
+                            
+                            <div style="margin-top: 1rem; text-align: center; font-size: 1.3rem; font-family: 'Kalam';">
+                                Total Rolls: <span id="dice-total" style="font-weight: bold; color: var(--primary);">0</span>
+                            </div>
+
+                            <div class="pedagogical-note note-success" style="margin-top: 1rem; padding: 1.5rem; transform: rotate(1deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-calculator"></i> What is our fraction for a 6?</div>
+                                <div id="math-dice-result" style="font-size: 1.8rem; color: var(--accent); text-align: center; margin-top: 0.5rem;">$$\\frac{0}{0}$$</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn1 = container.querySelector('#btn-roll-1');
+                const btn100 = container.querySelector('#btn-roll-100');
+                const btnReset = container.querySelector('#btn-reset-dice');
+                const dice = container.querySelector('#dice');
+                const totalEl = container.querySelector('#dice-total');
+                const mathResult = container.querySelector('#math-dice-result');
+                
+                let counts = [0, 0, 0, 0, 0, 0, 0];
+                let total = 0; let isRolling = false;
+
+                const rotations = {
+                    1: "translateZ(-60px) rotateY(0deg) rotateX(0deg)",    
+                    6: "translateZ(-60px) rotateY(180deg) rotateX(0deg)",  
+                    3: "translateZ(-60px) rotateY(-90deg) rotateX(0deg)",  
+                    4: "translateZ(-60px) rotateY(90deg) rotateX(0deg)",   
+                    2: "translateZ(-60px) rotateX(-90deg) rotateY(0deg)",  
+                    5: "translateZ(-60px) rotateX(90deg) rotateY(0deg)"    
+                };
+
+                const updateUI = () => {
+                    for(let i=1; i<=6; i++) { container.querySelector(`#count-${i}`).textContent = counts[i]; }
+                    totalEl.textContent = total;
+                    if (total > 0) { mathResult.innerHTML = `$$\\frac{${counts[6]}}{${total}}$$`; } 
+                    else { mathResult.innerHTML = `$$\\frac{0}{0}$$`; }
+                    renderMath();
+                };
+
+                const rollOnce = () => {
+                    if (isRolling) return;
+                    isRolling = true; btn1.disabled = true; btn100.disabled = true;
+                    dice.classList.add('rolling');
+                    const result = Math.floor(Math.random() * 6) + 1;
+
+                    setTimeout(() => {
+                        dice.classList.remove('rolling');
+                        dice.style.transform = rotations[result];
+                        counts[result]++; total++;
+                        updateUI();
+                        isRolling = false; btn1.disabled = false; btn100.disabled = false;
+                    }, 500);
+                };
+
+                const roll100 = () => {
+                    if (isRolling) return;
+                    for(let i=0; i<100; i++) { counts[Math.floor(Math.random() * 6) + 1]++; total++; }
+                    dice.classList.add('rolling');
+                    setTimeout(() => {
+                        dice.classList.remove('rolling');
+                        dice.style.transform = rotations[6]; 
+                        updateUI();
+                    }, 300);
+                };
+
+                const resetData = () => {
+                    counts = [0, 0, 0, 0, 0, 0, 0]; total = 0;
+                    dice.style.transform = "translateZ(-60px) rotateX(-20deg) rotateY(-20deg)";
+                    updateUI();
+                };
+
+                btn1.addEventListener('click', rollOnce);
+                btn100.addEventListener('click', roll100);
+                btnReset.addEventListener('click', resetData);
+                renderMath();
+                return () => { btn1.removeEventListener('click', rollOnce); btn100.removeEventListener('click', roll100); btnReset.removeEventListener('click', resetData); };
+            }
+        },
+
+        // SLIDE 6: What is Experimental Probability?
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2 style="margin-bottom: 1rem;">What is Experimental Probability?</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        <div>
+                            <div class="pedagogical-note note-write text-left" style="transform: rotate(-1deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> Important Words</div>
+                                <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">1. Trial</h3>
+                                <p style="margin-bottom: 1rem; font-size: 1.3rem;">One try or turn in an experiment. <br><span style="color: var(--text-dim); font-size: 1.1rem;">(Example: Flipping a coin exactly one time.)</span></p>
+                                
+                                <h3 style="color: var(--accent); margin-bottom: 0.5rem; font-size: 1.8rem;">2. Success</h3>
+                                <p style="margin-bottom: 0; font-size: 1.3rem;">Getting the result you are looking for. <br><span style="color: var(--text-dim); font-size: 1.1rem;">(Example: We want Heads. The coin lands on Heads. That is a success!)</span></p>
+                            </div>
+                        </div>
+
+                        <div class="text-left">
+                            <div class="glass-card" style="margin-bottom: 1.5rem; background: #fff;">
+                                <h3 style="color: var(--text-dim); font-size: 1.2rem; text-align: center; margin-bottom: 1rem; font-family: 'Kalam';">The Math Rule</h3>
+                                <div style="font-size: 1.6rem; color: var(--primary); text-align: center;">
+                                    $$\\text{Probability} = \\frac{\\text{Number of Successes}}{\\text{Total Trials}}$$
+                                </div>
+                            </div>
+                            
+                            <div class="pedagogical-note note-theory" style="transform: rotate(0.5deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-lightbulb"></i> The Big Idea</div>
+                                <p style="font-size: 1.3rem;">Why do we flip the coin 100 times instead of just 2 times?</p>
+                                <p style="color: var(--danger); font-weight: bold; margin-top: 0.5rem; font-size: 1.4rem;">The more trials we do, the closer our answer gets to the true probability!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 7: Tree Diagrams (2 Coin Flips)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Flipping Two Coins</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-family: 'Kalam'; font-size: 1.4rem;">A <strong>Tree Diagram</strong> helps us draw all the possible outcomes.</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1050px; margin: 0 auto; align-items: start;">
+                        
+                        <div class="glass-card text-center" style="padding: 1.5rem;">
+                            <div class="pedagogical-badge" style="color: var(--primary); margin-bottom: 1rem;"><i class="fa-solid fa-pencil"></i> Draw This Tree</div>
+                            <h3 style="color: var(--text-dim); margin-bottom: 1rem; font-size: 1rem; font-family: 'Kalam';">Coin 1 &nbsp;&nbsp;&rarr;&nbsp;&nbsp; Coin 2 &nbsp;&nbsp;&rarr;&nbsp;&nbsp; Outcome</h3>
+                            <svg width="100%" viewBox="0 0 450 300" style="stroke: var(--primary); fill: none; stroke-width: 3; stroke-linecap: round;">
+                                <!-- Paths -->
+                                <path d="M 40 150 L 140 75" />
+                                <path d="M 40 150 L 140 225" />
+                                <path d="M 140 75 L 240 35" />
+                                <path d="M 140 75 L 240 115" />
+                                <path d="M 140 225 L 240 185" />
+                                <path d="M 140 225 L 240 265" />
+
+                                <!-- Nodes -->
+                                <circle cx="40" cy="150" r="6" fill="var(--primary)" stroke="none" />
+                                <circle cx="140" cy="75" r="22" fill="#ffffff" stroke="var(--primary)" />
+                                <circle cx="140" cy="225" r="22" fill="#ffffff" stroke="var(--primary)" />
+                                <circle cx="240" cy="35" r="22" fill="#ffffff" stroke="var(--primary)" />
+                                <circle cx="240" cy="115" r="22" fill="#ffffff" stroke="var(--primary)" />
+                                <circle cx="240" cy="185" r="22" fill="#ffffff" stroke="var(--primary)" />
+                                <circle cx="240" cy="265" r="22" fill="#ffffff" stroke="var(--primary)" />
+
+                                <!-- H/T Text -->
+                                <text x="140" y="81" fill="var(--primary)" stroke="none" text-anchor="middle" font-family="Kalam" font-weight="bold" font-size="18px">H</text>
+                                <text x="140" y="231" fill="var(--primary)" stroke="none" text-anchor="middle" font-family="Kalam" font-weight="bold" font-size="18px">T</text>
+                                <text x="240" y="41" fill="var(--primary)" stroke="none" text-anchor="middle" font-family="Kalam" font-weight="bold" font-size="18px">H</text>
+                                <text x="240" y="121" fill="var(--primary)" stroke="none" text-anchor="middle" font-family="Kalam" font-weight="bold" font-size="18px">T</text>
+                                <text x="240" y="191" fill="var(--primary)" stroke="none" text-anchor="middle" font-family="Kalam" font-weight="bold" font-size="18px">H</text>
+                                <text x="240" y="271" fill="var(--primary)" stroke="none" text-anchor="middle" font-family="Kalam" font-weight="bold" font-size="18px">T</text>
+
+                                <!-- Outcome Text -->
+                                <text x="280" y="41" fill="var(--accent)" stroke="none" font-family="Kalam" font-weight="bold" font-size="20px">H H</text>
+                                <text x="325" y="41" fill="var(--text-dim)" stroke="none" font-family="Kalam" font-size="14px">(2 Heads)</text>
+
+                                <text x="280" y="121" fill="var(--accent)" stroke="none" font-family="Kalam" font-weight="bold" font-size="20px">H T</text>
+                                <text x="325" y="121" fill="var(--text-dim)" stroke="none" font-family="Kalam" font-size="14px">(1 Head)</text>
+
+                                <text x="280" y="191" fill="var(--accent)" stroke="none" font-family="Kalam" font-weight="bold" font-size="20px">T H</text>
+                                <text x="325" y="191" fill="var(--text-dim)" stroke="none" font-family="Kalam" font-size="14px">(1 Head)</text>
+
+                                <text x="280" y="271" fill="var(--danger)" stroke="none" font-family="Kalam" font-weight="bold" font-size="20px">T T</text>
+                                <text x="325" y="271" fill="var(--text-dim)" stroke="none" font-family="Kalam" font-size="14px">(0 Heads)</text>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <div class="pedagogical-note note-task" style="margin-top: 0; padding: 1.5rem; transform: rotate(-1deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-circle-question"></i> The Question</div>
+                                <p style="font-size: 1.4rem; font-weight: bold; line-height: 1.5;">What is the probability of getting at least 1 Heads?</p>
+                                <p style="color: var(--text-dim); font-size: 1.1rem; margin-top: 0.5rem;"><em>Hint: "At least 1" means 1 Head OR 2 Heads.</em></p>
+                            </div>
+
+                            <div class="reveal-card" id="tree-reveal" role="button" tabindex="0" style="padding: 1.5rem;">
+                                <div class="pre-reveal">
+                                    <i class="fa-solid fa-hand-pointer" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary);"></i>
+                                    <h3 style="font-size: 1.3rem;">Click to check answer</h3>
+                                </div>
+                                <div class="reveal-content text-left">
+                                    <ul style="font-size: 1.2rem; line-height: 1.6; margin-left: 1.5rem; margin-bottom: 1rem; font-family: 'Kalam';">
+                                        <li><strong>Total Outcomes:</strong> 4 <br><span style="font-size: 1rem; color: var(--text-dim);">(Count the right side of the tree)</span></li>
+                                        <li style="margin-top: 0.5rem;"><strong>Successes:</strong> 3 <br><span style="font-size: 1rem; color: var(--accent);">(HH, HT, and TH have Heads)</span></li>
+                                    </ul>
+
+                                    <div style="background: rgba(22, 163, 74, 0.1); border: 2px dashed var(--accent); padding: 0.5rem; border-radius: 8px; text-align: center;">
+                                        <p style="font-size: 1.8rem; color: var(--accent); margin: 0;">$$P = \\frac{3}{4}$$</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCard = container.querySelector('#tree-reveal');
+                const handler = () => { revealCard.classList.add('revealed'); };
+                revealCard.addEventListener('click', handler);
+                renderMath();
+                return () => revealCard.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 8: Independent Events (Multiplying Probabilities)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Two Events Together</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-family: 'Kalam'; font-size: 1.4rem;">What if we roll a die AND flip a coin at the same time?</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1050px; margin: 0 auto; align-items: start;">
+                        
+                        <div class="glass-card text-center" style="padding: 1.5rem;">
+                            <h3 style="color: var(--text-dim); margin-bottom: 1rem; font-size: 1rem; font-family: 'Kalam';">Die Roll &nbsp;&nbsp;&rarr;&nbsp;&nbsp; Coin Flip &nbsp;&nbsp;&rarr;&nbsp;&nbsp; Outcome</h3>
+                            <svg width="100%" viewBox="0 0 450 200" style="stroke: var(--primary); fill: none; stroke-width: 3; stroke-linecap: round;">
+                                <!-- Paths -->
+                                <path d="M 40 100 L 160 50" />
+                                <path d="M 40 100 L 160 150" stroke-dasharray="5,5" stroke="var(--text-dim)" opacity="0.5"/>
+                                <path d="M 160 50 L 280 20" />
+                                <path d="M 160 50 L 280 80" stroke-dasharray="5,5" stroke="var(--text-dim)" opacity="0.5"/>
+
+                                <!-- Nodes -->
+                                <circle cx="40" cy="100" r="6" fill="var(--primary)" stroke="none" />
+                                <circle cx="160" cy="50" r="25" fill="#ffffff" stroke="var(--primary)" />
+                                <circle cx="160" cy="150" r="25" fill="#ffffff" stroke="var(--text-dim)" opacity="0.5"/>
+                                <circle cx="280" cy="20" r="25" fill="#ffffff" stroke="var(--primary)" />
+                                <circle cx="280" cy="80" r="25" fill="#ffffff" stroke="var(--text-dim)" opacity="0.5"/>
+
+                                <!-- Text on Nodes -->
+                                <text x="160" y="56" fill="var(--primary)" stroke="none" text-anchor="middle" font-family="Kalam" font-weight="bold" font-size="16px">5 or 6</text>
+                                <text x="160" y="156" fill="var(--text-dim)" stroke="none" text-anchor="middle" font-family="Kalam" font-weight="bold" font-size="16px" opacity="0.8">1 to 4</text>
+                                <text x="280" y="26" fill="var(--primary)" stroke="none" text-anchor="middle" font-family="Kalam" font-weight="bold" font-size="16px">H</text>
+                                <text x="280" y="86" fill="var(--text-dim)" stroke="none" text-anchor="middle" font-family="Kalam" font-weight="bold" font-size="16px" opacity="0.8">T</text>
+
+                                <!-- Probabilities on branches -->
+                                <text x="90" y="65" fill="var(--accent)" stroke="none" font-size="16px" font-family="Kalam" font-weight="bold">1/3</text>
+                                <text x="210" y="25" fill="var(--warning)" stroke="none" font-size="16px" font-family="Kalam" font-weight="bold">1/2</text>
+
+                                <!-- Target Outcome -->
+                                <text x="360" y="26" fill="var(--accent)" stroke="none" font-family="Kalam" font-weight="bold" font-size="20px">Success!</text>
+                            </svg>
+                            <p style="color: var(--text-dim); font-size: 1rem; margin-top: 1rem; font-family: 'Kalam';">We only follow the top path where BOTH things happen.</p>
+                        </div>
+
+                        <div>
+                            <div class="pedagogical-note note-write" style="margin-top: 0; transform: rotate(0.5deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-link-slash"></i> Important Words</div>
+                                <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.6rem;">Independent Events</h3>
+                                <p style="font-size: 1.3rem; line-height: 1.5;">When one event does <strong>not</strong> change the other.</p>
+                                <p style="color: var(--text-dim); font-size: 1.1rem; margin-top: 0.5rem;"><em>(Rolling a 5 on the die does not change the coin flip!)</em></p>
+                            </div>
+
+                            <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--accent);">
+                                <h3 style="color: var(--accent); margin-bottom: 1rem; font-family: 'Kalam'; font-size: 1.6rem;">The Multiplication Rule</h3>
+                                <p style="font-size: 1.2rem; margin-bottom: 1rem;">To find the probability of BOTH happening, we <strong>multiply</strong> their fractions.</p>
+                                
+                                <div style="background: rgba(37, 99, 235, 0.05); padding: 1.5rem; border-radius: 8px; text-align: center; border: 1px dashed var(--primary);">
+                                    <p style="font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-main);">$$P(\\text{5 or 6}) = \\frac{2}{6} = \\frac{1}{3}$$</p>
+                                    <p style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-main);">$$P(\\text{Heads}) = \\frac{1}{2}$$</p>
+                                    <p style="color: var(--accent); font-size: 1.5rem; font-weight: bold; margin-bottom: 0;">$$P(\\text{Both}) = \\frac{1}{3} \\times \\frac{1}{2} = \\frac{1}{6}$$</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 9: Summary & Assessment
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-flag-checkered delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h2 class="delay-1" style="font-size: 2.5rem;">Lesson Complete!</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 2rem auto; text-align: left; transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> Summary</div>
+                        <p style="margin-bottom: 0.5rem; font-size: 1.3rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Probability Scale:</strong> Goes from 0 (Impossible) to 1 (Certain).</p>
+                        <p style="margin-bottom: 0.5rem; font-size: 1.3rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Experiments:</strong> We can test probability by doing an action many times (like flipping a coin).</p>
+                        <p style="margin-bottom: 0.5rem; font-size: 1.3rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Fractions:</strong> We write our results as $$\\frac{\\text{Successful Trials}}{\\text{Total Trials}}$$.</p>
+                        <p style="font-size: 1.3rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Independent Events:</strong> Multiply the fractions to find the chance of BOTH happening.</p>
+                    </div>
+
+                    <div class="pedagogical-note note-task delay-3" style="max-width: 750px; margin: 2rem auto; text-align: left; background: #fffcf2; border: 2px dashed var(--warning); transform: rotate(1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-book-open"></i> Homework Assignment</div>
+                        <h3 style="color: var(--warning); margin-bottom: 0.5rem; font-size: 1.8rem;">Workbook Practice</h3>
+                        <p style="font-size: 1.4rem; margin-bottom: 1rem;">
+                            Please take out your math workbook.
+                        </p>
+                        <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+                            <p style="color: var(--warning); font-size: 1.2rem; font-weight: bold;">
+                                <i class="fa-solid fa-pencil"></i> Complete all exercises in <strong>Section 13.1</strong>. Give them to Mr. Bowen before next class.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        // Execute cleanup from previous slide if it exists
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        // Render HTML synchronously
+        container.innerHTML = slide.template();
+        
+        // Execute script immediately
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        // Update UI
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
