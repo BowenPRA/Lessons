@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 13.1 Independent Events - Year 9 Math</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Notebook Edutech Standard) --- */
+        :root {
+            --bg-paper: #fdfbf7;       /* Warm paper white */
+            --bg-panel: #ffffff;       /* Pure white for cards */
+            --primary: #2563eb;        /* Blue Ink */
+            --accent: #16a34a;         /* Green Ink */
+            --warning: #ea580c;        /* Orange Highlighter */
+            --danger: #dc2626;         /* Red Pen */
+            --cold: #0284c7;           /* Light Blue */
+            --text-main: #334155;      /* Dark slate text */
+            --text-dim: #64748b;       /* Secondary text */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-main); }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-main); }
+
+        strong { color: var(--text-main); font-weight: 800; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: #ffffff;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: var(--primary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 2px 2px 0px rgba(37, 99, 235, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            /* Notebook Paper Effect */
+            background-image:
+                linear-gradient(90deg, transparent 60px, rgba(220, 38, 38, 0.2) 60px, rgba(220, 38, 38, 0.2) 62px, transparent 62px),
+                linear-gradient(rgba(37, 99, 235, 0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 32px;
+            background-attachment: local;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 2rem 2rem 80px; /* Offset for margin line */
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+        }
+
+        /* Signposting System (Pedagogical Framework) */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            background: #ffffff;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+            animation: slideIn 0.5s ease;
+            font-family: 'Kalam', cursive;
+            font-size: 1.3rem;
+        }
+        .pedagogical-note p, .pedagogical-note li, .pedagogical-note h3 {
+            font-family: 'Kalam', cursive;
+        }
+        .pedagogical-badge {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Reveal Card */
+        .reveal-card {
+            background: #ffffff;
+            border: 3px dashed var(--primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+        }
+        .reveal-card:hover { transform: translateY(-2px); box-shadow: 6px 6px 0px rgba(0,0,0,0.06); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid rgba(0,0,0,0.05); }
+        .reveal-card.revealed { border-style: solid; border-color: var(--accent); cursor: default; transform: none; box-shadow: 4px 4px 0px rgba(0,0,0,0.06); }
+        .reveal-card.revealed .pre-reveal { display: none; }
+        .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+        .btn-action:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+        }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+        .btn-secondary { background: #ffffff; color: var(--text-main); border: 2px solid rgba(0,0,0,0.1); }
+        .btn-secondary:hover:not(:disabled) { background: #f8fafc; border-color: var(--text-dim); }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: var(--text-main);
+            border: 2px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cold), var(--primary)); transition: width 0.3s ease; }
+
+        /* Light Theme Tables */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; color: var(--text-main); background: #ffffff; }
+        .data-table th, .data-table td { border: 2px solid rgba(0,0,0,0.1); padding: 0.8rem; text-align: center; }
+        .data-table th { background: rgba(37,99,235,0.05); color: var(--primary); font-family: 'Outfit'; }
+        .data-table tr.highlight { background: rgba(22, 163, 74, 0.1); font-weight: bold; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        @media (max-width: 1024px) {
+            .slide-wrapper { padding-left: 60px; }
+        }
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+            .slide-wrapper { padding-left: 2rem; }
+            .viewport { background-image: none; background-color: var(--bg-paper); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-dice"></i> Year 9 Math</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;">Unit 13.1 Independent Events</span>
+        </div>
+        <div style="font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-main); font-size: 1.2rem;">
+            17 March 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    const renderMath = () => {
+        if (window.MathJax) {
+            window.MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+        }
+    };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Title & Objectives
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-chart-pie delay-1" style="font-size: 5rem; color: var(--cold); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Events & Outcomes</h1>
+                    <h2 class="delay-1" style="color: var(--primary);">Cambridge Mathematics</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 3rem auto; text-align: left; transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objectives</div>
+                        <ul style="margin-left: 1rem; display: grid; gap: 1rem; list-style-type: none; padding: 0; margin-top: 0.5rem;">
+                            <li style="font-size: 1.4rem; display: flex; align-items: flex-start; gap: 10px; color: var(--text-main);">
+                                <span>🎲</span>
+                                <span>Define the word <strong>Outcome</strong> in probability.</span>
+                            </li>
+                            <li style="font-size: 1.4rem; display: flex; align-items: flex-start; gap: 10px; color: var(--text-main);">
+                                <span>⚖️</span>
+                                <span>Understand <strong>Mutually Exclusive</strong> events.</span>
+                            </li>
+                            <li style="font-size: 1.4rem; display: flex; align-items: flex-start; gap: 10px; color: var(--text-main);">
+                                <span>✖️</span>
+                                <span>Identify Independent and Dependent Events.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 2: Warm-up (Melted Die)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Warm-up: The Melted Die</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem; font-size: 1.3rem;">Someone accidentally left a plastic die in the microwave! It melted slightly.<br>We rolled it <strong>500 times</strong> to see what happens. Here are the results:</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <!-- Data Table -->
+                        <div class="glass-card" style="padding: 1.5rem; transform: rotate(-1deg);">
+                            <table class="data-table">
+                                <tr><th>Result on Die</th><th>Frequency (Count)</th></tr>
+                                <tr><td>1</td><td style="font-family: 'Kalam'; font-size: 1.3rem;">45</td></tr>
+                                <tr><td>2</td><td style="font-family: 'Kalam'; font-size: 1.3rem;">55</td></tr>
+                                <tr><td>3</td><td style="font-family: 'Kalam'; font-size: 1.3rem;">150</td></tr>
+                                <tr><td>4</td><td style="font-family: 'Kalam'; font-size: 1.3rem;">40</td></tr>
+                                <tr><td>5</td><td style="font-family: 'Kalam'; font-size: 1.3rem;">60</td></tr>
+                                <tr class="highlight"><td style="color: var(--accent);">6</td><td style="color: var(--accent); font-family: 'Kalam'; font-size: 1.3rem; font-weight: bold;">150</td></tr>
+                                <tr style="background: rgba(0,0,0,0.03);"><td><strong>Total Rolls</strong></td><td style="font-weight: bold; font-family: 'Kalam'; font-size: 1.3rem;">500</td></tr>
+                            </table>
+                        </div>
+
+                        <!-- Questions -->
+                        <div>
+                            <div class="pedagogical-note note-task" style="margin-top: 0;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-question-circle"></i> Task 1</div>
+                                <p style="font-size: 1.4rem; font-weight: bold;">Find the experimental probability of getting a 6.</p>
+                                
+                                <button class="btn-action hw-btn" data-target="ans-1" style="width: 100%; margin-top: 1rem;"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                                
+                                <div id="ans-1" style="display: none; background: rgba(37, 99, 235, 0.05); padding: 1rem; border-radius: 8px; border: 1px dashed var(--primary); margin-top: 1rem; text-align: center;">
+                                    <p style="font-size: 1.5rem; color: var(--primary);">$$P(6) = \\frac{150}{500} = \\frac{3}{10}$$</p>
+                                </div>
+                            </div>
+
+                            <div class="pedagogical-note note-write" style="margin-top: 1.5rem; transform: rotate(0.5deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-list-ol"></i> Task 2</div>
+                                <p style="font-size: 1.3rem; font-weight: bold;">Find the probability for <em>each</em> outcome.</p>
+                                
+                                <button class="btn-action hw-btn" data-target="ans-2" style="width: 100%; margin-top: 1rem; background: var(--warning);"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                                
+                                <div id="ans-2" style="display: none; background: rgba(234, 88, 12, 0.05); padding: 1rem; border-radius: 8px; border: 1px dashed var(--warning); margin-top: 1rem;">
+                                    <p style="font-family: 'Kalam'; font-size: 1.2rem; margin-bottom: 0.5rem;">$$P(1) = \\frac{45}{500} = \\frac{9}{100}$$</p>
+                                    <p style="font-family: 'Kalam'; font-size: 1.2rem; margin-bottom: 0.5rem;">$$P(2) = \\frac{55}{500} = \\frac{11}{100}$$</p>
+                                    <p style="font-family: 'Kalam'; font-size: 1.2rem; margin-bottom: 0.5rem;">$$P(3) = \\frac{150}{500} = \\frac{3}{10}$$</p>
+                                    <p style="font-family: 'Kalam'; font-size: 1.2rem; margin-bottom: 0.5rem;">$$P(4) = \\frac{40}{500} = \\frac{2}{25}$$</p>
+                                    <p style="font-family: 'Kalam'; font-size: 1.2rem; margin-bottom: 0;">$$P(5) = \\frac{60}{500} = \\frac{3}{25}$$</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btns = container.querySelectorAll('.hw-btn');
+                const handlers = [];
+                btns.forEach(btn => {
+                    const handler = () => {
+                        const targetId = btn.getAttribute('data-target');
+                        const target = container.querySelector('#' + targetId);
+                        target.style.display = 'block';
+                        target.style.animation = 'fadeIn 0.4s ease';
+                        btn.style.display = 'none';
+                    };
+                    handlers.push({ el: btn, fn: handler });
+                    btn.addEventListener('click', handler);
+                });
+                renderMath();
+                return () => handlers.forEach(h => h.el.removeEventListener('click', h.fn));
+            }
+        },
+
+        // SLIDE 3: Define Outcome
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">What is an Outcome?</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: stretch;">
+                        
+                        <div class="pedagogical-note note-write" style="transform: rotate(-1deg); display: flex; flex-direction: column; justify-content: center;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                            <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 2rem;">Outcome</h3>
+                            <p style="font-size: 1.5rem; line-height: 1.5; margin-bottom: 1rem;">An outcome is a <strong>possible result</strong> of an experiment.</p>
+                            <p style="color: var(--text-dim); font-size: 1.2rem;">When we do a math experiment, anything that can happen at the end is called an outcome.</p>
+                        </div>
+
+                        <div class="glass-card delay-2" style="border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--accent); margin-bottom: 1rem;"><i class="fa-solid fa-flask"></i> Tying it together</h3>
+                            
+                            <div style="background: rgba(22, 163, 74, 0.05); padding: 1.5rem; border-radius: 8px; border: 1px dashed var(--accent); margin-bottom: 1rem;">
+                                <p style="font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem;">The Experiment:</p>
+                                <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--text-main);">Rolling a six-sided die.</p>
+                            </div>
+                            
+                            <div style="background: rgba(37, 99, 235, 0.05); padding: 1.5rem; border-radius: 8px; border: 1px dashed var(--primary);">
+                                <p style="font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem;">The Outcomes:</p>
+                                <div style="display: flex; gap: 1rem; justify-content: center; font-family: 'Outfit'; font-size: 1.8rem; font-weight: bold; color: var(--primary);">
+                                    <span>1,</span> <span>2,</span> <span>3,</span> <span>4,</span> <span>5,</span> <span>6</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 4: Mutually Exclusive
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Mutually Exclusive Events</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.3rem;">Let's break down these big math words into simple English.</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <div>
+                            <div class="glass-card" style="margin-bottom: 1.5rem;">
+                                <h3 style="color: var(--text-main); font-size: 1.4rem;"><i class="fa-solid fa-language"></i> English Definition</h3>
+                                
+                                <p style="font-family: 'Kalam'; font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--primary);"><strong>Mutually</strong> = Shared / To each other</p>
+                                <p style="color: var(--text-dim); font-size: 1rem; margin-bottom: 1rem; margin-left: 1rem;">(Like "mutual friends" on Facebook)</p>
+                                
+                                <p style="font-family: 'Kalam'; font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--danger);"><strong>Exclusive</strong> = Leaving things out</p>
+                                <p style="color: var(--text-dim); font-size: 1rem; margin-left: 1rem;">(Like an "exclusive club" that doesn't let everyone in)</p>
+                            </div>
+
+                            <button class="btn-action" id="btn-reveal-exclusive" style="width: 100%;"><i class="fa-solid fa-wand-magic-sparkles"></i> Reveal Math Definition</button>
+                        </div>
+
+                        <div id="exclusive-definition" style="display: none;">
+                            <div class="pedagogical-note note-write" style="margin-top: 0; transform: rotate(1deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                                <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">Mutually Exclusive</h3>
+                                <p style="font-size: 1.5rem; font-weight: bold; line-height: 1.5;">Events that CANNOT happen at the exact same time.</p>
+                            </div>
+                            
+                            <div class="glass-card" style="border-top: 4px solid var(--warning); margin-top: 1.5rem;">
+                                <h3 style="color: var(--warning);"><i class="fa-solid fa-dice"></i> Example: Rolling a Die</h3>
+                                <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">You can roll a <strong>1</strong>.</p>
+                                <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">You can roll a <strong>6</strong>.</p>
+                                <p style="color: var(--danger); font-size: 1.2rem; font-weight: bold;">You CANNOT roll a 1 and a 6 on a single die at the same time!</p>
+                                <p style="color: var(--text-dim); font-size: 1.1rem; margin-top: 0.5rem;">Therefore, getting a 1 and getting a 6 are mutually exclusive.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-reveal-exclusive');
+                const def = container.querySelector('#exclusive-definition');
+                
+                const handler = () => {
+                    def.style.display = 'block';
+                    def.classList.add('anim-enter');
+                    btn.style.display = 'none';
+                };
+                
+                btn.addEventListener('click', handler);
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 5: Examples of Mutually Exclusive (Multiple)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Are they Mutually Exclusive?</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.3rem;">Can these two things happen at the EXACT same time?</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; gap: 1.5rem;">
+                        
+                        <!-- Card 1 -->
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--text-main); font-size: 1.2rem;">Example 1</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--primary);">Turning Left <br><span style="color: var(--text-main);">vs</span><br> Turning Right</p>
+                            <div style="background: rgba(37, 99, 235, 0.05); padding: 0.8rem; border-radius: 8px; margin-top: 1rem; border: 1px dashed var(--primary);">
+                                <p style="color: var(--primary); font-weight: bold; font-size: 1.2rem;">YES. Mutually Exclusive.</p>
+                                <p style="color: var(--text-dim); font-size: 0.9rem;">You cannot turn left and right at the same time.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--text-main); font-size: 1.2rem;">Example 2</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--accent);">Rolling an EVEN number <br><span style="color: var(--text-main);">vs</span><br> Rolling a 3</p>
+                            <div style="background: rgba(22, 163, 74, 0.05); padding: 0.8rem; border-radius: 8px; margin-top: 1rem; border: 1px dashed var(--accent);">
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.2rem;">YES. Mutually Exclusive.</p>
+                                <p style="color: var(--text-dim); font-size: 0.9rem;">3 is not an even number. You can't do both.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 4px solid var(--danger);">
+                            <h3 style="color: var(--text-main); font-size: 1.2rem;">Example 3</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--danger);">Rolling an EVEN number <br><span style="color: var(--text-main);">vs</span><br> Rolling a 2</p>
+                            <div style="background: rgba(220, 38, 38, 0.05); padding: 0.8rem; border-radius: 8px; margin-top: 1rem; border: 1px dashed var(--danger);">
+                                <p style="color: var(--danger); font-weight: bold; font-size: 1.2rem;">NO! Not Exclusive.</p>
+                                <p style="color: var(--text-dim); font-size: 0.9rem;">If you roll a 2, you did BOTH at the same time!</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 4 -->
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 4px solid var(--warning);">
+                            <h3 style="color: var(--text-main); font-size: 1.2rem;">Example 4</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--warning);">Drawing a RED card <br><span style="color: var(--text-main);">vs</span><br> Drawing a KING</p>
+                            <div style="background: rgba(234, 88, 12, 0.05); padding: 0.8rem; border-radius: 8px; margin-top: 1rem; border: 1px dashed var(--warning);">
+                                <p style="color: var(--warning); font-weight: bold; font-size: 1.2rem;">NO! Not Exclusive.</p>
+                                <p style="color: var(--text-dim); font-size: 0.9rem;">You could draw the King of Hearts (a red King).</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 6: Practice Mutually Exclusive Outcomes
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Practice: Mutually Exclusive</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.3rem;">Can you name two mutually exclusive outcomes for these experiments?</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <div class="glass-card" style="border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary);"><i class="fa-solid fa-flask"></i> Experiment 1</h3>
+                            <p style="font-size: 1.4rem; font-weight: bold; margin-bottom: 1rem;">Rolling a 6-sided die.</p>
+                            <p style="color: var(--text-dim); font-size: 1.1rem; font-family: 'Kalam';">Write down two outcomes that CANNOT happen at the same time.</p>
+                        </div>
+
+                        <div class="glass-card" style="border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--accent);"><i class="fa-solid fa-flask"></i> Experiment 2</h3>
+                            <p style="font-size: 1.4rem; font-weight: bold; margin-bottom: 1rem;">Picking a card from a deck.</p>
+                            <p style="color: var(--text-dim); font-size: 1.1rem; font-family: 'Kalam';">Write down two outcomes that CANNOT happen at the same time.</p>
+                        </div>
+
+                    </div>
+
+                    <div class="text-center delay-3" style="margin-top: 2rem;">
+                        <button class="btn-action" id="btn-reveal-practice"><i class="fa-solid fa-eye"></i> Show Example Answers</button>
+                    </div>
+
+                    <div id="practice-answers" style="display: none; max-width: 1000px; margin: 2rem auto 0; gap: 2rem;" class="grid-2">
+                        <div style="background: rgba(37, 99, 235, 0.05); padding: 1.5rem; border-radius: 8px; border: 2px dashed var(--primary); text-align: center;">
+                            <p style="font-family: 'Kalam'; font-size: 1.5rem; color: var(--primary);">"Rolling a 2" and "Rolling a 5"</p>
+                        </div>
+                        <div style="background: rgba(22, 163, 74, 0.05); padding: 1.5rem; border-radius: 8px; border: 2px dashed var(--accent); text-align: center;">
+                            <p style="font-family: 'Kalam'; font-size: 1.5rem; color: var(--accent);">"Drawing a Red card" and "Drawing a Spade"</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-reveal-practice');
+                const ans = container.querySelector('#practice-answers');
+                const handler = () => {
+                    ans.style.display = 'grid';
+                    ans.classList.add('anim-enter');
+                    btn.style.display = 'none';
+                };
+                btn.addEventListener('click', handler);
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 7: The Coin Flip Mystery
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">The Coin Mystery</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 800px; margin: 2rem auto; transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-circle-question"></i> The Setup</div>
+                        <p style="font-size: 1.4rem; line-height: 1.6;">You flip a coin 4 times in a row. It lands on <strong>HEADS</strong> every single time!</p>
+                        <div style="display: flex; gap: 1rem; justify-content: center; font-family: 'Outfit'; font-size: 2rem; font-weight: bold; color: var(--warning); margin: 1rem 0;">
+                            <span>H</span> <span>&rarr;</span> <span>H</span> <span>&rarr;</span> <span>H</span> <span>&rarr;</span> <span>H</span>
+                        </div>
+                        <p style="font-size: 1.4rem; font-weight: bold; text-align: center;">What is the probability it lands on Heads on the 5th flip?</p>
+                    </div>
+
+                    <div class="reveal-card delay-2" id="coin-mystery-reveal" role="button" tabindex="0" style="max-width: 800px; margin: 0 auto;">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-hand-pointer" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary);"></i>
+                            <h3 style="font-size: 1.3rem;">Click to reveal the answer</h3>
+                        </div>
+                        <div class="reveal-content text-center">
+                            <h3 style="color: var(--accent); font-size: 2.5rem; margin-bottom: 0.5rem;">Still $$\\frac{1}{2}$$ !</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--text-main);">The coin has <strong>no memory</strong>. It doesn't remember the last 4 flips.</p>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--text-main);">The 5th flip is a completely new event!</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCard = container.querySelector('#coin-mystery-reveal');
+                const handler = () => { revealCard.classList.add('revealed'); };
+                revealCard.addEventListener('click', handler);
+                renderMath();
+                return () => revealCard.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 8: The Card Mystery (Without Replacement)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">The Card Mystery</h2>
+                    
+                    <div class="pedagogical-note note-theory delay-1" style="max-width: 800px; margin: 2rem auto; transform: rotate(1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-circle-question"></i> The Setup</div>
+                        <p style="font-size: 1.4rem; line-height: 1.6;">You draw a card from a deck and <strong>keep it</strong>. You draw a second card and <strong>keep it</strong> too. Both cards were <strong>7s</strong>!</p>
+                        <div style="display: flex; gap: 1rem; justify-content: center; font-family: 'Outfit'; font-size: 2rem; font-weight: bold; color: var(--danger); margin: 1rem 0;">
+                            <span>7</span> <span>&rarr;</span> <span>7</span>
+                        </div>
+                        <p style="font-size: 1.4rem; font-weight: bold; text-align: center;">What is the probability of getting a 7 again on your 3rd draw?</p>
+                    </div>
+
+                    <div class="reveal-card delay-2" id="card-mystery-reveal" role="button" tabindex="0" style="max-width: 800px; margin: 0 auto; border-color: var(--danger);">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-hand-pointer" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--danger);"></i>
+                            <h3 style="font-size: 1.3rem; color: var(--danger);">Click to reveal the answer</h3>
+                        </div>
+                        <div class="reveal-content text-center">
+                            <h3 style="color: var(--danger); font-size: 2.5rem; margin-bottom: 0.5rem;">Only $$\\frac{2}{50}$$ !</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--text-main);">Because you <strong>kept</strong> the cards, the deck changed.</p>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--text-main);">There are only <strong>2</strong> sevens left out of <strong>50</strong> remaining cards.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCard = container.querySelector('#card-mystery-reveal');
+                const handler = () => { revealCard.classList.add('revealed'); };
+                revealCard.addEventListener('click', handler);
+                renderMath();
+                return () => revealCard.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 9: Independent Events
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Independent Events</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.3rem;">Let's give these mysteries a math name.</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <div>
+                            <div class="pedagogical-note note-write" style="margin-top: 0; transform: rotate(-0.5deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                                <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">Independent Events</h3>
+                                <p style="font-size: 1.5rem; font-weight: bold; line-height: 1.5;">Events where the outcome of the first event does NOT change the probability of the second event.</p>
+                            </div>
+                            
+                            <div class="pedagogical-note note-theory" style="transform: rotate(0.5deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> The Opposite</div>
+                                <p style="font-size: 1.3rem;">If an event DOES change the next probability (like keeping the cards in the mystery), we call it <strong>Dependent</strong>.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card" style="border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--accent); margin-bottom: 1rem;"><i class="fa-solid fa-lightbulb"></i> The Two Golden Rules of Independence</h3>
+                            <ul style="font-family: 'Kalam'; font-size: 1.3rem; margin-left: 1.5rem; color: var(--text-main); line-height: 1.6;">
+                                <li style="margin-bottom: 0.5rem;"><strong>No Memory:</strong> Objects like dice, coins, and spinners do not remember what they landed on before.</li>
+                                <li><strong>Repeatable:</strong> If you reset an experiment perfectly (like putting a drawn card back in the deck), the events stay independent!</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 10: Independent vs Dependent Practice
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Independent or Dependent?</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.3rem;">Does the first event change the probability of the second?</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; gap: 1.5rem;">
+                        
+                        <!-- Card 1 -->
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--text-main); font-size: 1.2rem;">Situation 1</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--primary);">Rolling a die <br><span style="color: var(--text-main);">then</span><br> Flipping a coin</p>
+                            <div class="answer-box" style="display: none; background: rgba(37, 99, 235, 0.05); padding: 0.8rem; border-radius: 8px; margin-top: 1rem; border: 1px dashed var(--primary);">
+                                <p style="color: var(--primary); font-weight: bold; font-size: 1.2rem;">INDEPENDENT</p>
+                                <p style="color: var(--text-dim); font-size: 0.9rem;">The die does not affect the coin at all.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--text-main); font-size: 1.2rem;">Situation 2</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--accent);">Taking a red candy, eating it <br><span style="color: var(--text-main);">then</span><br> Taking another candy</p>
+                            <div class="answer-box" style="display: none; background: rgba(22, 163, 74, 0.05); padding: 0.8rem; border-radius: 8px; margin-top: 1rem; border: 1px dashed var(--accent);">
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.2rem;">DEPENDENT</p>
+                                <p style="color: var(--text-dim); font-size: 0.9rem;">You ate it! The total number of candies changed.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 4px solid var(--danger);">
+                            <h3 style="color: var(--text-main); font-size: 1.2rem;">Situation 3</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--danger);">Drawing a card, putting it back <br><span style="color: var(--text-main);">then</span><br> Drawing another card</p>
+                            <div class="answer-box" style="display: none; background: rgba(220, 38, 38, 0.05); padding: 0.8rem; border-radius: 8px; margin-top: 1rem; border: 1px dashed var(--danger);">
+                                <p style="color: var(--danger); font-weight: bold; font-size: 1.2rem;">INDEPENDENT</p>
+                                <p style="color: var(--text-dim); font-size: 0.9rem;">You put it back. The deck resets perfectly.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 4 -->
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 4px solid var(--warning);">
+                            <h3 style="color: var(--text-main); font-size: 1.2rem;">Situation 4</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; color: var(--warning);">Drawing a name from a hat, keeping it out <br><span style="color: var(--text-main);">then</span><br> Drawing a second name</p>
+                            <div class="answer-box" style="display: none; background: rgba(234, 88, 12, 0.05); padding: 0.8rem; border-radius: 8px; margin-top: 1rem; border: 1px dashed var(--warning);">
+                                <p style="color: var(--warning); font-weight: bold; font-size: 1.2rem;">DEPENDENT</p>
+                                <p style="color: var(--text-dim); font-size: 0.9rem;">The hat has one less name inside it now.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div class="text-center delay-3" style="margin-top: 2rem;">
+                        <button class="btn-action" id="btn-reveal-indep"><i class="fa-solid fa-eye"></i> Show Answers</button>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-reveal-indep');
+                const boxes = container.querySelectorAll('.answer-box');
+                const handler = () => {
+                    boxes.forEach(box => {
+                        box.style.display = 'block';
+                        box.classList.add('anim-enter');
+                    });
+                    btn.style.display = 'none';
+                };
+                btn.addEventListener('click', handler);
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 11: Summary & Assessment
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-flag-checkered delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h2 class="delay-1" style="font-size: 2.5rem;">Lesson Complete!</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 2rem auto; text-align: left; transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> Summary</div>
+                        <p style="margin-bottom: 0.5rem; font-size: 1.3rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Outcome:</strong> A possible result of an experiment.</p>
+                        <p style="margin-bottom: 0.5rem; font-size: 1.3rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Mutually Exclusive:</strong> Two events that CANNOT happen at the same time.</p>
+                        <p style="font-size: 1.3rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Independent Events:</strong> The outcome of one event does not change the probability of the next one.</p>
+                    </div>
+
+                    <div class="pedagogical-note note-task delay-3" style="max-width: 750px; margin: 2rem auto; text-align: left; background: #fffcf2; border: 2px dashed var(--warning); transform: rotate(1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-book-open"></i> Homework Assignment</div>
+                        <h3 style="color: var(--warning); margin-bottom: 0.5rem; font-size: 1.8rem;">Workbook Practice</h3>
+                        <p style="font-size: 1.4rem; margin-bottom: 1rem;">
+                            Please take out your math workbook.
+                        </p>
+                        <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+                            <p style="color: var(--warning); font-size: 1.2rem; font-weight: bold;">
+                                <i class="fa-solid fa-pencil"></i> Complete the mutually exclusive & independent events worksheet. Give it to Mr. Bowen before next class.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        // Execute cleanup from previous slide if it exists
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        // Render HTML synchronously
+        container.innerHTML = slide.template();
+        
+        // Execute script immediately
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        // Update UI
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
