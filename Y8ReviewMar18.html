@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer Grading - Year 8 Assessment</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for rendering math equations easily -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Bible Standard) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Secondary Background */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Success/Acid Green */
+            --warning: #f59e0b;        /* Hazard Orange */
+            --danger: #ef4444;         /* Heat Red */
+            --cold: #0ea5e9;           /* Cold Blue */
+            --text-light: #f1f5f9;     /* Main Text */
+            --text-dim: #94a3b8;       /* Subtitles */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.15rem; line-height: 1.6; color: var(--text-dim); }
+
+        strong { color: var(--text-light); }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .mark-badge {
+            background: var(--accent);
+            color: var(--bg-deep);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            white-space: nowrap;
+            font-family: 'Outfit', sans-serif;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        /* Questions and Reveal Buttons */
+        .question-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-reveal:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .answer-content {
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1.2rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        .math-text { font-size: 1.3rem; color: white; margin: 0.5rem 0; }
+        
+        table.math-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: rgba(0,0,0,0.2);
+        }
+        table.math-table th, table.math-table td {
+            border: 1px solid var(--text-dim);
+            padding: 10px;
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        table.math-table th { background: rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-check-double"></i> Peer Grading</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">18 March Assessment solutions</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; color: var(--primary);">
+            Year 8 Science & Math
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    // Global function for revealing answers
+    window.revealAnswer = function(btn) {
+        btn.nextElementSibling.style.display = 'block';
+        btn.style.display = 'none';
+        // Re-trigger MathJax to format any hidden math that was just revealed
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+    }
+
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Instructions
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-users delay-1" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Time to Mark!</h1>
+                    <h2 class="delay-1" style="color: var(--accent);">18 March Assessment solutions</h2>
+                    
+                    <div class="glass-card delay-2" style="max-width: 750px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--warning);">
+                        <h3 style="color: var(--warning);"><i class="fa-solid fa-exchange-alt"></i> Instructions</h3>
+                        <ol style="margin-left: 2rem; margin-top: 1rem; color: white; line-height: 2;">
+                            <li>Please <strong>trade papers</strong> with the person in front or behind you.</li>
+                            <li>Take out a <strong>Pen or Colored Pencil</strong>. (No normal grey pencils!)</li>
+                            <li>Go to the front page. Look for the word <strong style="text-decoration: line-through; color: var(--danger);">Teacher</strong>.</li>
+                            <li><strong>Cross it out</strong> and write your name as the <strong>Grader</strong>.</li>
+                            <li><strong>Write a comment:</strong> Write 1 thing they did good, and 1 thing to work on.</li>
+                            <li>Be fair! Only give marks if they have the correct ideas.</li>
+                        </ol>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: PDF Embed
+        {
+            template: () => `
+                <div class="anim-enter text-center" style="display: flex; flex-direction: column; height: 100%;">
+                    <h2 class="delay-1" style="margin-bottom: 0.5rem;">Assessment Reference</h2>
+                    <p class="delay-1" style="color: var(--text-dim); margin-bottom: 1rem;">Original Assessment PDF</p>
+                    
+                    <div class="glass-card delay-2" style="flex: 1; min-height: 60vh; padding: 0.5rem; border-top: 4px solid var(--primary);">
+                        <iframe src="Y8ReviewMar18.pdf" width="100%" height="100%" style="border: none; border-radius: 8px; min-height: 58vh;" title="Assessment Review PDF">
+                            <p>Your browser does not support iframes. <a href="Y8ReviewMar18.pdf" style="color: var(--accent);">Download the PDF</a>.</p>
+                        </iframe>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: Science Q1
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part A: Science <span style="color: var(--text-dim);">|</span> Q1: Atoms & Elements</h2>
+                    
+                    <div class="question-box delay-1">
+                        <div class="question-text"><strong>(a) Define what an element is. (1 mark)</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">An element is a pure substance made of only <strong>one type</strong> of atom.</p>
+                            <span class="mark-badge">1 mark</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2">
+                        <div class="question-text"><strong>(b) Complete the table stating the electrical charge (+, -, or 0) for each particle. (3 marks)</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">Proton = <strong>+</strong> (Positive)</p>
+                            <p style="color: white;">Neutron = <strong>0</strong> (Neutral or Zero)</p>
+                            <p style="color: white;">Electron = <strong>-</strong> (Negative)</p>
+                            <span class="mark-badge">3 marks (1 point for each correct symbol)</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-3">
+                        <div class="question-text"><strong>(c) Which subatomic particle is responsible for chemical bonding? (1 mark)</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">The <strong>Electron</strong>.</p>
+                            <span class="mark-badge">1 mark</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: Science Q2
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part A: Science <span style="color: var(--text-dim);">|</span> Q2: Reactions</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>(a) Explain what happens to atoms during a chemical reaction. (1 mark)</strong></div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">They are <strong>rearranged</strong>. (Bonds break and new bonds are formed to make new things).</p>
+                                <span class="mark-badge">1 mark</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>(b) In a word equation, what term is used for the starting substances? (1 mark)</strong></div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;"><strong>Reactants</strong>.</p>
+                                <span class="mark-badge">1 mark</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2">
+                        <div class="question-text"><strong>(c) Compare an exothermic reaction to an endothermic reaction in terms of thermal energy. (2 marks)</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;"><strong>Exothermic:</strong> Gives out heat (gets hotter / releases thermal energy).</p>
+                            <p style="color: white;"><strong>Endothermic:</strong> Takes in heat (gets colder / absorbs thermal energy).</p>
+                            <span class="mark-badge">2 marks (1 for each definition)</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-3">
+                        <div class="question-text"><strong>(d) Explain why a chemical reaction, such as a burning candle, eventually stops. (2 marks)</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">It stops because the <strong>reactants are completely used up</strong>. When there is no more fuel/chemicals left, it can't react anymore.</p>
+                            <span class="mark-badge">2 marks</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: Science Q3 (Part 1)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part A: Science <span style="color: var(--text-dim);">|</span> Q3: Metals & Oxygen (1/2)</h2>
+                    
+                    <div class="question-box delay-1">
+                        <div class="question-text"><strong>(a) A scientist cuts a piece of sodium metal. Explain why the shiny cut surface quickly becomes dull. (1 mark)</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">Because it quickly <strong>reacts with oxygen</strong> in the air (forming an oxide layer).</p>
+                            <span class="mark-badge">1 mark</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2">
+                        <div class="question-text"><strong>(b) Magnesium burns blindingly bright in air. Write the word equation for this reaction. (1 mark)</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">Magnesium + Oxygen &rarr; <strong>Magnesium oxide</strong></p>
+                            <span class="mark-badge">1 mark</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-3">
+                        <div class="question-text"><strong>(c) Some metals, like gold, are described as "inert". What does this mean? (1 mark)</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">It means they are <strong>unreactive</strong>. They do not react easily with other chemicals.</p>
+                            <span class="mark-badge">1 mark</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: Science Q3 (Part 2)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part A: Science <span style="color: var(--text-dim);">|</span> Q3: Rusting (2/2)</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 1rem;">(d) A student investigates the rusting of iron nails using different test tubes.</p>
+
+                    <div class="question-box delay-1">
+                        <div class="question-text"><strong>(i) State the two conditions needed for iron to rust. (2 marks)</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">1. <strong>Water</strong> (or moisture)</p>
+                            <p style="color: white;">2. <strong>Oxygen</strong> (or air)</p>
+                            <span class="mark-badge">2 marks (1 for each)</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2">
+                        <div class="question-text"><strong>(ii) In one test tube, an iron nail is placed in boiled water with a layer of oil on top. Explain why this nail will not rust. (2 marks)</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">Boiling the water removes all the <strong>oxygen</strong>. The layer of oil stops new <strong>air from getting in</strong>.</p>
+                            <span class="mark-badge">2 marks (1 point for mentioning no oxygen, 1 for oil blocking air)</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-3">
+                        <div class="question-text"><strong>(iii) State two ways to protect an iron gate from rusting. (2 marks)</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">Any two of the following:</p>
+                            <ul style="color: white; margin-left: 2rem;">
+                                <li><strong>Paint</strong> it.</li>
+                                <li>Cover it in <strong>oil or grease</strong>.</li>
+                                <li><strong>Galvanize</strong> it (cover in Zinc).</li>
+                            </ul>
+                            <span class="mark-badge">2 marks</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: Math Q4
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part B: Math <span style="color: var(--text-dim);">|</span> Q4: Fractions</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>(a) Calculate: \\( 3\\frac{1}{4} - 1\\frac{5}{6} \\) (3 marks)</strong></div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <div class="math-text">Change to improper: \\( \\frac{13}{4} - \\frac{11}{6} \\)</div>
+                                <div class="math-text">Common Denominator (12): \\( \\frac{39}{12} - \\frac{22}{12} \\)</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-top: 1rem;">Answer: \\( \\frac{17}{12} \\text{  or  } 1\\frac{5}{12} \\)</div>
+                                <br>
+                                <span class="mark-badge" style="background: var(--primary);">3 marks (1 for improper, 1 for /12, 1 for final)</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>(b) Calculate: \\( \\frac{4}{9} \\div \\frac{8}{15} \\) (3 marks)</strong></div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <div class="math-text">Flip & Multiply (KFC): \\( \\frac{4}{9} \\times \\frac{15}{8} \\)</div>
+                                <div class="math-text">Multiply straight across: \\( \\frac{60}{72} \\)</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-top: 1rem;">Simplest form: \\( \\frac{5}{6} \\)</div>
+                                <br>
+                                <span class="mark-badge" style="background: var(--primary);">3 marks (1 for flip/multiply, 1 for 60/72, 1 for 5/6)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: Math Q5
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part B: Math <span style="color: var(--text-dim);">|</span> Q5: Ratio</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>(a) Simplify the ratio 45 : 60. (1 mark)</strong></div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p style="color: white; font-size: 1.1rem;">Divide both sides by 15.</p>
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: 3 : 4</p>
+                                <span class="mark-badge" style="background: var(--primary);">1 mark</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>(b) A sum of $240 is shared between Alice and Bob in the ratio 3:5. How much money does Bob receive? (2 marks)</strong></div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p style="color: white;">Total parts = 3 + 5 = 8 parts.</p>
+                                <p style="color: white;">Value of 1 part = $240 &divide; 8 = <strong>$30</strong></p>
+                                <p style="color: white;">Bob has 5 parts.</p>
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: 5 &times; $30 = $150</p>
+                                <span class="mark-badge" style="background: var(--primary);">2 marks (1 for finding $30, 1 for $150)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-3">
+                        <div class="question-text"><strong>(c) Ratio of teachers to students is 2:25. If there are 350 students, how many teachers are there? (3 marks)</strong></div>
+                        <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                            <p style="color: white;">Multiplier = 350 &divide; 25 = <strong>14</strong>.</p>
+                            <p style="color: white;">Multiply the teacher side by 14.</p>
+                            <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: 2 &times; 14 = 28 teachers.</p>
+                            <span class="mark-badge" style="background: var(--primary);">3 marks</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 9: Math Q6
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part B: Math <span style="color: var(--text-dim);">|</span> Q6: Direct Proportion</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>(a) A recipe for 4 people requires 200g of flour. How much flour is needed to make the same recipe for 10 people? (2 marks)</strong></div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p style="color: white;">Flour for 1 person = 200g &divide; 4 = 50g.</p>
+                                <p style="color: white;">Flour for 10 people = 50g &times; 10.</p>
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: 500g</p>
+                                <span class="mark-badge" style="background: var(--primary);">2 marks</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>(b) \\( y \\) is directly proportional to \\( x \\). When \\( x = 5 \\), \\( y = 15 \\). Find the value of \\( y \\) when \\( x = 8 \\). (2 marks)</strong></div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <div class="math-text">Formula is \\( y = kx \\).</div>
+                                <div class="math-text">Find k: \\( 15 = k(5) \\rightarrow k = 3 \\).</div>
+                                <div class="math-text">When x=8: \\( y = 3(8) \\).</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( y = 24 \\)</div>
+                                <span class="mark-badge" style="background: var(--primary);">2 marks</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-3" style="max-width: 600px; margin: 0 auto;">
+                        <div class="question-text"><strong>(c) The cost of 5 identical books is $32.50. Calculate the cost of 8 of these books. (2 marks)</strong></div>
+                        <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                            <p style="color: white;">Cost of 1 book = $32.50 &divide; 5 = $6.50.</p>
+                            <p style="color: white;">Cost of 8 books = 8 &times; $6.50.</p>
+                            <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: $52.00</p>
+                            <span class="mark-badge" style="background: var(--primary);">2 marks</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 10: Math Q7
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part B: Math <span style="color: var(--text-dim);">|</span> Q7: Functions</h2>
+                    <p class="text-center delay-1" style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">A function is given by the formula \\( f(x) = 4x - 5 \\).</p>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>(a) Calculate the value of \\( f(3) \\). (1 mark)</strong></div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p style="color: white;">\\( f(3) = 4(3) - 5 = 12 - 5 \\)</p>
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: 7</p>
+                                <span class="mark-badge" style="background: var(--primary);">1 mark</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>(b) Calculate the value of \\( f(-2) \\). (1 mark)</strong></div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p style="color: white;">\\( f(-2) = 4(-2) - 5 = -8 - 5 \\)</p>
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: -13</p>
+                                <span class="mark-badge" style="background: var(--primary);">1 mark</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>(c) Find the value of \\( x \\) when \\( f(x) = 15 \\). (2 marks)</strong></div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p style="color: white;">\\( 4x - 5 = 15 \\)</p>
+                                <p style="color: white;">\\( 4x = 20 \\)</p>
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( x = 5 \\)</p>
+                                <span class="mark-badge" style="background: var(--primary);">2 marks</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-3">
+                            <div class="question-text"><strong>(d) Function machine: \\( x \\rightarrow [Multiply \\ by \\ 2] \\rightarrow [Add \\ 7] \\rightarrow y \\). Write down the formula for \\( y \\) in terms of \\( x \\). (2 marks)</strong></div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p style="color: white;">Start with x, multiply by 2 (2x), then add 7.</p>
+                                <p style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( y = 2x + 7 \\)</p>
+                                <span class="mark-badge" style="background: var(--primary);">2 marks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 11: Math Q8 (Graphing 1/2)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part B: Math <span style="color: var(--text-dim);">|</span> Q8: Graphing (1/2)</h2>
+                    
+                    <div class="question-box delay-1" style="max-width: 800px; margin: 0 auto; margin-bottom: 2rem;">
+                        <div class="question-text"><strong>(a) Complete the table of values for the equation \\( y = 2x - 1 \\). (2 marks)</strong></div>
+                        <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                            <table class="math-table">
+                                <tr>
+                                    <th>x</th><td>-2</td><td>-1</td><td>0</td><td>1</td><td>2</td><td>3</td>
+                                </tr>
+                                <tr>
+                                    <th>y</th><td>-5</td><td style="color: var(--accent); font-weight: bold;">-3</td><td>-1</td><td style="color: var(--accent); font-weight: bold;">1</td><td>3</td><td>5</td>
+                                </tr>
+                            </table>
+                            <div style="margin-top: 10px;"><span class="mark-badge" style="background: var(--primary);">2 marks (1 for -3, 1 for 1)</span></div>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2" style="max-width: 800px; margin: 0 auto;">
+                        <div class="question-text"><strong>(c) Another line has the equation \\( y = -3x + 4 \\). State the gradient (slope) and the y-intercept. (2 marks)</strong></div>
+                        <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                            <p style="color: white; font-size: 1.2rem;">Gradient (Slope) = <strong style="color: var(--accent);">-3</strong></p>
+                            <p style="color: white; font-size: 1.2rem;">y-intercept = <strong style="color: var(--accent);">4</strong></p>
+                            <span class="mark-badge" style="background: var(--primary);">2 marks (1 for each)</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 12: Math Q8 (Graphing 2/2)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part B: Math <span style="color: var(--text-dim);">|</span> Q8: Graphing (2/2)</h2>
+                    
+                    <div class="question-box delay-1" style="max-width: 900px; margin: 0 auto; text-align: center;">
+                        <div class="question-text text-left"><strong>(b) On the grid, draw the graph of \\( y = 2x - 1 \\) for values of \\( x \\) from -2 to 3. (2 marks)</strong></div>
+                        <button class="btn-reveal" style="background: var(--primary); margin-bottom: 1rem;" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer Graph</button>
+                        
+                        <div class="answer-content" style="display: none; border-left-color: var(--primary); background: white; padding: 2rem; border-radius: 8px;">
+                            <!-- SVG Coordinate Graph -->
+                            <svg width="400" height="400" viewBox="-4 -7 9 14" style="background: white; border: 1px solid #ccc; margin: 0 auto; display: block;">
+                                <!-- Grid lines -->
+                                <g stroke="#e2e8f0" stroke-width="0.1">
+                                    <line x1="-4" y1="-6" x2="5" y2="-6"/>
+                                    <line x1="-4" y1="-5" x2="5" y2="-5"/>
+                                    <line x1="-4" y1="-4" x2="5" y2="-4"/>
+                                    <line x1="-4" y1="-3" x2="5" y2="-3"/>
+                                    <line x1="-4" y1="-2" x2="5" y2="-2"/>
+                                    <line x1="-4" y1="-1" x2="5" y2="-1"/>
+                                    <line x1="-4" y1="1" x2="5" y2="1"/>
+                                    <line x1="-4" y1="2" x2="5" y2="2"/>
+                                    <line x1="-4" y1="3" x2="5" y2="3"/>
+                                    <line x1="-4" y1="4" x2="5" y2="4"/>
+                                    <line x1="-4" y1="5" x2="5" y2="5"/>
+                                    <line x1="-4" y1="6" x2="5" y2="6"/>
+                                    
+                                    <line x1="-3" y1="-7" x2="-3" y2="7"/>
+                                    <line x1="-2" y1="-7" x2="-2" y2="7"/>
+                                    <line x1="-1" y1="-7" x2="-1" y2="7"/>
+                                    <line x1="1" y1="-7" x2="1" y2="7"/>
+                                    <line x1="2" y1="-7" x2="2" y2="7"/>
+                                    <line x1="3" y1="-7" x2="3" y2="7"/>
+                                    <line x1="4" y1="-7" x2="4" y2="7"/>
+                                </g>
+                                
+                                <!-- Axes -->
+                                <line x1="-4" y1="0" x2="5" y2="0" stroke="black" stroke-width="0.15"/>
+                                <line x1="0" y1="-7" x2="0" y2="7" stroke="black" stroke-width="0.15"/>
+                                
+                                <!-- Labels -->
+                                <text x="4.5" y="-0.3" font-size="0.6" font-family="sans-serif">x</text>
+                                <text x="-0.6" y="-6.5" font-size="0.6" font-family="sans-serif">y</text>
+
+                                <!-- Tick Labels X-->
+                                <text x="-2" y="0.8" font-size="0.5" text-anchor="middle">-2</text>
+                                <text x="-1" y="0.8" font-size="0.5" text-anchor="middle">-1</text>
+                                <text x="1" y="0.8" font-size="0.5" text-anchor="middle">1</text>
+                                <text x="2" y="0.8" font-size="0.5" text-anchor="middle">2</text>
+                                <text x="3" y="0.8" font-size="0.5" text-anchor="middle">3</text>
+
+                                <!-- Tick Labels Y-->
+                                <text x="-0.3" y="5.1" font-size="0.5" text-anchor="end">-5</text>
+                                <text x="-0.3" y="3.1" font-size="0.5" text-anchor="end">-3</text>
+                                <text x="-0.3" y="1.1" font-size="0.5" text-anchor="end">-1</text>
+                                <text x="-0.3" y="-0.9" font-size="0.5" text-anchor="end">1</text>
+                                <text x="-0.3" y="-2.9" font-size="0.5" text-anchor="end">3</text>
+                                <text x="-0.3" y="-4.9" font-size="0.5" text-anchor="end">5</text>
+                                
+                                <!-- The Graph Line y = 2x - 1. In SVG, Y is down, so we invert Y coordinates.
+                                     Points: (-2,-5) -> SVG(-2, 5)
+                                     Points: (3, 5)  -> SVG(3, -5) -->
+                                <line x1="-2" y1="5" x2="3" y2="-5" stroke="#10b981" stroke-width="0.2"/>
+                                
+                                <!-- Plot Points -->
+                                <circle cx="-2" cy="5" r="0.15" fill="#ef4444"/>
+                                <circle cx="-1" cy="3" r="0.15" fill="#ef4444"/>
+                                <circle cx="0" cy="1" r="0.15" fill="#ef4444"/>
+                                <circle cx="1" cy="-1" r="0.15" fill="#ef4444"/>
+                                <circle cx="2" cy="-3" r="0.15" fill="#ef4444"/>
+                                <circle cx="3" cy="-5" r="0.15" fill="#ef4444"/>
+                            </svg>
+                            
+                            <div style="text-align: left; margin-top: 1rem; color: #0f172a;">
+                                <p><strong>Check their work:</strong></p>
+                                <ul>
+                                    <li>Did they plot the points correctly based on their table?</li>
+                                    <li>Did they draw a straight continuous line using a ruler?</li>
+                                </ul>
+                                <span class="mark-badge" style="background: var(--primary);">2 marks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 13: End Marking / Final Score Instructions
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-handshake-angle delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">All Done!</h1>
+                    
+                    <div class="glass-card delay-2" style="max-width: 650px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--accent);">
+                        <ol style="margin-left: 1rem; color: white; font-size: 1.3rem; line-height: 2.2;">
+                            <li><strong style="color: var(--danger);">Do NOT</strong> tally up the total score. The person who took the assessment can choose to do that for themselves later.</li>
+                            <li>Check that you wrote your name under "Grader" on the front page.</li>
+                            <li>Check that you wrote your <strong style="color: var(--warning);">two comments</strong> (1 good thing, 1 thing to work on).</li>
+                            <li>Return the paper to the owner!</li>
+                        </ol>
+                    </div>
+                    
+                    <h2 class="delay-3" style="color: var(--text-dim);">Thank you for grading fairly!</h2>
+                </div>
+            `
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        // Render HTML synchronously
+        container.innerHTML = slide.template();
+        
+        // Ensure MathJax renders any initial visible math immediately
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+        
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        // Update UI
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
