@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law of Large Numbers - Year 8 Maths</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Chart.js and MathJax -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Notebook Edutech Standard) --- */
+        :root {
+            --bg-paper: #fdfbf7;       /* Warm paper white */
+            --bg-panel: #ffffff;       /* Pure white for cards */
+            --primary: #2563eb;        /* Blue Ink */
+            --accent: #16a34a;         /* Green Ink */
+            --warning: #ea580c;        /* Orange Highlighter */
+            --danger: #dc2626;         /* Red Pen */
+            --text-main: #334155;      /* Dark slate text */
+            --text-dim: #64748b;       /* Secondary text */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-main); }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-main); }
+        strong { font-weight: 800; }
+
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: #ffffff;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: var(--primary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            background-image:
+                linear-gradient(90deg, transparent 60px, rgba(220, 38, 38, 0.2) 60px, rgba(220, 38, 38, 0.2) 62px, transparent 62px),
+                linear-gradient(rgba(37, 99, 235, 0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 32px;
+            background-attachment: local;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 2rem 2rem 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+        }
+
+        .pedagogical-note {
+            padding: 1.5rem; border-radius: 12px; margin: 1.5rem 0; border-left: 5px solid;
+            background: #ffffff; box-shadow: 4px 4px 0px rgba(0,0,0,0.06); font-family: 'Kalam', cursive; font-size: 1.3rem;
+        }
+        .pedagogical-badge {
+            font-weight: 700; margin-bottom: 0.5rem; display: inline-flex; align-items: center; gap: 0.5rem;
+            text-transform: uppercase; font-size: 1rem; letter-spacing: 1px; font-family: 'Outfit', sans-serif;
+        }
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        .note-theory { border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        .note-success { border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        .btn-action {
+            background: var(--primary); color: white; border: none; padding: 0.8rem 1.5rem;
+            border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s;
+            font-family: 'Outfit', sans-serif; font-size: 1.1rem; box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+        .btn-action:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 4px 4px 0px rgba(0,0,0,0.2); }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+        .btn-nav {
+            width: 50px; height: 50px; border-radius: 12px; background: #ffffff;
+            color: var(--text-main); border: 2px solid rgba(0,0,0,0.1); cursor: pointer;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
+
+        .table-container { max-height: 300px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+        th { background: #f8fafc; position: sticky; top: 0; padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-calculator"></i> Year 8 Maths</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;">The Law of Large Numbers</span>
+        </div>
+        <div style="font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-main); font-size: 1.2rem;">
+            20 March 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slides Injected Here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="progress-container"><div class="progress-fill" id="progress-bar"></div></div>
+        <button class="btn-nav" id="btn-next"><i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+</div>
+
+<script>
+    const rawString = "01.11.202106.01.202218.12.202215.11.202228.01.202225.07.202225.07.202211.11.202102.02.202402.03.202323.04.202131.08.202124.11.202004.10.202030.09.202120.07.202118.06.202102.11.202019.07.202119/11/202028.01.202207.07.202113.07.202128.01.202013-03-202003.11.202922.03.202015.11.201826.08.201918.02.201710.02.201727.06.201719.10.201603.05.201718.05.201831.01.201719.11.201605.03.201621.05.201501.04.201504.10.201414.05.201513.11.201521.09.201523.09.201508.12.201428.04.201527.04.201410.12.201431.03.201510.07.202501.03.201514.12.201414.04.201318.10.201214.04.201407.10.201215.12.201230.10.201216.03.201207.11.201205.07.201312.03.201320.04.201224.07.201228.09.201115.05.201231.07.201005.12.201103.10.201012.11.200823.07.2008";
+    const today = new Date('2026-03-20');
+    let studentData = [];
+    let simHistory = [];
+    let manualSamples = [];
+    let histogramFreqs = new Array(21).fill(0);
+    let simChart = null;
+
+    // --- DATA PROCESSING ---
+    function processData() {
+        const regex = /(\d{2})[.\/-](\d{2})[.\/-](\d{4})/g;
+        let match;
+        let count = 1;
+        while ((match = regex.exec(rawString)) !== null) {
+            const dob = new Date(match[3], match[2]-1, match[1]);
+            const ageInMs = today - dob;
+            const ageInYears = Math.floor(ageInMs / (1000 * 60 * 60 * 24 * 365.25));
+            if (ageInYears >= 0 && ageInYears < 100) {
+                studentData.push({ id: count++, dob: `${match[1]}/${match[2]}/${match[3]}`, age: ageInYears });
+            }
+        }
+    }
+    processData();
+
+    const totalStudents = studentData.length;
+    const totalAge = studentData.reduce((a, b) => a + b.age, 0);
+    const trueMean = (totalAge / totalStudents).toFixed(2);
+
+    const state = { currentSlide: 0, slides: [], cleanupFn: null };
+
+    state.slides = [
+        // SLIDE 1: Title
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-chart-line" style="font-size: 5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h1 style="font-size: 3.5rem;">Probability & Sampling</h1>
+                    <h2 style="color: var(--accent);">The Law of Large Numbers</h2>
+                    
+                    <div class="pedagogical-note note-success" style="max-width: 750px; margin: 3rem auto; text-align: left; transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objectives</div>
+                        <ul style="list-style: none; padding: 0; margin-top: 0.5rem; display: grid; gap: 0.8rem;">
+                            <li>🎯 <strong>Clean</strong> raw birthday strings into structured numerical data.</li>
+                            <li>🎯 <strong>Investigate</strong> if small samples represent the whole group.</li>
+                            <li>🎯 <strong>Discover</strong> how averages stabilize with larger trial counts.</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        // SLIDE 2: Raw Data Table
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Dataset: Student Records</h2>
+                    <div class="grid-2" style="grid-template-columns: 1.2fr 0.8fr; gap: 2rem;">
+                        <div class="glass-card">
+                            <h3 style="color: var(--primary);"><i class="fa-solid fa-table"></i> Record Table</h3>
+                            <div class="table-container">
+                                <table>
+                                    <thead><tr><th>ID</th><th>Birthday</th><th>Age</th></tr></thead>
+                                    <tbody>${studentData.map(s => `<tr><td>${s.id}</td><td>${s.dob}</td><td>${s.age}</td></tr>`).join('')}</tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="pedagogical-note note-theory" style="transform: rotate(1deg); margin-top: 0;">
+                                <div class="pedagogical-badge">What is the "Mean"?</div>
+                                <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">The <strong>Mean</strong> (or <strong>Average</strong>) is calculated by adding all values together, then dividing by the number of values.</p>
+                                <p style="font-size: 1.15rem; text-align: center; font-weight: bold; color: var(--danger); font-family: 'Outfit';">Mean = Total Sum ÷ Total Count</p>
+                            </div>
+                            
+                            <div class="pedagogical-note note-write">
+                                <div class="pedagogical-badge">True School Mean</div>
+                                <p style="margin-bottom: 0.5rem; font-size: 1.1rem;">This is the "Mathematical Truth". Let's calculate the exact mean age of our ${totalStudents} students.</p>
+                                
+                                <div id="meanRevealArea" style="display: none; background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px dashed var(--primary); margin-top: 1rem;">
+                                    <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; font-family: 'Outfit';">
+                                        <div style="display: flex; flex-direction: column; align-items: center; font-size: 1.1rem;">
+                                            <span style="border-bottom: 2px solid var(--text-main); padding: 0 0.5rem 0.2rem 0.5rem;">Total Age (${totalAge})</span>
+                                            <span style="padding: 0.2rem 0.5rem 0 0.5rem;">Total Students (${totalStudents})</span>
+                                        </div>
+                                        <div style="font-size: 1.5rem;">= <strong style="color: var(--primary);">${trueMean} Years</strong></div>
+                                    </div>
+                                </div>
+
+                                <button id="btnRevealMean" class="btn-action" style="width: 100%; margin-top: 1rem; padding: 0.8rem; font-size: 1rem;"><i class="fa-solid fa-calculator"></i> Show Calculation & Mean</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btnRevealMean');
+                const meanArea = container.querySelector('#meanRevealArea');
+                if(btn && meanArea) {
+                    btn.addEventListener('click', () => {
+                        meanArea.style.display = 'block';
+                        btn.style.display = 'none';
+                    });
+                }
+                return () => {};
+            }
+        },
+        // SLIDE 3: Activity 1 - Manual Sample
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Activity 1: The Sample of 4</h2>
+                    <div class="glass-card text-center" style="max-width: 900px; margin: 0 auto;">
+                        <p class="mb-4">If we pick <strong>4 students</strong> at random, will their average age match the school's true average?</p>
+                        
+                        <div id="sampleVisual" class="flex justify-center gap-4 my-6" style="display: flex; gap: 1rem; justify-content: center;">
+                            <div style="width: 70px; height: 70px; border: 3px dashed #cbd5e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #94a3b8;">?</div>
+                            <div style="width: 70px; height: 70px; border: 3px dashed #cbd5e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #94a3b8;">?</div>
+                            <div style="width: 70px; height: 70px; border: 3px dashed #cbd5e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #94a3b8;">?</div>
+                            <div style="width: 70px; height: 70px; border: 3px dashed #cbd5e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #94a3b8;">?</div>
+                        </div>
+
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <p id="calcString" style="font-family: 'Kalam'; font-size: 1.2rem; color: var(--text-dim); min-height: 2rem;">Click the button to draw 4 students!</p>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                            <div class="text-left">
+                                <p style="font-size: 0.9rem; color: var(--text-dim); text-transform: uppercase; font-weight: 800;">Current Sample Average</p>
+                                <p id="currentAvgDisp" style="font-size: 2.5rem; font-weight: 900; color: var(--primary);">-</p>
+                            </div>
+                            <button id="btnSample" class="btn-action">Pick 4 Students</button>
+                        </div>
+
+                        <!-- Sample History Area -->
+                        <div style="border-top: 2px dashed #e2e8f0; padding-top: 1.5rem;">
+                            <h3 style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 1rem;">Sample History (Up to 12)</h3>
+                            <div id="historyGrid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; margin-bottom: 1.5rem; min-height: 40px;">
+                                <!-- History items will appear here -->
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(22, 163, 74, 0.1); padding: 1rem; border-radius: 8px; border: 1px solid var(--accent);">
+                                <button id="btnAvgOfAvgs" class="btn-action" style="background: var(--accent); padding: 0.5rem 1rem;" disabled>Find Average of Averages</button>
+                                <div class="text-right">
+                                    <p id="avgOfAvgsDisp" style="font-size: 1.8rem; font-weight: 900; color: var(--accent);">-</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btnSample');
+                const btnAvg = container.querySelector('#btnAvgOfAvgs');
+                const visual = container.querySelector('#sampleVisual');
+                const disp = container.querySelector('#currentAvgDisp');
+                const calcString = container.querySelector('#calcString');
+                const historyGrid = container.querySelector('#historyGrid');
+                const avgOfAvgsDisp = container.querySelector('#avgOfAvgsDisp');
+                
+                const updateHistoryUI = () => {
+                    historyGrid.innerHTML = manualSamples.map((val, idx) => `
+                        <div style="background: #ffffff; border: 1px solid #cbd5e1; padding: 0.5rem; border-radius: 6px; font-weight: bold; font-family: 'Outfit'; font-size: 0.9rem; color: var(--text-main); text-align: center; box-shadow: 2px 2px 0px rgba(0,0,0,0.05);">
+                            #${idx+1}: <span style="color: var(--primary);">${val}</span>
+                        </div>
+                    `).join('');
+                    
+                    if (manualSamples.length >= 2) {
+                        btnAvg.disabled = false;
+                    }
+                    if (manualSamples.length >= 12) {
+                        btn.disabled = true;
+                        btn.innerText = "Max Samples Reached";
+                    } else {
+                        btn.disabled = false;
+                        btn.innerText = "Pick 4 Students";
+                    }
+                };
+                updateHistoryUI();
+
+                btn.addEventListener('click', () => {
+                    if (manualSamples.length >= 12) return;
+
+                    const sample = [];
+                    for(let i=0; i<4; i++) sample.push(studentData[Math.floor(Math.random() * studentData.length)]);
+                    
+                    visual.innerHTML = sample.map(s => `
+                        <div style="width: 70px; height: 70px; background: var(--primary); color: white; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Outfit'; box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: slideIn 0.3s ease-out;">
+                            <span style="font-weight: 800; font-size: 1.1rem;">${s.age}</span>
+                            <span style="font-size: 0.7rem;">yrs</span>
+                        </div>
+                    `).join('');
+                    
+                    const sum = sample.reduce((a, b) => a + b.age, 0);
+                    const avg = (sum / 4).toFixed(2);
+                    
+                    calcString.innerHTML = `Calculation: (${sample.map(s => s.age).join(' + ')}) &divide; 4 = <strong style="color: var(--primary);">${avg}</strong>`;
+                    disp.innerText = avg;
+                    
+                    manualSamples.push(parseFloat(avg));
+                    updateHistoryUI();
+                });
+
+                btnAvg.addEventListener('click', () => {
+                    if(manualSamples.length === 0) return;
+                    const total = manualSamples.reduce((a, b) => a + b, 0);
+                    const finalAvg = (total / manualSamples.length).toFixed(3);
+                    avgOfAvgsDisp.innerHTML = `${finalAvg} <span style="font-size: 1rem; font-weight: normal; color: var(--text-dim);">Years</span>`;
+                });
+
+                return () => {};
+            }
+        },
+        // SLIDE 4: Simulation
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Activity 2: Plotting Many Samples</h2>
+                    <div class="grid-2" style="grid-template-columns: 1fr 1fr; gap: 2rem; align-items: flex-start;">
+                        <div class="glass-card">
+                            <div class="flex justify-between items-center mb-4" style="display: flex; gap: 0.5rem; justify-content: space-between;">
+                                <h3 style="margin:0;">Sample Means Histogram</h3>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button id="btnSim30" class="btn-action" style="padding: 0.5rem 0.8rem; font-size: 0.8rem;">Plot 30</button>
+                                    <button id="btnSim300" class="btn-action" style="background: var(--warning); padding: 0.5rem 0.8rem; font-size: 0.8rem;">Plot 300</button>
+                                </div>
+                            </div>
+                            <div style="height: 300px; width: 100%;">
+                                <canvas id="simChart"></canvas>
+                            </div>
+                            <p style="text-align: center; font-size: 0.85rem; color: var(--text-dim); margin-top: 0.5rem;">X-Axis: Average Age &nbsp;|&nbsp; Y-Axis: Frequency (How many times?)</p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="pedagogical-note note-write" style="margin:0;">
+                                <div class="pedagogical-badge">Observation</div>
+                                <p>Instead of a messy line, we are sorting our sample averages into buckets. This is a <strong>Histogram</strong>.</p>
+                                <p style="margin-top: 1rem;">Total Samples Plotted: <strong id="trialCount">0</strong></p>
+                            </div>
+                            <div class="pedagogical-note note-theory" style="transform: rotate(-1deg);">
+                                <div class="pedagogical-badge">What is happening?</div>
+                                <p>When you take 300 samples, which age bucket gets the tallest bar? Is it close to our True Mean of <strong style="color: var(--danger);">${trueMean}</strong>?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const ctx = container.querySelector('#simChart').getContext('2d');
+                const btn30 = container.querySelector('#btnSim30');
+                const btn300 = container.querySelector('#btnSim300');
+                const trialDisp = container.querySelector('#trialCount');
+
+                // Set up bins covering realistic ages: 4 to 18
+                const binMin = 4;
+                const binMax = 18;
+                const labels = Array.from({length: binMax - binMin + 1}, (_, i) => i + binMin);
+                
+                // Color the true mean bin differently
+                const trueMeanRounded = Math.round(parseFloat(trueMean));
+                const bgColors = labels.map(l => l === trueMeanRounded ? 'rgba(220, 38, 38, 0.7)' : 'rgba(37, 99, 235, 0.7)');
+
+                simChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Frequency',
+                            data: histogramFreqs.slice(binMin, binMax + 1),
+                            backgroundColor: bgColors,
+                            borderColor: bgColors.map(c => c.replace('0.7', '1')),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { 
+                        responsive: true, maintainAspectRatio: false, 
+                        scales: { 
+                            x: { title: { display: true, text: 'Average Age of Sample (Rounded)' } }, 
+                            y: { title: { display: true, text: 'Count' }, beginAtZero: true } 
+                        },
+                        animation: { duration: 300 }
+                    }
+                });
+
+                const runSimulation = (numSamples) => {
+                    for(let i=0; i<numSamples; i++) {
+                        let sum = 0;
+                        for(let j=0; j<4; j++) sum += studentData[Math.floor(Math.random() * studentData.length)].age;
+                        const avg = sum / 4;
+                        const bin = Math.max(0, Math.min(20, Math.round(avg)));
+                        histogramFreqs[bin]++;
+                        simHistory.push(avg); // Keep overall count
+                    }
+                    
+                    simChart.data.datasets[0].data = histogramFreqs.slice(binMin, binMax + 1);
+                    simChart.update();
+                    trialDisp.innerText = simHistory.length.toLocaleString();
+                };
+
+                btn30.addEventListener('click', () => runSimulation(30));
+                btn300.addEventListener('click', () => runSimulation(300));
+
+                if(simHistory.length > 0) {
+                    simChart.data.datasets[0].data = histogramFreqs.slice(binMin, binMax + 1);
+                    simChart.update();
+                    trialDisp.innerText = simHistory.length.toLocaleString();
+                }
+                
+                return () => { if(simChart) simChart.destroy(); };
+            }
+        },
+        // SLIDE 5: The Bell Curve
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2 style="margin-bottom: 2rem;">The Secret Shape of Randomness</h2>
+                    
+                    <div class="grid-2" style="max-width: 1000px; margin: 0 auto; align-items: center;">
+                        <div class="glass-card text-center" style="border: 4px solid var(--primary); padding: 1rem;">
+                            <svg viewBox="0 0 400 250" style="width: 100%; max-width: 400px; height: auto;">
+                                <!-- Grid Lines & Axis -->
+                                <line x1="200" y1="20" x2="200" y2="210" stroke="rgba(220, 38, 38, 0.4)" stroke-width="2" stroke-dasharray="6,6"/>
+                                <line x1="20" y1="210" x2="380" y2="210" stroke="#94a3b8" stroke-width="2"/>
+                                
+                                <!-- Symmetrical Bell Curve Path -->
+                                <path d="M 20 208 C 80 208, 140 40, 200 40 C 260 40, 320 208, 380 208" fill="rgba(37, 99, 235, 0.1)" stroke="var(--primary)" stroke-width="4" stroke-linecap="round"/>
+                                
+                                <!-- Labels -->
+                                <text x="200" y="235" font-size="16" text-anchor="middle" fill="var(--danger)" font-family="Outfit" font-weight="bold">True Average (Mean)</text>
+                                <text x="80" y="190" font-size="15" text-anchor="middle" fill="var(--text-dim)" font-family="Outfit">Rare</text>
+                                <text x="320" y="190" font-size="15" text-anchor="middle" fill="var(--text-dim)" font-family="Outfit">Rare</text>
+                                <text x="200" y="120" font-size="18" text-anchor="middle" fill="var(--primary)" font-family="Outfit" font-weight="bold">Most Common</text>
+                            </svg>
+                        </div>
+                        
+                        <div style="text-align: left;">
+                            <div class="pedagogical-note note-theory" style="margin-top: 0; transform: rotate(1deg);">
+                                <div class="pedagogical-badge">The Normal Distribution</div>
+                                <p style="font-size: 1.3rem;">Did you notice the shape the bars made when we plotted 300 samples? It looks just like a <strong>Bell</strong>!</p>
+                            </div>
+                            
+                            <div class="pedagogical-note note-write" style="transform: rotate(-0.5deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                                <ul style="margin-left: 1.5rem; display: flex; flex-direction: column; gap: 0.8rem;">
+                                    <li>Most sample averages gather tightly in the middle, very close to the <strong>True Average</strong>.</li>
+                                    <li>Getting an extreme sample (like picking 4 very old students or 4 very young students at once) is rare, which is why the edges of the bell curve are so low.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+        // SLIDE 6: Bell Curves in Nature
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2 style="margin-bottom: 1rem;">Bell Curves in the Real World</h2>
+                    <p style="color: var(--text-dim); margin-bottom: 2rem;">The Law of Large Numbers isn't just for ages. It shows up everywhere in nature!</p>
+                    
+                    <div class="grid-2" style="max-width: 1000px; margin: 0 auto; align-items: center;">
+                        <div style="text-align: left;">
+                            <div class="pedagogical-note note-write" style="margin-top: 0; transform: rotate(-1deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-ruler-vertical"></i> Human Height</div>
+                                <p style="font-size: 1.2rem;">If we measured the height of 100,000 adults, the graph would look like two overlapping bell curves.</p>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 1.1rem;">
+                                    <li>Most women are close to the female average.</li>
+                                    <li>Most men are close to the male average.</li>
+                                    <li>Extremely tall or extremely short people are rare!</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="pedagogical-note note-task" style="transform: rotate(1deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-brain"></i> Think & Discuss</div>
+                                <h3 style="color: var(--warning); margin-bottom: 0.5rem;">Why might height follow the bell curve?</h3>
+                                <p style="font-size: 1.1rem;"><em>Hint: Think about how many different things (like genetics, diet, and environment) have to combine perfectly to make someone super tall.</em></p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card text-center" style="border-top: 4px solid var(--accent); padding: 1rem;">
+                            <svg viewBox="0 0 500 300" style="width: 100%; height: auto;">
+                                <line x1="40" y1="250" x2="460" y2="250" stroke="#94a3b8" stroke-width="2"/>
+                                
+                                <!-- Female Curve -->
+                                <path d="M 40 248 C 100 248, 140 80, 200 80 C 260 80, 300 248, 360 248" fill="rgba(236, 72, 153, 0.2)" stroke="#ec4899" stroke-width="3"/>
+                                <line x1="200" y1="80" x2="200" y2="250" stroke="#ec4899" stroke-width="2" stroke-dasharray="5,5"/>
+                                <text x="200" y="275" font-size="16" text-anchor="middle" fill="#ec4899" font-family="Outfit" font-weight="bold">Avg Female</text>
+                                
+                                <!-- Male Curve -->
+                                <path d="M 140 248 C 200 248, 240 60, 300 60 C 360 60, 400 248, 460 248" fill="rgba(59, 130, 246, 0.2)" stroke="#3b82f6" stroke-width="3"/>
+                                <line x1="300" y1="60" x2="300" y2="250" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5,5"/>
+                                <text x="300" y="275" font-size="16" text-anchor="middle" fill="#3b82f6" font-family="Outfit" font-weight="bold">Avg Male</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+        // SLIDE 7: Summary
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-graduation-cap" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h2>Why does this matter?</h2>
+                    
+                    <div class="grid-2" style="max-width: 900px; margin: 0 auto; text-align: left;">
+                        <div class="pedagogical-note note-write">
+                            <div class="pedagogical-badge">Polling & Surveys</div>
+                            <p>This is how political polls work! Researchers and governments <strong>never have the time or money to interview every single person</strong> in a country.</p>
+                            <p style="margin-top: 0.5rem;">Instead, they look at random samples. If the sample is large enough, the Law of Large Numbers guarantees their prediction will be incredibly close to the real answer!</p>
+                        </div>
+                        <div class="pedagogical-note note-theory" style="transform: rotate(1deg);">
+                            <div class="pedagogical-badge">Risk</div>
+                            <p>Insurance companies use this to predict when people might get sick or crash cars. They rely on the "stability" of large averages.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="max-width: 600px; margin: 2rem auto; border-top: 5px solid var(--primary);">
+                        <h3 style="font-family: 'Kalam';">Final Thought</h3>
+                        <p style="font-family: 'Kalam'; font-size: 1.4rem;">Randomness is unpredictable in the short term, but extremely predictable in the long term.</p>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        if (state.cleanupFn) state.cleanupFn();
+        container.innerHTML = slide.template();
+        if (slide.script) state.cleanupFn = slide.script(container);
+        
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    document.getElementById('btn-prev').addEventListener('click', () => { if(state.currentSlide > 0) { state.currentSlide--; render(); } });
+    document.getElementById('btn-next').addEventListener('click', () => { if(state.currentSlide < state.slides.length - 1) { state.currentSlide++; render(); } });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') document.getElementById('btn-next').click();
+        if (e.key === 'ArrowLeft') document.getElementById('btn-prev').click();
+    });
+
+    render();
+</script>
+
+</body>
+</html>
