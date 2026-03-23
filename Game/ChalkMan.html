@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Chalked Man: A fun, friendly spelling game for primary students.">
+    <title>Chalked Man</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE: Sunny & Playful --- */
+            --bg-main: #e0f2fe; /* Light sky blue */
+            --bg-pattern: #bae6fd;
+            
+            /* UI Elements */
+            --panel-bg: rgba(255, 255, 255, 0.95);
+            --panel-border: #bae6fd;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+
+            /* Interactive Colors */
+            --tile-bg: #ffffff;
+            --tile-border: #cbd5e1;
+            --tile-shadow: #94a3b8;
+            --tile-hover: #f8fafc;
+
+            /* Keyboard States */
+            --key-correct-bg: #10b981;
+            --key-correct-border: #059669;
+            --key-wrong-bg: #f1f5f9;
+            --key-wrong-border: #cbd5e1;
+            --key-wrong-text: #94a3b8;
+
+            /* Dimensions */
+            --sidebar-width: 280px;
+            --max-board-width: 800px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-main);
+            background-image: radial-gradient(var(--bg-pattern) 20%, transparent 20%), radial-gradient(var(--bg-pattern) 20%, transparent 20%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            color: var(--text-primary);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* --- LAYOUT --- */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--panel-bg);
+            border-right: 4px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            gap: 1.5rem;
+            z-index: 20;
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+        }
+
+        /* Custom scrollbar for sidebar */
+        .sidebar::-webkit-scrollbar { width: 8px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .sidebar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .brand {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            line-height: 1.1;
+            color: #f59e0b; /* Amber */
+            text-align: center;
+            text-shadow: 2px 2px 0px #fde68a;
+            margin-bottom: 0.5rem;
+        }
+        .brand span { color: #8b5cf6; text-shadow: 2px 2px 0px #ddd6fe;}
+
+        .level-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .level-btn {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px;
+            border-radius: 16px;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            color: var(--text-secondary);
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            font-size: 1.05rem;
+            width: 100%;
+            box-shadow: 0 4px 0px #cbd5e1;
+        }
+
+        .level-btn .btn-num { 
+            background: #cbd5e1; color: white; border-radius: 50%; width: 28px; height: 28px; 
+            display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800;
+            flex-shrink: 0;
+        }
+        
+        .level-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 0px #cbd5e1;
+            background: #e2e8f0;
+        }
+        
+        .level-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0px #cbd5e1;
+        }
+
+        .level-btn.active {
+            background: #fffbeb;
+            border: 2px solid #fcd34d;
+            color: #b45309;
+            box-shadow: 0 4px 0px #fcd34d;
+        }
+        .level-btn.active .btn-num { background: #f59e0b; }
+
+        /* --- MAIN GAME ARENA --- */
+        .arena {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem; 
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .game-board-wrapper {
+            width: 100%;
+            max-width: var(--max-board-width);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: auto; 
+            margin-bottom: auto;
+            background: var(--panel-bg);
+            padding: 1.5rem 2rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05), 0 0 0 4px #fff inset;
+            border: 2px solid var(--panel-border);
+        }
+
+        @keyframes bounceIn { 
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); } 
+            100% { opacity: 1; transform: scale(1) translateY(0); } 
+        }
+
+        /* Game Header */
+        .game-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 5px;
+            border-bottom: 3px dashed #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        .header-left { display: flex; flex-direction: column; gap: 4px; }
+
+        .game-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(1.5rem, 2.5vw, 2rem);
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.1;
+        }
+
+        .instruction { 
+            color: #64748b; 
+            font-weight: 700; 
+            margin: 0; 
+            font-size: 1.1rem; 
+        }
+
+        /* Play Area Layout */
+        .play-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        /* Chalkboard / Stickman Container */
+        .chalkboard-container {
+            background: #1e293b; /* Dark slate */
+            border: 8px solid #8b5cf6; /* Fun purple border */
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 8px 0 #6d28d9, inset 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 220px;
+            height: 250px;
+            margin: 0 auto;
+        }
+
+        .chalkboard-container::after {
+            content: '';
+            position: absolute;
+            bottom: 10px; right: 10px;
+            width: 30px; height: 10px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            opacity: 0.8;
+            box-shadow: -2px 2px 2px rgba(0,0,0,0.2);
+        }
+
+        #stickman-canvas {
+            width: 180px;
+            height: 220px;
+        }
+
+        /* Word Display */
+        .word-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 10px 0;
+            min-height: 60px;
+        }
+
+        .letter-slot {
+            width: 45px;
+            height: 55px;
+            border-bottom: 5px solid #0ea5e9;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0f172a;
+            text-transform: uppercase;
+            padding-bottom: 5px;
+            transition: all 0.3s;
+        }
+
+        .letter-slot.empty {
+            color: transparent;
+        }
+        
+        .letter-slot.revealed-end {
+            color: #ef4444; /* Show missed letters in red at the end */
+            border-bottom-color: #ef4444;
+        }
+
+        /* Keyboard */
+        .keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .key {
+            background: var(--tile-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--tile-border);
+            border-radius: 12px;
+            width: clamp(35px, 8vw, 45px);
+            height: clamp(45px, 10vw, 55px);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 0 var(--tile-shadow);
+        }
+
+        .key:hover:not(:disabled):not(.pressed) {
+            transform: translateY(-2px);
+            background: var(--tile-hover);
+            box-shadow: 0 6px 0 var(--tile-shadow);
+        }
+
+        .key:active:not(:disabled), .key.pressed {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 transparent !important;
+        }
+
+        .key:disabled {
+            cursor: not-allowed;
+            transform: translateY(4px);
+            box-shadow: 0 0 0 transparent;
+        }
+
+        .key.correct {
+            background: var(--key-correct-bg);
+            color: white;
+            border-color: var(--key-correct-border);
+        }
+
+        .key.wrong {
+            background: var(--key-wrong-bg);
+            color: var(--key-wrong-text);
+            border-color: var(--key-wrong-border);
+            opacity: 0.6;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 
+            10%, 90% { transform: translate3d(-2px, 4px, 0); } 
+            20%, 80% { transform: translate3d(4px, 4px, 0); } 
+            30%, 50%, 70% { transform: translate3d(-6px, 4px, 0); } 
+            40%, 60% { transform: translate3d(6px, 4px, 0); } 
+        }
+
+        .pop { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- ALERTS & MODALS --- */
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translate(-50%, -20px);
+            background: #fff; color: #0f172a; padding: 16px 32px; border-radius: 50px;
+            font-weight: 700; font-family: 'Fredoka'; z-index: 2000;
+            border: 4px solid #e2e8f0; opacity: 0; pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px;
+            font-size: 1.2rem;
+        }
+        .toast.visible { transform: translate(-50%, 0); opacity: 1; }
+        .toast.hint { border-color: #f59e0b; color: #d97706; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center; z-index: 2100;
+        }
+        .modal-card {
+            background: #fff; color: #0f172a; padding: 3rem; border-radius: 32px;
+            text-align: center; max-width: 450px; width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 4px solid #f1f5f9;
+        }
+        .modal-card h2 { font-family: 'Fredoka'; font-size: 2.5rem; margin-bottom: 0.5rem; color: #0ea5e9; }
+        .modal-card p { font-size: 1.2rem; color: #64748b; font-weight: 600; margin-bottom: 25px; }
+        
+        .modal-options { display: flex; flex-direction: column; gap: 15px; margin-top: 1rem; }
+        .modal-btn {
+            padding: 16px; border-radius: 16px; border: none;
+            font-family: 'Fredoka'; font-weight: 700; font-size: 1.2rem; cursor: pointer;
+            width: 100%; transition: all 0.2s;
+        }
+        .modal-btn.primary { background: #10b981; color: white; box-shadow: 0 6px 0 #059669; }
+        .modal-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #059669; }
+        .modal-btn.primary:active { transform: translateY(4px); box-shadow: 0 2px 0 #059669; }
+        
+        .modal-btn.secondary { background: #f1f5f9; color: #475569; box-shadow: 0 6px 0 #cbd5e1; }
+        .modal-btn.secondary:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1; }
+        .modal-btn.secondary:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
+
+        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1500; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; }
+            .sidebar { 
+                width: 100%; height: auto; padding: 1rem; border-right: none; border-bottom: 4px solid var(--panel-border);
+                flex-direction: row; align-items: center; overflow-x: auto;
+            }
+            .brand { font-size: 1.5rem; margin-bottom: 0; margin-right: 1rem;}
+            .level-list { flex-direction: row; width: max-content; }
+            .level-btn { width: auto; white-space: nowrap; padding: 10px 16px; font-size: 1rem; }
+            
+            .game-header { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+            .header-left { align-items: center; }
+
+            .arena { padding: 1rem; height: auto; min-height: calc(100vh - 100px); display: block; }
+            .game-board-wrapper { gap: 15px; margin-top: 0; margin-bottom: 0; padding: 1.5rem; border-radius: 20px;}
+            
+            .word-display { gap: 6px; }
+            .letter-slot { width: 35px; height: 45px; font-size: 1.8rem; border-width: 4px; }
+            .keyboard { gap: 6px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti"></canvas>
+
+    <div id="toast" class="toast" role="alert" aria-live="assertive">
+        <i id="toast-icon" class="fa-solid fa-lightbulb"></i> <span id="toast-text">Hint</span>
+    </div>
+
+    <div class="app-container">
+        
+        <nav class="sidebar" aria-label="Game Levels">
+            <div class="brand">Chalked<br><span>Man</span></div>
+            <div class="level-list" id="level-list">
+                <!-- Populated by JS -->
+            </div>
+        </nav>
+
+        <main class="arena">
+            <div class="game-board-wrapper" id="board-wrapper">
+                
+                <header class="game-header">
+                    <div class="header-left">
+                        <h1 class="game-title" id="game-title-display">Word 1</h1>
+                        <p class="instruction" id="game-hint">Guess the letters to find the word!</p>
+                    </div>
+                </header>
+
+                <div class="play-area">
+                    <div class="chalkboard-container">
+                        <canvas id="stickman-canvas" width="180" height="220"></canvas>
+                    </div>
+
+                    <div class="word-display" id="word-display">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div class="keyboard" id="keyboard">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="end-modal" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <h2 id="modal-title">Awesome Job!</h2>
+            <p id="modal-msg">You guessed the word!</p>
+            
+            <div class="modal-options">
+                <button class="modal-btn primary" id="btn-next">Next Word</button>
+                <button class="modal-btn secondary" id="btn-retry" style="display:none;">Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Chalked Man
+         * A polished, friendly, and beautifully animated hangman alternative for primary students.
+         */
+
+        // --- DATA CONFIGURATION ---
+        const WORDS = [
+            { word: "RAINBOW", hint: "A colorful arch in the sky after it rains." },
+            { word: "DINOSAUR", hint: "A giant animal that lived a long, long time ago." },
+            { word: "ASTRONAUT", hint: "Someone who travels in a rocket to outer space." },
+            { word: "BUTTERFLY", hint: "A beautiful insect with colorful wings." },
+            { word: "ELEPHANT", hint: "A very large gray animal with a long trunk." },
+            { word: "SUNFLOWER", hint: "A tall, bright yellow plant that loves the sun." },
+            { word: "VOLCANO", hint: "A mountain that can erupt with hot lava." },
+            { word: "TELESCOPE", hint: "A tool used to look closely at stars and planets." },
+            { word: "CHOCOLATE", hint: "A sweet, brown treat made from cocoa beans." },
+            { word: "KANGAROO", hint: "An animal that hops and carries its baby in a pouch." },
+            { word: "UMBRELLA", hint: "Something you hold over your head to stay dry in the rain." },
+            { word: "PENGUIN", hint: "A bird that swims, loves the cold, and waddles on ice." }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        const state = {
+            currentLevel: 0,
+            word: "",
+            guessedLetters: new Set(),
+            mistakes: 0,
+            maxMistakes: 6,
+            isGameOver: false,
+            isAnimating: false // Animation lock
+        };
+
+        // --- DOM REFERENCES ---
+        const DOM = {
+            levelList: document.getElementById('level-list'),
+            titleDisplay: document.getElementById('game-title-display'),
+            hintDisplay: document.getElementById('game-hint'),
+            wordDisplay: document.getElementById('word-display'),
+            keyboard: document.getElementById('keyboard'),
+            canvas: document.getElementById('stickman-canvas'),
+            ctx: document.getElementById('stickman-canvas').getContext('2d'),
+            boardWrapper: document.getElementById('board-wrapper'),
+            
+            modal: document.getElementById('end-modal'),
+            modalTitle: document.getElementById('modal-title'),
+            modalMsg: document.getElementById('modal-msg'),
+            btnNext: document.getElementById('btn-next'),
+            btnRetry: document.getElementById('btn-retry'),
+            
+            toast: document.getElementById('toast'),
+            toastText: document.getElementById('toast-text'),
+            toastIcon: document.getElementById('toast-icon'),
+            confetti: document.getElementById('confetti')
+        };
+
+        // --- INIT & EVENTS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            buildSidebar();
+            buildKeyboard();
+            initGame(0);
+            setupEventListeners();
+            setupConfettiResize();
+        });
+
+        function setupEventListeners() {
+            DOM.btnNext.addEventListener('click', () => {
+                let nextLevel = (state.currentLevel + 1) % WORDS.length;
+                initGame(nextLevel);
+            });
+            
+            DOM.btnRetry.addEventListener('click', () => {
+                initGame(state.currentLevel);
+            });
+            
+            // Allow physical keyboard typing with visual feedback
+            document.addEventListener('keydown', (e) => {
+                if (state.isGameOver || state.isAnimating) return;
+                const key = e.key.toUpperCase();
+                
+                if (/^[A-Z]$/.test(key)) {
+                    const keyBtn = document.getElementById(`key-${key}`);
+                    if (keyBtn && !keyBtn.disabled) {
+                        // Visual pressing animation
+                        keyBtn.classList.add('pressed');
+                        setTimeout(() => keyBtn.classList.remove('pressed'), 150);
+                        handleGuess(key);
+                    }
+                }
+            });
+        }
+
+        function buildSidebar() {
+            DOM.levelList.innerHTML = '';
+            WORDS.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = `level-btn`;
+                btn.dataset.index = index;
+                btn.innerHTML = `<div class="btn-num">${index + 1}</div> Word ${index + 1}`;
+                btn.onclick = () => {
+                    if(!state.isAnimating) initGame(index);
+                };
+                DOM.levelList.appendChild(btn);
+            });
+        }
+
+        function buildKeyboard() {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+            DOM.keyboard.innerHTML = '';
+            letters.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'key';
+                btn.innerText = letter;
+                btn.id = `key-${letter}`;
+                btn.onclick = () => handleGuess(letter);
+                DOM.keyboard.appendChild(btn);
+            });
+        }
+
+        // --- GAME LOGIC ---
+
+        function initGame(index) {
+            state.currentLevel = index;
+            state.word = WORDS[index].word;
+            state.guessedLetters.clear();
+            state.mistakes = 0;
+            state.isGameOver = false;
+            state.isAnimating = false;
+
+            // Update UI
+            updateSidebar();
+            DOM.titleDisplay.innerText = `Word ${index + 1}`;
+            DOM.hintDisplay.innerText = WORDS[index].hint;
+            
+            hideModal();
+            resetKeyboard();
+            renderWordDisplay();
+            clearCanvas();
+            
+            // Pop in animation
+            DOM.boardWrapper.style.animation = 'none';
+            DOM.boardWrapper.offsetHeight; 
+            DOM.boardWrapper.style.animation = 'bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+
+            // Show hint toast briefly
+            setTimeout(() => {
+                showToast(WORDS[index].hint, "hint", "fa-lightbulb");
+            }, 600);
+        }
+
+        function updateSidebar() {
+            const btns = DOM.levelList.querySelectorAll('.level-btn');
+            btns.forEach((btn, idx) => {
+                if (idx === state.currentLevel) {
+                    btn.classList.add('active');
+                    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function resetKeyboard() {
+            const keys = DOM.keyboard.querySelectorAll('.key');
+            keys.forEach(key => {
+                key.disabled = false;
+                key.className = 'key'; 
+            });
+        }
+
+        function renderWordDisplay() {
+            DOM.wordDisplay.innerHTML = '';
+            for (let i = 0; i < state.word.length; i++) {
+                const char = state.word[i];
+                const slot = document.createElement('div');
+                slot.className = 'letter-slot';
+                
+                if (state.guessedLetters.has(char)) {
+                    slot.innerText = char;
+                    slot.classList.add('pop');
+                } else {
+                    slot.innerText = '_';
+                    slot.classList.add('empty');
+                }
+                DOM.wordDisplay.appendChild(slot);
+            }
+        }
+
+        function handleGuess(letter) {
+            if (state.isGameOver || state.isAnimating || state.guessedLetters.has(letter)) return;
+
+            state.guessedLetters.add(letter);
+            const keyBtn = document.getElementById(`key-${letter}`);
+            keyBtn.disabled = true;
+
+            if (state.word.includes(letter)) {
+                // Correct
+                keyBtn.classList.add('correct');
+                renderWordDisplay();
+                checkWin();
+            } else {
+                // Wrong
+                keyBtn.classList.add('wrong');
+                state.mistakes++;
+                state.isAnimating = true; // Lock interactions while drawing
+                
+                drawStickmanPart(state.mistakes, () => {
+                    state.isAnimating = false; // Unlock
+                    
+                    // Shake the chalkboard when drawing finishes
+                    const board = document.querySelector('.chalkboard-container');
+                    board.classList.remove('shake');
+                    board.offsetHeight; 
+                    board.classList.add('shake');
+
+                    checkLose();
+                });
+            }
+        }
+
+        function checkWin() {
+            const hasWon = state.word.split('').every(char => state.guessedLetters.has(char));
+            if (hasWon) {
+                state.isGameOver = true;
+                
+                // Draw happy face if they didn't get fully chalked
+                if(state.mistakes < state.maxMistakes && state.mistakes > 0) {
+                    drawHappyFace();
+                }
+
+                setTimeout(() => {
+                    startConfetti();
+                    DOM.modalTitle.innerText = "Awesome Job!";
+                    DOM.modalTitle.style.color = "#10b981";
+                    DOM.modalMsg.innerText = `You spelled ${state.word}!`;
+                    DOM.btnNext.style.display = 'block';
+                    DOM.btnRetry.style.display = 'none';
+                    DOM.modal.style.display = 'flex';
+                }, 800);
+            }
+        }
+
+        function checkLose() {
+            if (state.mistakes >= state.maxMistakes) {
+                state.isGameOver = true;
+                
+                // Reveal the missing letters in red
+                const slots = DOM.wordDisplay.querySelectorAll('.letter-slot');
+                for (let i = 0; i < state.word.length; i++) {
+                    const char = state.word[i];
+                    if (!state.guessedLetters.has(char)) {
+                        slots[i].innerText = char;
+                        slots[i].classList.remove('empty');
+                        slots[i].classList.add('revealed-end');
+                        slots[i].classList.add('pop');
+                    }
+                }
+
+                setTimeout(() => {
+                    DOM.modalTitle.innerText = "Oh no!";
+                    DOM.modalTitle.style.color = "#ef4444";
+                    DOM.modalMsg.innerText = `The word was ${state.word}.`;
+                    DOM.btnNext.style.display = 'none';
+                    DOM.btnRetry.style.display = 'block';
+                    DOM.modal.style.display = 'flex';
+                }, 1500);
+            }
+        }
+
+        // --- DRAWING LOGIC (Animated Chalky Stickman) ---
+        function clearCanvas() {
+            DOM.ctx.clearRect(0, 0, DOM.canvas.width, DOM.canvas.height);
+        }
+
+        function animateLine(x1, y1, x2, y2, color, callback) {
+            let start = null;
+            const duration = 250; // ms
+            const ctx = DOM.ctx;
+            
+            function step(timestamp) {
+                if (!start) start = timestamp;
+                let progress = (timestamp - start) / duration;
+                if (progress > 1) progress = 1;
+                
+                // Easing out
+                let easeOut = 1 - Math.pow(1 - progress, 3);
+                
+                const currentX = x1 + (x2 - x1) * easeOut;
+                const currentY = y1 + (y2 - y1) * easeOut;
+                
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(currentX, currentY);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 6;
+                ctx.lineCap = 'round';
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = color;
+                ctx.stroke();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+        function animateArc(x, y, radius, startAngle, endAngle, color, callback, anticlockwise = false) {
+            let start = null;
+            const duration = 300; // ms
+            const ctx = DOM.ctx;
+
+            function step(timestamp) {
+                if (!start) start = timestamp;
+                let progress = (timestamp - start) / duration;
+                if (progress > 1) progress = 1;
+                
+                let easeOut = 1 - Math.pow(1 - progress, 3);
+                const currentAngle = startAngle + (endAngle - startAngle) * easeOut;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, radius, startAngle, currentAngle, anticlockwise);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 6;
+                ctx.lineCap = 'round';
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = color;
+                ctx.stroke();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+        function drawStickmanPart(mistakeNum, onComplete) {
+            const cX = 90; // Center X
+            
+            switch(mistakeNum) {
+                case 1: // Head (Yellow)
+                    animateArc(cX, 45, 25, 0, Math.PI * 2, '#fde047', onComplete);
+                    break;
+                case 2: // Body (Blue)
+                    animateLine(cX, 70, cX, 140, '#38bdf8', onComplete);
+                    break;
+                case 3: // Left Arm (Green)
+                    animateLine(cX, 90, cX - 35, 120, '#4ade80', onComplete);
+                    break;
+                case 4: // Right Arm (Pink)
+                    animateLine(cX, 90, cX + 35, 120, '#f472b6', onComplete);
+                    break;
+                case 5: // Left Leg (Orange)
+                    animateLine(cX, 140, cX - 30, 190, '#fb923c', onComplete);
+                    break;
+                case 6: // Right Leg + Sad Face (Red)
+                    animateLine(cX, 140, cX + 30, 190, '#f87171', () => {
+                        drawSadFace(onComplete);
+                    });
+                    break;
+            }
+        }
+
+        function drawSadFace(onComplete) {
+            const cX = 90;
+            const ctx = DOM.ctx;
+            
+            // Draw Eyes Instantly
+            ctx.fillStyle = '#f87171';
+            ctx.shadowBlur = 2;
+            ctx.shadowColor = '#f87171';
+            ctx.beginPath(); ctx.arc(cX - 8, 40, 3, 0, Math.PI*2); ctx.fill(); 
+            ctx.beginPath(); ctx.arc(cX + 8, 40, 3, 0, Math.PI*2); ctx.fill(); 
+            
+            // Animate Sad Mouth
+            animateArc(cX, 58, 8, Math.PI, 0, '#f87171', onComplete, false);
+        }
+
+        function drawHappyFace() {
+            const cX = 90;
+            const ctx = DOM.ctx;
+            
+            // Draw Happy Eyes Instantly
+            ctx.fillStyle = '#10b981'; // Green
+            ctx.shadowBlur = 2;
+            ctx.shadowColor = '#10b981';
+            ctx.beginPath(); ctx.arc(cX - 8, 40, 3, 0, Math.PI*2); ctx.fill(); 
+            ctx.beginPath(); ctx.arc(cX + 8, 40, 3, 0, Math.PI*2); ctx.fill(); 
+            
+            // Draw Happy Mouth Instantly
+            ctx.beginPath();
+            ctx.arc(cX, 45, 10, 0, Math.PI, false); 
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        // --- UTILS ---
+        function hideModal() { DOM.modal.style.display = 'none'; }
+
+        function showToast(msg, typeClass, iconClass) {
+            DOM.toastText.innerText = msg;
+            DOM.toastIcon.className = `fa-solid ${iconClass || 'fa-circle-exclamation'}`;
+            DOM.toast.className = `toast visible ${typeClass || ''}`;
+            
+            if(state.toastTimeout) clearTimeout(state.toastTimeout);
+            state.toastTimeout = setTimeout(() => {
+                DOM.toast.classList.remove('visible');
+            }, 4000); // Plenty of time to read hints
+        }
+
+        // --- CONFETTI EFFECT ---
+        function startConfetti() {
+            const canvas = DOM.confetti;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particles = [];
+            const colors = ['#fde047', '#38bdf8', '#4ade80', '#f472b6', '#f87171'];
+            
+            for(let i=0; i<150; i++) {
+                particles.push({
+                    x: canvas.width / 2, 
+                    y: canvas.height / 2 + 100, 
+                    vx: (Math.random() - 0.5) * 25, 
+                    vy: (Math.random() - 1) * 25 - 5, 
+                    size: Math.random() * 8 + 6, 
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rot: Math.random() * 360,
+                    rotSpeed: (Math.random() - 0.5) * 10
+                });
+            }
+            
+            function loop() {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                let active = false;
+                particles.forEach(p => {
+                    p.x += p.vx; 
+                    p.y += p.vy; 
+                    p.vy += 0.6; 
+                    p.vx *= 0.96; 
+                    p.rot += p.rotSpeed;
+                    
+                    if (p.y < canvas.height + 20) active = true;
+                    
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.color; 
+                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                    ctx.restore();
+                });
+                if(active) requestAnimationFrame(loop);
+                else ctx.clearRect(0,0,canvas.width,canvas.height); 
+            }
+            loop();
+        }
+
+        function setupConfettiResize() {
+            window.addEventListener('resize', () => {
+                DOM.confetti.width = window.innerWidth;
+                DOM.confetti.height = window.innerHeight;
+            });
+        }
+
+    </script>
+</body>
+</html>
