@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 9 Maths - Homework Solutions</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Notebook Edutech Standard) --- */
+        :root {
+            --bg-paper: #fdfbf7;       /* Warm paper white */
+            --bg-panel: #ffffff;       /* Pure white for cards */
+            --primary: #2563eb;        /* Blue Ink */
+            --accent: #16a34a;         /* Green Ink */
+            --warning: #ea580c;        /* Orange Highlighter */
+            --danger: #dc2626;         /* Red Pen */
+            --cold: #0284c7;           /* Light Blue */
+            --text-main: #334155;      /* Dark slate text */
+            --text-dim: #64748b;       /* Secondary text */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-main); }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-main); }
+
+        strong { color: var(--text-main); font-weight: 800; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; align-items: start; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; align-items: start; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: #ffffff;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: var(--primary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 2px 2px 0px rgba(37, 99, 235, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            /* Notebook Paper Effect */
+            background-image:
+                linear-gradient(90deg, transparent 60px, rgba(220, 38, 38, 0.2) 60px, rgba(220, 38, 38, 0.2) 62px, transparent 62px),
+                linear-gradient(rgba(37, 99, 235, 0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 32px;
+            background-attachment: local;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 2rem 2rem 80px; /* Offset for margin line */
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+            position: relative;
+        }
+
+        /* Signposting System */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            background: #ffffff;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+            animation: slideIn 0.5s ease;
+            font-family: 'Kalam', cursive;
+            font-size: 1.3rem;
+        }
+        .pedagogical-note p, .pedagogical-note li, .pedagogical-note h3 {
+            font-family: 'Kalam', cursive;
+        }
+        .pedagogical-badge {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Problem Blocks */
+        .problem-block {
+            background: #ffffff;
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            font-size: 1.4rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+        }
+        .problem-number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            width: 100%;
+        }
+        .btn-action:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+        }
+        .btn-action.btn-accent { background: var(--accent); }
+        .btn-action.btn-warning { background: var(--warning); }
+        .btn-action.btn-danger { background: var(--danger); }
+        .btn-action.btn-cold { background: var(--cold); }
+        .btn-action.btn-purple { background: #8b5cf6; }
+
+        /* Answer Reveal Blocks */
+        .answer-box {
+            display: none; 
+            background: #ffffff; 
+            padding: 1.5rem; 
+            border-radius: 8px; 
+            border: 2px solid var(--accent); 
+            margin-top: 1rem; 
+            box-shadow: 3px 3px 0px rgba(22, 163, 74, 0.2);
+            text-align: center;
+        }
+        .answer-box p {
+            font-family: 'Kalam', cursive;
+            font-size: 1.5rem;
+            line-height: 1.5;
+        }
+        .final-ans {
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.8rem !important;
+            margin-top: 0.5rem;
+        }
+
+        /* Light Theme Tables */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; margin-bottom: 1rem; color: var(--text-main); background: #ffffff; font-size: 1.3rem; }
+        .data-table th, .data-table td { border: 2px solid rgba(0,0,0,0.2); padding: 0.8rem; text-align: left; }
+        .data-table th { background: rgba(37,99,235,0.1); color: var(--text-main); font-family: 'Outfit'; font-weight: bold; }
+        .data-table.center-all th, .data-table.center-all td { text-align: center; }
+
+        /* Tree Diagram Styles */
+        .tree-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 1rem;
+            font-family: 'Kalam', cursive;
+            font-size: 1.3rem;
+        }
+        .tree-level {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+        }
+        .tree-node {
+            background: #f8fafc;
+            border: 2px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+        .tree-prob {
+            color: var(--danger);
+            font-weight: bold;
+            font-size: 1.1rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #fdfbf7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px dashed var(--danger);
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: var(--text-main);
+            border: 2px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cold), var(--primary)); transition: width 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-enter { animation: fadeIn 0.4s ease-out; }
+        .delay-1 { animation: slideIn 0.4s ease-out 0.1s both; }
+        .delay-2 { animation: slideIn 0.4s ease-out 0.2s both; }
+        .delay-3 { animation: slideIn 0.4s ease-out 0.3s both; }
+
+        /* Math Sizing */
+        .math-lg { font-size: 1.8rem; }
+
+        @media (max-width: 1024px) {
+            .slide-wrapper { padding-left: 60px; }
+        }
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+            .slide-wrapper { padding-left: 2rem; }
+            .viewport { background-image: none; background-color: var(--bg-paper); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-book"></i> Year 9 Math</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;">Homework Solutions</span>
+        </div>
+        <div style="font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-main); font-size: 1.2rem;">
+            24 March 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- CORE ENGINE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    const renderMath = () => {
+        if (window.MathJax) {
+            window.MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+        }
+    };
+
+    const bindReveals = (container) => {
+        const btns = container.querySelectorAll('.reveal-btn');
+        const handlers = [];
+        btns.forEach(btn => {
+            const handler = () => {
+                const targetId = btn.getAttribute('data-target');
+                const target = container.querySelector('#' + targetId);
+                target.style.display = 'block';
+                target.classList.add('anim-enter');
+                btn.style.display = 'none';
+                renderMath(); 
+            };
+            handlers.push({ el: btn, fn: handler });
+            btn.addEventListener('click', handler);
+        });
+        return () => handlers.forEach(h => h.el.removeEventListener('click', h.fn));
+    };
+
+    // --- SLIDES ---
+    state.slides = [
+        // SLIDE 1: Title
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-pen-to-square delay-1" style="font-size: 5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Homework Solutions</h1>
+                    <h2 class="delay-1" style="color: var(--accent);">Advanced Probability, Tree Diagrams & Fractions</h2>
+                    <p class="delay-1" style="font-family: 'Kalam', cursive; color: var(--text-dim); font-size: 1.5rem; margin-bottom: 1rem;">Chào buổi sáng from Hội An! Let's get started.</p>
+                    
+                    <div class="pedagogical-note note-write delay-2" style="max-width: 750px; margin: 2rem auto; text-align: left; transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">Objective:</h3>
+                        <p style="font-size: 1.4rem;">We will review our assignment and write down the correct solutions with <strong>full work shown</strong>.</p>
+                        
+                        <div style="background: rgba(0,0,0,0.05); padding: 1rem; border-radius: 8px; margin-top: 1.5rem; border: 1px dashed var(--text-dim);">
+                            <p style="font-size: 1.1rem; color: var(--text-dim); text-align: center; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                <i class="fa-solid fa-lightbulb"></i> Check your assignment carefully. If you made a mistake, cross it out neatly and copy the correct working down.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 2: Part 1 - Fractions to Percentages (Q1 - Q4)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part 1: Fractions to Percentages</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.3rem;">Rule: Divide numerator by denominator, multiply by 100.</p>
+
+                    <div class="grid-4 delay-2" style="max-width: 1150px; margin: 0 auto;">
+                        
+                        <div class="glass-card" style="padding: 1.2rem; text-align: center;">
+                            <h3 style="color: var(--text-main); margin-bottom: 1rem;">1) &nbsp; $$\\frac{1}{4}$$</h3>
+                            <button class="btn-action reveal-btn" data-target="ans-q1" style="font-size: 1rem; padding: 0.5rem;"><i class="fa-solid fa-eye"></i> Show</button>
+                            <div id="ans-q1" class="answer-box" style="padding: 0.8rem;">
+                                <p style="font-size: 1rem; color: var(--text-dim); margin-bottom: 0.5rem;">$$1 \\div 4 = 0.25$$</p>
+                                <p style="font-size: 1rem; color: var(--text-dim); margin-bottom: 0.5rem;">$$0.25 \\times 100$$</p>
+                                <p class="final-ans" style="font-size: 1.4rem !important;">25%</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.2rem; text-align: center;">
+                            <h3 style="color: var(--text-main); margin-bottom: 1rem;">2) &nbsp; $$\\frac{2}{5}$$</h3>
+                            <button class="btn-action btn-accent reveal-btn" data-target="ans-q2" style="font-size: 1rem; padding: 0.5rem;"><i class="fa-solid fa-eye"></i> Show</button>
+                            <div id="ans-q2" class="answer-box" style="padding: 0.8rem;">
+                                <p style="font-size: 1rem; color: var(--text-dim); margin-bottom: 0.5rem;">$$2 \\div 5 = 0.40$$</p>
+                                <p style="font-size: 1rem; color: var(--text-dim); margin-bottom: 0.5rem;">$$0.40 \\times 100$$</p>
+                                <p class="final-ans" style="font-size: 1.4rem !important;">40%</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.2rem; text-align: center;">
+                            <h3 style="color: var(--text-main); margin-bottom: 1rem;">3) &nbsp; $$\\frac{7}{10}$$</h3>
+                            <button class="btn-action btn-warning reveal-btn" data-target="ans-q3" style="font-size: 1rem; padding: 0.5rem;"><i class="fa-solid fa-eye"></i> Show</button>
+                            <div id="ans-q3" class="answer-box" style="padding: 0.8rem; border-color: var(--warning);">
+                                <p style="font-size: 1rem; color: var(--text-dim); margin-bottom: 0.5rem;">$$7 \\div 10 = 0.70$$</p>
+                                <p style="font-size: 1rem; color: var(--text-dim); margin-bottom: 0.5rem;">$$0.70 \\times 100$$</p>
+                                <p class="final-ans" style="font-size: 1.4rem !important; color: var(--warning);">70%</p>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card" style="padding: 1.2rem; text-align: center;">
+                            <h3 style="color: var(--text-main); margin-bottom: 1rem;">4) &nbsp; $$\\frac{17}{20}$$</h3>
+                            <button class="btn-action btn-danger reveal-btn" data-target="ans-q4" style="font-size: 1rem; padding: 0.5rem;"><i class="fa-solid fa-eye"></i> Show</button>
+                            <div id="ans-q4" class="answer-box" style="padding: 0.8rem; border-color: var(--danger);">
+                                <p style="font-size: 1rem; color: var(--text-dim); margin-bottom: 0.5rem;">$$17 \\div 20 = 0.85$$</p>
+                                <p style="font-size: 1rem; color: var(--text-dim); margin-bottom: 0.5rem;">$$0.85 \\times 100$$</p>
+                                <p class="final-ans" style="font-size: 1.4rem !important; color: var(--danger);">85%</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => { renderMath(); return bindReveals(container); }
+        },
+
+        // SLIDE 3: Part 2 - Basic Probability (Q5 - Q6)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part 2: Basic Probability (Q5 & Q6)</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1100px; margin: 0 auto;">
+                        
+                        <div class="glass-card">
+                            <h3 style="color: var(--primary);">5) 5 Red, 3 Blue, 2 Green</h3>
+                            <p style="font-size: 1.1rem; margin-bottom: 1rem;"><strong>a)</strong> P(Blue)? &nbsp;&nbsp;&nbsp; <strong>b)</strong> P(NOT Green)?</p>
+                            <button class="btn-action reveal-btn" data-target="ans-q5"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-q5" class="answer-box">
+                                <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 0.5rem;">First, find the total: 5 + 3 + 2 = 10 marbles.</p>
+                                <hr style="border: 0; border-top: 1px dashed #ccc; margin: 10px 0;">
+                                <p style="font-size: 1.1rem;"><strong>a) P(Blue):</strong> There are 3 Blue.</p>
+                                <p class="final-ans" style="font-size: 1.5rem !important;">$$\\frac{3}{10}$$</p>
+                                <hr style="border: 0; border-top: 1px dashed #ccc; margin: 10px 0;">
+                                <p style="font-size: 1.1rem;"><strong>b) P(NOT Green):</strong> Green is $$\\frac{2}{10}$$. So NOT green is $$1 - \\frac{2}{10} = \\frac{8}{10}$$.</p>
+                                <p class="final-ans" style="font-size: 1.5rem !important;">$$\\frac{4}{5}$$ (simplified)</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card">
+                            <h3 style="color: var(--accent);">6) 8-sided Spinner (1-8)</h3>
+                            <p style="font-size: 1.1rem; margin-bottom: 1rem;"><strong>a)</strong> P(landing on 7)? &nbsp;&nbsp;&nbsp; <strong>b)</strong> P(Even number)?</p>
+                            <button class="btn-action btn-accent reveal-btn" data-target="ans-q6"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-q6" class="answer-box">
+                                <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 0.5rem;">Total possible outcomes = 8.</p>
+                                <hr style="border: 0; border-top: 1px dashed #ccc; margin: 10px 0;">
+                                <p style="font-size: 1.1rem;"><strong>a) P(7):</strong> There is only one '7' on the spinner.</p>
+                                <p class="final-ans" style="font-size: 1.5rem !important;">$$\\frac{1}{8}$$</p>
+                                <hr style="border: 0; border-top: 1px dashed #ccc; margin: 10px 0;">
+                                <p style="font-size: 1.1rem;"><strong>b) P(Even):</strong> Evens are 2, 4, 6, 8 (Four outcomes).</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">$$\\frac{4}{8}$$ simplifies to...</p>
+                                <p class="final-ans" style="font-size: 1.5rem !important;">$$\\frac{1}{2}$$</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => { renderMath(); return bindReveals(container); }
+        },
+
+        // SLIDE 4: Part 3 - Expected Frequency (Q7 - Q8)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part 3: Expected Frequency (Q7 & Q8)</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.3rem;">Rule: Expected Frequency = P(event) × Total Trials</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1100px; margin: 0 auto;">
+                        
+                        <div class="glass-card">
+                            <h3 style="color: var(--warning);">7) Remembering Homework</h3>
+                            <p style="font-size: 1.1rem; margin-bottom: 1rem;">P(forget) = 0.12. Out of 250 students, how many are expected to <strong>remember</strong>?</p>
+                            <button class="btn-action btn-warning reveal-btn" data-target="ans-q7"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-q7" class="answer-box" style="border-color: var(--warning);">
+                                <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 0.5rem;">Step 1: Find Probability of Remembering (NOT forgetting).</p>
+                                <p>$$1 - 0.12 = 0.88$$</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 0.5rem; margin-top: 0.5rem;">Step 2: Multiply by total students.</p>
+                                <p>$$0.88 \\times 250$$</p>
+                                <p class="final-ans" style="color: var(--warning); font-size: 1.6rem !important;">220 students</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card">
+                            <h3 style="color: var(--danger);">8) Factory Lightbulbs</h3>
+                            <p style="font-size: 1.1rem; margin-bottom: 1rem;">P(broken) = 3.5%. Out of 4,000 bulbs, how many are expected to work perfectly?</p>
+                            <button class="btn-action btn-danger reveal-btn" data-target="ans-q8"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-q8" class="answer-box" style="border-color: var(--danger);">
+                                <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 0.5rem;">Step 1: Convert % to decimal. 3.5% = 0.035. <br>Find P(Perfect):</p>
+                                <p>$$1 - 0.035 = 0.965$$</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 0.5rem; margin-top: 0.5rem;">Step 2: Multiply by total bulbs.</p>
+                                <p>$$0.965 \\times 4000$$</p>
+                                <p class="final-ans" style="color: var(--danger); font-size: 1.6rem !important;">3,860 lightbulbs</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => { renderMath(); return bindReveals(container); }
+        },
+
+        // SLIDE 5: Part 4 - Sample Space Diagrams (Q9)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part 4: Sample Space Diagrams (Q9)</h2>
+                    
+                    <div class="problem-block delay-1" style="max-width: 900px; margin: 0 auto 1.5rem auto;">
+                        <p><span class="problem-number">9</span> A fair 6-sided die is rolled and a fair coin is flipped.</p>
+                        <p style="margin-top: 0.5rem;">a) Draw a two-way table for all outcomes.</p>
+                        <p>b) Find the probability of getting a Tail and a 5.</p>
+                    </div>
+
+                    <div class="glass-card delay-2" style="max-width: 900px; margin: 0 auto; text-align: center;">
+                        <button class="btn-action reveal-btn" data-target="ans-q9"><i class="fa-solid fa-table"></i> Reveal Table & Answer</button>
+                        
+                        <div id="ans-q9" class="answer-box" style="padding: 1rem;">
+                            <table class="data-table center-all" style="width: 80%; margin: 0 auto 1.5rem auto;">
+                                <tr>
+                                    <th style="background: #e2e8f0;"></th>
+                                    <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
+                                </tr>
+                                <tr>
+                                    <th>Head (H)</th>
+                                    <td>H,1</td><td>H,2</td><td>H,3</td><td>H,4</td><td>H,5</td><td>H,6</td>
+                                </tr>
+                                <tr>
+                                    <th>Tail (T)</th>
+                                    <td>T,1</td><td>T,2</td><td>T,3</td><td>T,4</td><td style="background: rgba(22, 163, 74, 0.2); font-weight: bold; color: var(--accent);">T,5</td><td>T,6</td>
+                                </tr>
+                            </table>
+                            <p style="font-size: 1.2rem; color: var(--text-dim);">There are 12 total possible outcomes. (6 × 2 = 12).<br>Only ONE outcome is "Tail and 5".</p>
+                            <p class="final-ans">$$\\frac{1}{12}$$</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => { renderMath(); return bindReveals(container); }
+        },
+
+        // SLIDE 6: Part 5 - Tree Diagrams (Q10 - Independent)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part 5: Independent Tree Diagrams (Q10)</h2>
+                    
+                    <div class="problem-block delay-1" style="max-width: 1000px; margin: 0 auto 1.5rem auto;">
+                        <p><span class="problem-number">10</span> 3 Red tokens, 2 Blue tokens. (Total = 5).</p>
+                        <p style="margin-top: 0.5rem;">A token is chosen, <strong>REPLACED</strong>, and a second is chosen.</p>
+                        <p>Calculate the probability that both tokens chosen are Blue.</p>
+                    </div>
+
+                    <div class="glass-card delay-2" style="max-width: 1000px; margin: 0 auto; text-align: center;">
+                        <button class="btn-action btn-accent reveal-btn" data-target="ans-q10"><i class="fa-solid fa-code-branch"></i> Reveal Tree Diagram & Answer</button>
+                        
+                        <div id="ans-q10" class="answer-box" style="padding: 1rem;">
+                            <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1rem;">Because it is replaced, the denominators stay as 5 for the second draw.</p>
+                            
+                            <div class="tree-container">
+                                <div class="tree-level">
+                                    <div class="tree-node">
+                                        <span class="tree-prob">3/5</span><br><strong>Red</strong>
+                                    </div>
+                                    <div class="tree-node" style="border-color: var(--primary); background: rgba(37, 99, 235, 0.05);">
+                                        <span class="tree-prob">2/5</span><br><strong style="color: var(--primary);">Blue</strong>
+                                    </div>
+                                </div>
+                                <div style="display: flex; flex-direction: column; justify-content: space-around; font-size: 2rem; color: #cbd5e1;"><i class="fa-solid fa-arrow-right"></i><i class="fa-solid fa-arrow-right"></i></div>
+                                <div class="tree-level">
+                                    <div class="tree-node">
+                                        <span class="tree-prob">3/5</span><br><strong>Red</strong> (BR)
+                                    </div>
+                                    <div class="tree-node" style="border-color: var(--primary); background: rgba(37, 99, 235, 0.1); border-width: 3px;">
+                                        <span class="tree-prob">2/5</span><br><strong style="color: var(--primary);">Blue</strong> (BB)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p style="font-size: 1.2rem; margin-top: 1.5rem;">Follow the path for Blue -> Blue. Multiply the branches.</p>
+                            <p>$$P(\\text{Blue, Blue}) = \\frac{2}{5} \\times \\frac{2}{5}$$</p>
+                            <p class="final-ans">$$\\frac{4}{25}$$</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => { renderMath(); return bindReveals(container); }
+        },
+
+        // SLIDE 7: Part 6 - Tree Diagrams (Q11 - Dependent)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part 6: Dependent Tree Diagrams (Q11)</h2>
+                    
+                    <div class="problem-block delay-1" style="max-width: 1000px; margin: 0 auto 1.5rem auto;">
+                        <p><span class="problem-number">11</span> 4 Red, 6 Blue. (Total = 10).</p>
+                        <p style="margin-top: 0.5rem; color: var(--danger); font-weight: bold;">A marble is chosen and is NOT REPLACED.</p>
+                        <p>Calculate the probability that both marbles chosen are Red.</p>
+                    </div>
+
+                    <div class="glass-card delay-2" style="max-width: 1000px; margin: 0 auto; text-align: center;">
+                        <button class="btn-action btn-danger reveal-btn" data-target="ans-q11"><i class="fa-solid fa-code-branch"></i> Reveal Tree Diagram & Answer</button>
+                        
+                        <div id="ans-q11" class="answer-box" style="padding: 1rem; border-color: var(--danger);">
+                            <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1rem;">Since it is NOT replaced, Total becomes 9. If Red is picked, Red becomes 3.</p>
+                            
+                            <div class="tree-container">
+                                <div class="tree-level">
+                                    <div class="tree-node" style="border-color: var(--danger); background: rgba(220, 38, 38, 0.05);">
+                                        <span class="tree-prob">4/10</span><br><strong style="color: var(--danger);">Red</strong>
+                                    </div>
+                                    <div class="tree-node">
+                                        <span class="tree-prob">6/10</span><br><strong>Blue</strong>
+                                    </div>
+                                </div>
+                                <div style="display: flex; flex-direction: column; justify-content: space-around; font-size: 2rem; color: #cbd5e1;"><i class="fa-solid fa-arrow-right"></i><i class="fa-solid fa-arrow-right"></i></div>
+                                <div class="tree-level">
+                                    <div class="tree-node" style="border-color: var(--danger); background: rgba(220, 38, 38, 0.1); border-width: 3px;">
+                                        <span class="tree-prob">3/9</span><br><strong style="color: var(--danger);">Red</strong> (RR)
+                                    </div>
+                                    <div class="tree-node">
+                                        <span class="tree-prob">6/9</span><br><strong>Blue</strong> (RB)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p style="font-size: 1.2rem; margin-top: 1.5rem;">Follow the path for Red -> Red. Multiply the branches.</p>
+                            <p>$$P(\\text{Red, Red}) = \\frac{4}{10} \\times \\frac{3}{9} = \\frac{12}{90}$$</p>
+                            <p style="font-size: 1.1rem; color: var(--text-dim);">Simplify by dividing by 6.</p>
+                            <p class="final-ans" style="color: var(--danger);">$$\\frac{2}{15}$$</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => { renderMath(); return bindReveals(container); }
+        },
+
+        // SLIDE 8: Part 6 - Challenge (Q12)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Challenge: The Sock Drawer (Q12)</h2>
+                    
+                    <div class="problem-block delay-1" style="max-width: 1000px; margin: 0 auto 1.5rem auto;">
+                        <p><span class="problem-number">12</span> 3 Black socks, 2 White socks. (Total = 5). Pull two WITHOUT replacement.</p>
+                        <p style="margin-top: 0.5rem;">b) Probability of Black first, then White?</p>
+                        <p>c) Probability of a matching pair? (Black-Black OR White-White).</p>
+                    </div>
+
+                    <div class="glass-card delay-2" style="max-width: 1000px; margin: 0 auto; text-align: center;">
+                        <button class="btn-action btn-purple reveal-btn" data-target="ans-q12"><i class="fa-solid fa-bolt"></i> Reveal Solution</button>
+                        
+                        <div id="ans-q12" class="answer-box" style="padding: 1rem; border-color: #8b5cf6;">
+                            
+                            <div class="grid-2">
+                                <div>
+                                    <h3 style="color: #8b5cf6; font-size: 1.3rem;">b) P(Black then White)</h3>
+                                    <p style="font-size: 1.1rem; color: var(--text-dim);">Pick Black: 3/5. Total is now 4.<br>Pick White: 2/4.</p>
+                                    <p>$$P(B,W) = \\frac{3}{5} \\times \\frac{2}{4} = \\frac{6}{20}$$</p>
+                                    <p class="final-ans" style="color: #8b5cf6; font-size: 1.4rem !important;">$$\\frac{3}{10}$$</p>
+                                </div>
+                                <div>
+                                    <h3 style="color: #8b5cf6; font-size: 1.3rem;">c) P(Matching Pair)</h3>
+                                    <p style="font-size: 1.1rem; color: var(--text-dim);">Path 1 (BB): $$\\frac{3}{5} \\times \\frac{2}{4} = \\frac{6}{20}$$</p>
+                                    <p style="font-size: 1.1rem; color: var(--text-dim);">Path 2 (WW): $$\\frac{2}{5} \\times \\frac{1}{4} = \\frac{2}{20}$$</p>
+                                    <p style="font-size: 1.1rem; color: var(--text-dim); margin-top: 0.5rem;">Add the winning paths together:</p>
+                                    <p>$$\\frac{6}{20} + \\frac{2}{20} = \\frac{8}{20}$$</p>
+                                    <p class="final-ans" style="color: #8b5cf6; font-size: 1.4rem !important;">$$\\frac{2}{5}$$</p>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => { renderMath(); return bindReveals(container); }
+        },
+
+        // SLIDE 9: Part 7 - Challenging Fractions (Q13-Q14)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part 7: Challenging Fractions (Q13 & Q14)</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.3rem;">Remember BIDMAS and convert to improper fractions.</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1100px; margin: 0 auto;">
+                        
+                        <div class="glass-card">
+                            <h3 style="color: var(--text-main);">13) &nbsp; $$2 \\frac{1}{3} \\times (1 \\frac{1}{2} + \\frac{3}{4})$$</h3>
+                            <button class="btn-action reveal-btn" data-target="ans-q13"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-q13" class="answer-box">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Brackets first. Find common denominator.</p>
+                                <p>$$\\frac{7}{3} \\times (\\frac{6}{4} + \\frac{3}{4})$$</p>
+                                <p>$$\\frac{7}{3} \\times \\frac{9}{4} = \\frac{63}{12}$$</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Simplify ($$\\div 3$$): $$\\frac{21}{4}$$</p>
+                                <p class="final-ans">$$5 \\frac{1}{4}$$</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card">
+                            <h3 style="color: var(--text-main);">14) &nbsp; $$\\frac{5}{6} \\div 1 \\frac{2}{3} - \\frac{1}{4}$$</h3>
+                            <button class="btn-action btn-accent reveal-btn" data-target="ans-q14"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-q14" class="answer-box">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Division first. Use Keep-Change-Flip.</p>
+                                <p>$$(\\frac{5}{6} \\div \\frac{5}{3}) - \\frac{1}{4}$$</p>
+                                <p>$$(\\frac{5}{6} \\times \\frac{3}{5}) - \\frac{1}{4} = \\frac{15}{30} - \\frac{1}{4}$$</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Simplify $$\\frac{15}{30}$$ to $$\\frac{1}{2}$$. Common denominator is 4.</p>
+                                <p>$$\\frac{2}{4} - \\frac{1}{4}$$</p>
+                                <p class="final-ans">$$\\frac{1}{4}$$</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => { renderMath(); return bindReveals(container); }
+        },
+
+        // SLIDE 10: Part 7 - Challenging Fractions (Q15-Q16)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Part 7: Challenging Fractions (Q15 & Q16)</h2>
+
+                    <div class="grid-2 delay-1" style="max-width: 1100px; margin: 0 auto;">
+                        
+                        <div class="glass-card">
+                            <h3 style="color: var(--text-main);">15) &nbsp; $$(3 \\frac{1}{5} - 1 \\frac{1}{2}) \\times 2 \\frac{1}{2}$$</h3>
+                            <button class="btn-action btn-warning reveal-btn" data-target="ans-q15"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-q15" class="answer-box" style="border-color: var(--warning);">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Brackets first. Convert to improper. LCM = 10.</p>
+                                <p>$$(\\frac{16}{5} - \\frac{3}{2}) \\times \\frac{5}{2}$$</p>
+                                <p>$$(\\frac{32}{10} - \\frac{15}{10}) \\times \\frac{5}{2} = \\frac{17}{10} \\times \\frac{5}{2}$$</p>
+                                <p>$$\\frac{85}{20}$$</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Simplify ($$\\div 5$$): $$\\frac{17}{4}$$</p>
+                                <p class="final-ans" style="color: var(--warning);">$$4 \\frac{1}{4}$$</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card">
+                            <h3 style="color: var(--text-main);">16) &nbsp; $$4 \\frac{1}{2} - 2 \\frac{3}{4} \\div \\frac{11}{12}$$</h3>
+                            <button class="btn-action btn-danger reveal-btn" data-target="ans-q16"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-q16" class="answer-box" style="border-color: var(--danger);">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Division first. Keep-Change-Flip.</p>
+                                <p>$$\\frac{9}{2} - (\\frac{11}{4} \\times \\frac{12}{11})$$</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Cross-cancel the 11s, and simplify $$\\frac{12}{4}$$ to 3.</p>
+                                <p>$$\\frac{9}{2} - 3 = 4.5 - 3 = 1.5$$</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Convert back to fraction.</p>
+                                <p class="final-ans" style="color: var(--danger);">$$1 \\frac{1}{2}$$</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => { renderMath(); return bindReveals(container); }
+        },
+
+        // SLIDE 11: Summary & Reflection
+        {
+            template: () => `
+                <div class="anim-enter text-center" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                    <i class="fa-solid fa-ranking-star delay-1" style="font-size: 5rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Year 9 Lesson Complete!</h1>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 1100px; margin: 2rem auto; text-align: left; align-items: stretch;">
+                        
+                        <div class="glass-card" style="border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary); margin-bottom: 1rem;"><i class="fa-solid fa-list-check"></i> 3 Key Topics Covered:</h3>
+                            <ul style="margin-left: 1.5rem; font-size: 1.3rem; line-height: 1.8; color: var(--text-main);">
+                                <li><strong>Tree Diagrams:</strong> Understanding the difference between Independent (With Replacement) and Dependent (Without Replacement) events.</li>
+                                <li><strong>Expected Frequency:</strong> Multiplying probability by total trials.</li>
+                                <li><strong>Complex Fractions:</strong> Applying BIDMAS accurately to mixed numbers.</li>
+                            </ul>
+                        </div>
+
+                        <div class="pedagogical-note note-task" style="margin: 0; background: rgba(234, 88, 12, 0.05); border-color: var(--warning); transform: rotate(0.5deg);">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-brain"></i> Reflection Question</div>
+                            <p style="font-size: 1.5rem; margin-top: 1rem; font-family: 'Kalam', cursive; font-weight: bold; line-height: 1.4;">"When drawing a tree diagram, how does NOT replacing an item change the numbers on the second set of branches?"</p>
+                            
+                            <div style="background: white; padding: 1rem; border-radius: 8px; margin-top: 1.5rem; border: 1px dashed var(--text-dim);">
+                                <p style="font-size: 1.2rem; color: var(--text-dim); text-align: center; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                    <i class="fa-solid fa-pencil"></i> Write your answer to this reflection in your notebook.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 12: Transition to Bonus
+        {
+            template: () => `
+                <div class="anim-enter text-center" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                    <i class="fa-solid fa-forward-step delay-1" style="font-size: 5rem; color: var(--cold); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Bonus Round</h1>
+                    <h2 class="delay-1" style="color: var(--text-dim);">Year 8 Hard Fractions Review</h2>
+                    
+                    <div class="glass-card delay-2" style="max-width: 700px; margin: 2rem auto; border-top: 4px solid var(--cold);">
+                        <p style="font-size: 1.4rem; line-height: 1.6;">Let's quickly review the challenging fraction questions from the Year 8 homework as extra practice. It's great to see how much we've grown!</p>
+                        <p style="font-size: 1.2rem; margin-top: 1rem; color: var(--text-dim);">Press 'Next' to view the bonus slides.</p>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 13: Bonus Q5 - Q6
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Year 8 Bonus (Q5 & Q6)</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1050px; margin: 0 auto;">
+                        
+                        <div class="glass-card">
+                            <h3 style="color: var(--text-main);">5) &nbsp; $$(\\frac{2}{3})^2 + \\frac{1}{9}$$</h3>
+                            <button class="btn-action reveal-btn" data-target="ans-y8q5"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-y8q5" class="answer-box">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);"><strong>BIDMAS:</strong> Evaluate indices (exponents) first.</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">$$(\\frac{2}{3})^2 = \\frac{2}{3} \\times \\frac{2}{3} = \\frac{4}{9}$$</p>
+                                <p>$$\\frac{4}{9} + \\frac{1}{9}$$</p>
+                                <p class="final-ans">$$\\frac{5}{9}$$</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card">
+                            <h3 style="color: var(--text-main);">6) &nbsp; $$\\frac{5}{6} \\times (1 \\frac{1}{2} - \\frac{3}{4})$$</h3>
+                            <button class="btn-action btn-accent reveal-btn" data-target="ans-y8q6"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-y8q6" class="answer-box">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);"><strong>BIDMAS:</strong> Brackets first! Convert $$1 \\frac{1}{2}$$ to $$\\frac{3}{2}$$, then to $$\\frac{6}{4}$$.</p>
+                                <p>$$\\frac{5}{6} \\times (\\frac{6}{4} - \\frac{3}{4}) = \\frac{5}{6} \\times \\frac{3}{4}$$</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Multiply straight across, then simplify.</p>
+                                <p class="final-ans">$$\\frac{15}{24} = \\frac{5}{8}$$</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => { renderMath(); return bindReveals(container); }
+        },
+
+        // SLIDE 14: Bonus Q7 - Q8
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Year 8 Bonus (Q7 & Q8)</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1050px; margin: 0 auto;">
+                        
+                        <div class="glass-card">
+                            <h3 style="color: var(--text-main);">7) &nbsp; $$3 \\frac{1}{4} - 1 \\frac{5}{6}$$</h3>
+                            <button class="btn-action btn-warning reveal-btn" data-target="ans-y8q7"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-y8q7" class="answer-box" style="border-color: var(--warning);">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Convert both to improper fractions first.</p>
+                                <p>$$\\frac{13}{4} - \\frac{11}{6}$$</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Find common denominator (12).</p>
+                                <p>$$\\frac{39}{12} - \\frac{22}{12} = \\frac{17}{12}$$</p>
+                                <p class="final-ans" style="color: var(--warning);">$$1 \\frac{5}{12}$$</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card">
+                            <h3 style="color: var(--text-main);">8) &nbsp; $$2 \\frac{2}{5} \\div 1 \\frac{1}{3} + \\frac{1}{5}$$</h3>
+                            <button class="btn-action btn-danger reveal-btn" data-target="ans-y8q8"><i class="fa-solid fa-eye"></i> Show Work</button>
+                            <div id="ans-y8q8" class="answer-box" style="border-color: var(--danger);">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);"><strong>BIDMAS:</strong> Division before Addition. Convert mixed numbers.</p>
+                                <p>$$(\\frac{12}{5} \\div \\frac{4}{3}) + \\frac{1}{5}$$</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Use Keep-Change-Flip for the division block.</p>
+                                <p>$$(\\frac{12}{5} \\times \\frac{3}{4}) + \\frac{1}{5} = \\frac{36}{20} + \\frac{1}{5}$$</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Simplify $$\\frac{36}{20}$$ to $$\\frac{9}{5}$$.</p>
+                                <p class="final-ans" style="color: var(--danger);">$$\\frac{9}{5} + \\frac{1}{5} = \\frac{10}{5} = 2$$</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => { renderMath(); return bindReveals(container); }
+        },
+
+        // SLIDE 15: Outro
+        {
+            template: () => `
+                <div class="anim-enter text-center" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                    <i class="fa-solid fa-sun delay-1" style="font-size: 5rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Cảm ơn các bạn!</h1>
+                    <h2 class="delay-2" style="color: var(--text-dim);">Excellent work today, Year 9.</h2>
+                    
+                    <div class="pedagogical-note note-success delay-3" style="max-width: 600px; margin: 2rem auto; text-align: center;">
+                        <p style="font-size: 1.4rem;">Make sure all corrections are written in your green pen before handing in your homework.</p>
+                        <p style="font-size: 1.2rem; color: var(--text-dim); margin-top: 0.5rem;">Have a wonderful rest of your day in Hội An!</p>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        // Execute cleanup from previous slide if it exists
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        // Render HTML synchronously
+        container.innerHTML = slide.template();
+        
+        // Execute script immediately
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        // Update UI
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
+```
