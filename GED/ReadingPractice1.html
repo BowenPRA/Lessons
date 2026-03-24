@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED RLA: Reading Comprehension</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & THEME (Official Testing Look) --- */
+        :root {
+            --bg-page: #f4f5f7;        
+            --bg-panel: #ffffff; 
+            --primary-blue: #005A9C;    
+            --primary-blue-hover: #00447a;
+            --selected-blue: #e6f0fa;
+            --border-color: #cccccc;
+            --text-main: #333333;        
+            --text-muted: #666666;       
+            
+            --header-h: 60px;
+            --footer-h: 70px;
+            
+            --font-ui: 'Open Sans', Arial, sans-serif;           
+            --font-passage: 'Noto Serif', 'Times New Roman', Times, serif; 
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-ui);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        .app-shell { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+        }
+
+        /* --- HEADER --- */
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            background: var(--primary-blue);
+            z-index: 50;
+        }
+
+        .header-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- SPLIT LAYOUT --- */
+        .split-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--header-h) - var(--footer-h));
+            overflow: hidden;
+        }
+
+        .pane-left {
+            flex: 0 0 50%;
+            background: var(--bg-panel);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .resizer {
+            flex: 0 0 8px;
+            background: #e0e0e0;
+            cursor: col-resize;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            transition: background 0.2s;
+        }
+        .resizer:hover, .resizer:active {
+            background: #c0c0c0;
+        }
+
+        .pane-right {
+            flex: 1;
+            background: var(--bg-panel);
+            padding: 2rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* --- TYPOGRAPHY & READING FORMATTING --- */
+        .passage-title { 
+            font-family: var(--font-ui); 
+            font-size: 1.4rem; 
+            font-weight: 700;
+            margin: 1.5rem 0 0.5rem 0;
+            color: var(--text-main);
+        }
+        .passage-meta { 
+            color: var(--text-muted); 
+            font-style: italic; 
+            font-size: 0.95rem; 
+            margin-bottom: 1.5rem; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 1rem;
+        }
+        
+        .paragraph { 
+            font-family: var(--font-passage);
+            font-size: 1.15rem; 
+            line-height: 1.8; 
+            color: var(--text-main); 
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+        .para-num {
+            font-family: var(--font-ui);
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 1rem;
+            user-select: none;
+            min-width: 20px;
+        }
+
+        /* --- INTERACTIVE KEYWORDS (ESL SUPPORT) --- */
+        .esl-tip {
+            background: #fffbe6;
+            border-left: 4px solid #ffe58f;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .keyword {
+            background-color: #fffac0;
+            border-bottom: 2px dotted var(--text-muted);
+            color: var(--text-main);
+            font-weight: normal;
+            cursor: pointer;
+            padding: 0 2px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .keyword:hover {
+            background-color: #ffe680;
+        }
+
+        /* --- QUESTIONS & QUIZ UI --- */
+        .question-slide {
+            display: none;
+        }
+        .question-slide.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .q-title {
+            font-family: var(--font-ui);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        /* Radio Button Styling */
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .radio-option:hover {
+            background-color: #f9f9f9;
+        }
+        .radio-option input[type="radio"] {
+            margin-top: 0.25rem;
+            margin-right: 1rem;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        .radio-option span {
+            font-family: var(--font-ui);
+            font-size: 1.05rem;
+            line-height: 1.4;
+        }
+        .radio-option.selected {
+            background-color: var(--selected-blue);
+            border-color: var(--primary-blue);
+        }
+        
+        /* Action Buttons */
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-blue-hover);
+        }
+        .btn-primary:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Explanation Box */
+        .explanation-box {
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            border-radius: 4px;
+            display: none;
+            font-size: 1rem;
+            line-height: 1.6;
+            border: 1px solid;
+        }
+        .explanation-box.correct {
+            background-color: #f0fdf4;
+            border-color: #bbf7d0;
+            color: #166534;
+        }
+        .explanation-box.incorrect {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+        .exp-en { margin-bottom: 0.8rem; }
+        .exp-vn { font-style: italic; font-family: var(--font-passage); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.8rem; }
+
+        /* --- DRAG AND DROP UI --- */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .options-bank {
+            background: #f9f9f9;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+            min-height: 120px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .draggable-item {
+            background: #ffffff;
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            cursor: grab;
+            font-size: 0.95rem;
+            font-family: var(--font-ui);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            user-select: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .draggable-item:active { cursor: grabbing; }
+        
+        .claims-area { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media(max-width: 1200px) { .claims-area { grid-template-columns: 1fr; } }
+        
+        .claim-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+        }
+        .claim-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .dropzone {
+            background: #f4f5f7;
+            border: 2px dashed #cccccc;
+            border-radius: 4px;
+            min-height: 50px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            padding: 0.25rem;
+        }
+        .dropzone.dragover {
+            background: var(--selected-blue);
+            border-color: var(--primary-blue);
+        }
+
+        /* --- FOOTER NAVIGATION --- */
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            z-index: 50;
+        }
+        
+        .nav-progress {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 1.05rem;
+        }
+
+        .btn-nav {
+            background: var(--primary-blue);
+            border: 1px solid var(--primary-blue-hover);
+            padding: 0.6rem 2rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary-blue-hover);
+        }
+        .btn-nav:disabled {
+            background: #cccccc;
+            color: #666666;
+            border-color: #bbbbbb;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* --- DEFINITION DOCK --- */
+        .def-dock {
+            position: fixed;
+            bottom: var(--footer-h);
+            left: 0;
+            width: 100%;
+            background: #ffffff;
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            transform: translateY(110%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 40;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+        }
+        .def-dock.active { transform: translateY(0); }
+        .def-content { max-width: 1200px; margin: 0 auto; }
+        
+        .dock-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1rem; }
+        .dock-term { font-family: var(--font-ui); font-size: 1.4rem; font-weight: 700; color: var(--primary-blue); }
+        .dock-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+
+        @keyframes fadeIn { from {opacity: 0;} to { opacity: 1; } }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .split-layout { flex-direction: column; }
+            .pane-left, .pane-right { flex: 1 1 50%; }
+            .resizer { height: 8px; width: 100%; cursor: row-resize; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    
+    <!-- STANDARD TESTING HEADER -->
+    <header class="header">
+        <div class="header-title">GED® Reading Language Arts (RLA) - Practice Test</div>
+    </header>
+
+    <!-- SPLIT LAYOUT -->
+    <main class="split-layout">
+        
+        <!-- LEFT PANE: READING TEXT -->
+        <div class="pane-left" id="left-pane">
+            <div class="esl-tip">
+                <strong>ESL Tip:</strong> Click on the <span class="keyword">highlighted words</span> to see their English definitions and Vietnamese translations.
+            </div>
+
+            <h1 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Fight Fire with Fire: Dual Perspectives</h1>
+
+            <div class="passage-title">Passage 1</div>
+            <div class="passage-meta">Guest Column: Fight Fire with Fire by Paula Lehner, Director, Riverton Land Management Council • Riverton Daily News</div>
+
+            <div class="paragraph">
+                <div class="para-num">1</div>
+                <div>Here's an alarming number: $2 billion, the amount the U.S. Forest Service spends each year on wildfire <span class="keyword" data-term="suppression">suppression</span>. No one is claiming that we should stop fighting these fires, but there is a scientifically proven way to limit their spread: by setting controlled, or <span class="keyword" data-term="prescribed">prescribed</span>, burns. These smaller fires, which clear <span class="keyword" data-term="accumulated">accumulated</span> dead or diseased plant life from forests and other areas, are far less <span class="keyword" data-term="hazardous">hazardous</span> than the uncontrolled wildfires that are increasing in frequency. By regularly burning up decaying <span class="keyword" data-term="vegetation">vegetation</span>, smaller fires eliminate that potential fuel for much larger fires. Less plant-matter fuel on the ground helps slow the progress of unwanted fires before they ever start.</div>
+            </div>
+
+            <div class="paragraph">
+                <div class="para-num">2</div>
+                <div>In addition to causing fuel buildup, wildfire suppression has other negative consequences. For example, wildfires can <span class="keyword" data-term="purge">purge</span> insect <span class="keyword" data-term="infestations">infestations</span>. In nature, small fires normally thin the population of insects in an area, but in the absence of those fires there is little to stop insect populations from increasing to unnaturally high levels. Further, many plants developed their life cycles in response to <span class="keyword" data-term="periodic">periodic</span> natural fires from lightning strikes and other sources; these plants need fire if they are to remain healthy. Burning, as opposed to wildfire suppression, also helps create ash, which returns nutrients to the soil and can help new seeds <span class="keyword" data-term="germinate">germinate</span>.</div>
+            </div>
+
+            <div class="paragraph">
+                <div class="para-num">3</div>
+                <div>Certainly, there will always be fires that we have to fight. People and their homes have to be protected. But the fact that more and more homes are being built near wilderness areas, many right here in Riverton, means that the burden on land management agencies and their brave firefighters is increasing. We need the right tools if we are going to continue to do our jobs effectively, and those tools include prescribed burns.</div>
+            </div>
+
+            <div class="paragraph">
+                <div class="para-num">4</div>
+                <div>There is no way around it. We have to fight fire with fire.</div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #ccc; margin: 2rem 0;">
+
+            <div class="passage-title">Passage 2</div>
+            <div class="passage-meta">Letter to the Editor: Prescribed Burns by Roy Rodriguez, resident • Riverton Daily News</div>
+
+            <div class="paragraph">
+                <div class="para-num">5</div>
+                <div>I found Paula Lehner's opinion piece about prescribed burns nothing less than horrifying. In her <span class="keyword" data-term="zeal">zeal</span>, she neglected to mention even one of the many criticisms of prescribed burns. First, consider this appalling statistic: one in every 500 prescribed burns gets out of control, and while that may sound like a small fraction, just imagine if that one raging fire were the one Lehner had decided to set near your house. In 2009, a "controlled" fire set in Yosemite National Park was intended to burn 91 acres; instead it consumed 5,000 acres.</div>
+            </div>
+
+            <div class="paragraph">
+                <div class="para-num">6</div>
+                <div>As for her ridiculous idea that "controlled" fires are needed to rid areas of wildfire fuel, doesn't she realize that fire isn't the only way to eliminate unwanted plants? Has she not heard of mechanical and chemical thinning-in simple terms, the use of power tools and herbicides?</div>
+            </div>
+
+            <div class="paragraph">
+                <div class="para-num">7</div>
+                <div>Finally-and this is the worst <span class="keyword" data-term="omission">omission</span> of all-she did not mention the costs to the surrounding area of the fires she wants to set. Riverton has, in the past year, hit all-time high air pollution levels, and smoke from Lehner's fires would only worsen those numbers. Has she bothered to research the number of allergy and asthma sufferers in our region? Does she know that, nationwide, the <span class="keyword" data-term="incidence">incidence</span> of allergies and asthma is rising? Is she planning to personally hand out face masks to affected individuals, or does she have some exciting new smoke-containment technology at her disposal?</div>
+            </div>
+
+            <div class="paragraph">
+                <div class="para-num">8</div>
+                <div>Ms. Lehner should do more research before recommending a dangerous path for our community. We must fight the fire, not add fuel to it.</div>
+            </div>
+            
+        </div>
+
+        <!-- DRAGGABLE DIVIDER -->
+        <div class="resizer" id="dragMe"></div>
+
+        <!-- RIGHT PANE: QUESTIONS -->
+        <div class="pane-right" id="right-pane">
+            <div id="questions-container">
+                <!-- Slides will be injected here via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- STICKY FOOTER NAVIGATION -->
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" onclick="navigate(-1)">Previous</button>
+        <div class="nav-progress" id="nav-progress">Instructions</div>
+        <button class="btn-nav" id="btn-next" onclick="navigate(1)">Next</button>
+    </footer>
+
+    <!-- VOCABULARY DOCK -->
+    <div id="def-dock" class="def-dock">
+        <div class="def-content">
+            <div class="dock-header">
+                <div class="dock-term" id="dock-term">Term</div>
+                <button class="dock-close" onclick="toggleDictionaryDock(false)"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <span style="font-weight: 700; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">English Definition</span>
+                    <p id="dock-def" style="margin-top: 0.5rem; line-height: 1.5;"></p>
+                </div>
+                <div style="border-left: 2px solid var(--border-color); padding-left: 2rem;">
+                    <span style="font-weight: 700; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Vietnamese (Tiếng Việt)</span>
+                    <p id="dock-vn" style="margin-top: 0.5rem; font-weight: 700; color: var(--primary-blue);"></p>
+                    <p id="dock-vn-def" style="margin-top: 0.25rem; font-style: italic; line-height: 1.5;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /* =========================================================================
+       STATE MANAGEMENT & DATA
+       ========================================================================= */
+    const state = {
+        currentQuestionIndex: 0,
+        userAnswers: {},     // Stores selected answer values per question ID
+        explanationsRevealed: new Set()
+    };
+
+    const questionsData = [
+        {
+            id: 'intro',
+            type: 'info',
+            title: "Practice Test Instructions",
+            content: `
+                <div style="font-size: 1.15rem; line-height: 1.8; color: var(--text-main); background: #f9f9f9; padding: 2.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><strong>Welcome!</strong> Please follow these instructions carefully:</p>
+                    
+                    <ol style="margin-left: 2rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 1rem;">Answer all the questions and read through the solutions provided after you submit your answer to fully understand the reasoning.</li>
+                        <li style="margin-bottom: 1rem;"><strong>Vocabulary Task:</strong> Click on all the <span class="keyword" style="pointer-events: none; padding: 0 4px;">highlighted words</span> in the passage and <strong>write down their definitions in your notebook</strong>.</li>
+                    </ol>
+                    
+                    <p style="font-weight: 600; color: var(--primary-blue); margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        <i class="fa-solid fa-arrow-down" style="margin-right: 8px;"></i> Click the "Next" button below to begin the test.
+                    </p>
+                </div>
+            `
+        },
+        {
+            id: 'q1',
+            type: 'mcq',
+            title: "1. What is the impact of Lehner's use of the word \"tools\" in paragraph 3?",
+            options: [
+                { val: 'A', text: 'A. It minimizes the emotional reaction people often have to prescribed burns.' },
+                { val: 'B', text: 'B. It indicates that using prescribed burns makes firefighting similar to other trades.' },
+                { val: 'C', text: 'C. It emphasizes that prescribed burns should be used only under specific conditions.' },
+                { val: 'D', text: 'D. It suggests that prescribed burns have costs similar to other implements used by firefighters.' }
+            ],
+            correct: 'A',
+            expEn: "By calling prescribed burns 'tools', Lehner normalizes them. People usually view fires as terrifying or destructive disasters, but calling them 'tools' strips away that emotion and makes them sound like necessary, safe, and standard professional equipment.",
+            expVn: "Bằng cách gọi các đám cháy có kiểm soát là 'công cụ' (tools), Lehner bình thường hóa chúng. Mọi người thường coi hỏa hoạn là thảm họa đáng sợ, nhưng từ 'công cụ' loại bỏ cảm xúc đó và khiến chúng nghe có vẻ giống như thiết bị chuyên dụng, cần thiết và an toàn."
+        },
+        {
+            id: 'q2',
+            type: 'dnd',
+            title: "2. What evidence does Lehner use to support her claims? Drag and drop two pieces of evidence for each claim.",
+            bank: [
+                { val: 'A', text: '[A] More homes are being built near wilderness areas.' },
+                { val: 'B', text: '[B] Small fires thin populations of insects.' },
+                { val: 'C', text: '[C] Uncontrolled wildfires are becoming more frequent.' },
+                { val: 'D', text: '[D] Prescribed burns can limit wildfires\' spread.' },
+                { val: 'E', text: '[E] Some plants develop by means of lightning strikes.' },
+                { val: 'F', text: '[F] Land managers need certain tools for their jobs.' }
+            ],
+            claims: [
+                { id: 'c1', text: 'Claim 1: The burden on firefighters is increasing.', dropzones: ['dz1', 'dz2'] },
+                { id: 'c2', text: 'Claim 2: Wildfires can be beneficial.', dropzones: ['dz3', 'dz4'] }
+            ],
+            correct: { dz1: ['A', 'C'], dz2: ['A', 'C'], dz3: ['B', 'E'], dz4: ['B', 'E'] }, // any combination in the set
+            correctSets: { c1: ['A', 'C'], c2: ['B', 'E'] },
+            expEn: "Claim 1 is supported by [A] and [C] because more homes in the wilderness and more frequent fires create more work (burden) for firefighters (Paragraphs 1 & 3). Claim 2 is supported by [B] and [E] because paragraph 2 explicitly lists thinning insects and helping plant life cycles as natural benefits of fire.",
+            expVn: "Nhận định 1 được hỗ trợ bởi [A] và [C] vì việc có nhiều nhà ở khu vực hoang dã hơn và cháy rừng thường xuyên hơn tạo ra nhiều gánh nặng công việc hơn cho lính cứu hỏa (Đoạn 1 & 3). Nhận định 2 được hỗ trợ bởi [B] và [E] vì đoạn 2 liệt kê rõ ràng việc giảm lượng côn trùng và giúp ích cho chu kỳ sống của thực vật là những lợi ích tự nhiên của lửa."
+        },
+        {
+            id: 'q3',
+            type: 'mcq',
+            title: "3. Which detail in Rodriguez's letter supports the idea that there are disadvantages associated with controlled fires?",
+            options: [
+                { val: 'A', text: 'A. "... fire isn\'t the only way to eliminate unwanted plants..." (paragraph 6)' },
+                { val: 'B', text: 'B. "Has she not heard of mechanical and chemical thinning..." (paragraph 6)' },
+                { val: 'C', text: 'C. "Riverton has, in the past year, hit all-time high air pollution levels, and smoke from Lehner\'s fires would only worsen those numbers." (paragraph 7)' },
+                { val: 'D', text: 'D. "... nationwide, the incidence of allergies and asthma is rising..." (paragraph 7)' }
+            ],
+            correct: 'C',
+            expEn: "Option C provides a direct, specific negative consequence (disadvantage) of the controlled fires themselves: worsening the local air pollution. Options A and B talk about alternatives, and D states a general fact without directly linking it back to the fires in that exact sentence.",
+            expVn: "Lựa chọn C cung cấp một hậu quả tiêu cực trực tiếp, cụ thể (nhược điểm) của chính các đám cháy có kiểm soát: làm tồi tệ thêm tình trạng ô nhiễm không khí ở địa phương."
+        },
+        {
+            id: 'q4',
+            type: 'mcq',
+            title: "4. How does Rodriguez build his argument that \"Lehner should do more research\"?",
+            options: [
+                { val: 'A', text: 'A. Rodriguez brings up several issues relevant to prescribed burns that Lehner fails to address.' },
+                { val: 'B', text: 'B. Rodriguez repeatedly casts doubt on Lehner\'s qualifications for discussing the issue of prescribed burns.' },
+                { val: 'C', text: 'C. Rodriguez raises numerous questions about whether Lehner\'s statistics about prescribed burns are accurate.' },
+                { val: 'D', text: 'D. Rodriguez demonstrates that Lehner is an outsider to the community that would be affected by prescribed burns.' }
+            ],
+            correct: 'A',
+            expEn: "Rodriguez attacks Lehner's argument by pointing out what she 'neglected to mention' or made a 'worst omission of all' (pollution, asthma, alternative methods). By listing these unaddressed issues, he implies she hasn't researched the topic fully.",
+            expVn: "Rodriguez công kích lập luận của Lehner bằng cách chỉ ra những gì cô ấy 'đã phớt lờ không nhắc đến' hoặc 'sự bỏ sót tồi tệ nhất' (ô nhiễm, hen suyễn, các phương pháp thay thế). Bằng cách liệt kê những vấn đề chưa được giải quyết này, ông ngụ ý rằng cô ấy chưa nghiên cứu đầy đủ về chủ đề này."
+        },
+        {
+            id: 'q5',
+            type: 'mcq',
+            title: "5. Which idea about the effect of prescribed burns is included in Rodriguez's letter?",
+            options: [
+                { val: 'A', text: 'A. They result in decreased sales of power tools and herbicides.' },
+                { val: 'B', text: 'B. They result in reduced enthusiasm about fighting air pollution.' },
+                { val: 'C', text: 'C. They cause financial hardship for organizations that fight fires.' },
+                { val: 'D', text: 'D. They cause respiratory problems for increasing numbers of people.' }
+            ],
+            correct: 'D',
+            expEn: "In paragraph 7, Rodriguez specifically mentions that the smoke from the fires affects allergy and asthma sufferers, which are respiratory problems. The other options are not mentioned in the text.",
+            expVn: "Trong đoạn 7, Rodriguez đặc biệt đề cập rằng khói từ các đám cháy ảnh hưởng đến những người bị dị ứng và hen suyễn (đây là các vấn đề về hô hấp). Các lựa chọn khác không được đề cập trong văn bản."
+        },
+        {
+            id: 'q6',
+            type: 'mcq',
+            title: "6. Which conclusion is supported by Rodriguez's letter?",
+            options: [
+                { val: 'A', text: 'A. Prescribed burns have caused damage to residential areas.' },
+                { val: 'B', text: 'B. The size of prescribed burns and the smoke they create are difficult to control.' },
+                { val: 'C', text: 'C. Mechanical and chemical thinning are more successful than fire at eliminating unwanted plants.' },
+                { val: 'D', text: 'D. Inventing new smoke-containment technologies would increase the effectiveness of prescribed burns.' }
+            ],
+            correct: 'B',
+            expEn: "Rodriguez provides evidence that fires meant for 91 acres can consume 5,000 acres instead (size is hard to control), and he complains about the widespread, uncontainable smoke causing air pollution (smoke is hard to control).",
+            expVn: "Rodriguez cung cấp bằng chứng cho thấy các đám cháy dự kiến rộng 91 mẫu Anh có thể thiêu rụi tới 5.000 mẫu Anh (kích thước khó kiểm soát), và ông phàn nàn về lượng khói lan rộng không thể ngăn chặn gây ô nhiễm không khí (khói khó kiểm soát)."
+        },
+        {
+            id: 'q7',
+            type: 'mcq',
+            title: "7. How are the conclusions of Lehner's column and Rodriguez's letter similar?",
+            options: [
+                { val: 'A', text: 'A. Both convey the idea that firefighters should have a say in the use of prescribed burns.' },
+                { val: 'B', text: 'B. Both convey the idea that prescribed burns are simply one element of wildfire prevention.' },
+                { val: 'C', text: 'C. Both convey the idea that the subject of prescribed burns leaves no room for compromise.' },
+                { val: 'D', text: 'D. Both convey the idea that the effectiveness of prescribed burns has not yet been sufficiently studied.' }
+            ],
+            correct: 'C',
+            expEn: "Both authors use absolute, stubborn language in their final sentences. Lehner says, 'There is no way around it. We have to fight fire with fire.' Rodriguez says, 'We must fight the fire, not add fuel to it.' Both show they are completely unwilling to compromise on their opposing stances.",
+            expVn: "Cả hai tác giả đều sử dụng ngôn từ tuyệt đối, cứng rắn trong câu chốt của họ. Lehner nói, 'Không có cách nào khác...' Rodriguez nói, 'Chúng ta phải dập tắt lửa, chứ không...' Cả hai đều cho thấy họ hoàn toàn không sẵn sàng thỏa hiệp với lập trường trái ngược của mình."
+        }
+    ];
+
+    const glossary = {
+        "suppression": { def: "The act of forcibly putting an end to something.", vn: "Sự đàn áp / Sự dập tắt", vn_def: "Hành động dập tắt lửa." },
+        "prescribed": { def: "Recommended or authorized, typically a controlled action.", vn: "Được chỉ định / Được kiểm soát", vn_def: "Hành động có kiểm soát với mục đích cụ thể." },
+        "accumulated": { def: "Gathered or built up over a period of time.", vn: "Tích lũy / Chất đống", vn_def: "Tập hợp lại trong một khoảng thời gian." },
+        "hazardous": { def: "Risky or dangerous.", vn: "Nguy hiểm", vn_def: "Gây nguy hiểm cho sức khỏe hoặc sự an toàn." },
+        "vegetation": { def: "Plants considered collectively.", vn: "Thảm thực vật", vn_def: "Toàn bộ thực vật mọc trong một khu vực." },
+        "purge": { def: "To physically remove something completely.", vn: "Thanh lọc / Loại bỏ", vn_def: "Dọn sạch những thứ không mong muốn." },
+        "infestations": { def: "The presence of an unusually large number of insects/animals causing damage.", vn: "Sự phá hoại (của sâu bọ)", vn_def: "Sự xuất hiện số lượng lớn bất thường của côn trùng." },
+        "periodic": { def: "Appearing or occurring at intervals.", vn: "Định kỳ / Theo chu kỳ", vn_def: "Xảy ra lặp đi lặp lại." },
+        "germinate": { def: "To begin to grow and put out shoots.", vn: "Nảy mầm", vn_def: "Bắt đầu phát triển và đâm chồi." },
+        "zeal": { def: "Great energy or enthusiasm in pursuit of a cause.", vn: "Sự hăng hái / Lòng nhiệt huyết", vn_def: "Sự nhiệt tình trong việc theo đuổi mục tiêu." },
+        "omission": { def: "Someone or something that has been left out.", vn: "Sự bỏ sót", vn_def: "Thứ gì đó đã bị bỏ quên hoặc loại trừ." },
+        "incidence": { def: "The occurrence, rate, or frequency of a disease or something undesirable.", vn: "Tỷ lệ mắc phải / Tần suất xảy ra", vn_def: "Tỷ lệ hoặc tần suất của một điều không mong muốn." }
+    };
+
+    /* =========================================================================
+       INITIALIZATION & RENDERING
+       ========================================================================= */
+    function init() {
+        const container = document.getElementById('questions-container');
+        
+        questionsData.forEach((q, index) => {
+            const slide = document.createElement('div');
+            slide.className = `question-slide ${index === 0 ? 'active' : ''}`;
+            slide.id = `slide-${index}`;
+            
+            let html = `<div class="q-title">${q.title}</div>`;
+            
+            if (q.type === 'mcq') {
+                html += `<div class="options-container" id="opts-${q.id}">`;
+                q.options.forEach(opt => {
+                    html += `
+                        <label class="radio-option" id="label-${q.id}-${opt.val}">
+                            <input type="radio" name="${q.id}" value="${opt.val}" onchange="handleAnswerSelection('${q.id}', '${opt.val}')">
+                            <span class="radio-text">${opt.text}</span>
+                        </label>
+                    `;
+                });
+                html += `</div>`;
+            } else if (q.type === 'dnd') {
+                html += `<div class="dnd-container">`;
+                html += `<div class="options-bank" id="bank-${q.id}" ondragover="allowDrop(event)" ondrop="drop(event, 'bank-${q.id}')">`;
+                q.bank.forEach(item => {
+                    html += `<div class="draggable-item" draggable="true" id="item-${q.id}-${item.val}" ondragstart="drag(event)" data-val="${item.val}">
+                                <i class="fa-solid fa-grip-vertical" style="color:#aaa;"></i> ${item.text}
+                             </div>`;
+                });
+                html += `</div><div class="claims-area">`;
+                q.claims.forEach(claim => {
+                    html += `<div class="claim-box">
+                                <div class="claim-title">${claim.text}</div>`;
+                    claim.dropzones.forEach(dz => {
+                        html += `<div class="dropzone" id="${q.id}-${dz}" ondragover="allowDrop(event)" ondrop="drop(event, '${q.id}-${dz}')">Drop Evidence Here</div>`;
+                    });
+                    html += `</div>`;
+                });
+                html += `</div></div>`;
+            } else if (q.type === 'info') {
+                html += q.content;
+            }
+
+            // Only add explanation block for actual questions, not info slides
+            if (q.type !== 'info') {
+                html += `<button class="btn-primary" id="btn-check-${q.id}" onclick="checkAnswers('${q.id}')">Submit / Check Answer</button>`;
+                html += `<div class="explanation-box" id="exp-${q.id}">
+                            <div class="exp-title" id="exp-title-${q.id}" style="font-weight:bold; margin-bottom: 0.5rem;"></div>
+                            <div class="exp-en">${q.expEn}</div>
+                            <div class="exp-vn">${q.expVn}</div>
+                         </div>`;
+            }
+            
+            slide.innerHTML = html;
+            container.appendChild(slide);
+        });
+
+        // Event listeners for Dictionary
+        document.querySelectorAll('.keyword').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const term = el.dataset.term;
+                if(glossary[term]) {
+                    document.getElementById('dock-term').innerText = term;
+                    document.getElementById('dock-def').innerText = glossary[term].def;
+                    document.getElementById('dock-vn').innerText = glossary[term].vn;
+                    document.getElementById('dock-vn-def').innerText = glossary[term].vn_def;
+                    toggleDictionaryDock(true);
+                }
+            });
+        });
+
+        updateNavigationUI();
+    }
+
+    /* =========================================================================
+       LOGIC: NAVIGATION & STATE
+       ========================================================================= */
+    function navigate(direction) {
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.remove('active');
+        state.currentQuestionIndex += direction;
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.add('active');
+        
+        // Reset scroll position of right pane
+        document.getElementById('right-pane').scrollTop = 0;
+        
+        updateNavigationUI();
+    }
+
+    function updateNavigationUI() {
+        document.getElementById('btn-prev').disabled = state.currentQuestionIndex === 0;
+        document.getElementById('btn-next').disabled = state.currentQuestionIndex === questionsData.length - 1;
+        
+        const currentQ = questionsData[state.currentQuestionIndex];
+        const progressContainer = document.getElementById('nav-progress');
+
+        if (currentQ.type === 'info') {
+            progressContainer.innerHTML = 'Instructions';
+        } else {
+            // Subtracting the intro slide to display proper standard question numbers 
+            let actualQNum = state.currentQuestionIndex; 
+            let totalQs = questionsData.filter(q => q.type !== 'info').length;
+            progressContainer.innerHTML = `Question <span id="current-q-num">${actualQNum}</span> of ${totalQs}`;
+        }
+    }
+
+    function toggleDictionaryDock(show) {
+        const dock = document.getElementById('def-dock');
+        if(show) dock.classList.add('active');
+        else dock.classList.remove('active');
+    }
+
+    /* =========================================================================
+       LOGIC: ANSWER SELECTION & EVALUATION
+       ========================================================================= */
+    function handleAnswerSelection(qId, value) {
+        // Clear previous selection styling
+        const labels = document.querySelectorAll(`#opts-${qId} .radio-option`);
+        labels.forEach(lbl => lbl.classList.remove('selected'));
+        
+        // Add styling to new selection
+        const selectedLabel = document.getElementById(`label-${qId}-${value}`);
+        if(selectedLabel) selectedLabel.classList.add('selected');
+
+        // Update State
+        state.userAnswers[qId] = value;
+        
+        // Hide explanation if they change answer after checking
+        document.getElementById(`exp-${qId}`).style.display = 'none';
+        document.getElementById(`btn-check-${qId}`).style.display = 'block';
+    }
+
+    function checkAnswers(qId) {
+        const qData = questionsData.find(q => q.id === qId);
+        const expBox = document.getElementById(`exp-${qId}`);
+        const expTitle = document.getElementById(`exp-title-${qId}`);
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        
+        let isCorrect = false;
+
+        if (qData.type === 'mcq') {
+            const userVal = state.userAnswers[qId];
+            if (!userVal) return alert("Please select an answer first.");
+            isCorrect = (userVal === qData.correct);
+        } 
+        else if (qData.type === 'dnd') {
+            // Read state straight from DOM for DnD to save syncing complexity
+            const c1_vals = [
+                document.getElementById(`${qId}-dz1`).firstElementChild?.dataset.val,
+                document.getElementById(`${qId}-dz2`).firstElementChild?.dataset.val
+            ].filter(Boolean);
+            
+            const c2_vals = [
+                document.getElementById(`${qId}-dz3`).firstElementChild?.dataset.val,
+                document.getElementById(`${qId}-dz4`).firstElementChild?.dataset.val
+            ].filter(Boolean);
+
+            const c1_correct = c1_vals.length === 2 && qData.correctSets.c1.every(val => c1_vals.includes(val));
+            const c2_correct = c2_vals.length === 2 && qData.correctSets.c2.every(val => c2_vals.includes(val));
+            
+            isCorrect = c1_correct && c2_correct;
+            
+            // Save state
+            state.userAnswers[qId] = { dz1: c1_vals[0], dz2: c1_vals[1], dz3: c2_vals[0], dz4: c2_vals[1] };
+        }
+
+        // Show Explanation
+        expBox.style.display = 'block';
+        checkBtn.style.display = 'none'; // hide button after check
+        state.explanationsRevealed.add(qId);
+
+        if (isCorrect) {
+            expBox.className = 'explanation-box correct';
+            expTitle.innerText = "Correct!";
+        } else {
+            expBox.className = 'explanation-box incorrect';
+            expTitle.innerText = "Incorrect. Review the explanation below.";
+        }
+    }
+
+    /* =========================================================================
+       LOGIC: DRAG AND DROP
+       ========================================================================= */
+    let draggedItem = null;
+
+    function drag(ev) {
+        draggedItem = ev.target;
+        ev.dataTransfer.setData("text", ev.target.id);
+        ev.dataTransfer.effectAllowed = "move";
+        setTimeout(() => ev.target.style.opacity = "0.5", 0);
+    }
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+        const dropzone = ev.target.closest('.dropzone');
+        if(dropzone) dropzone.classList.add('dragover');
+    }
+
+    document.addEventListener('dragleave', (ev) => {
+        const dropzone = ev.target.closest('.dropzone');
+        if(dropzone) dropzone.classList.remove('dragover');
+    });
+
+    document.addEventListener('dragend', (ev) => {
+        if(draggedItem) draggedItem.style.opacity = "1";
+        document.querySelectorAll('.dropzone').forEach(el => el.classList.remove('dragover'));
+    });
+
+    function drop(ev, targetId) {
+        ev.preventDefault();
+        const data = ev.dataTransfer.getData("text");
+        const draggedEl = document.getElementById(data);
+        if(!draggedEl) return;
+
+        const dropTarget = document.getElementById(targetId);
+        
+        if (dropTarget.classList.contains('dropzone')) {
+            dropTarget.classList.remove('dragover');
+            
+            // If dropzone is full, send existing item back to bank
+            if (dropTarget.children.length > 0) {
+                const existingItem = dropTarget.children[0];
+                const qId = targetId.split('-')[0];
+                document.getElementById(`bank-${qId}`).appendChild(existingItem);
+            }
+            
+            dropTarget.innerHTML = '';
+            dropTarget.appendChild(draggedEl);
+        } 
+        else if (dropTarget.classList.contains('options-bank')) {
+            dropTarget.appendChild(draggedEl);
+        }
+    }
+
+    /* =========================================================================
+       UTILITIES (Resizer)
+       ========================================================================= */
+    // Split pane resizer
+    const resizer = document.getElementById('dragMe');
+    const leftPane = document.getElementById('left-pane');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        document.body.style.cursor = 'col-resize';
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        const containerWidth = document.querySelector('.split-layout').offsetWidth;
+        const newWidth = (e.clientX / containerWidth) * 100;
+        if(newWidth > 30 && newWidth < 70) {
+            leftPane.style.flex = `0 0 ${newWidth}%`;
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if(isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+        }
+    });
+
+    // Run Initialization
+    window.onload = init;
+</script>
+</body>
+</html>
