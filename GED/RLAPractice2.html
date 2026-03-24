@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED RLA: Reading Comprehension Practice</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEMING
+           ========================================================================== */
+        :root {
+            /* Colors */
+            --bg-page: #f4f5f7;        
+            --bg-panel: #ffffff; 
+            --primary-blue: #005A9C;    
+            --primary-blue-hover: #00447a;
+            --selected-blue: #e6f0fa;
+            --border-color: #cccccc;
+            
+            /* Text Colors */
+            --text-main: #333333;        
+            --text-muted: #666666;
+            --color-correct: #166534;
+            --color-incorrect: #991b1b;
+            
+            /* Layout Dimensions */
+            --header-h: 60px;
+            --footer-h: 70px;
+            
+            /* Typography */
+            --font-ui: 'Open Sans', Arial, sans-serif;            
+            --font-passage: 'Noto Serif', 'Times New Roman', Times, serif; 
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-ui);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT & GRID
+           ========================================================================== */
+        .app-shell { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+        }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            background: var(--primary-blue);
+            z-index: 50;
+        }
+
+        .split-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--header-h) - var(--footer-h));
+            overflow: hidden;
+        }
+
+        .pane-left, .pane-right {
+            background: var(--bg-panel);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .pane-left { flex: 0 0 50%; }
+        .pane-right { flex: 1; position: relative; }
+
+        .resizer {
+            flex: 0 0 8px;
+            background: #e0e0e0;
+            cursor: col-resize;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .resizer:hover, .resizer:active { background: #c0c0c0; }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            z-index: 50;
+        }
+
+        /* ==========================================================================
+           4. TYPOGRAPHY & PASSAGE STYLING
+           ========================================================================== */
+        .header-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+        .section-title.primary { color: var(--primary-blue); }
+        .section-title.center { text-align: center; }
+
+        .passage-title { 
+            font-family: var(--font-ui); 
+            font-size: 1.4rem; 
+            font-weight: 700;
+            margin: 1.5rem 0 0.5rem 0;
+            color: var(--text-main);
+        }
+
+        .passage-meta { 
+            color: var(--text-muted); 
+            font-style: italic; 
+            font-size: 0.95rem; 
+            margin-bottom: 1.5rem; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 1rem;
+        }
+        
+        .paragraph { 
+            font-family: var(--font-passage);
+            font-size: 1.15rem; 
+            line-height: 1.8; 
+            color: var(--text-main); 
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .para-num {
+            font-family: var(--font-ui);
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 1rem;
+            user-select: none;
+            min-width: 20px;
+        }
+
+        .info-box {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--text-main);
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* ==========================================================================
+           5. COMPONENTS (Buttons, Timers, Flags)
+           ========================================================================== */
+        .timer {
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: rgba(0,0,0,0.2);
+            padding: 0.25rem 1rem;
+            border-radius: 4px;
+            display: none; /* Hidden until Phase 1 starts */
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-primary:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            color: #666;
+        }
+
+        .btn-nav {
+            background: var(--primary-blue);
+            border: 1px solid var(--primary-blue-hover);
+            padding: 0.6rem 2rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-nav:disabled {
+            background: #cccccc;
+            color: #666666;
+            border-color: #bbbbbb;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .flag-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e65100;
+            cursor: pointer;
+            user-select: none;
+        }
+        .flag-container input { cursor: pointer; transform: scale(1.2); }
+
+        .nav-progress { font-weight: 600; color: var(--text-main); font-size: 1.05rem; }
+
+        /* ==========================================================================
+           6. QUESTION UI (MCQ & Drag-and-Drop)
+           ========================================================================== */
+        .question-slide { display: none; }
+        .question-slide.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .q-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .q-title {
+            font-family: var(--font-ui);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        /* Radio Options */
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .radio-option:hover { background-color: #f9f9f9; }
+        .radio-option input[type="radio"] {
+            margin-top: 0.25rem;
+            margin-right: 1rem;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        .radio-option span {
+            font-family: var(--font-ui);
+            font-size: 1.05rem;
+            line-height: 1.4;
+        }
+        .radio-option.selected {
+            background-color: var(--selected-blue);
+            border-color: var(--primary-blue);
+        }
+
+        /* Drag and Drop Container */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .options-bank {
+            background: #f9f9f9;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+            min-height: 120px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .draggable-item {
+            background: #ffffff;
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            cursor: grab;
+            font-size: 0.95rem;
+            font-family: var(--font-ui);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            user-select: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .draggable-item:active { cursor: grabbing; }
+        
+        .claims-area { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media(max-width: 1200px) { .claims-area { grid-template-columns: 1fr; } }
+        
+        .claim-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+        }
+        .claim-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .dropzone {
+            background: #f4f5f7;
+            border: 2px dashed #cccccc;
+            border-radius: 4px;
+            min-height: 50px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            padding: 0.25rem;
+        }
+        .dropzone.dragover {
+            background: var(--selected-blue);
+            border-color: var(--primary-blue);
+        }
+
+        /* ==========================================================================
+           7. PHASE-SPECIFIC STYLES & OVERRIDES
+           ========================================================================== */
+        
+        /* Interactive Keywords (ESL Features - Active in Phase 0, 2, 3) */
+        .esl-tip {
+            background: #fffbe6;
+            border-left: 4px solid #ffe58f;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+        .keyword {
+            background-color: #fffac0;
+            border-bottom: 2px dotted var(--text-muted);
+            color: var(--text-main);
+            font-weight: normal;
+            cursor: pointer;
+            padding: 0 2px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .keyword:hover { background-color: #ffe680; }
+
+        /* Phase 1 & 4 (Testing Mode): Disable ESL Features entirely */
+        body.phase-1 .keyword, body.phase-4 .keyword {
+            background-color: transparent !important;
+            border-bottom: none !important;
+            color: inherit !important;
+            cursor: text !important;
+            pointer-events: none !important;
+        }
+        body.phase-1 .esl-tip, body.phase-3 .esl-tip, body.phase-4 .esl-tip { display: none !important; }
+
+        /* Submit Summary List */
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+        }
+        .summary-item:last-child { border-bottom: none; }
+
+        /* Phase 2: Review Screen */
+        .review-header {
+            text-align: center;
+            padding: 1rem;
+            background: var(--selected-blue);
+            border: 1px solid var(--primary-blue);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .review-score {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        .review-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: #ffffff;
+        }
+        .review-q-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .review-choice {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            background: #f9f9f9;
+        }
+        .review-choice.correct-ans {
+            background-color: #f0fdf4;
+            border-color: #bbf7d0;
+            color: var(--color-correct);
+            font-weight: 600;
+        }
+        .review-choice.wrong-ans {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+            color: var(--color-incorrect);
+            text-decoration: line-through;
+        }
+
+        /* Explanations */
+        .explanation-box {
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            line-height: 1.6;
+            border: 1px solid;
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: #334155;
+        }
+        .explanation-box.correct { background-color: #f0fdf4; border-color: #bbf7d0; color: var(--color-correct); }
+        .explanation-box.incorrect { background-color: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); }
+        .exp-en { margin-bottom: 0.8rem; }
+        .exp-vn { font-style: italic; font-family: var(--font-passage); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.8rem; }
+
+        /* Phase 3: Dictionary Styling */
+        .study-instructions {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .study-instructions p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #b45309;
+            line-height: 1.5;
+        }
+        .study-dict {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            min-height: 300px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .dict-term { font-family: var(--font-ui); font-size: 1.8rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 1.5rem; border-bottom: 2px solid var(--selected-blue); padding-bottom: 0.5rem;}
+        .dict-section { margin-bottom: 1.5rem; }
+        .dict-label { font-weight: 700; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dict-text { margin-top: 0.5rem; line-height: 1.6; font-size: 1.1rem;}
+        .dict-empty { color: var(--text-muted); font-style: italic; text-align: center; margin-top: 3rem; }
+
+        /* ==========================================================================
+           8. UTILITIES & RESPONSIVE DESIGN
+           ========================================================================== */
+        @keyframes fadeIn { from {opacity: 0;} to { opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .split-layout { flex-direction: column; }
+            .pane-left, .pane-right { flex: 1 1 50%; }
+            .resizer { height: 8px; width: 100%; cursor: row-resize; }
+        }
+    </style>
+</head>
+<body class="phase-0">
+
+<div class="app-shell">
+    
+    <!-- STANDARD TESTING HEADER -->
+    <header class="header">
+        <div class="header-title">GED® Reading Language Arts (RLA) - Practice Test</div>
+        <div id="timer-display" class="timer" aria-live="polite">15:00</div>
+    </header>
+
+    <!-- SPLIT LAYOUT -->
+    <main class="split-layout">
+        
+        <!-- LEFT PANE: DYNAMIC CONTENT BASED ON PHASE -->
+        <section class="pane-left" id="left-pane" aria-label="Passage Content">
+            
+            <!-- OVERVIEW: SHOWN ONLY IN PHASE 0 -->
+            <article id="intro-overview" style="display: block;">
+                <h1 class="section-title primary">Activity Overview</h1>
+                <div class="info-box">
+                    <p style="margin-bottom: 1rem;">This is a practice test giving you a similar format to the official GED test.</p>
+                    <p>It also has similar pacing to help you prepare effectively for the real exam.</p>
+                </div>
+            </article>
+
+            <!-- READING PASSAGE: HIDDEN IN PHASE 0 -->
+            <article id="reading-passage" style="display: none;">
+                <div class="esl-tip">
+                    <strong>ESL Tip:</strong> Click on the <span class="keyword">highlighted words</span> to see their English definitions and Vietnamese translations.
+                </div>
+
+                <h1 class="section-title">Is Game-Based Learning Effective?</h1>
+
+                <div class="passage-title">Source Material #1</div>
+                <div class="passage-meta">Game-based Learning Is Merely a Fad by Solomon Robles, Ed.D., Professor of Education at Winborne College • Workplace Training Journal</div>
+
+                <div class="paragraph">
+                    <div class="para-num">1</div>
+                    <div>Electronic learning, or "eLearning," was sold to many CEOs as the wave of the <span class="keyword" data-term="corporate">corporate</span> future. There's no need to hire human beings to train staff, managers were told. All the information you require can be accessed online at a reduced cost for the company, and more <span class="keyword" data-term="flexible">flexible</span> scheduling for employees. It sounded too good to be true and it was. As one writer noted, "most eLearning is nothing more than online lectures or course notes." To teach skills beyond basic facts, the person-to-person method is still more effective than any form of electronic learning.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">2</div>
+                    <div>And yet, along comes the next eLearning <span class="keyword" data-term="fad">fad</span>: "<span class="keyword" data-term="gamification">gamification</span>," which means using video games to teach. Video-game-based learning is already widely used in schools, and has spread to corporations as a tool for training workers and motivating customers. This approach is even used in the military. But does it work?</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">3</div>
+                    <div>Most research on game-based learning has looked at schools. Results have been <span class="keyword" data-term="inconsistent">inconsistent</span> but not especially encouraging. One 2013 study found that "students who completed the gamified experience got better scores in practical assignments and in overall score, but... performed poorly on written assignments and participated less during class activities." This makes sense: If you're playing video games, you are not developing the so-called "<span class="keyword" data-term="soft skills">soft skills</span>" - also known as "people skills" - that are necessary for success in any job. In a traditional classroom, on the other hand, students can ask questions and engage with the teacher and with other learners.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">4</div>
+                    <div>In the workplace, game-based learning is yet another <span class="keyword" data-term="wedge">wedge</span> driven between younger employees, who might applaud gamification, and older workers, who may now feel <span class="keyword" data-term="obsolete">obsolete</span>. What's more, the <span class="keyword" data-term="prestigious">prestigious</span> magazine The Economist points out that "many of the aspects of gamification that do work are merely old ideas in <span class="keyword" data-term="trendy">trendy</span> new clothes." For example, the points and other rewards that are selling features of video games are just online versions of sales contests or "employee of the month" <span class="keyword" data-term="perks">perks</span>. Like other trends, game-based learning is likely to fade away as the next new teaching fad appears on the horizon.</div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid #ccc; margin: 2rem 0;">
+
+                <div class="passage-title">Source Material #2</div>
+                <div class="passage-meta">Game-based Learning: An Effective Training Strategy by Janette Morgan, Ph.D., Professor of Business, Saratoga State University • Innovative Trends in the Workplace</div>
+
+                <div class="paragraph">
+                    <div class="para-num">5</div>
+                    <div>Already a multi-billion-dollar business, game-based learning in the corporate world continues to grow at a steady pace, and is here to stay. <span class="keyword" data-term="executive">Executives</span> are smart - they are not going to waste resources on training methods that don't work. Let's look at some of the advantages of "gamifying" workplace training.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">6</div>
+                    <div>First, many people are "gamers" in their non-work lives, so playing video games is something they are already comfortable with and enjoy. This makes game-based learning in the workplace more attractive and motivating than traditional instruction. And according to the Entertainment Software Association, despite the image of video-game players as teenaged boys, "the average gamer is now 37 years old." Further challenging the <span class="keyword" data-term="stereotype">stereotype</span>, nearly half of gamers are girls or women. Even 29 percent of those over age 50 are getting into the video-game habit. Teenagers and young men, in fact, make up only 15 percent of the over 190 million video-game users in the United States.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">7</div>
+                    <div>Evidence supporting the effectiveness of game-based learning is starting to emerge. Researchers point out that video games have "<span class="keyword" data-term="compelling">compelling</span> storylines, <span class="keyword" data-term="attainable">attainable</span> challenges, rewards, recognition and control," all of which <span class="keyword" data-term="stimulate">stimulate</span> learners. A 2012 report on game-based learning notes that "there is research evidence demonstrating positive impact on higher order skills such as decision making and problem solving." The report adds that using video games can also reduce training time, an advantage for both managers and employees.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">8</div>
+                    <div>Finally, unlike one-time training in a classroom, game-based learning is <span class="keyword" data-term="infinitely">infinitely</span> repeatable. If employees miss something or need more practice, they can always start the game again, using the feedback provided by the game to <span class="keyword" data-term="gauge">gauge</span> their progress. This leads to a sense of <span class="keyword" data-term="accomplishment">accomplishment</span> and creates a supportive learning environment, which is what we all want in an education strategy.</div>
+                </div>
+            </article>
+            
+        </section>
+
+        <!-- DRAGGABLE DIVIDER -->
+        <div class="resizer" id="dragMe" title="Drag to resize"></div>
+
+        <!-- RIGHT PANE: QUESTIONS & MODES -->
+        <aside class="pane-right" id="right-pane" aria-label="Interactive Workspace">
+            <div id="questions-container">
+                <!-- Question Slides injected dynamically here via JS -->
+            </div>
+        </aside>
+    </main>
+
+    <!-- STICKY FOOTER NAVIGATION -->
+    <footer class="footer" id="main-footer">
+        <button class="btn-nav" id="btn-prev" onclick="navigate(-1)">Previous</button>
+        <div class="nav-progress" id="nav-progress" aria-live="polite">Start Test</div>
+        <button class="btn-nav" id="btn-next" onclick="navigate(1)">Next</button>
+    </footer>
+
+</div>
+
+<script>
+    /* =========================================================================
+       1. DATA SCHEMAS & CONFIGURATION (AI TEMPLATING GUIDE)
+       ========================================================================= */
+
+    /**
+     * @typedef {Object} QuestionOption - For Multiple Choice Questions.
+     * @property {string} val - Identifier for the option (e.g., 'A').
+     * @property {string} text - The display text for the option.
+     */
+
+    /**
+     * @typedef {Object} DragDropBankItem - For Drag and Drop Question bank.
+     * @property {string} val - Identifier for the draggable item (e.g., 'A').
+     * @property {string} text - The display text.
+     */
+
+    /**
+     * @typedef {Object} DragDropClaim - For Drag and Drop Question containers.
+     * @property {string} id - Identifier for the claim group (e.g., 'c1').
+     * @property {string} text - The visible label for the claim box.
+     * @property {string[]} dropzones - Array of dropzone IDs to generate (e.g., ['dz1', 'dz2']).
+     */
+
+    /**
+     * @typedef {Object} Question - Master Schema for a Question Slide.
+     * @property {string} id - Unique ID for the question (e.g., 'intro', 'q1').
+     * @property {'info'|'mcq'|'dnd'} type - Slide type. 'info' = read-only text, 'mcq' = multiple choice, 'dnd' = drag & drop.
+     * @property {string} title - The title or prompt.
+     * @property {string} [content] - (Info only) HTML content.
+     * @property {QuestionOption[]} [options] - (MCQ only) Options array.
+     * @property {string} [correct] - (MCQ only) The correct option value.
+     * @property {DragDropBankItem[]} [bank] - (DnD only) Items available to drag.
+     * @property {DragDropClaim[]} [claims] - (DnD only) The dropzone containers.
+     * @property {Object.<string, string[]>} [correctSets] - (DnD only) Grading map matching Claim IDs to an array of correct values. Order doesn't matter. (e.g., { c1: ['A', 'C'] })
+     * @property {string} [expEn] - (MCQ & DnD) English explanation for Phase 2.
+     * @property {string} [expVn] - (MCQ & DnD) Vietnamese translation for Phase 2.
+     */
+
+    const questionsData = [
+        {
+            id: 'intro',
+            type: 'info',
+            title: "Phase 1: Strict Testing Mode",
+            content: `
+                <div class="info-box" style="padding: 2.5rem; background: #f9f9f9;">
+                    <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><strong>Welcome to the GED Practice Test.</strong></p>
+                    <p style="margin-bottom: 1.5rem;">This test has been structured into 4 formal phases to optimize your learning:</p>
+                    
+                    <ul style="margin-left: 2rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 1: Timed Testing.</strong> You have 15 minutes to complete 6 questions. ESL features are disabled to simulate a real testing environment. You must answer all questions to submit.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 2: Review & Score.</strong> See your grade, discover the correct answers, and read bilingual explanations.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 3: Deep Study.</strong> Re-read the passage with full dictionary access to master difficult vocabulary.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 4: Extended Response (Essay).</strong> At the end of the test, you will complete a GED-style essay in Google Docs and email it to your instructors.</li>
+                    </ul>
+                    
+                    <p style="font-weight: 600; color: var(--primary-blue); margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        Click "Start Timer & Begin" to enter Phase 1.
+                    </p>
+                    <button class="btn-primary" onclick="startPhase1()" style="font-size: 1.1rem; padding: 1rem 2rem; margin-top: 1rem;">Start Timer & Begin</button>
+                </div>
+            `
+        },
+        {
+            id: 'q1',
+            type: 'mcq',
+            title: "1. What is the primary argument made by Solomon Robles in Source Material #1?",
+            options: [
+                { val: 'A', text: 'A. Gamification is an excellent way to replace traditional classroom teachers.' },
+                { val: 'B', text: 'B. Video games are only appropriate for teenage students and should not be used in the workplace.' },
+                { val: 'C', text: 'C. Game-based learning is a passing trend that fails to teach the necessary soft skills developed in traditional classrooms.' },
+                { val: 'D', text: 'D. Electronic learning is too expensive and inflexible for modern corporations to implement.' }
+            ],
+            correct: 'C',
+            expEn: "Robles argues that gamification is just another \"fad\" (trend) and cites a study showing it leads to poor performance on written assignments. He emphasizes that video games do not develop the \"soft skills\" or \"people skills\" that are naturally built in traditional classrooms where students engage with others.",
+            expVn: "Robles lập luận rằng \"trò chơi hóa\" (gamification) chỉ là một trào lưu nhất thời (fad) và trích dẫn một nghiên cứu cho thấy nó dẫn đến kết quả kém trong các bài tập viết. Ông nhấn mạnh rằng trò chơi điện tử không phát triển được \"kỹ năng mềm\" hay \"kỹ năng giao tiếp\" - những kỹ năng được rèn luyện tự nhiên trong các lớp học truyền thống khi học sinh tương tác với người khác."
+        },
+        {
+            id: 'q2',
+            type: 'mcq',
+            title: "2. In Source Material #2, how does Janette Morgan challenge the stereotype that gamers are mostly \"teenaged boys\"?",
+            options: [
+                { val: 'A', text: 'A. By arguing that game-based learning is a multi-billion-dollar business.' },
+                { val: 'B', text: 'B. By citing data showing the average gamer is 37 years old and nearly half are female.' },
+                { val: 'C', text: 'C. By proving that older workers learn faster than younger workers when using video games.' },
+                { val: 'D', text: 'D. By stating that 29 percent of teenagers prefer traditional instruction over video games.' }
+            ],
+            correct: 'B',
+            expEn: "Morgan directly counters the stereotype by providing statistics from the Entertainment Software Association. She notes that \"the average gamer is now 37 years old,\" \"nearly half of gamers are girls or women,\" and teenagers/young men only make up 15 percent of the user base.",
+            expVn: "Morgan trực tiếp bác bỏ định kiến này bằng cách đưa ra số liệu thống kê từ Hiệp hội Phần mềm Giải trí. Cô lưu ý rằng \"độ tuổi trung bình của người chơi game hiện là 37\", \"gần một nửa số người chơi là nữ giới\", và thanh thiếu niên/nam thanh niên chỉ chiếm 15% tổng số người dùng."
+        },
+        {
+            id: 'q3',
+            type: 'mcq',
+            title: "3. In Source Material #1, paragraph 4, what does the word \"obsolete\" most likely mean?",
+            options: [
+                { val: 'A', text: 'A. Highly valued and respected' },
+                { val: 'B', text: 'B. Confused and angry' },
+                { val: 'C', text: 'C. Trendy and fashionable' },
+                { val: 'D', text: 'D. Outdated and no longer useful' }
+            ],
+            correct: 'D',
+            expEn: "Robles writes that game-based learning drives a wedge between younger employees and older workers, \"who may now feel obsolete.\" Because gamification is a new, trendy technology, older workers might feel left behind, outdated, or no longer useful to the company.",
+            expVn: "Robles viết rằng phương pháp học qua game tạo ra khoảng cách giữa nhân viên trẻ và những nhân viên lớn tuổi, \"những người giờ đây có thể cảm thấy 'obsolete' (lỗi thời)\". Vì trò chơi hóa là một công nghệ mới và hợp thời, những người lao động lớn tuổi có thể cảm thấy bị tụt hậu, lỗi thời hoặc không còn hữu ích cho công ty."
+        },
+        {
+            id: 'q4',
+            type: 'mcq',
+            title: "4. On which of the following points would Robles and Morgan most likely DISAGREE?",
+            options: [
+                { val: 'A', text: 'A. The fact that game-based learning is currently being used by major corporations.' },
+                { val: 'B', text: 'B. The effectiveness of game-based learning in training employees and developing essential skills.' },
+                { val: 'C', text: 'C. The idea that traditional classrooms involve person-to-person engagement.' },
+                { val: 'D', text: 'D. The reality that electronic learning methods were introduced to reduce company costs.' }
+            ],
+            correct: 'B',
+            expEn: "Both authors agree that gamification is currently being used in corporations (A), involves non-traditional methods (C), and was historically meant to save money (D). However, they strongly disagree on its effectiveness. Morgan believes it builds high-order skills and is highly effective, while Robles believes it is ineffective and fails to build soft skills.",
+            expVn: "Cả hai tác giả đều đồng ý rằng \"trò chơi hóa\" hiện đang được sử dụng trong các tập đoàn (A), liên quan đến các phương pháp phi truyền thống (C), và ban đầu được giới thiệu để tiết kiệm chi phí (D). Tuy nhiên, họ hoàn toàn bất đồng về tính hiệu quả của nó. Morgan tin rằng nó xây dựng các kỹ năng bậc cao và rất hiệu quả, trong khi Robles tin rằng nó không hiệu quả và thất bại trong việc xây dựng kỹ năng mềm."
+        },
+        {
+            id: 'q5',
+            type: 'mcq',
+            title: "5. According to Source Material #2, what is one major advantage of game-based learning over traditional classroom training?",
+            options: [
+                { val: 'A', text: 'A. It forces employees to compete against each other for the \"employee of the month\" perk.' },
+                { val: 'B', text: 'B. It requires no effort or monitoring from the company\'s managers.' },
+                { val: 'C', text: 'C. It is infinitely repeatable, allowing employees to practice as much as they need.' },
+                { val: 'D', text: 'D. It focuses primarily on developing soft skills and person-to-person communication.' }
+            ],
+            correct: 'C',
+            expEn: "In the final paragraph of Source Material #2, Morgan states, \"unlike one-time training in a classroom, game-based learning is infinitely repeatable. If employees miss something or need more practice, they can always start the game again...\" Option D is incorrect because Robles (not Morgan) discusses soft skills.",
+            expVn: "Trong đoạn cuối của Tài liệu #2, Morgan khẳng định, \"khác với việc đào tạo chỉ diễn ra một lần trong lớp học, học tập qua game có thể lặp lại vô hạn. Nếu nhân viên bỏ lỡ điều gì đó hoặc cần thực hành thêm, họ luôn có thể bắt đầu lại trò chơi...\" Lựa chọn D sai vì Robles (chứ không phải Morgan) là người thảo luận về kỹ năng mềm."
+        },
+        {
+            id: 'q6',
+            type: 'dnd',
+            title: "6. Categorize the following pieces of evidence to support Claim 1 or Claim 2.",
+            bank: [
+                { val: 'A', text: '[A] Video games provide infinitely repeatable practice and feedback to gauge progress.' },
+                { val: 'B', text: '[B] Gamification fails to develop the "soft skills" necessary for success in any job.' },
+                { val: 'C', text: '[C] Gamification drives a wedge between younger employees and older workers.' },
+                { val: 'D', text: '[D] Game-based learning stimulates decision making and problem-solving through challenges.' }
+            ],
+            claims: [
+                { id: 'c1', text: 'Claim 1: Game-based learning is ineffective and problematic. (Robles)', dropzones: ['dz1', 'dz2'] },
+                { id: 'c2', text: 'Claim 2: Game-based learning is a highly beneficial training strategy. (Morgan)', dropzones: ['dz3', 'dz4'] }
+            ],
+            correctSets: { c1: ['B', 'C'], c2: ['A', 'D'] }, 
+            expEn: "Evidence [B] and [C] highlight the negative aspects of gamification (lack of soft skills and alienating older workers), which align with Robles' argument in Claim 1. Evidence [A] and [D] highlight the positive benefits (repeatable practice and stimulating higher-order skills), which support Morgan's argument in Claim 2.",
+            expVn: "Bằng chứng [B] và [C] nhấn mạnh các khía cạnh tiêu cực của trò chơi hóa (thiếu kỹ năng mềm và làm xa lánh lao động lớn tuổi), phù hợp với lập luận của Robles trong Nhận định 1. Bằng chứng [A] và [D] nhấn mạnh những lợi ích tích cực (thực hành lặp lại và kích thích kỹ năng bậc cao), ủng hộ lập luận của Morgan trong Nhận định 2."
+        }
+    ];
+
+    /**
+     * @typedef {Object} DictionaryEntry
+     * @property {string} def - English definition.
+     * @property {string} vn - Vietnamese translation.
+     * @property {string} vn_def - Vietnamese descriptive definition.
+     */
+    const glossary = {
+        "fad": { def: "A popular trend that quickly fades away.", vn: "Trào lưu nhất thời", vn_def: "Một xu hướng rất phổ biến nhưng nhanh chóng bị lãng quên." },
+        "corporate": { def: "Related to a large business or company.", vn: "Thuộc về tập đoàn", vn_def: "Liên quan đến các công ty hoặc doanh nghiệp lớn." },
+        "flexible": { def: "Easy to change or adapt.", vn: "Linh hoạt", vn_def: "Dễ dàng thay đổi để phù hợp với hoàn cảnh." },
+        "gamification": { def: "Turning tasks into games to make them fun.", vn: "Trò chơi hóa", vn_def: "Biến công việc hoặc bài học thành trò chơi để trở nên hấp dẫn hơn." },
+        "inconsistent": { def: "Changing frequently; not the same all the time.", vn: "Không nhất quán", vn_def: "Hay thay đổi, không giống nhau mọi lúc." },
+        "soft skills": { def: "People skills, like communication and teamwork.", vn: "Kỹ năng mềm", vn_def: "Kỹ năng giao tiếp và làm việc với người khác." },
+        "obsolete": { def: "No longer useful because it is too old.", vn: "Lỗi thời", vn_def: "Đã quá cũ và không còn được sử dụng nữa." },
+        "prestigious": { def: "Very respected and famous.", vn: "Danh giá / Uy tín", vn_def: "Rất nổi tiếng và được mọi người tôn trọng." },
+        "trendy": { def: "Very popular right now.", vn: "Hợp thời trang / Đúng mốt", vn_def: "Rất phổ biến và thời thượng hiện nay." },
+        "perks": { def: "Extra benefits or rewards from a job.", vn: "Đặc quyền / Phúc lợi thêm", vn_def: "Những phần thưởng hoặc lợi ích thêm từ công việc ngoài tiền lương." },
+        "executive": { def: "A top boss or leader in a company.", vn: "Giám đốc / Lãnh đạo", vn_def: "Người sếp hoặc lãnh đạo cấp cao trong một công ty." },
+        "stereotype": { def: "A common but often false belief about a group of people.", vn: "Định kiến", vn_def: "Một niềm tin phổ biến nhưng thường không đúng về một nhóm người." },
+        "compelling": { def: "Very interesting and holding your attention.", vn: "Hấp dẫn", vn_def: "Rất thú vị và thu hút sự chú ý của bạn." },
+        "attainable": { def: "Possible to reach or achieve.", vn: "Có thể đạt được", vn_def: "Khả thi, có thể làm được hoặc đạt được." },
+        "stimulate": { def: "To encourage activity or interest.", vn: "Kích thích / Khuyến khích", vn_def: "Khuyến khích sự hào hứng hoặc làm cho điều gì đó hoạt động." },
+        "infinitely": { def: "With no limits; endlessly.", vn: "Vô hạn", vn_def: "Không có giới hạn; có thể lặp đi lặp lại vô tận." },
+        "gauge": { def: "To measure or judge something.", vn: "Đo lường / Đánh giá", vn_def: "Đo lường hoặc đánh giá mức độ của một việc gì đó." },
+        "accomplishment": { def: "A success or completed goal.", vn: "Thành tựu", vn_def: "Một thành công hoặc một mục tiêu đã hoàn thành." },
+        "wedge": { def: "Something that separates people or causes problems between them.", vn: "Rào cản / Sự chia rẽ", vn_def: "Thứ gây chia rẽ hoặc tạo khoảng cách giữa mọi người." }
+    };
+
+    /* =========================================================================
+       2. STATE MANAGEMENT
+       ========================================================================= */
+    const state = {
+        phase: 0, // 0: Start, 1: Testing, 2: Review, 3: Study, 4: Essay
+        currentQuestionIndex: 0,
+        userAnswers: {},     // Maps qId -> option value OR object of dropzone values
+        flagged: new Set(),  // Set of flagged question IDs
+        timerInterval: null,
+        timeRemaining: 15 * 60 // 15 minutes default
+    };
+
+    /* =========================================================================
+       3. INITIALIZATION & TEMPLATE RENDERING
+       ========================================================================= */
+    function init() {
+        const container = document.getElementById('questions-container');
+        
+        // 3a. Generate Question Slides Dynamically
+        questionsData.forEach((q, index) => {
+            const slide = document.createElement('article');
+            slide.className = `question-slide ${index === 0 ? 'active' : ''}`;
+            slide.id = `slide-${index}`;
+            
+            let html = '';
+            
+            if (q.type === 'info') {
+                html += `<div class="q-title section-title center">${q.title}</div>`;
+                html += q.content;
+            } else {
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)">
+                            Flag for Review
+                        </label>
+                    </div>
+                `;
+                
+                if (q.type === 'mcq') {
+                    html += `<div class="options-container" id="opts-${q.id}">`;
+                    q.options.forEach(opt => {
+                        html += `
+                            <label class="radio-option" id="label-${q.id}-${opt.val}">
+                                <input type="radio" name="${q.id}" value="${opt.val}" onchange="handleAnswerSelection('${q.id}', '${opt.val}')">
+                                <span class="radio-text">${opt.text}</span>
+                            </label>
+                        `;
+                    });
+                    html += `</div>`;
+                } 
+                else if (q.type === 'dnd') {
+                    html += `<div class="dnd-container">`;
+                    html += `<div class="options-bank" id="bank-${q.id}" ondragover="allowDrop(event)" ondrop="drop(event, 'bank-${q.id}')">`;
+                    q.bank.forEach(item => {
+                        html += `<div class="draggable-item" draggable="true" id="item-${q.id}-${item.val}" ondragstart="drag(event)" data-val="${item.val}">
+                                    <i class="fa-solid fa-grip-vertical" style="color:#aaa;"></i> ${item.text}
+                                 </div>`;
+                    });
+                    html += `</div><div class="claims-area">`;
+                    q.claims.forEach(claim => {
+                        html += `<div class="claim-box">
+                                    <div class="claim-title">${claim.text}</div>`;
+                        claim.dropzones.forEach(dz => {
+                            html += `<div class="dropzone" id="${q.id}-${dz}" ondragover="allowDrop(event)" ondrop="drop(event, '${q.id}-${dz}')">Drop Evidence Here</div>`;
+                        });
+                        html += `</div>`;
+                    });
+                    html += `</div></div>`;
+                }
+            }
+            
+            slide.innerHTML = html;
+            container.appendChild(slide);
+        });
+
+        // 3b. Generate The "Submit Gate" Slide
+        const submitSlide = document.createElement('article');
+        submitSlide.className = `question-slide`;
+        submitSlide.id = `slide-${questionsData.length}`;
+        submitSlide.innerHTML = `
+            <div class="q-title section-title center">Review & Submit</div>
+            <div class="info-box" style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Question Status</h3>
+                <div id="submit-summary-list"></div>
+            </div>
+            <div style="text-align: center;">
+                <button id="btn-final-submit" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="startPhase2()" disabled>
+                    Answer all questions to submit
+                </button>
+            </div>
+        `;
+        container.appendChild(submitSlide);
+
+        // 3c. ESL Keyword Listeners (Triggered in Phase 3)
+        document.querySelectorAll('.keyword').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if(state.phase !== 3) return; 
+                e.stopPropagation();
+                const term = el.dataset.term;
+                if(glossary[term]) renderDictionaryTerm(term);
+            });
+        });
+
+        updateNavigationUI();
+    }
+
+    /* =========================================================================
+       4. PHASE TRANSITION LOGIC
+       ========================================================================= */
+    function startPhase1() {
+        state.phase = 1;
+        document.body.className = 'phase-1';
+        
+        document.getElementById('intro-overview').style.display = 'none';
+        document.getElementById('reading-passage').style.display = 'block';
+        
+        // Start Timer Safely
+        if (state.timerInterval) clearInterval(state.timerInterval);
+        
+        document.getElementById('timer-display').style.display = 'block';
+        updateTimerDisplay();
+        
+        state.timerInterval = setInterval(() => {
+            state.timeRemaining--;
+            updateTimerDisplay();
+            if(state.timeRemaining <= 0) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+                alert("Time is up! Submitting your test.");
+                startPhase2();
+            }
+        }, 1000);
+
+        navigate(1); 
+    }
+
+    function updateTimerDisplay() {
+        const m = Math.floor(state.timeRemaining / 60);
+        const s = state.timeRemaining % 60;
+        document.getElementById('timer-display').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function startPhase2() {
+        state.phase = 2;
+        document.body.className = 'phase-2';
+        
+        if (state.timerInterval) {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+        }
+        
+        document.getElementById('main-footer').style.display = 'none';
+        renderReviewMode();
+    }
+
+    function startPhase3() {
+        state.phase = 3;
+        document.body.className = 'phase-3'; 
+        
+        const container = document.getElementById('questions-container');
+        container.innerHTML = `
+            <div class="study-instructions">
+                <p>Write down all highlighted vocabulary words and their definitions in your notebook. If there are any other words in the passage you do not know, look them up and write them down as well.</p>
+            </div>
+            <div class="study-dict" id="study-dict" aria-live="polite">
+                <div class="dict-empty">
+                    <i class="fa-solid fa-book-open" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <p>Click any highlighted word in the passage to view its definition here.</p>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top: 2rem;">
+                <button class="btn-primary" onclick="startPhase4()" style="font-size:1.2rem; padding:1rem 3rem;">
+                    Continue to Phase 4: Essay <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+                </button>
+            </div>
+        `;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+    
+    function startPhase4() {
+        state.phase = 4;
+        document.body.className = 'phase-4'; 
+        
+        const container = document.getElementById('questions-container');
+        container.innerHTML = `
+            <div class="q-title section-title center">Phase 4: Extended Response (Essay)</div>
+            <div class="info-box">
+                <p style="margin-bottom: 1rem;"><strong>Prompt:</strong> Analyze both passages ("Game-based Learning Is Merely a Fad" and "Game-based Learning: An Effective Training Strategy"). Write a response that analyzes both texts to determine which position is best supported. Use relevant and specific evidence from both passages to support your response.</p>
+                
+                <div style="background: #fff3e0; border: 1px solid #ffcc80; padding: 1.5rem; border-radius: 4px; margin-top: 1.5rem;">
+                    <h4 style="margin-bottom: 0.5rem; color: #e65100; font-size: 1.1rem;"><i class="fa-solid fa-pen-nib" style="margin-right: 8px;"></i>Essay Instructions:</h4>
+                    <ol style="margin-left: 1.5rem; color: #e65100; font-weight: 600;">
+                        <li style="margin-bottom: 0.5rem;">Open a blank <a href="https://docs.google.com" target="_blank" style="color: #d84315; text-decoration: underline;">Google Doc</a>.</li>
+                        <li style="margin-bottom: 0.5rem;">Write a complete, GED-style essay answering the prompt above.</li>
+                        <li>When you are finished, share or email your Google Doc to your instructors for review.</li>
+                    </ol>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top: 2rem;">
+                <p style="color: var(--text-muted); font-style: italic; font-size: 1.1rem;">You have completed the practice activity. Great job!</p>
+            </div>
+        `;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    function renderDictionaryTerm(term) {
+        const dictContainer = document.getElementById('study-dict');
+        if (!dictContainer) return; 
+        
+        const data = glossary[term];
+        dictContainer.innerHTML = `
+            <div class="dict-term">${term}</div>
+            <div class="dict-section">
+                <div class="dict-label">English Definition</div>
+                <div class="dict-text">${data.def}</div>
+            </div>
+            <div class="dict-section" style="border-top: 1px solid #eee; padding-top: 1.5rem;">
+                <div class="dict-label">Vietnamese (Tiếng Việt)</div>
+                <div class="dict-text" style="color: var(--primary-blue); font-weight: 700;">${data.vn}</div>
+                <div class="dict-text" style="font-style: italic;">${data.vn_def}</div>
+            </div>
+        `;
+    }
+
+    /* =========================================================================
+       5. PHASE 1 QUIZ LOGIC (Navigation, Tracking, Submitting)
+       ========================================================================= */
+    function navigate(direction) {
+        if(state.phase !== 0 && state.phase !== 1) return;
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.remove('active');
+        state.currentQuestionIndex += direction;
+        
+        // Prevent retreating to info screen during testing phase
+        if (state.phase === 1 && state.currentQuestionIndex === 0) {
+            state.currentQuestionIndex = 1;
+        }
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.add('active');
+        document.getElementById('right-pane').scrollTop = 0;
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function updateNavigationUI() {
+        if (state.phase === 0) {
+            document.getElementById('btn-prev').disabled = true;
+            document.getElementById('btn-next').style.display = 'none';
+            return;
+        }
+
+        const totalQs = questionsData.filter(q => q.type !== 'info').length; 
+        const isSubmitGate = (state.currentQuestionIndex === questionsData.length);
+
+        document.getElementById('btn-prev').disabled = (state.currentQuestionIndex === 1);
+        document.getElementById('btn-next').style.display = 'block';
+        document.getElementById('btn-next').disabled = isSubmitGate;
+        
+        const progressContainer = document.getElementById('nav-progress');
+        if (isSubmitGate) {
+            progressContainer.innerHTML = `Review & Submit`;
+        } else {
+            const currentQ = questionsData[state.currentQuestionIndex];
+            progressContainer.innerHTML = currentQ.type === 'info' ? currentQ.title : `Question ${state.currentQuestionIndex} of ${totalQs}`;
+        }
+    }
+
+    function toggleFlag(qId, isChecked) {
+        if (isChecked) state.flagged.add(qId);
+        else state.flagged.delete(qId);
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+    }
+
+    function handleAnswerSelection(qId, value) {
+        const labels = document.querySelectorAll(`#opts-${qId} .radio-option`);
+        labels.forEach(lbl => lbl.classList.remove('selected'));
+        
+        const selectedLabel = document.getElementById(`label-${qId}-${value}`);
+        if(selectedLabel) selectedLabel.classList.add('selected');
+
+        state.userAnswers[qId] = value;
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+    }
+
+    // Abstracted: Evaluates ALL claims inside a DnD question dynamically
+    function checkDnDState(qId) {
+        const qConfig = questionsData.find(q => q.id === qId);
+        if (!qConfig) return;
+
+        let ansObj = {};
+        let hasAnyAnswer = false;
+
+        qConfig.claims.forEach(claim => {
+            claim.dropzones.forEach(dz => {
+                const dropzoneEl = document.getElementById(`${qId}-${dz}`);
+                const val = dropzoneEl.firstElementChild?.dataset.val;
+                if (val) {
+                    ansObj[dz] = val;
+                    hasAnyAnswer = true;
+                }
+            });
+        });
+
+        if (hasAnyAnswer) {
+            state.userAnswers[qId] = ansObj;
+        } else {
+            delete state.userAnswers[qId]; // Clear object if empty to trigger required fields
+        }
+    }
+
+    function updateSubmitSlide() {
+        const container = document.getElementById('submit-summary-list');
+        let answeredCount = 0;
+        let html = '';
+        const qList = questionsData.filter(q => q.type !== 'info');
+        
+        qList.forEach((q, idx) => {
+            let isAnswered = false;
+            if (q.type === 'mcq') {
+                isAnswered = !!state.userAnswers[q.id];
+            } else if (q.type === 'dnd') {
+                const ans = state.userAnswers[q.id];
+                // Abstracted check: Ensures all expected dropzones have a value
+                const totalExpectedDz = q.claims.reduce((acc, curr) => acc + curr.dropzones.length, 0);
+                const totalAnsweredDz = ans ? Object.keys(ans).length : 0;
+                isAnswered = (totalExpectedDz === totalAnsweredDz);
+            }
+            
+            if (isAnswered) answeredCount++;
+            
+            const isFlagged = state.flagged.has(q.id);
+            const flagHtml = isFlagged ? '<i class="fa-solid fa-flag" style="color:#d97706; margin-left:8px;" title="Flagged"></i>' : '';
+            
+            html += `
+                <div class="summary-item">
+                    <span>Question ${idx + 1} ${flagHtml}</span>
+                    <span style="font-weight:bold; color: ${isAnswered ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                        ${isAnswered ? 'Answered' : 'Unanswered'}
+                    </span>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        const btn = document.getElementById('btn-final-submit');
+        
+        if (answeredCount === qList.length) {
+            btn.disabled = false;
+            btn.innerText = "Submit Test for Grading";
+            btn.style.background = "var(--color-correct)"; 
+        } else {
+            btn.disabled = true;
+            btn.innerText = `Answer all ${qList.length} questions to submit (${answeredCount}/${qList.length})`;
+            btn.style.background = "var(--primary-blue)";
+        }
+    }
+
+    /* =========================================================================
+       6. PHASE 2 SCORING & REVIEW LOGIC
+       ========================================================================= */
+    function checkAnswerCorrectness(qId, qData) {
+        if (qData.type === 'mcq') {
+            return state.userAnswers[qId] === qData.correct;
+        } else if (qData.type === 'dnd') {
+            const ans = state.userAnswers[qId];
+            if(!ans) return false;
+            
+            let allClaimsCorrect = true;
+            
+            // Abstracted Evaluation: Validates dynamic quantities of claims
+            for (const claim of qData.claims) {
+                const userVals = claim.dropzones.map(dz => ans[dz]).filter(Boolean);
+                const correctVals = qData.correctSets[claim.id];
+                const claimIsCorrect = userVals.length === correctVals.length && correctVals.every(val => userVals.includes(val));
+                
+                if (!claimIsCorrect) {
+                    allClaimsCorrect = false;
+                    break;
+                }
+            }
+            return allClaimsCorrect;
+        }
+        return false;
+    }
+
+    function renderReviewMode() {
+        const container = document.getElementById('questions-container');
+        let html = '';
+        let score = 0;
+        const qList = questionsData.filter(q => q.type !== 'info');
+        const totalQs = qList.length;
+
+        const qHtmlBlocks = [];
+
+        qList.forEach((q, idx) => {
+            const isCorrect = checkAnswerCorrectness(q.id, q);
+            if (isCorrect) score++;
+
+            let qBlock = `<div class="review-item">
+                <div class="review-q-title">${idx + 1}. ${q.title}</div>`;
+
+            if (q.type === 'mcq') {
+                const userAns = state.userAnswers[q.id];
+                q.options.forEach(opt => {
+                    let className = "review-choice";
+                    let icon = "";
+                    if (opt.val === q.correct) {
+                        className += " correct-ans";
+                        icon = '<i class="fa-solid fa-check" style="margin-right:8px;"></i>';
+                    } else if (opt.val === userAns && opt.val !== q.correct) {
+                        className += " wrong-ans";
+                        icon = '<i class="fa-solid fa-xmark" style="margin-right:8px;"></i>';
+                    }
+                    qBlock += `<div class="${className}">${icon}${opt.text}</div>`;
+                });
+            } 
+            else if (q.type === 'dnd') {
+                const ans = state.userAnswers[q.id] || {};
+                const getTexts = (vals) => vals.map(v => q.bank.find(b => b.val === v)?.text).join(' & ');
+
+                // Abstracted Display: Maps user's answers against correct sets generically
+                q.claims.forEach(claim => {
+                    const userVals = claim.dropzones.map(dz => ans[dz]).filter(Boolean);
+                    const correctVals = q.correctSets[claim.id];
+                    const isClaimCorrect = userVals.length === correctVals.length && correctVals.every(val => userVals.includes(val));
+
+                    qBlock += `
+                        <div style="margin-bottom:1rem; padding: 1rem; background: #f8fafc; border-radius:4px;">
+                            <strong>${claim.text}</strong><br>
+                            <span style="color: ${isClaimCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">Your Answer: ${getTexts(userVals) || 'None'}</span><br>
+                            <span style="color: var(--color-correct); font-weight:bold;">Correct Answer: ${getTexts(correctVals)}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            // Explanation Block
+            const expClass = isCorrect ? 'correct' : 'incorrect';
+            const expTitle = isCorrect ? 'Correct!' : 'Incorrect. Review the explanation below:';
+            
+            qBlock += `
+                <div class="explanation-box ${expClass}" style="display:block;">
+                    <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+                    <div class="exp-en">${q.expEn}</div>
+                    <div class="exp-vn">${q.expVn}</div>
+                </div>
+            </div>`;
+
+            qHtmlBlocks.push(qBlock);
+        });
+
+        html += `
+            <div class="review-header">
+                <div style="font-size: 1.2rem; margin-bottom: 0.5rem; font-weight:600; color:var(--text-main);">Test Complete</div>
+                <div class="review-score">Score: ${score} / ${totalQs}</div>
+            </div>
+        `;
+        html += qHtmlBlocks.join('');
+        html += `
+            <div style="text-align:center; margin-top: 2rem;">
+                <button class="btn-primary" onclick="startPhase3()" style="font-size:1.2rem; padding:1rem 3rem;">
+                    Continue to Study Mode <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+                </button>
+            </div>
+        `;
+
+        container.innerHTML = html;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    /* =========================================================================
+       7. DRAG AND DROP ENGINE
+       ========================================================================= */
+    let draggedItem = null;
+
+    function drag(ev) {
+        if(state.phase !== 1) return;
+        // Improved: Ensures we grab the parent draggable, not inner elements (like icons)
+        draggedItem = ev.target.closest('.draggable-item');
+        if(!draggedItem) return;
+
+        ev.dataTransfer.setData("text", draggedItem.id);
+        ev.dataTransfer.effectAllowed = "move";
+        setTimeout(() => draggedItem.style.opacity = "0.5", 0);
+    }
+
+    function allowDrop(ev) {
+        if(state.phase !== 1) return;
+        ev.preventDefault();
+        const dropzone = ev.target.closest('.dropzone');
+        if(dropzone) dropzone.classList.add('dragover');
+    }
+
+    document.addEventListener('dragleave', (ev) => {
+        const dropzone = ev.target.closest('.dropzone');
+        if(dropzone) dropzone.classList.remove('dragover');
+    });
+
+    document.addEventListener('dragend', (ev) => {
+        if(draggedItem) draggedItem.style.opacity = "1";
+        document.querySelectorAll('.dropzone').forEach(el => el.classList.remove('dragover'));
+    });
+
+    function drop(ev, targetId) {
+        if(state.phase !== 1) return;
+        ev.preventDefault();
+        const data = ev.dataTransfer.getData("text");
+        const draggedEl = document.getElementById(data);
+        if(!draggedEl) return;
+
+        const dropTarget = document.getElementById(targetId);
+        
+        if (dropTarget.classList.contains('dropzone')) {
+            dropTarget.classList.remove('dragover');
+            
+            // If dropzone is full, send existing item back to bank safely
+            if (dropTarget.children.length > 0) {
+                const existingItem = dropTarget.children[0];
+                const qId = targetId.split('-')[0];
+                document.getElementById(`bank-${qId}`).appendChild(existingItem);
+            }
+            
+            dropTarget.innerHTML = ''; // Clear just in case
+            dropTarget.appendChild(draggedEl);
+            
+            const qId = targetId.split('-')[0];
+            checkDnDState(qId);
+            
+        } 
+        else if (dropTarget.classList.contains('options-bank')) {
+            dropTarget.appendChild(draggedEl);
+            const qId = targetId.split('-')[1];
+            checkDnDState(qId);
+        }
+    }
+
+    /* =========================================================================
+       8. UTILITIES (Responsive Split Pane Resizer)
+       ========================================================================= */
+    const resizer = document.getElementById('dragMe');
+    const leftPane = document.getElementById('left-pane');
+    let isResizing = false;
+
+    // Improved to support Touch Devices and generic axes
+    resizer.addEventListener('mousedown', startResize);
+    resizer.addEventListener('touchstart', startResize, {passive: false});
+
+    function startResize(e) {
+        isResizing = true;
+        document.body.style.cursor = 'col-resize';
+    }
+
+    document.addEventListener('mousemove', doResize);
+    document.addEventListener('touchmove', doResize, {passive: false});
+
+    function doResize(e) {
+        if (!isResizing) return;
+        
+        const layout = document.querySelector('.split-layout');
+        const isColumn = window.getComputedStyle(layout).flexDirection === 'column';
+        
+        // Normalize coordinates across mouse vs touch
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        if (isColumn) { // Mobile layout
+            const containerHeight = layout.offsetHeight;
+            const newHeight = (clientY / containerHeight) * 100;
+            if(newHeight > 20 && newHeight < 80) {
+                leftPane.style.flex = `0 0 ${newHeight}%`;
+            }
+        } else { // Desktop Layout
+            const containerWidth = layout.offsetWidth;
+            const newWidth = (clientX / containerWidth) * 100;
+            if(newWidth > 20 && newWidth < 80) {
+                leftPane.style.flex = `0 0 ${newWidth}%`;
+            }
+        }
+    }
+
+    function stopResize() {
+        if(isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+        }
+    }
+
+    document.addEventListener('mouseup', stopResize);
+    document.addEventListener('touchend', stopResize);
+
+    // Boot
+    window.onload = init;
+</script>
+</body>
+</html>
