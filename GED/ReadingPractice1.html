@@ -174,8 +174,9 @@
             background-color: #ffe680;
         }
 
-        /* Phase 1 and Phase 3 overrides for ESL features */
-        body.phase-1 .keyword {
+        /* Phase 1 and Phase 4 overrides for ESL features */
+        body.phase-1 .keyword,
+        body.phase-4 .keyword {
             background-color: transparent !important;
             border-bottom: none !important;
             color: inherit !important;
@@ -183,7 +184,8 @@
             pointer-events: none !important;
         }
         body.phase-1 .esl-tip,
-        body.phase-3 .esl-tip {
+        body.phase-3 .esl-tip,
+        body.phase-4 .esl-tip {
             display: none !important;
         }
 
@@ -623,7 +625,7 @@
        STATE MANAGEMENT & DATA
        ========================================================================= */
     const state = {
-        phase: 0, // 0: Start, 1: Testing, 2: Review, 3: Study
+        phase: 0, // 0: Start, 1: Testing, 2: Review, 3: Study, 4: Essay
         currentQuestionIndex: 0,
         userAnswers: {},     // Stores selected answer values per question ID
         flagged: new Set(),  // Stores flagged question IDs
@@ -639,12 +641,13 @@
             content: `
                 <div style="font-size: 1.15rem; line-height: 1.8; color: var(--text-main); background: #f9f9f9; padding: 2.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
                     <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><strong>Welcome to the GED Practice Test.</strong></p>
-                    <p style="margin-bottom: 1.5rem;">This test has been structured into 3 formal phases to optimize your learning:</p>
+                    <p style="margin-bottom: 1.5rem;">This test has been structured into 4 formal phases to optimize your learning:</p>
                     
                     <ul style="margin-left: 2rem; margin-bottom: 2rem;">
                         <li style="margin-bottom: 0.5rem;"><strong>Phase 1: Timed Testing.</strong> You have 15 minutes to complete 7 questions. ESL features are disabled to simulate a real testing environment. You must answer all questions to submit.</li>
                         <li style="margin-bottom: 0.5rem;"><strong>Phase 2: Review & Score.</strong> See your grade, discover the correct answers, and read bilingual explanations.</li>
                         <li style="margin-bottom: 0.5rem;"><strong>Phase 3: Deep Study.</strong> Re-read the passage with full dictionary access to master difficult vocabulary.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 4: Extended Response (Essay).</strong> At the end of the test, you will complete a GED-style essay in Google Docs and email it to Mr. Bowen and Mr. Landon.</li>
                     </ul>
                     
                     <p style="font-weight: 600; color: var(--primary-blue); margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
@@ -942,6 +945,41 @@
                     <p>Click any highlighted word in the passage to view its definition here.</p>
                 </div>
             </div>
+            <div style="text-align:center; margin-top: 2rem;">
+                <button class="btn-primary" onclick="startPhase4()" style="font-size:1.2rem; padding:1rem 3rem;">
+                    Continue to Phase 4: Essay <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+                </button>
+            </div>
+        `;
+        
+        // Reset scroll position
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+    
+    function startPhase4() {
+        state.phase = 4;
+        document.body.className = 'phase-4'; 
+        
+        const container = document.getElementById('questions-container');
+        
+        // Render Phase 4 Essay Prompt
+        container.innerHTML = `
+            <div class="q-title" style="font-size: 1.5rem; margin-bottom: 1.5rem; text-align:center;">Phase 4: Extended Response (Essay)</div>
+            <div style="font-size: 1.15rem; line-height: 1.8; color: var(--text-main); background: #f9f9f9; padding: 2rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <p style="margin-bottom: 1rem;"><strong>Prompt:</strong> Analyze both passages ("Guest Column: Fight Fire with Fire" and "Letter to the Editor: Prescribed Burns"). Write a response that analyzes both texts to determine which position is best supported. Use relevant and specific evidence from both passages to support your response.</p>
+                
+                <div style="background: #fff3e0; border: 1px solid #ffcc80; padding: 1.5rem; border-radius: 4px; margin-top: 1.5rem;">
+                    <h4 style="margin-bottom: 0.5rem; color: #e65100; font-size: 1.1rem;"><i class="fa-solid fa-pen-nib" style="margin-right: 8px;"></i>Essay Instructions:</h4>
+                    <ol style="margin-left: 1.5rem; color: #e65100; font-weight: 600;">
+                        <li style="margin-bottom: 0.5rem;">Open a blank <a href="https://docs.google.com" target="_blank" style="color: #d84315; text-decoration: underline;">Google Doc</a>.</li>
+                        <li style="margin-bottom: 0.5rem;">Write a complete, GED-style essay answering the prompt above.</li>
+                        <li>When you are finished, share or email your Google Doc to <strong>Mr. Bowen</strong> and <strong>Mr. Landon</strong> for review.</li>
+                    </ol>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top: 2rem;">
+                <p style="color: var(--text-muted); font-style: italic; font-size: 1.1rem;">You have completed the practice activity. Great job!</p>
+            </div>
         `;
         
         // Reset scroll position
@@ -950,6 +988,8 @@
 
     function renderDictionaryTerm(term) {
         const dictContainer = document.getElementById('study-dict');
+        if (!dictContainer) return; // Prevent error if clicked in Phase 4
+        
         const data = glossary[term];
         dictContainer.innerHTML = `
             <div class="dict-term">${term}</div>
@@ -1002,7 +1042,8 @@
             return;
         }
 
-        const totalQs = questionsData.length - 1; // 7 questions
+        // Count only the graded questions
+        const totalQs = questionsData.filter(q => q.type !== 'info').length; 
         const isSubmitGate = (state.currentQuestionIndex === questionsData.length);
 
         document.getElementById('btn-prev').disabled = (state.currentQuestionIndex === 1);
@@ -1013,7 +1054,12 @@
         if (isSubmitGate) {
             progressContainer.innerHTML = `Review & Submit`;
         } else {
-            progressContainer.innerHTML = `Question ${state.currentQuestionIndex} of ${totalQs}`;
+            const currentQ = questionsData[state.currentQuestionIndex];
+            if (currentQ.type === 'info') {
+                progressContainer.innerHTML = currentQ.title;
+            } else {
+                progressContainer.innerHTML = `Question ${state.currentQuestionIndex} of ${totalQs}`;
+            }
         }
     }
 
