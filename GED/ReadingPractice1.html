@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* --- CSS VARIABLES & THEME (Official Testing Look) --- */
+        /* --- CSS VARIABLES & THEME --- */
         :root {
             --bg-page: #f4f5f7;        
             --bg-panel: #ffffff; 
@@ -28,7 +28,7 @@
             --header-h: 60px;
             --footer-h: 70px;
             
-            --font-ui: 'Open Sans', Arial, sans-serif;           
+            --font-ui: 'Open Sans', Arial, sans-serif;            
             --font-passage: 'Noto Serif', 'Times New Roman', Times, serif; 
         }
 
@@ -67,6 +67,17 @@
             font-size: 1.2rem;
             color: #ffffff;
             letter-spacing: 0.5px;
+        }
+
+        .timer {
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: rgba(0,0,0,0.2);
+            padding: 0.25rem 1rem;
+            border-radius: 4px;
+            display: none; /* Hidden until Phase 1 starts */
         }
 
         /* --- SPLIT LAYOUT --- */
@@ -163,6 +174,19 @@
             background-color: #ffe680;
         }
 
+        /* Phase 1 and Phase 3 overrides for ESL features */
+        body.phase-1 .keyword {
+            background-color: transparent !important;
+            border-bottom: none !important;
+            color: inherit !important;
+            cursor: text !important;
+            pointer-events: none !important;
+        }
+        body.phase-1 .esl-tip,
+        body.phase-3 .esl-tip {
+            display: none !important;
+        }
+
         /* --- QUESTIONS & QUIZ UI --- */
         .question-slide {
             display: none;
@@ -172,13 +196,40 @@
             animation: fadeIn 0.3s ease-out forwards;
         }
 
+        .q-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
         .q-title {
             font-family: var(--font-ui);
             font-size: 1.15rem;
             font-weight: 600;
             color: var(--text-main);
-            margin-bottom: 1.5rem;
             line-height: 1.5;
+            flex: 1;
+        }
+
+        .flag-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e65100;
+            cursor: pointer;
+            user-select: none;
+        }
+        .flag-container input {
+            cursor: pointer;
+            transform: scale(1.2);
         }
 
         /* Radio Button Styling */
@@ -231,6 +282,7 @@
         .btn-primary:disabled {
             background: #cccccc;
             cursor: not-allowed;
+            color: #666;
         }
 
         /* Explanation Box */
@@ -238,10 +290,12 @@
             padding: 1.25rem;
             margin-top: 1.5rem;
             border-radius: 4px;
-            display: none;
             font-size: 1rem;
             line-height: 1.6;
             border: 1px solid;
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: #334155;
         }
         .explanation-box.correct {
             background-color: #f0fdf4;
@@ -366,26 +420,89 @@
             cursor: not-allowed;
         }
 
-        /* --- DEFINITION DOCK --- */
-        .def-dock {
-            position: fixed;
-            bottom: var(--footer-h);
-            left: 0;
-            width: 100%;
-            background: #ffffff;
-            border-top: 1px solid var(--border-color);
-            padding: 1.5rem 2rem;
-            transform: translateY(110%);
-            transition: transform 0.3s ease-in-out;
-            z-index: 40;
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+        /* --- PHASE 2: REVIEW LIST --- */
+        .review-header {
+            text-align: center;
+            padding: 1rem;
+            background: var(--selected-blue);
+            border: 1px solid var(--primary-blue);
+            border-radius: 8px;
+            margin-bottom: 2rem;
         }
-        .def-dock.active { transform: translateY(0); }
-        .def-content { max-width: 1200px; margin: 0 auto; }
-        
-        .dock-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1rem; }
-        .dock-term { font-family: var(--font-ui); font-size: 1.4rem; font-weight: 700; color: var(--primary-blue); }
-        .dock-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+        .review-score {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        .review-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: #ffffff;
+        }
+        .review-q-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .review-choice {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            background: #f9f9f9;
+        }
+        .review-choice.correct-ans {
+            background-color: #f0fdf4;
+            border-color: #bbf7d0;
+            color: #166534;
+            font-weight: 600;
+        }
+        .review-choice.wrong-ans {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+            color: #991b1b;
+            text-decoration: line-through;
+        }
+
+        /* --- PHASE 3: STUDY DICTIONARY --- */
+        .study-instructions {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .study-instructions p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #b45309;
+            line-height: 1.5;
+        }
+        .study-dict {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            min-height: 300px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .dict-term { font-family: var(--font-ui); font-size: 1.8rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 1.5rem; border-bottom: 2px solid var(--selected-blue); padding-bottom: 0.5rem;}
+        .dict-section { margin-bottom: 1.5rem; }
+        .dict-label { font-weight: 700; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dict-text { margin-top: 0.5rem; line-height: 1.6; font-size: 1.1rem;}
+        .dict-empty { color: var(--text-muted); font-style: italic; text-align: center; margin-top: 3rem; }
+
+        /* --- SUBMIT SUMMARY --- */
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+        }
+        .summary-item:last-child { border-bottom: none; }
 
         @keyframes fadeIn { from {opacity: 0;} to { opacity: 1; } }
 
@@ -397,72 +514,86 @@
         }
     </style>
 </head>
-<body>
+<body class="phase-0">
 
 <div class="app-shell">
     
     <!-- STANDARD TESTING HEADER -->
     <header class="header">
         <div class="header-title">GED® Reading Language Arts (RLA) - Practice Test</div>
+        <div id="timer-display" class="timer">15:00</div>
     </header>
 
     <!-- SPLIT LAYOUT -->
     <main class="split-layout">
         
-        <!-- LEFT PANE: READING TEXT -->
+        <!-- LEFT PANE: DYNAMIC CONTENT BASED ON PHASE -->
         <div class="pane-left" id="left-pane">
-            <div class="esl-tip">
-                <strong>ESL Tip:</strong> Click on the <span class="keyword">highlighted words</span> to see their English definitions and Vietnamese translations.
+            
+            <!-- OVERVIEW: SHOWN ONLY IN PHASE 0 -->
+            <div id="intro-overview" style="display: block;">
+                <h1 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--primary-blue);">Activity Overview</h1>
+                <div style="font-size: 1.15rem; line-height: 1.8; color: var(--text-main); background: #f8fafc; padding: 2rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <p style="margin-bottom: 1rem;">This is a practice test giving you a similar format to the official GED test.</p>
+                    <p style="margin-bottom: 1rem;">It also has similar pacing to help you prepare effectively for the real exam.</p>
+                </div>
             </div>
 
-            <h1 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Fight Fire with Fire: Dual Perspectives</h1>
+            <!-- READING PASSAGE: HIDDEN IN PHASE 0 -->
+            <div id="reading-passage" style="display: none;">
+                <div class="esl-tip">
+                    <strong>ESL Tip:</strong> Click on the <span class="keyword">highlighted words</span> to see their English definitions and Vietnamese translations.
+                </div>
 
-            <div class="passage-title">Passage 1</div>
-            <div class="passage-meta">Guest Column: Fight Fire with Fire by Paula Lehner, Director, Riverton Land Management Council • Riverton Daily News</div>
+                <h1 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Fight Fire with Fire: Dual Perspectives</h1>
 
-            <div class="paragraph">
-                <div class="para-num">1</div>
-                <div>Here's an alarming number: $2 billion, the amount the U.S. Forest Service spends each year on wildfire <span class="keyword" data-term="suppression">suppression</span>. No one is claiming that we should stop fighting these fires, but there is a scientifically proven way to limit their spread: by setting controlled, or <span class="keyword" data-term="prescribed">prescribed</span>, burns. These smaller fires, which clear <span class="keyword" data-term="accumulated">accumulated</span> dead or diseased plant life from forests and other areas, are far less <span class="keyword" data-term="hazardous">hazardous</span> than the uncontrolled wildfires that are increasing in frequency. By regularly burning up decaying <span class="keyword" data-term="vegetation">vegetation</span>, smaller fires eliminate that potential fuel for much larger fires. Less plant-matter fuel on the ground helps slow the progress of unwanted fires before they ever start.</div>
-            </div>
+                <div class="passage-title">Passage 1</div>
+                <div class="passage-meta">Guest Column: Fight Fire with Fire by Paula Lehner, Director, Riverton Land Management Council • Riverton Daily News</div>
 
-            <div class="paragraph">
-                <div class="para-num">2</div>
-                <div>In addition to causing fuel buildup, wildfire suppression has other negative consequences. For example, wildfires can <span class="keyword" data-term="purge">purge</span> insect <span class="keyword" data-term="infestations">infestations</span>. In nature, small fires normally thin the population of insects in an area, but in the absence of those fires there is little to stop insect populations from increasing to unnaturally high levels. Further, many plants developed their life cycles in response to <span class="keyword" data-term="periodic">periodic</span> natural fires from lightning strikes and other sources; these plants need fire if they are to remain healthy. Burning, as opposed to wildfire suppression, also helps create ash, which returns nutrients to the soil and can help new seeds <span class="keyword" data-term="germinate">germinate</span>.</div>
-            </div>
+                <div class="paragraph">
+                    <div class="para-num">1</div>
+                    <div>Here's an alarming number: $2 billion, the amount the U.S. Forest Service spends each year on wildfire <span class="keyword" data-term="suppression">suppression</span>. No one is claiming that we should stop fighting these fires, but there is a scientifically proven way to limit their spread: by setting controlled, or <span class="keyword" data-term="prescribed">prescribed</span>, burns. These smaller fires, which clear <span class="keyword" data-term="accumulated">accumulated</span> dead or diseased plant life from forests and other areas, are far less <span class="keyword" data-term="hazardous">hazardous</span> than the uncontrolled wildfires that are increasing in frequency. By regularly burning up decaying <span class="keyword" data-term="vegetation">vegetation</span>, smaller fires eliminate that potential fuel for much larger fires. Less plant-matter fuel on the ground helps slow the progress of unwanted fires before they ever start.</div>
+                </div>
 
-            <div class="paragraph">
-                <div class="para-num">3</div>
-                <div>Certainly, there will always be fires that we have to fight. People and their homes have to be protected. But the fact that more and more homes are being built near wilderness areas, many right here in Riverton, means that the burden on land management agencies and their brave firefighters is increasing. We need the right tools if we are going to continue to do our jobs effectively, and those tools include prescribed burns.</div>
-            </div>
+                <div class="paragraph">
+                    <div class="para-num">2</div>
+                    <div>In addition to causing fuel buildup, wildfire suppression has other negative consequences. For example, wildfires can <span class="keyword" data-term="purge">purge</span> insect <span class="keyword" data-term="infestations">infestations</span>. In nature, small fires normally thin the population of insects in an area, but in the absence of those fires there is little to stop insect populations from increasing to unnaturally high levels. Further, many plants developed their life cycles in response to <span class="keyword" data-term="periodic">periodic</span> natural fires from lightning strikes and other sources; these plants need fire if they are to remain healthy. Burning, as opposed to wildfire suppression, also helps create ash, which returns nutrients to the soil and can help new seeds <span class="keyword" data-term="germinate">germinate</span>.</div>
+                </div>
 
-            <div class="paragraph">
-                <div class="para-num">4</div>
-                <div>There is no way around it. We have to fight fire with fire.</div>
-            </div>
+                <div class="paragraph">
+                    <div class="para-num">3</div>
+                    <div>Certainly, there will always be fires that we have to fight. People and their homes have to be protected. But the fact that more and more homes are being built near wilderness areas, many right here in Riverton, means that the burden on land management agencies and their brave firefighters is increasing. We need the right tools if we are going to continue to do our jobs effectively, and those tools include prescribed burns.</div>
+                </div>
 
-            <hr style="border: none; border-top: 1px solid #ccc; margin: 2rem 0;">
+                <div class="paragraph">
+                    <div class="para-num">4</div>
+                    <div>There is no way around it. We have to fight fire with fire.</div>
+                </div>
 
-            <div class="passage-title">Passage 2</div>
-            <div class="passage-meta">Letter to the Editor: Prescribed Burns by Roy Rodriguez, resident • Riverton Daily News</div>
+                <hr style="border: none; border-top: 1px solid #ccc; margin: 2rem 0;">
 
-            <div class="paragraph">
-                <div class="para-num">5</div>
-                <div>I found Paula Lehner's opinion piece about prescribed burns nothing less than horrifying. In her <span class="keyword" data-term="zeal">zeal</span>, she neglected to mention even one of the many criticisms of prescribed burns. First, consider this appalling statistic: one in every 500 prescribed burns gets out of control, and while that may sound like a small fraction, just imagine if that one raging fire were the one Lehner had decided to set near your house. In 2009, a "controlled" fire set in Yosemite National Park was intended to burn 91 acres; instead it consumed 5,000 acres.</div>
-            </div>
+                <div class="passage-title">Passage 2</div>
+                <div class="passage-meta">Letter to the Editor: Prescribed Burns by Roy Rodriguez, resident • Riverton Daily News</div>
 
-            <div class="paragraph">
-                <div class="para-num">6</div>
-                <div>As for her ridiculous idea that "controlled" fires are needed to rid areas of wildfire fuel, doesn't she realize that fire isn't the only way to eliminate unwanted plants? Has she not heard of mechanical and chemical thinning-in simple terms, the use of power tools and herbicides?</div>
-            </div>
+                <div class="paragraph">
+                    <div class="para-num">5</div>
+                    <div>I found Paula Lehner's opinion piece about prescribed burns nothing less than <span class="keyword" data-term="horrifying">horrifying</span>. In her <span class="keyword" data-term="zeal">zeal</span>, she neglected to mention even one of the many criticisms of prescribed burns. First, consider this <span class="keyword" data-term="appalling">appalling</span> statistic: one in every 500 prescribed burns gets out of control, and while that may sound like a small <span class="keyword" data-term="fraction">fraction</span>, just imagine if that one raging fire were the one Lehner had decided to set near your house. In 2009, a "controlled" fire set in Yosemite National Park was intended to burn 91 acres; instead it <span class="keyword" data-term="consumed">consumed</span> 5,000 acres.</div>
+                </div>
 
-            <div class="paragraph">
-                <div class="para-num">7</div>
-                <div>Finally-and this is the worst <span class="keyword" data-term="omission">omission</span> of all-she did not mention the costs to the surrounding area of the fires she wants to set. Riverton has, in the past year, hit all-time high air pollution levels, and smoke from Lehner's fires would only worsen those numbers. Has she bothered to research the number of allergy and asthma sufferers in our region? Does she know that, nationwide, the <span class="keyword" data-term="incidence">incidence</span> of allergies and asthma is rising? Is she planning to personally hand out face masks to affected individuals, or does she have some exciting new smoke-containment technology at her disposal?</div>
-            </div>
+                <div class="paragraph">
+                    <div class="para-num">6</div>
+                    <div>As for her <span class="keyword" data-term="ridiculous">ridiculous</span> idea that "controlled" fires are needed to rid areas of wildfire fuel, doesn't she realize that fire isn't the only way to eliminate unwanted plants? Has she not heard of mechanical and chemical thinning-in simple terms, the use of power tools and <span class="keyword" data-term="herbicides">herbicides</span>?</div>
+                </div>
 
-            <div class="paragraph">
-                <div class="para-num">8</div>
-                <div>Ms. Lehner should do more research before recommending a dangerous path for our community. We must fight the fire, not add fuel to it.</div>
+                <div class="paragraph">
+                    <div class="para-num">7</div>
+                    <div>Finally-and this is the worst <span class="keyword" data-term="omission">omission</span> of all-she did not mention the costs to the surrounding area of the fires she wants to set. Riverton has, in the past year, hit all-time high air pollution levels, and smoke from Lehner's fires would only worsen those numbers. Has she bothered to research the number of allergy and asthma sufferers in our region? Does she know that, nationwide, the <span class="keyword" data-term="incidence">incidence</span> of allergies and asthma is rising? Is she planning to personally hand out face masks to affected individuals, or does she have some exciting new smoke-containment technology at her disposal?</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">8</div>
+                    <div>Ms. Lehner should do more research before recommending a dangerous path for our community. We must fight the fire, not add fuel to it.</div>
+                </div>
             </div>
             
         </div>
@@ -470,7 +601,7 @@
         <!-- DRAGGABLE DIVIDER -->
         <div class="resizer" id="dragMe"></div>
 
-        <!-- RIGHT PANE: QUESTIONS -->
+        <!-- RIGHT PANE: QUESTIONS & MODES -->
         <div class="pane-right" id="right-pane">
             <div id="questions-container">
                 <!-- Slides will be injected here via JS -->
@@ -479,32 +610,11 @@
     </main>
 
     <!-- STICKY FOOTER NAVIGATION -->
-    <footer class="footer">
+    <footer class="footer" id="main-footer">
         <button class="btn-nav" id="btn-prev" onclick="navigate(-1)">Previous</button>
-        <div class="nav-progress" id="nav-progress">Instructions</div>
+        <div class="nav-progress" id="nav-progress">Start Test</div>
         <button class="btn-nav" id="btn-next" onclick="navigate(1)">Next</button>
     </footer>
-
-    <!-- VOCABULARY DOCK -->
-    <div id="def-dock" class="def-dock">
-        <div class="def-content">
-            <div class="dock-header">
-                <div class="dock-term" id="dock-term">Term</div>
-                <button class="dock-close" onclick="toggleDictionaryDock(false)"><i class="fa-solid fa-times"></i></button>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                <div>
-                    <span style="font-weight: 700; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">English Definition</span>
-                    <p id="dock-def" style="margin-top: 0.5rem; line-height: 1.5;"></p>
-                </div>
-                <div style="border-left: 2px solid var(--border-color); padding-left: 2rem;">
-                    <span style="font-weight: 700; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Vietnamese (Tiếng Việt)</span>
-                    <p id="dock-vn" style="margin-top: 0.5rem; font-weight: 700; color: var(--primary-blue);"></p>
-                    <p id="dock-vn-def" style="margin-top: 0.25rem; font-style: italic; line-height: 1.5;"></p>
-                </div>
-            </div>
-        </div>
-    </div>
 
 </div>
 
@@ -513,28 +623,34 @@
        STATE MANAGEMENT & DATA
        ========================================================================= */
     const state = {
+        phase: 0, // 0: Start, 1: Testing, 2: Review, 3: Study
         currentQuestionIndex: 0,
         userAnswers: {},     // Stores selected answer values per question ID
-        explanationsRevealed: new Set()
+        flagged: new Set(),  // Stores flagged question IDs
+        timerInterval: null,
+        timeRemaining: 15 * 60 // 15 minutes
     };
 
     const questionsData = [
         {
             id: 'intro',
             type: 'info',
-            title: "Practice Test Instructions",
+            title: "Phase 1: Strict Testing Mode",
             content: `
                 <div style="font-size: 1.15rem; line-height: 1.8; color: var(--text-main); background: #f9f9f9; padding: 2.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
-                    <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><strong>Welcome!</strong> Please follow these instructions carefully:</p>
+                    <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><strong>Welcome to the GED Practice Test.</strong></p>
+                    <p style="margin-bottom: 1.5rem;">This test has been structured into 3 formal phases to optimize your learning:</p>
                     
-                    <ol style="margin-left: 2rem; margin-bottom: 2rem;">
-                        <li style="margin-bottom: 1rem;">Answer all the questions and read through the solutions provided after you submit your answer to fully understand the reasoning.</li>
-                        <li style="margin-bottom: 1rem;"><strong>Vocabulary Task:</strong> Click on all the <span class="keyword" style="pointer-events: none; padding: 0 4px;">highlighted words</span> in the passage and <strong>write down their definitions in your notebook</strong>.</li>
-                    </ol>
+                    <ul style="margin-left: 2rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 1: Timed Testing.</strong> You have 15 minutes to complete 7 questions. ESL features are disabled to simulate a real testing environment. You must answer all questions to submit.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 2: Review & Score.</strong> See your grade, discover the correct answers, and read bilingual explanations.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 3: Deep Study.</strong> Re-read the passage with full dictionary access to master difficult vocabulary.</li>
+                    </ul>
                     
                     <p style="font-weight: 600; color: var(--primary-blue); margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
-                        <i class="fa-solid fa-arrow-down" style="margin-right: 8px;"></i> Click the "Next" button below to begin the test.
+                        Click "Start Timer & Begin" to enter Phase 1.
                     </p>
+                    <button class="btn-primary" onclick="startPhase1()" style="font-size: 1.1rem; padding: 1rem 2rem;">Start Timer & Begin</button>
                 </div>
             `
         },
@@ -568,7 +684,7 @@
                 { id: 'c1', text: 'Claim 1: The burden on firefighters is increasing.', dropzones: ['dz1', 'dz2'] },
                 { id: 'c2', text: 'Claim 2: Wildfires can be beneficial.', dropzones: ['dz3', 'dz4'] }
             ],
-            correct: { dz1: ['A', 'C'], dz2: ['A', 'C'], dz3: ['B', 'E'], dz4: ['B', 'E'] }, // any combination in the set
+            correct: { dz1: ['A', 'C'], dz2: ['A', 'C'], dz3: ['B', 'E'], dz4: ['B', 'E'] }, 
             correctSets: { c1: ['A', 'C'], c2: ['B', 'E'] },
             expEn: "Claim 1 is supported by [A] and [C] because more homes in the wilderness and more frequent fires create more work (burden) for firefighters (Paragraphs 1 & 3). Claim 2 is supported by [B] and [E] because paragraph 2 explicitly lists thinning insects and helping plant life cycles as natural benefits of fire.",
             expVn: "Nhận định 1 được hỗ trợ bởi [A] và [C] vì việc có nhiều nhà ở khu vực hoang dã hơn và cháy rừng thường xuyên hơn tạo ra nhiều gánh nặng công việc hơn cho lính cứu hỏa (Đoạn 1 & 3). Nhận định 2 được hỗ trợ bởi [B] và [E] vì đoạn 2 liệt kê rõ ràng việc giảm lượng côn trùng và giúp ích cho chu kỳ sống của thực vật là những lợi ích tự nhiên của lửa."
@@ -657,7 +773,13 @@
         "germinate": { def: "To begin to grow and put out shoots.", vn: "Nảy mầm", vn_def: "Bắt đầu phát triển và đâm chồi." },
         "zeal": { def: "Great energy or enthusiasm in pursuit of a cause.", vn: "Sự hăng hái / Lòng nhiệt huyết", vn_def: "Sự nhiệt tình trong việc theo đuổi mục tiêu." },
         "omission": { def: "Someone or something that has been left out.", vn: "Sự bỏ sót", vn_def: "Thứ gì đó đã bị bỏ quên hoặc loại trừ." },
-        "incidence": { def: "The occurrence, rate, or frequency of a disease or something undesirable.", vn: "Tỷ lệ mắc phải / Tần suất xảy ra", vn_def: "Tỷ lệ hoặc tần suất của một điều không mong muốn." }
+        "incidence": { def: "The occurrence, rate, or frequency of a disease or something undesirable.", vn: "Tỷ lệ mắc phải / Tần suất xảy ra", vn_def: "Tỷ lệ hoặc tần suất của một điều không mong muốn." },
+        "horrifying": { def: "Causing much fear, horror, or shock.", vn: "Kinh hoàng", vn_def: "Gây ra sự sợ hãi, kinh dị hoặc sốc." },
+        "appalling": { def: "Causing shock or dismay; horrific.", vn: "Kinh khủng", vn_def: "Gây sốc hoặc mất tinh thần; tồi tệ." },
+        "fraction": { def: "A small or tiny part, amount, or proportion of something.", vn: "Một phần nhỏ", vn_def: "Một phần nhỏ hoặc tỷ lệ nhỏ của một thứ gì đó." },
+        "consumed": { def: "Destroyed completely (especially by fire).", vn: "Thiêu rụi", vn_def: "Bị phá hủy hoàn toàn (đặc biệt là bởi lửa)." },
+        "ridiculous": { def: "Deserving or inviting derision or mockery; absurd.", vn: "Nực cười", vn_def: "Đáng bị chế giễu; vô lý." },
+        "herbicides": { def: "A substance that is toxic to plants, used to destroy unwanted vegetation.", vn: "Thuốc diệt cỏ", vn_def: "Chất độc đối với thực vật, dùng để tiêu diệt cỏ dại." }
     };
 
     /* =========================================================================
@@ -666,71 +788,90 @@
     function init() {
         const container = document.getElementById('questions-container');
         
+        // 1. Generate Question Slides
         questionsData.forEach((q, index) => {
             const slide = document.createElement('div');
             slide.className = `question-slide ${index === 0 ? 'active' : ''}`;
             slide.id = `slide-${index}`;
             
-            let html = `<div class="q-title">${q.title}</div>`;
+            let html = '';
             
-            if (q.type === 'mcq') {
-                html += `<div class="options-container" id="opts-${q.id}">`;
-                q.options.forEach(opt => {
-                    html += `
-                        <label class="radio-option" id="label-${q.id}-${opt.val}">
-                            <input type="radio" name="${q.id}" value="${opt.val}" onchange="handleAnswerSelection('${q.id}', '${opt.val}')">
-                            <span class="radio-text">${opt.text}</span>
+            if (q.type === 'info') {
+                html += `<div class="q-title" style="margin-bottom:1.5rem; font-size:1.5rem;">${q.title}</div>`;
+                html += q.content;
+            } else {
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)">
+                            Flag for Review
                         </label>
-                    `;
-                });
-                html += `</div>`;
-            } else if (q.type === 'dnd') {
-                html += `<div class="dnd-container">`;
-                html += `<div class="options-bank" id="bank-${q.id}" ondragover="allowDrop(event)" ondrop="drop(event, 'bank-${q.id}')">`;
-                q.bank.forEach(item => {
-                    html += `<div class="draggable-item" draggable="true" id="item-${q.id}-${item.val}" ondragstart="drag(event)" data-val="${item.val}">
-                                <i class="fa-solid fa-grip-vertical" style="color:#aaa;"></i> ${item.text}
-                             </div>`;
-                });
-                html += `</div><div class="claims-area">`;
-                q.claims.forEach(claim => {
-                    html += `<div class="claim-box">
-                                <div class="claim-title">${claim.text}</div>`;
-                    claim.dropzones.forEach(dz => {
-                        html += `<div class="dropzone" id="${q.id}-${dz}" ondragover="allowDrop(event)" ondrop="drop(event, '${q.id}-${dz}')">Drop Evidence Here</div>`;
+                    </div>
+                `;
+                
+                if (q.type === 'mcq') {
+                    html += `<div class="options-container" id="opts-${q.id}">`;
+                    q.options.forEach(opt => {
+                        html += `
+                            <label class="radio-option" id="label-${q.id}-${opt.val}">
+                                <input type="radio" name="${q.id}" value="${opt.val}" onchange="handleAnswerSelection('${q.id}', '${opt.val}')">
+                                <span class="radio-text">${opt.text}</span>
+                            </label>
+                        `;
                     });
                     html += `</div>`;
-                });
-                html += `</div></div>`;
-            } else if (q.type === 'info') {
-                html += q.content;
-            }
-
-            // Only add explanation block for actual questions, not info slides
-            if (q.type !== 'info') {
-                html += `<button class="btn-primary" id="btn-check-${q.id}" onclick="checkAnswers('${q.id}')">Submit / Check Answer</button>`;
-                html += `<div class="explanation-box" id="exp-${q.id}">
-                            <div class="exp-title" id="exp-title-${q.id}" style="font-weight:bold; margin-bottom: 0.5rem;"></div>
-                            <div class="exp-en">${q.expEn}</div>
-                            <div class="exp-vn">${q.expVn}</div>
-                         </div>`;
+                } else if (q.type === 'dnd') {
+                    html += `<div class="dnd-container">`;
+                    html += `<div class="options-bank" id="bank-${q.id}" ondragover="allowDrop(event)" ondrop="drop(event, 'bank-${q.id}')">`;
+                    q.bank.forEach(item => {
+                        html += `<div class="draggable-item" draggable="true" id="item-${q.id}-${item.val}" ondragstart="drag(event)" data-val="${item.val}">
+                                    <i class="fa-solid fa-grip-vertical" style="color:#aaa;"></i> ${item.text}
+                                 </div>`;
+                    });
+                    html += `</div><div class="claims-area">`;
+                    q.claims.forEach(claim => {
+                        html += `<div class="claim-box">
+                                    <div class="claim-title">${claim.text}</div>`;
+                        claim.dropzones.forEach(dz => {
+                            html += `<div class="dropzone" id="${q.id}-${dz}" ondragover="allowDrop(event)" ondrop="drop(event, '${q.id}-${dz}')">Drop Evidence Here</div>`;
+                        });
+                        html += `</div>`;
+                    });
+                    html += `</div></div>`;
+                }
             }
             
             slide.innerHTML = html;
             container.appendChild(slide);
         });
 
-        // Event listeners for Dictionary
+        // 2. Generate Review & Submit Slide (The Gate)
+        const submitSlide = document.createElement('div');
+        submitSlide.className = `question-slide`;
+        submitSlide.id = `slide-${questionsData.length}`;
+        submitSlide.innerHTML = `
+            <div class="q-title" style="font-size: 1.5rem; margin-bottom: 2rem; text-align:center;">Review & Submit</div>
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Question Status</h3>
+                <div id="submit-summary-list"></div>
+            </div>
+            <div style="text-align: center;">
+                <button id="btn-final-submit" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="startPhase2()" disabled>
+                    Answer all 7 questions to submit
+                </button>
+            </div>
+        `;
+        container.appendChild(submitSlide);
+
+        // 3. Keyword Listeners (Phase 3 Dict)
         document.querySelectorAll('.keyword').forEach(el => {
             el.addEventListener('click', (e) => {
+                if(state.phase !== 3) return; // Only active in Phase 3
                 e.stopPropagation();
                 const term = el.dataset.term;
                 if(glossary[term]) {
-                    document.getElementById('dock-term').innerText = term;
-                    document.getElementById('dock-def').innerText = glossary[term].def;
-                    document.getElementById('dock-vn').innerText = glossary[term].vn;
-                    document.getElementById('dock-vn-def').innerText = glossary[term].vn_def;
-                    toggleDictionaryDock(true);
+                    renderDictionaryTerm(term);
                 }
             });
         });
@@ -739,45 +880,149 @@
     }
 
     /* =========================================================================
-       LOGIC: NAVIGATION & STATE
+       PHASE TRANSITIONS & TIMERS
+       ========================================================================= */
+    function startPhase1() {
+        state.phase = 1;
+        document.body.className = 'phase-1';
+        
+        // Show passage, hide intro overview
+        document.getElementById('intro-overview').style.display = 'none';
+        document.getElementById('reading-passage').style.display = 'block';
+        
+        // Start Timer
+        document.getElementById('timer-display').style.display = 'block';
+        updateTimerDisplay();
+        state.timerInterval = setInterval(() => {
+            state.timeRemaining--;
+            updateTimerDisplay();
+            if(state.timeRemaining <= 0) {
+                clearInterval(state.timerInterval);
+                alert("Time is up! Submitting your test.");
+                startPhase2();
+            }
+        }, 1000);
+
+        // Move to Q1
+        navigate(1); 
+    }
+
+    function updateTimerDisplay() {
+        const m = Math.floor(state.timeRemaining / 60);
+        const s = state.timeRemaining % 60;
+        document.getElementById('timer-display').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function startPhase2() {
+        state.phase = 2;
+        document.body.className = 'phase-2';
+        clearInterval(state.timerInterval);
+        
+        // Hide Footer Navigation
+        document.getElementById('main-footer').style.display = 'none';
+        
+        // Render Review Mode
+        renderReviewMode();
+    }
+
+    function startPhase3() {
+        state.phase = 3;
+        document.body.className = 'phase-3'; // Restores ESL styles
+        
+        const container = document.getElementById('questions-container');
+        
+        // Render Study Mode LHS/RHS
+        container.innerHTML = `
+            <div class="study-instructions">
+                <p>Write down all highlighted vocabulary words and their definitions in your notebook. If there are any other words in the passage you do not know, look them up and write them down as well.</p>
+            </div>
+            <div class="study-dict" id="study-dict">
+                <div class="dict-empty">
+                    <i class="fa-solid fa-book-open" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <p>Click any highlighted word in the passage to view its definition here.</p>
+                </div>
+            </div>
+        `;
+        
+        // Reset scroll position
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    function renderDictionaryTerm(term) {
+        const dictContainer = document.getElementById('study-dict');
+        const data = glossary[term];
+        dictContainer.innerHTML = `
+            <div class="dict-term">${term}</div>
+            <div class="dict-section">
+                <div class="dict-label">English Definition</div>
+                <div class="dict-text">${data.def}</div>
+            </div>
+            <div class="dict-section" style="border-top: 1px solid #eee; padding-top: 1.5rem;">
+                <div class="dict-label">Vietnamese (Tiếng Việt)</div>
+                <div class="dict-text" style="color: var(--primary-blue); font-weight: 700;">${data.vn}</div>
+                <div class="dict-text" style="font-style: italic;">${data.vn_def}</div>
+            </div>
+        `;
+    }
+
+    /* =========================================================================
+       LOGIC: NAVIGATION & STATE (PHASE 1)
        ========================================================================= */
     function navigate(direction) {
+        if(state.phase !== 0 && state.phase !== 1) return;
+
+        // Hide current
         document.getElementById(`slide-${state.currentQuestionIndex}`).classList.remove('active');
+        
         state.currentQuestionIndex += direction;
+        
+        // Prevent going back to info screen if in Phase 1
+        if (state.phase === 1 && state.currentQuestionIndex === 0) {
+            state.currentQuestionIndex = 1;
+        }
+
+        // Show new
         document.getElementById(`slide-${state.currentQuestionIndex}`).classList.add('active');
         
-        // Reset scroll position of right pane
+        // Reset scroll
         document.getElementById('right-pane').scrollTop = 0;
+        
+        // If reaching submit gate, update it
+        if (state.currentQuestionIndex === questionsData.length) {
+            updateSubmitSlide();
+        }
         
         updateNavigationUI();
     }
 
     function updateNavigationUI() {
-        document.getElementById('btn-prev').disabled = state.currentQuestionIndex === 0;
-        document.getElementById('btn-next').disabled = state.currentQuestionIndex === questionsData.length - 1;
-        
-        const currentQ = questionsData[state.currentQuestionIndex];
-        const progressContainer = document.getElementById('nav-progress');
+        if (state.phase === 0) {
+            document.getElementById('btn-prev').disabled = true;
+            document.getElementById('btn-next').style.display = 'none'; // handeled by button inside intro
+            return;
+        }
 
-        if (currentQ.type === 'info') {
-            progressContainer.innerHTML = 'Instructions';
+        const totalQs = questionsData.length - 1; // 7 questions
+        const isSubmitGate = (state.currentQuestionIndex === questionsData.length);
+
+        document.getElementById('btn-prev').disabled = (state.currentQuestionIndex === 1);
+        document.getElementById('btn-next').style.display = 'block';
+        document.getElementById('btn-next').disabled = isSubmitGate;
+        
+        const progressContainer = document.getElementById('nav-progress');
+        if (isSubmitGate) {
+            progressContainer.innerHTML = `Review & Submit`;
         } else {
-            // Subtracting the intro slide to display proper standard question numbers 
-            let actualQNum = state.currentQuestionIndex; 
-            let totalQs = questionsData.filter(q => q.type !== 'info').length;
-            progressContainer.innerHTML = `Question <span id="current-q-num">${actualQNum}</span> of ${totalQs}`;
+            progressContainer.innerHTML = `Question ${state.currentQuestionIndex} of ${totalQs}`;
         }
     }
 
-    function toggleDictionaryDock(show) {
-        const dock = document.getElementById('def-dock');
-        if(show) dock.classList.add('active');
-        else dock.classList.remove('active');
+    function toggleFlag(qId, isChecked) {
+        if (isChecked) state.flagged.add(qId);
+        else state.flagged.delete(qId);
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
     }
 
-    /* =========================================================================
-       LOGIC: ANSWER SELECTION & EVALUATION
-       ========================================================================= */
     function handleAnswerSelection(qId, value) {
         // Clear previous selection styling
         const labels = document.querySelectorAll(`#opts-${qId} .radio-option`);
@@ -790,57 +1035,187 @@
         // Update State
         state.userAnswers[qId] = value;
         
-        // Hide explanation if they change answer after checking
-        document.getElementById(`exp-${qId}`).style.display = 'none';
-        document.getElementById(`btn-check-${qId}`).style.display = 'block';
+        // Auto-update submit slide if currently viewing it (unlikely but safe)
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
     }
 
-    function checkAnswers(qId) {
-        const qData = questionsData.find(q => q.id === qId);
-        const expBox = document.getElementById(`exp-${qId}`);
-        const expTitle = document.getElementById(`exp-title-${qId}`);
-        const checkBtn = document.getElementById(`btn-check-${qId}`);
+    function checkDnDState(qId) {
+        const c1_vals = [
+            document.getElementById(`${qId}-dz1`).firstElementChild?.dataset.val,
+            document.getElementById(`${qId}-dz2`).firstElementChild?.dataset.val
+        ].filter(Boolean);
         
-        let isCorrect = false;
+        const c2_vals = [
+            document.getElementById(`${qId}-dz3`).firstElementChild?.dataset.val,
+            document.getElementById(`${qId}-dz4`).firstElementChild?.dataset.val
+        ].filter(Boolean);
 
-        if (qData.type === 'mcq') {
-            const userVal = state.userAnswers[qId];
-            if (!userVal) return alert("Please select an answer first.");
-            isCorrect = (userVal === qData.correct);
-        } 
-        else if (qData.type === 'dnd') {
-            // Read state straight from DOM for DnD to save syncing complexity
-            const c1_vals = [
-                document.getElementById(`${qId}-dz1`).firstElementChild?.dataset.val,
-                document.getElementById(`${qId}-dz2`).firstElementChild?.dataset.val
-            ].filter(Boolean);
+        if (c1_vals.length > 0 || c2_vals.length > 0) {
+            state.userAnswers[qId] = { dz1: c1_vals[0], dz2: c1_vals[1], dz3: c2_vals[0], dz4: c2_vals[1] };
+        } else {
+            delete state.userAnswers[qId];
+        }
+    }
+
+    function updateSubmitSlide() {
+        const container = document.getElementById('submit-summary-list');
+        let answeredCount = 0;
+        let html = '';
+        
+        const qList = questionsData.filter(q => q.type !== 'info');
+        
+        qList.forEach((q, idx) => {
+            let isAnswered = false;
             
-            const c2_vals = [
-                document.getElementById(`${qId}-dz3`).firstElementChild?.dataset.val,
-                document.getElementById(`${qId}-dz4`).firstElementChild?.dataset.val
-            ].filter(Boolean);
+            if (q.type === 'mcq') {
+                isAnswered = !!state.userAnswers[q.id];
+            } else if (q.type === 'dnd') {
+                const ans = state.userAnswers[q.id];
+                isAnswered = ans && ans.dz1 && ans.dz2 && ans.dz3 && ans.dz4;
+            }
+            
+            if (isAnswered) answeredCount++;
+            
+            const isFlagged = state.flagged.has(q.id);
+            const flagHtml = isFlagged ? '<i class="fa-solid fa-flag" style="color:#d97706; margin-left:8px;" title="Flagged"></i>' : '';
+            
+            html += `
+                <div class="summary-item">
+                    <span>Question ${idx + 1} ${flagHtml}</span>
+                    <span style="font-weight:bold; color: ${isAnswered ? '#166534' : '#991b1b'}">
+                        ${isAnswered ? 'Answered' : 'Unanswered'}
+                    </span>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        const btn = document.getElementById('btn-final-submit');
+        
+        if (answeredCount === qList.length) {
+            btn.disabled = false;
+            btn.innerText = "Submit Test for Grading";
+            btn.style.background = "#16a34a"; // Green for ready
+        } else {
+            btn.disabled = true;
+            btn.innerText = `Answer all ${qList.length} questions to submit (${answeredCount}/${qList.length})`;
+            btn.style.background = "var(--primary-blue)";
+        }
+    }
 
+    /* =========================================================================
+       PHASE 2: SCORING & REVIEW RENDER
+       ========================================================================= */
+    function checkAnswerCorrectness(qId, qData) {
+        if (qData.type === 'mcq') {
+            return state.userAnswers[qId] === qData.correct;
+        } else if (qData.type === 'dnd') {
+            const ans = state.userAnswers[qId];
+            if(!ans) return false;
+            
+            const c1_vals = [ans.dz1, ans.dz2].filter(Boolean);
+            const c2_vals = [ans.dz3, ans.dz4].filter(Boolean);
+            
             const c1_correct = c1_vals.length === 2 && qData.correctSets.c1.every(val => c1_vals.includes(val));
             const c2_correct = c2_vals.length === 2 && qData.correctSets.c2.every(val => c2_vals.includes(val));
             
-            isCorrect = c1_correct && c2_correct;
+            return c1_correct && c2_correct;
+        }
+        return false;
+    }
+
+    function renderReviewMode() {
+        const container = document.getElementById('questions-container');
+        let html = '';
+        let score = 0;
+        const totalQs = questionsData.filter(q => q.type !== 'info').length;
+
+        const qHtmlBlocks = [];
+
+        questionsData.forEach((q, idx) => {
+            if (q.type === 'info') return;
+
+            const isCorrect = checkAnswerCorrectness(q.id, q);
+            if (isCorrect) score++;
+
+            let qBlock = `<div class="review-item">
+                <div class="review-q-title">${idx}. ${q.title}</div>`;
+
+            if (q.type === 'mcq') {
+                const userAns = state.userAnswers[q.id];
+                q.options.forEach(opt => {
+                    let className = "review-choice";
+                    let icon = "";
+                    if (opt.val === q.correct) {
+                        className += " correct-ans";
+                        icon = '<i class="fa-solid fa-check" style="margin-right:8px;"></i>';
+                    } else if (opt.val === userAns && opt.val !== q.correct) {
+                        className += " wrong-ans";
+                        icon = '<i class="fa-solid fa-xmark" style="margin-right:8px;"></i>';
+                    }
+                    qBlock += `<div class="${className}">${icon}${opt.text}</div>`;
+                });
+            } else if (q.type === 'dnd') {
+                const ans = state.userAnswers[q.id] || {};
+                
+                const c1_vals = [ans.dz1, ans.dz2].filter(Boolean);
+                const c2_vals = [ans.dz3, ans.dz4].filter(Boolean);
+                const c1_correct = c1_vals.length === 2 && q.correctSets.c1.every(val => c1_vals.includes(val));
+                const c2_correct = c2_vals.length === 2 && q.correctSets.c2.every(val => c2_vals.includes(val));
+                
+                const getTexts = (vals) => vals.map(v => q.bank.find(b => b.val === v)?.text).join(' & ');
+                const getCorrectTexts = (vals) => vals.map(v => q.bank.find(b => b.val === v)?.text).join(' & ');
+
+                qBlock += `
+                    <div style="margin-bottom:1rem; padding: 1rem; background: #f8fafc; border-radius:4px;">
+                        <strong>Claim 1: The burden on firefighters is increasing.</strong><br>
+                        <span style="color: ${c1_correct ? '#166534' : '#991b1b'}">Your Answer: ${getTexts(c1_vals) || 'None'}</span><br>
+                        <span style="color: #166534; font-weight:bold;">Correct Answer: ${getCorrectTexts(q.correctSets.c1)}</span>
+                    </div>
+                    <div style="margin-bottom:1rem; padding: 1rem; background: #f8fafc; border-radius:4px;">
+                        <strong>Claim 2: Wildfires can be beneficial.</strong><br>
+                        <span style="color: ${c2_correct ? '#166534' : '#991b1b'}">Your Answer: ${getTexts(c2_vals) || 'None'}</span><br>
+                        <span style="color: #166534; font-weight:bold;">Correct Answer: ${getCorrectTexts(q.correctSets.c2)}</span>
+                    </div>
+                `;
+            }
+
+            // Explanation Block
+            const expClass = isCorrect ? 'correct' : 'incorrect';
+            const expTitle = isCorrect ? 'Correct!' : 'Incorrect. Review the explanation below:';
             
-            // Save state
-            state.userAnswers[qId] = { dz1: c1_vals[0], dz2: c1_vals[1], dz3: c2_vals[0], dz4: c2_vals[1] };
-        }
+            qBlock += `
+                <div class="explanation-box ${expClass}" style="display:block;">
+                    <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+                    <div class="exp-en">${q.expEn}</div>
+                    <div class="exp-vn">${q.expVn}</div>
+                </div>
+            </div>`;
 
-        // Show Explanation
-        expBox.style.display = 'block';
-        checkBtn.style.display = 'none'; // hide button after check
-        state.explanationsRevealed.add(qId);
+            qHtmlBlocks.push(qBlock);
+        });
 
-        if (isCorrect) {
-            expBox.className = 'explanation-box correct';
-            expTitle.innerText = "Correct!";
-        } else {
-            expBox.className = 'explanation-box incorrect';
-            expTitle.innerText = "Incorrect. Review the explanation below.";
-        }
+        // Banner Score
+        html += `
+            <div class="review-header">
+                <div style="font-size: 1.2rem; margin-bottom: 0.5rem; font-weight:600; color:var(--text-main);">Test Complete</div>
+                <div class="review-score">Score: ${score} / ${totalQs}</div>
+            </div>
+        `;
+
+        html += qHtmlBlocks.join('');
+
+        // Transition Button
+        html += `
+            <div style="text-align:center; margin-top: 2rem;">
+                <button class="btn-primary" onclick="startPhase3()" style="font-size:1.2rem; padding:1rem 3rem;">
+                    Continue to Study Mode <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+                </button>
+            </div>
+        `;
+
+        container.innerHTML = html;
+        document.getElementById('right-pane').scrollTop = 0;
     }
 
     /* =========================================================================
@@ -849,6 +1224,7 @@
     let draggedItem = null;
 
     function drag(ev) {
+        if(state.phase !== 1) return;
         draggedItem = ev.target;
         ev.dataTransfer.setData("text", ev.target.id);
         ev.dataTransfer.effectAllowed = "move";
@@ -856,6 +1232,7 @@
     }
 
     function allowDrop(ev) {
+        if(state.phase !== 1) return;
         ev.preventDefault();
         const dropzone = ev.target.closest('.dropzone');
         if(dropzone) dropzone.classList.add('dragover');
@@ -872,6 +1249,7 @@
     });
 
     function drop(ev, targetId) {
+        if(state.phase !== 1) return;
         ev.preventDefault();
         const data = ev.dataTransfer.getData("text");
         const draggedEl = document.getElementById(data);
@@ -891,9 +1269,16 @@
             
             dropTarget.innerHTML = '';
             dropTarget.appendChild(draggedEl);
+            
+            const qId = targetId.split('-')[0];
+            checkDnDState(qId);
+            
         } 
         else if (dropTarget.classList.contains('options-bank')) {
             dropTarget.appendChild(draggedEl);
+            
+            const qId = targetId.split('-')[1];
+            checkDnDState(qId);
         }
     }
 
