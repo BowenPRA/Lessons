@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED RLA: Reading Comprehension Practice</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEMING
+           ========================================================================== */
+        :root {
+            /* Colors */
+            --bg-page: #f4f5f7;        
+            --bg-panel: #ffffff; 
+            --primary-blue: #005A9C;    
+            --primary-blue-hover: #00447a;
+            --selected-blue: #e6f0fa;
+            --border-color: #cccccc;
+            
+            /* Text Colors */
+            --text-main: #333333;        
+            --text-muted: #666666;
+            --color-correct: #166534;
+            --color-incorrect: #991b1b;
+            
+            /* Layout Dimensions */
+            --header-h: 60px;
+            --footer-h: 70px;
+            
+            /* Typography */
+            --font-ui: 'Open Sans', Arial, sans-serif;            
+            --font-passage: 'Noto Serif', 'Times New Roman', Times, serif; 
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-ui);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT & GRID
+           ========================================================================== */
+        .app-shell { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+        }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            background: var(--primary-blue);
+            z-index: 50;
+        }
+
+        .split-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--header-h) - var(--footer-h));
+            overflow: hidden;
+        }
+
+        .pane-left, .pane-right {
+            background: var(--bg-panel);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .pane-left { flex: 0 0 50%; }
+        .pane-right { flex: 1; position: relative; }
+
+        .resizer {
+            flex: 0 0 8px;
+            background: #e0e0e0;
+            cursor: col-resize;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .resizer:hover, .resizer:active { background: #c0c0c0; }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            z-index: 50;
+        }
+
+        /* ==========================================================================
+           4. TYPOGRAPHY & PASSAGE STYLING
+           ========================================================================== */
+        .header-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+        .section-title.primary { color: var(--primary-blue); }
+        .section-title.center { text-align: center; }
+
+        .passage-title { 
+            font-family: var(--font-ui); 
+            font-size: 1.4rem; 
+            font-weight: 700;
+            margin: 1.5rem 0 0.5rem 0;
+            color: var(--text-main);
+        }
+
+        .passage-meta { 
+            color: var(--text-muted); 
+            font-style: italic; 
+            font-size: 0.95rem; 
+            margin-bottom: 1.5rem; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 1rem;
+        }
+        
+        .paragraph { 
+            font-family: var(--font-passage);
+            font-size: 1.15rem; 
+            line-height: 1.8; 
+            color: var(--text-main); 
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .para-num {
+            font-family: var(--font-ui);
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 1rem;
+            user-select: none;
+            min-width: 20px;
+        }
+
+        .info-box {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--text-main);
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* ==========================================================================
+           5. COMPONENTS (Buttons, Timers, Flags)
+           ========================================================================== */
+        .timer {
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: rgba(0,0,0,0.2);
+            padding: 0.25rem 1rem;
+            border-radius: 4px;
+            display: none; /* Hidden until Phase 1 starts */
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-primary:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            color: #666;
+        }
+
+        .btn-nav {
+            background: var(--primary-blue);
+            border: 1px solid var(--primary-blue-hover);
+            padding: 0.6rem 2rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-nav:disabled {
+            background: #cccccc;
+            color: #666666;
+            border-color: #bbbbbb;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .flag-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e65100;
+            cursor: pointer;
+            user-select: none;
+        }
+        .flag-container input { cursor: pointer; transform: scale(1.2); }
+
+        .nav-progress { font-weight: 600; color: var(--text-main); font-size: 1.05rem; }
+
+        /* ==========================================================================
+           6. QUESTION UI (MCQ & Drag-and-Drop)
+           ========================================================================== */
+        .question-slide { display: none; }
+        .question-slide.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .q-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .q-title {
+            font-family: var(--font-ui);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        /* Radio Options */
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .radio-option:hover { background-color: #f9f9f9; }
+        .radio-option input[type="radio"] {
+            margin-top: 0.25rem;
+            margin-right: 1rem;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        .radio-option span {
+            font-family: var(--font-ui);
+            font-size: 1.05rem;
+            line-height: 1.4;
+        }
+        .radio-option.selected {
+            background-color: var(--selected-blue);
+            border-color: var(--primary-blue);
+        }
+
+        /* Drag and Drop Container */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .options-bank {
+            background: #f9f9f9;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+            min-height: 120px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .draggable-item {
+            background: #ffffff;
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            cursor: grab;
+            font-size: 0.95rem;
+            font-family: var(--font-ui);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            user-select: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .draggable-item:active { cursor: grabbing; }
+        
+        .claims-area { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media(max-width: 1200px) { .claims-area { grid-template-columns: 1fr; } }
+        
+        .claim-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+        }
+        .claim-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .dropzone {
+            background: #f4f5f7;
+            border: 2px dashed #cccccc;
+            border-radius: 4px;
+            min-height: 50px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            padding: 0.25rem;
+        }
+        .dropzone.dragover {
+            background: var(--selected-blue);
+            border-color: var(--primary-blue);
+        }
+
+        /* ==========================================================================
+           7. PHASE-SPECIFIC STYLES & OVERRIDES
+           ========================================================================== */
+        
+        /* Interactive Keywords (ESL Features - Active in Phase 0, 2, 3) */
+        .esl-tip {
+            background: #fffbe6;
+            border-left: 4px solid #ffe58f;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+        .keyword {
+            background-color: #fffac0;
+            border-bottom: 2px dotted var(--text-muted);
+            color: var(--text-main);
+            font-weight: normal;
+            cursor: pointer;
+            padding: 0 2px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .keyword:hover { background-color: #ffe680; }
+
+        /* Phase 1 & 4 (Testing Mode): Disable ESL Features entirely */
+        body.phase-1 .keyword, body.phase-4 .keyword {
+            background-color: transparent !important;
+            border-bottom: none !important;
+            color: inherit !important;
+            cursor: text !important;
+            pointer-events: none !important;
+        }
+        body.phase-1 .esl-tip, body.phase-3 .esl-tip, body.phase-4 .esl-tip { display: none !important; }
+
+        /* Submit Summary List */
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+        }
+        .summary-item:last-child { border-bottom: none; }
+
+        /* Phase 2: Review Screen */
+        .review-header {
+            text-align: center;
+            padding: 1rem;
+            background: var(--selected-blue);
+            border: 1px solid var(--primary-blue);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .review-score {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        .review-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: #ffffff;
+        }
+        .review-q-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .review-choice {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            background: #f9f9f9;
+        }
+        .review-choice.correct-ans {
+            background-color: #f0fdf4;
+            border-color: #bbf7d0;
+            color: var(--color-correct);
+            font-weight: 600;
+        }
+        .review-choice.wrong-ans {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+            color: var(--color-incorrect);
+            text-decoration: line-through;
+        }
+
+        /* Explanations */
+        .explanation-box {
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            line-height: 1.6;
+            border: 1px solid;
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: #334155;
+        }
+        .explanation-box.correct { background-color: #f0fdf4; border-color: #bbf7d0; color: var(--color-correct); }
+        .explanation-box.incorrect { background-color: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); }
+        .exp-en { margin-bottom: 0.8rem; }
+        .exp-vn { font-style: italic; font-family: var(--font-passage); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.8rem; }
+
+        /* Phase 3: Dictionary Styling */
+        .study-instructions {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .study-instructions p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #b45309;
+            line-height: 1.5;
+        }
+        .study-dict {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            min-height: 300px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .dict-term { font-family: var(--font-ui); font-size: 1.8rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 1.5rem; border-bottom: 2px solid var(--selected-blue); padding-bottom: 0.5rem;}
+        .dict-section { margin-bottom: 1.5rem; }
+        .dict-label { font-weight: 700; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dict-text { margin-top: 0.5rem; line-height: 1.6; font-size: 1.1rem;}
+        .dict-empty { color: var(--text-muted); font-style: italic; text-align: center; margin-top: 3rem; }
+
+        /* ==========================================================================
+           8. UTILITIES & RESPONSIVE DESIGN
+           ========================================================================== */
+        @keyframes fadeIn { from {opacity: 0;} to { opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .split-layout { flex-direction: column; }
+            .pane-left, .pane-right { flex: 1 1 50%; }
+            .resizer { height: 8px; width: 100%; cursor: row-resize; }
+        }
+    </style>
+</head>
+<body class="phase-0">
+
+<div class="app-shell">
+    
+    <!-- STANDARD TESTING HEADER -->
+    <header class="header">
+        <div class="header-title">GED® Reading Language Arts (RLA) - Practice Test</div>
+        <div id="timer-display" class="timer" aria-live="polite">15:00</div>
+    </header>
+
+    <!-- SPLIT LAYOUT -->
+    <main class="split-layout">
+        
+        <!-- LEFT PANE: DYNAMIC CONTENT BASED ON PHASE -->
+        <section class="pane-left" id="left-pane" aria-label="Passage Content">
+            
+            <!-- OVERVIEW: SHOWN ONLY IN PHASE 0 -->
+            <article id="intro-overview" style="display: block;">
+                <h1 class="section-title primary">Activity Overview</h1>
+                <div class="info-box">
+                    <p style="margin-bottom: 1rem;">This is a practice test giving you a similar format to the official GED test.</p>
+                    <p>It also has similar pacing to help you prepare effectively for the real exam.</p>
+                </div>
+            </article>
+
+            <!-- READING PASSAGE: HIDDEN IN PHASE 0 -->
+            <article id="reading-passage" style="display: none;">
+                <div class="esl-tip">
+                    <strong>ESL Tip:</strong> Click on the <span class="keyword">highlighted words</span> to see their English definitions and Vietnamese translations.
+                </div>
+
+                <h1 class="section-title">Mandatory Parenting Classes: Dual Perspectives</h1>
+
+                <div class="passage-title">Passage 1</div>
+                <div class="passage-meta">Guest Column: Parenting Education Should Be Mandatory by Kai Fernandez, APRN • The Freeport Times</div>
+
+                <div class="paragraph">
+                    <div class="para-num">1</div>
+                    <div>As a nurse practitioner in a <span class="keyword" data-term="pediatric">pediatric</span> office, I had to complete <span class="keyword" data-term="extensive">extensive</span> training and obtain a license before I could examine my first toddler. Many jobs, from barber to pilot, involve specific training. But for the most important job - raising children to be responsible adults - no training is required, and children and society suffer the results of this lack of knowledge. The time has come to correct this situation. Before they can be <span class="keyword" data-term="discharged">discharged</span> from the hospital, first-time parents should be required to take parenting classes. Just as we <span class="keyword" data-term="equip">equip</span> new drivers with a learner's permit and instruction, we must also equip new parents with the skills they need.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">2</div>
+                    <div>While some people might believe that this is the "<span class="keyword" data-term="nanny state">nanny state</span>" stepping on the rights of individuals, I am not suggesting that there is only one "correct" style of parenting. But there is basic information about infants and children that every parent should be required to know, including nutrition, health and safety, and stages of child development. Knowing how to safely bathe a baby, for example, would prevent many <span class="keyword" data-term="tragedies">tragedies</span>. Understanding that babies are crying to communicate, not to be "<span class="keyword" data-term="naughty">naughty</span>," helps parents <span class="keyword" data-term="adjust">adjust</span> their expectations and their behavior.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">3</div>
+                    <div>And parent education works. According to the Centers for Disease Control, for example, the "Safe To Sleep" campaign has reduced the number of deaths from Sudden Infant Death Syndrome by fifty percent since 1994 just by teaching parents to put babies to bed on their backs.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">4</div>
+                    <div><span class="keyword" data-term="conversely">Conversely</span>, <span class="keyword" data-term="uninformed">uninformed</span> parenting hurts not only children, but the rest of us as well. A study by the Department of Education in England found that children whose parents use harsh or <span class="keyword" data-term="inconsistent">inconsistent</span> discipline are more likely to have poor attention spans, low levels of literacy, and anti-social behavior.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">5</div>
+                    <div>In cultures where extended families are the rule, raising children is a group effort. But in the modern world, new parents are on their own. It is our <span class="keyword" data-term="obligation">obligation</span> as a society to make sure they have the skills to do their best in this challenging job. Making parenting classes <span class="keyword" data-term="mandatory">mandatory</span> is a step towards this goal.</div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid #ccc; margin: 2rem 0;">
+
+                <div class="passage-title">Passage 2</div>
+                <div class="passage-meta">Guest Column: Leave New Parents Alone by Sophie Thomas • The Freeport Times</div>
+
+                <div class="paragraph">
+                    <div class="para-num">6</div>
+                    <div>I am writing in response to the op-ed essay by Kai Fernandez <span class="keyword" data-term="advocating">advocating</span> mandatory parenting classes for new parents. As the mother of three, I speak with experience about raising children, and I strongly <span class="keyword" data-term="object">object</span> to the idea that a random instructor knows my family and my <span class="keyword" data-term="circumstances">circumstances</span> better than I do. Just like New York City's efforts to ban the sale of large sodas, a law requiring parents to take parenting classes is yet another example of some government <span class="keyword" data-term="bureaucrat">bureaucrat</span> determining what is best for the rest of us.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">7</div>
+                    <div>Freedom of choice is a <span class="keyword" data-term="fundamental">fundamental</span> American value; forcing all parents to learn the same information about children conflicts with this basic right. While it is true that there are many challenges facing new parents, there are also many ways to learn how to handle these challenges. There are shelves full of parenting books in every bookstore; enter the word "parenting" in the search box on any Web browser, and millions of resources will pop up. Then there are family members and friends to turn to for advice, as well as good old trial and error.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">8</div>
+                    <div>Hospitals, community centers, and houses of worship also offer a variety of parenting classes - but the important point is that these are voluntary.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">9</div>
+                    <div>There are also the problems of funding and enforcing this proposal. Would parents have to pay for the classes themselves? This could pose a financial <span class="keyword" data-term="burden">burden</span> for many people. And what if parents refused to take the classes? Would they be fined? Arrested?</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">10</div>
+                    <div>Even if these practical aspects of mandatory parenting classes could be worked out, however, the issue of government <span class="keyword" data-term="intrusion">intrusion</span> into family lives makes it a non-starter. After all, parents have been raising children for millions of years without the government's help.</div>
+                </div>
+            </article>
+            
+        </section>
+
+        <!-- DRAGGABLE DIVIDER -->
+        <div class="resizer" id="dragMe" title="Drag to resize"></div>
+
+        <!-- RIGHT PANE: QUESTIONS & MODES -->
+        <aside class="pane-right" id="right-pane" aria-label="Interactive Workspace">
+            <div id="questions-container">
+                <!-- Question Slides injected dynamically here via JS -->
+            </div>
+        </aside>
+    </main>
+
+    <!-- STICKY FOOTER NAVIGATION -->
+    <footer class="footer" id="main-footer">
+        <button class="btn-nav" id="btn-prev" onclick="navigate(-1)">Previous</button>
+        <div class="nav-progress" id="nav-progress" aria-live="polite">Start Test</div>
+        <button class="btn-nav" id="btn-next" onclick="navigate(1)">Next</button>
+    </footer>
+
+</div>
+
+<script>
+    /* =========================================================================
+       1. DATA SCHEMAS & CONFIGURATION (AI TEMPLATING GUIDE)
+       ========================================================================= */
+
+    const questionsData = [
+        {
+            id: 'intro',
+            type: 'info',
+            title: "Phase 1: Strict Testing Mode",
+            content: `
+                <div class="info-box" style="padding: 2.5rem; background: #f9f9f9;">
+                    <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><strong>Welcome to the GED Practice Test.</strong></p>
+                    <p style="margin-bottom: 1.5rem;">This test has been structured into 4 formal phases to optimize your learning:</p>
+                    
+                    <ul style="margin-left: 2rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 1: Timed Testing.</strong> You have 15 minutes to complete 6 questions. ESL features are disabled to simulate a real testing environment. You must answer all questions to submit.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 2: Review & Score.</strong> See your grade, discover the correct answers, and read bilingual explanations.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 3: Deep Study.</strong> Re-read the passage with full dictionary access to master difficult vocabulary.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 4: Extended Response (Essay).</strong> At the end of the test, you will complete a 45-minute GED-style essay in Google Docs and email it to your instructors.</li>
+                    </ul>
+                    
+                    <p style="font-weight: 600; color: var(--primary-blue); margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        Click "Start Timer & Begin" to enter Phase 1.
+                    </p>
+                    <button class="btn-primary" onclick="startPhase1()" style="font-size: 1.1rem; padding: 1rem 2rem; margin-top: 1rem;">Start Timer & Begin</button>
+                </div>
+            `
+        },
+        {
+            id: 'q1',
+            type: 'mcq',
+            title: "1. What is the main argument made by Kai Fernandez in the first passage?",
+            options: [
+                { val: 'A', text: 'A. New parents should rely on their extended family for help.' },
+                { val: 'B', text: 'B. Raising children is the most important job in the world.' },
+                { val: 'C', text: 'C. First-time parents should be required by law to take parenting classes.' },
+                { val: 'D', text: 'D. People need a special license to become a barber or a pilot.' }
+            ],
+            correct: 'C',
+            expEn: "The author states clearly in the first paragraph that 'first-time parents should be required to take parenting classes.' This is the central claim and main idea that the rest of the essay supports.",
+            expVn: "Tác giả nêu rõ ở đoạn đầu tiên rằng 'những người lần đầu làm cha mẹ nên bắt buộc phải tham gia các lớp học nuôi dạy con cái.' Đây là luận điểm trung tâm và là ý chính mà phần còn lại của bài luận củng cố."
+        },
+        {
+            id: 'q2',
+            type: 'mcq',
+            title: "2. Why does Fernandez include the statistic from the Centers for Disease Control (CDC) about the \"Safe To Sleep\" campaign?",
+            options: [
+                { val: 'A', text: 'A. To prove that raising babies is very difficult.' },
+                { val: 'B', text: 'B. To show that educating parents has real, positive results that save lives.' },
+                { val: 'C', text: 'C. To argue that doctors and nurses should be the ones teaching parents.' },
+                { val: 'D', text: 'D. To explain the medical causes of Sudden Infant Death Syndrome.' }
+            ],
+            correct: 'B',
+            expEn: "Fernandez uses the CDC statistic to prove a point: parent education works. By showing that a simple education campaign successfully reduced infant deaths by 50%, Fernandez provides strong evidence that teaching parents basic skills has highly positive results.",
+            expVn: "Fernandez sử dụng số liệu thống kê của CDC để chứng minh một điểm: việc giáo dục cha mẹ mang lại hiệu quả. Bằng cách chỉ ra rằng một chiến dịch giáo dục đơn giản đã giảm 50% số ca tử vong ở trẻ sơ sinh, Fernandez cung cấp bằng chứng mạnh mẽ rằng việc dạy cho cha mẹ những kỹ năng cơ bản mang lại kết quả rất tích cực."
+        },
+        {
+            id: 'q3',
+            type: 'mcq',
+            title: "3. In the second passage, why does Sophie Thomas mention New York City's efforts to \"ban the sale of large sodas\"?",
+            options: [
+                { val: 'A', text: 'A. To show that the government often tries to control people\'s personal choices.' },
+                { val: 'B', text: 'B. To argue that parents should feed their children healthier food and drinks.' },
+                { val: 'C', text: 'C. To prove that parenting classes are too expensive for most families.' },
+                { val: 'D', text: 'D. To compare the difficulty of raising children to the difficulty of buying groceries.' }
+            ],
+            correct: 'A',
+            expEn: "Thomas uses the soda ban as a negative example of a 'government bureaucrat determining what is best for the rest of us.' She uses this comparison to argue that mandatory parenting classes are just another unfair government intrusion into personal freedom.",
+            expVn: "Thomas sử dụng lệnh cấm nước ngọt như một ví dụ tiêu cực về việc 'quan chức chính phủ quyết định điều gì là tốt nhất cho phần còn lại của chúng ta.' Cô sử dụng sự so sánh này để lập luận rằng các lớp học làm cha mẹ bắt buộc chỉ là một sự can thiệp bất công khác của chính phủ vào quyền tự do cá nhân."
+        },
+        {
+            id: 'q4',
+            type: 'mcq',
+            title: "4. Based on the passages, on which point would Kai Fernandez and Sophie Thomas most likely AGREE?",
+            options: [
+                { val: 'A', text: 'A. The government should stay out of family lives.' },
+                { val: 'B', text: 'B. Parenting classes should be mandatory for everyone.' },
+                { val: 'C', text: 'C. Raising children is a very challenging and important job.' },
+                { val: 'D', text: 'D. Extended families are the best way to raise children today.' }
+            ],
+            correct: 'C',
+            expEn: "Fernandez calls parenting 'the most important job' and a 'challenging job.' Thomas states that she speaks from experience about 'raising children' and agrees that 'there are many challenges facing new parents.' Despite their disagreement on the law, both agree that parenting is difficult and highly significant.",
+            expVn: "Fernandez gọi việc làm cha mẹ là 'công việc quan trọng nhất' và là một 'công việc đầy thử thách.' Thomas nói rằng cô nói từ kinh nghiệm về việc 'nuôi dạy trẻ' và đồng ý rằng 'có rất nhiều thách thức đối với những người mới làm cha mẹ.' Mặc dù họ bất đồng về luật pháp, cả hai đều đồng ý rằng việc nuôi dạy con cái là khó khăn và vô cùng quan trọng."
+        },
+        {
+            id: 'q5',
+            type: 'mcq',
+            title: "5. What is the meaning of the phrase \"financial burden\" as used by Sophie Thomas in paragraph 9?",
+            options: [
+                { val: 'A', text: 'A. A heavy emotional stress caused by children.' },
+                { val: 'B', text: 'B. A difficult money problem or heavy cost.' },
+                { val: 'C', text: 'C. A law that is impossible to follow.' },
+                { val: 'D', text: 'D. A class that takes too much time to finish.' }
+            ],
+            correct: 'B',
+            expEn: "A 'burden' is a heavy load. In this context, Thomas is asking who will pay for the classes. She worries that the cost of the classes will be too expensive and create a difficult money problem (financial burden) for new parents.",
+            expVn: "'Burden' có nghĩa là gánh nặng. Trong ngữ cảnh này, Thomas đang hỏi ai sẽ trả tiền cho các lớp học. Cô lo lắng rằng chi phí của các lớp học sẽ quá đắt đỏ và tạo ra một vấn đề tiền bạc khó khăn (gánh nặng tài chính) cho những người mới làm cha mẹ."
+        },
+        {
+            id: 'q6',
+            type: 'dnd',
+            title: "6. Categorize the following pieces of evidence to support Claim 1 (Fernandez's argument) or Claim 2 (Thomas's argument). Drag and drop two pieces of evidence for each claim.",
+            bank: [
+                { val: 'A', text: '[A] Children suffer from poor attention spans and low literacy when parents use harsh discipline.' },
+                { val: 'B', text: '[B] People have successfully raised children for millions of years without the government\'s help.' },
+                { val: 'C', text: '[C] Learning how to bathe a baby safely can prevent terrible accidents and tragedies.' },
+                { val: 'D', text: '[D] Community centers and houses of worship already offer classes on a voluntary basis.' }
+            ],
+            claims: [
+                { id: 'c1', text: 'Claim 1: Mandatory parenting classes are necessary and beneficial for society.', dropzones: ['dz1', 'dz2'] },
+                { id: 'c2', text: 'Claim 2: Mandatory parenting classes are unnecessary and a violation of personal freedom.', dropzones: ['dz3', 'dz4'] }
+            ],
+            correctSets: { c1: ['A', 'C'], c2: ['B', 'D'] },
+            expEn: "[A] and [C] support Fernandez's claim because they show the negative dangers of uneducated parents and the positive benefits of basic safety training. [B] and [D] support Thomas's claim because they argue that government mandates are not needed; people already have historical experience and voluntary resources available to them.",
+            expVn: "[A] và [C] ủng hộ luận điểm của Fernandez vì chúng cho thấy những mối nguy hiểm tiêu cực của việc cha mẹ không được giáo dục và những lợi ích tích cực của việc đào tạo an toàn cơ bản. [B] và [D] ủng hộ luận điểm của Thomas vì chúng lập luận rằng các quy định của chính phủ là không cần thiết; con người đã có sẵn kinh nghiệm lịch sử và các nguồn hỗ trợ tự nguyện."
+        }
+    ];
+
+    const glossary = {
+        "mandatory": { def: "Required by a law or rule; something you must do.", vn: "Bắt buộc", vn_def: "Một việc gì đó bạn phải làm theo luật hoặc quy định." },
+        "pediatric": { def: "Relating to the medical care of babies and children.", vn: "Thuộc về nhi khoa", vn_def: "Liên quan đến việc chăm sóc y tế cho trẻ sơ sinh và trẻ em." },
+        "extensive": { def: "Covering a large area; having a lot of detail or amount.", vn: "Rộng rãi / Chuyên sâu", vn_def: "Bao gồm nhiều chi tiết, số lượng lớn hoặc quy mô rộng." },
+        "discharged": { def: "Officially allowed to leave (a hospital, military, or job).", vn: "Được xuất viện / Được cho về", vn_def: "Được chính thức cho phép rời khỏi một nơi (như bệnh viện)." },
+        "equip": { def: "To provide someone with what they need (tools, skills, information).", vn: "Trang bị", vn_def: "Cung cấp cho ai đó những thứ họ cần như kỹ năng hoặc công cụ." },
+        "nanny state": { def: "A government that is too protective and interferes too much in personal choices.", vn: "Nhà nước bảo mẫu (Chính phủ can thiệp quá sâu)", vn_def: "Một chính phủ can thiệp quá nhiều vào quyền tự do cá nhân của người dân." },
+        "tragedies": { def: "Very sad events that cause ruin or death.", vn: "Bi kịch / Thảm kịch", vn_def: "Những sự kiện rất đáng buồn gây ra sự hủy hoại hoặc chết chóc." },
+        "naughty": { def: "Badly behaved (usually used for children).", vn: "Hư hỏng / Nghịch ngợm", vn_def: "Cư xử không tốt, thường dùng để chỉ trẻ em." },
+        "adjust": { def: "To change something slightly to make it work better.", vn: "Điều chỉnh", vn_def: "Thay đổi một chút để làm cho cái gì đó hoạt động tốt hơn hoặc phù hợp hơn." },
+        "conversely": { def: "In an opposite way; on the other hand.", vn: "Ngược lại", vn_def: "Dùng để giới thiệu một ý tưởng trái ngược với ý tưởng trước đó." },
+        "uninformed": { def: "Not having enough knowledge or information about something.", vn: "Thiếu hiểu biết / Không có thông tin", vn_def: "Không có đủ kiến thức hoặc thông tin về một vấn đề." },
+        "inconsistent": { def: "Not staying the same; changing behavior in an unpredictable way.", vn: "Không nhất quán / Thất thường", vn_def: "Không giữ nguyên một trạng thái, hay thay đổi hành vi." },
+        "obligation": { def: "A duty or something that you must do because it is right.", vn: "Nghĩa vụ / Bổn phận", vn_def: "Một trách nhiệm hoặc điều bạn phải làm vì đó là điều đúng đắn." },
+        "advocating": { def: "Publicly supporting an idea or plan.", vn: "Ủng hộ / Biện hộ cho", vn_def: "Công khai hỗ trợ cho một ý tưởng hoặc một kế hoạch nào đó." },
+        "object": { def: "To disagree with or oppose something.", vn: "Phản đối", vn_def: "Không đồng ý hoặc chống lại một điều gì đó." },
+        "circumstances": { def: "The conditions or facts that affect a situation.", vn: "Hoàn cảnh / Tình huống", vn_def: "Những điều kiện hoặc sự kiện ảnh hưởng đến một tình huống." },
+        "bureaucrat": { def: "An official in a government department (often used negatively to mean someone who follows rules too strictly).", vn: "Quan chức", vn_def: "Một quan chức chính phủ (thường dùng với ý tiêu cực chỉ người quá cứng nhắc với luật lệ)." },
+        "fundamental": { def: "Basic, extremely important, and necessary.", vn: "Cơ bản / Nền tảng", vn_def: "Điều rất cơ bản, cực kỳ quan trọng và cần thiết." },
+        "burden": { def: "A heavy load, or a difficult responsibility or problem.", vn: "Gánh nặng", vn_def: "Một trách nhiệm hoặc vấn đề khó khăn, nặng nề (thường là về tiền bạc hoặc công việc)." },
+        "intrusion": { def: "Going into a place or situation where you are not wanted or do not belong.", vn: "Sự xâm nhập / Sự can thiệp trái phép", vn_def: "Can thiệp vào một nơi hoặc một tình huống mà bạn không được chào đón." }
+    };
+
+    /* =========================================================================
+       2. STATE MANAGEMENT
+       ========================================================================= */
+    const state = {
+        phase: 0, // 0: Start, 1: Testing, 2: Review, 3: Study, 4: Essay
+        currentQuestionIndex: 0,
+        userAnswers: {},     // Maps qId -> option value OR object of dropzone values
+        flagged: new Set(),  // Set of flagged question IDs
+        timerInterval: null,
+        timeRemaining: 15 * 60 // 15 minutes default
+    };
+
+    /* =========================================================================
+       3. INITIALIZATION & TEMPLATE RENDERING
+       ========================================================================= */
+    function init() {
+        const container = document.getElementById('questions-container');
+        
+        // 3a. Generate Question Slides Dynamically
+        questionsData.forEach((q, index) => {
+            const slide = document.createElement('article');
+            slide.className = `question-slide ${index === 0 ? 'active' : ''}`;
+            slide.id = `slide-${index}`;
+            
+            let html = '';
+            
+            if (q.type === 'info') {
+                html += `<div class="q-title section-title center">${q.title}</div>`;
+                html += q.content;
+            } else {
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)">
+                            Flag for Review
+                        </label>
+                    </div>
+                `;
+                
+                if (q.type === 'mcq') {
+                    html += `<div class="options-container" id="opts-${q.id}">`;
+                    q.options.forEach(opt => {
+                        html += `
+                            <label class="radio-option" id="label-${q.id}-${opt.val}">
+                                <input type="radio" name="${q.id}" value="${opt.val}" onchange="handleAnswerSelection('${q.id}', '${opt.val}')">
+                                <span class="radio-text">${opt.text}</span>
+                            </label>
+                        `;
+                    });
+                    html += `</div>`;
+                } 
+                else if (q.type === 'dnd') {
+                    html += `<div class="dnd-container">`;
+                    html += `<div class="options-bank" id="bank-${q.id}" ondragover="allowDrop(event)" ondrop="drop(event, 'bank-${q.id}')">`;
+                    q.bank.forEach(item => {
+                        html += `<div class="draggable-item" draggable="true" id="item-${q.id}-${item.val}" ondragstart="drag(event)" data-val="${item.val}">
+                                    <i class="fa-solid fa-grip-vertical" style="color:#aaa;"></i> ${item.text}
+                                 </div>`;
+                    });
+                    html += `</div><div class="claims-area">`;
+                    q.claims.forEach(claim => {
+                        html += `<div class="claim-box">
+                                    <div class="claim-title">${claim.text}</div>`;
+                        claim.dropzones.forEach(dz => {
+                            html += `<div class="dropzone" id="${q.id}-${dz}" ondragover="allowDrop(event)" ondrop="drop(event, '${q.id}-${dz}')">Drop Evidence Here</div>`;
+                        });
+                        html += `</div>`;
+                    });
+                    html += `</div></div>`;
+                }
+            }
+            
+            slide.innerHTML = html;
+            container.appendChild(slide);
+        });
+
+        // 3b. Generate The "Submit Gate" Slide
+        const submitSlide = document.createElement('article');
+        submitSlide.className = `question-slide`;
+        submitSlide.id = `slide-${questionsData.length}`;
+        submitSlide.innerHTML = `
+            <div class="q-title section-title center">Review & Submit</div>
+            <div class="info-box" style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Question Status</h3>
+                <div id="submit-summary-list"></div>
+            </div>
+            <div style="text-align: center;">
+                <button id="btn-final-submit" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="startPhase2()" disabled>
+                    Answer all questions to submit
+                </button>
+            </div>
+        `;
+        container.appendChild(submitSlide);
+
+        // 3c. ESL Keyword Listeners (Triggered in Phase 3)
+        document.querySelectorAll('.keyword').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if(state.phase !== 3) return; 
+                e.stopPropagation();
+                const term = el.dataset.term;
+                if(glossary[term]) renderDictionaryTerm(term);
+            });
+        });
+
+        updateNavigationUI();
+    }
+
+    /* =========================================================================
+       4. PHASE TRANSITION LOGIC
+       ========================================================================= */
+    function startPhase1() {
+        state.phase = 1;
+        document.body.className = 'phase-1';
+        
+        document.getElementById('intro-overview').style.display = 'none';
+        document.getElementById('reading-passage').style.display = 'block';
+        
+        // Start Timer Safely
+        if (state.timerInterval) clearInterval(state.timerInterval);
+        
+        document.getElementById('timer-display').style.display = 'block';
+        updateTimerDisplay();
+        
+        state.timerInterval = setInterval(() => {
+            state.timeRemaining--;
+            updateTimerDisplay();
+            if(state.timeRemaining <= 0) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+                alert("Time is up! Submitting your test.");
+                startPhase2();
+            }
+        }, 1000);
+
+        navigate(1); 
+    }
+
+    function updateTimerDisplay() {
+        const m = Math.floor(state.timeRemaining / 60);
+        const s = state.timeRemaining % 60;
+        document.getElementById('timer-display').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function startPhase2() {
+        state.phase = 2;
+        document.body.className = 'phase-2';
+        
+        if (state.timerInterval) {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+        }
+        
+        document.getElementById('main-footer').style.display = 'none';
+        renderReviewMode();
+    }
+
+    function startPhase3() {
+        state.phase = 3;
+        document.body.className = 'phase-3'; 
+        
+        const container = document.getElementById('questions-container');
+        container.innerHTML = `
+            <div class="study-instructions">
+                <p>Write down all highlighted vocabulary words and their definitions in your notebook. If there are any other words in the passage you do not know, look them up and write them down as well.</p>
+            </div>
+            <div class="study-dict" id="study-dict" aria-live="polite">
+                <div class="dict-empty">
+                    <i class="fa-solid fa-book-open" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <p>Click any highlighted word in the passage to view its definition here.</p>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top: 2rem;">
+                <button class="btn-primary" onclick="startPhase4()" style="font-size:1.2rem; padding:1rem 3rem;">
+                    Continue to Phase 4: Essay <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+                </button>
+            </div>
+        `;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+    
+    function startPhase4() {
+        state.phase = 4;
+        document.body.className = 'phase-4'; 
+        
+        const container = document.getElementById('questions-container');
+        container.innerHTML = `
+            <div class="q-title section-title center">Phase 4: Extended Response (Essay)</div>
+            <div class="info-box">
+                <p style="margin-bottom: 1rem;"><strong>Prompt:</strong> Analyze the arguments presented in the two guest columns. In your response, develop an argument in which you explain how one position is better supported than the other. Incorporate relevant and specific evidence from both sources to support your argument.</p>
+                <p style="margin-bottom: 1rem; color: var(--text-muted); font-style: italic;">Remember, the better-argued position is not necessarily the position with which you agree.</p>
+                
+                <div style="background: #fff3e0; border: 1px solid #ffcc80; padding: 1.5rem; border-radius: 4px; margin-top: 1.5rem;">
+                    <h4 style="margin-bottom: 0.5rem; color: #e65100; font-size: 1.1rem;"><i class="fa-solid fa-pen-nib" style="margin-right: 8px;"></i>Essay Instructions:</h4>
+                    <ol style="margin-left: 1.5rem; color: #e65100; font-weight: 600;">
+                        <li style="margin-bottom: 0.5rem;">Open a blank <a href="https://docs.google.com" target="_blank" style="color: #d84315; text-decoration: underline;">Google Doc</a>.</li>
+                        <li style="margin-bottom: 0.5rem;">You have exactly <strong>45 minutes</strong> to complete this essay.</li>
+                        <li style="margin-bottom: 0.5rem;">At the very top of your Google Doc, type your <strong>Start Time: [Time]</strong> and <strong>End Time: [Time]</strong>.</li>
+                        <li style="margin-bottom: 0.5rem;">Write a complete, GED-style essay answering the prompt above.</li>
+                        <li>When you are finished, email your Google Doc to <strong>Mr. Bowen</strong> and <strong>Mr. Landon</strong> for review.</li>
+                    </ol>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top: 2rem;">
+                <p style="color: var(--text-muted); font-style: italic; font-size: 1.1rem;">You have completed the practice activity. Great job!</p>
+            </div>
+        `;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    function renderDictionaryTerm(term) {
+        const dictContainer = document.getElementById('study-dict');
+        if (!dictContainer) return; 
+        
+        const data = glossary[term];
+        dictContainer.innerHTML = `
+            <div class="dict-term">${term}</div>
+            <div class="dict-section">
+                <div class="dict-label">English Definition</div>
+                <div class="dict-text">${data.def}</div>
+            </div>
+            <div class="dict-section" style="border-top: 1px solid #eee; padding-top: 1.5rem;">
+                <div class="dict-label">Vietnamese (Tiếng Việt)</div>
+                <div class="dict-text" style="color: var(--primary-blue); font-weight: 700;">${data.vn}</div>
+                <div class="dict-text" style="font-style: italic;">${data.vn_def}</div>
+            </div>
+        `;
+    }
+
+    /* =========================================================================
+       5. PHASE 1 QUIZ LOGIC (Navigation, Tracking, Submitting)
+       ========================================================================= */
+    function navigate(direction) {
+        if(state.phase !== 0 && state.phase !== 1) return;
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.remove('active');
+        state.currentQuestionIndex += direction;
+        
+        // Prevent retreating to info screen during testing phase
+        if (state.phase === 1 && state.currentQuestionIndex === 0) {
+            state.currentQuestionIndex = 1;
+        }
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.add('active');
+        document.getElementById('right-pane').scrollTop = 0;
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function updateNavigationUI() {
+        if (state.phase === 0) {
+            document.getElementById('btn-prev').disabled = true;
+            document.getElementById('btn-next').style.display = 'none';
+            return;
+        }
+
+        const totalQs = questionsData.filter(q => q.type !== 'info').length; 
+        const isSubmitGate = (state.currentQuestionIndex === questionsData.length);
+
+        document.getElementById('btn-prev').disabled = (state.currentQuestionIndex === 1);
+        document.getElementById('btn-next').style.display = 'block';
+        document.getElementById('btn-next').disabled = isSubmitGate;
+        
+        const progressContainer = document.getElementById('nav-progress');
+        if (isSubmitGate) {
+            progressContainer.innerHTML = `Review & Submit`;
+        } else {
+            const currentQ = questionsData[state.currentQuestionIndex];
+            progressContainer.innerHTML = currentQ.type === 'info' ? currentQ.title : `Question ${state.currentQuestionIndex} of ${totalQs}`;
+        }
+    }
+
+    function toggleFlag(qId, isChecked) {
+        if (isChecked) state.flagged.add(qId);
+        else state.flagged.delete(qId);
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+    }
+
+    function handleAnswerSelection(qId, value) {
+        const labels = document.querySelectorAll(`#opts-${qId} .radio-option`);
+        labels.forEach(lbl => lbl.classList.remove('selected'));
+        
+        const selectedLabel = document.getElementById(`label-${qId}-${value}`);
+        if(selectedLabel) selectedLabel.classList.add('selected');
+
+        state.userAnswers[qId] = value;
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+    }
+
+    // Abstracted: Evaluates ALL claims inside a DnD question dynamically
+    function checkDnDState(qId) {
+        const qConfig = questionsData.find(q => q.id === qId);
+        if (!qConfig) return;
+
+        let ansObj = {};
+        let hasAnyAnswer = false;
+
+        qConfig.claims.forEach(claim => {
+            claim.dropzones.forEach(dz => {
+                const dropzoneEl = document.getElementById(`${qId}-${dz}`);
+                const val = dropzoneEl.firstElementChild?.dataset.val;
+                if (val) {
+                    ansObj[dz] = val;
+                    hasAnyAnswer = true;
+                }
+            });
+        });
+
+        if (hasAnyAnswer) {
+            state.userAnswers[qId] = ansObj;
+        } else {
+            delete state.userAnswers[qId]; // Clear object if empty to trigger required fields
+        }
+    }
+
+    function updateSubmitSlide() {
+        const container = document.getElementById('submit-summary-list');
+        let answeredCount = 0;
+        let html = '';
+        const qList = questionsData.filter(q => q.type !== 'info');
+        
+        qList.forEach((q, idx) => {
+            let isAnswered = false;
+            if (q.type === 'mcq') {
+                isAnswered = !!state.userAnswers[q.id];
+            } else if (q.type === 'dnd') {
+                const ans = state.userAnswers[q.id];
+                // Abstracted check: Ensures all expected dropzones have a value
+                const totalExpectedDz = q.claims.reduce((acc, curr) => acc + curr.dropzones.length, 0);
+                const totalAnsweredDz = ans ? Object.keys(ans).length : 0;
+                isAnswered = (totalExpectedDz === totalAnsweredDz);
+            }
+            
+            if (isAnswered) answeredCount++;
+            
+            const isFlagged = state.flagged.has(q.id);
+            const flagHtml = isFlagged ? '<i class="fa-solid fa-flag" style="color:#d97706; margin-left:8px;" title="Flagged"></i>' : '';
+            
+            html += `
+                <div class="summary-item">
+                    <span>Question ${idx + 1} ${flagHtml}</span>
+                    <span style="font-weight:bold; color: ${isAnswered ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                        ${isAnswered ? 'Answered' : 'Unanswered'}
+                    </span>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        const btn = document.getElementById('btn-final-submit');
+        
+        if (answeredCount === qList.length) {
+            btn.disabled = false;
+            btn.innerText = "Submit Test for Grading";
+            btn.style.background = "var(--color-correct)"; 
+        } else {
+            btn.disabled = true;
+            btn.innerText = `Answer all ${qList.length} questions to submit (${answeredCount}/${qList.length})`;
+            btn.style.background = "var(--primary-blue)";
+        }
+    }
+
+    /* =========================================================================
+       6. PHASE 2 SCORING & REVIEW LOGIC
+       ========================================================================= */
+    function checkAnswerCorrectness(qId, qData) {
+        if (qData.type === 'mcq') {
+            return state.userAnswers[qId] === qData.correct;
+        } else if (qData.type === 'dnd') {
+            const ans = state.userAnswers[qId];
+            if(!ans) return false;
+            
+            let allClaimsCorrect = true;
+            
+            // Abstracted Evaluation: Validates dynamic quantities of claims
+            for (const claim of qData.claims) {
+                const userVals = claim.dropzones.map(dz => ans[dz]).filter(Boolean);
+                const correctVals = qData.correctSets[claim.id];
+                const claimIsCorrect = userVals.length === correctVals.length && correctVals.every(val => userVals.includes(val));
+                
+                if (!claimIsCorrect) {
+                    allClaimsCorrect = false;
+                    break;
+                }
+            }
+            return allClaimsCorrect;
+        }
+        return false;
+    }
+
+    function renderReviewMode() {
+        const container = document.getElementById('questions-container');
+        let html = '';
+        let score = 0;
+        const qList = questionsData.filter(q => q.type !== 'info');
+        const totalQs = qList.length;
+
+        const qHtmlBlocks = [];
+
+        qList.forEach((q, idx) => {
+            const isCorrect = checkAnswerCorrectness(q.id, q);
+            if (isCorrect) score++;
+
+            let qBlock = `<div class="review-item">
+                <div class="review-q-title">${idx + 1}. ${q.title}</div>`;
+
+            if (q.type === 'mcq') {
+                const userAns = state.userAnswers[q.id];
+                q.options.forEach(opt => {
+                    let className = "review-choice";
+                    let icon = "";
+                    if (opt.val === q.correct) {
+                        className += " correct-ans";
+                        icon = '<i class="fa-solid fa-check" style="margin-right:8px;"></i>';
+                    } else if (opt.val === userAns && opt.val !== q.correct) {
+                        className += " wrong-ans";
+                        icon = '<i class="fa-solid fa-xmark" style="margin-right:8px;"></i>';
+                    }
+                    qBlock += `<div class="${className}">${icon}${opt.text}</div>`;
+                });
+            } 
+            else if (q.type === 'dnd') {
+                const ans = state.userAnswers[q.id] || {};
+                const getTexts = (vals) => vals.map(v => q.bank.find(b => b.val === v)?.text).join(' & ');
+
+                // Abstracted Display: Maps user's answers against correct sets generically
+                q.claims.forEach(claim => {
+                    const userVals = claim.dropzones.map(dz => ans[dz]).filter(Boolean);
+                    const correctVals = q.correctSets[claim.id];
+                    const isClaimCorrect = userVals.length === correctVals.length && correctVals.every(val => userVals.includes(val));
+
+                    qBlock += `
+                        <div style="margin-bottom:1rem; padding: 1rem; background: #f8fafc; border-radius:4px;">
+                            <strong>${claim.text}</strong><br>
+                            <span style="color: ${isClaimCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">Your Answer: ${getTexts(userVals) || 'None'}</span><br>
+                            <span style="color: var(--color-correct); font-weight:bold;">Correct Answer: ${getTexts(correctVals)}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            // Explanation Block
+            const expClass = isCorrect ? 'correct' : 'incorrect';
+            const expTitle = isCorrect ? 'Correct!' : 'Incorrect. Review the explanation below:';
+            
+            qBlock += `
+                <div class="explanation-box ${expClass}" style="display:block;">
+                    <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+                    <div class="exp-en">${q.expEn}</div>
+                    <div class="exp-vn">${q.expVn}</div>
+                </div>
+            </div>`;
+
+            qHtmlBlocks.push(qBlock);
+        });
+
+        html += `
+            <div class="review-header">
+                <div style="font-size: 1.2rem; margin-bottom: 0.5rem; font-weight:600; color:var(--text-main);">Test Complete</div>
+                <div class="review-score">Score: ${score} / ${totalQs}</div>
+            </div>
+        `;
+        html += qHtmlBlocks.join('');
+        html += `
+            <div style="text-align:center; margin-top: 2rem;">
+                <button class="btn-primary" onclick="startPhase3()" style="font-size:1.2rem; padding:1rem 3rem;">
+                    Continue to Study Mode <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+                </button>
+            </div>
+        `;
+
+        container.innerHTML = html;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    /* =========================================================================
+       7. DRAG AND DROP ENGINE
+       ========================================================================= */
+    let draggedItem = null;
+
+    function drag(ev) {
+        if(state.phase !== 1) return;
+        // Improved: Ensures we grab the parent draggable, not inner elements (like icons)
+        draggedItem = ev.target.closest('.draggable-item');
+        if(!draggedItem) return;
+
+        ev.dataTransfer.setData("text", draggedItem.id);
+        ev.dataTransfer.effectAllowed = "move";
+        setTimeout(() => draggedItem.style.opacity = "0.5", 0);
+    }
+
+    function allowDrop(ev) {
+        if(state.phase !== 1) return;
+        ev.preventDefault();
+        const dropzone = ev.target.closest('.dropzone');
+        if(dropzone) dropzone.classList.add('dragover');
+    }
+
+    document.addEventListener('dragleave', (ev) => {
+        const dropzone = ev.target.closest('.dropzone');
+        if(dropzone) dropzone.classList.remove('dragover');
+    });
+
+    document.addEventListener('dragend', (ev) => {
+        if(draggedItem) draggedItem.style.opacity = "1";
+        document.querySelectorAll('.dropzone').forEach(el => el.classList.remove('dragover'));
+    });
+
+    function drop(ev, targetId) {
+        if(state.phase !== 1) return;
+        ev.preventDefault();
+        const data = ev.dataTransfer.getData("text");
+        const draggedEl = document.getElementById(data);
+        if(!draggedEl) return;
+
+        const dropTarget = document.getElementById(targetId);
+        
+        if (dropTarget.classList.contains('dropzone')) {
+            dropTarget.classList.remove('dragover');
+            
+            // If dropzone is full, send existing item back to bank safely
+            if (dropTarget.children.length > 0) {
+                const existingItem = dropTarget.children[0];
+                const qId = targetId.split('-')[0];
+                document.getElementById(`bank-${qId}`).appendChild(existingItem);
+            }
+            
+            dropTarget.innerHTML = ''; // Clear just in case
+            dropTarget.appendChild(draggedEl);
+            
+            const qId = targetId.split('-')[0];
+            checkDnDState(qId);
+            
+        } 
+        else if (dropTarget.classList.contains('options-bank')) {
+            dropTarget.appendChild(draggedEl);
+            const qId = targetId.split('-')[1];
+            checkDnDState(qId);
+        }
+    }
+
+    /* =========================================================================
+       8. UTILITIES (Responsive Split Pane Resizer)
+       ========================================================================= */
+    const resizer = document.getElementById('dragMe');
+    const leftPane = document.getElementById('left-pane');
+    let isResizing = false;
+
+    // Improved to support Touch Devices and generic axes
+    resizer.addEventListener('mousedown', startResize);
+    resizer.addEventListener('touchstart', startResize, {passive: false});
+
+    function startResize(e) {
+        isResizing = true;
+        document.body.style.cursor = 'col-resize';
+    }
+
+    document.addEventListener('mousemove', doResize);
+    document.addEventListener('touchmove', doResize, {passive: false});
+
+    function doResize(e) {
+        if (!isResizing) return;
+        
+        const layout = document.querySelector('.split-layout');
+        const isColumn = window.getComputedStyle(layout).flexDirection === 'column';
+        
+        // Normalize coordinates across mouse vs touch
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        if (isColumn) { // Mobile layout
+            const containerHeight = layout.offsetHeight;
+            const newHeight = (clientY / containerHeight) * 100;
+            if(newHeight > 20 && newHeight < 80) {
+                leftPane.style.flex = `0 0 ${newHeight}%`;
+            }
+        } else { // Desktop Layout
+            const containerWidth = layout.offsetWidth;
+            const newWidth = (clientX / containerWidth) * 100;
+            if(newWidth > 20 && newWidth < 80) {
+                leftPane.style.flex = `0 0 ${newWidth}%`;
+            }
+        }
+    }
+
+    function stopResize() {
+        if(isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+        }
+    }
+
+    document.addEventListener('mouseup', stopResize);
+    document.addEventListener('touchend', stopResize);
+
+    // Boot
+    window.onload = init;
+</script>
+</body>
+</html>
