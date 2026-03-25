@@ -624,12 +624,15 @@
             content: `
                 <div class="info-box" style="padding: 2.5rem; background: #f9f9f9;">
                     <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><strong>Welcome to the Pronoun Practice.</strong></p>
-                    <p style="margin-bottom: 1.5rem;">This untimed practice contains two types of interactive questions designed for the GED:</p>
+                    <p style="margin-bottom: 1.5rem;">This untimed practice contains three types of interactive questions designed for the GED:</p>
                     
                     <ul style="margin-left: 2rem; margin-bottom: 2rem;">
                         <li style="margin-bottom: 0.5rem;"><strong>Practice 1: Drop-Down Menus.</strong> Choose the correct pronoun from the inline list. You will receive immediate feedback after your selection.</li>
                         <li style="margin-bottom: 0.5rem;"><strong>Practice 2: Drag-and-Drop.</strong> Complete the business passage by dragging pronouns into the correct blanks. Click "Check Answers" when finished.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Practice 3: General Grammar Passage.</strong> Complete the final business passage by selecting the correct verbs and phrases from the drop-down menus to test verb tense, agreement, and parallel structure.</li>
                     </ul>
+                    
+                    <p style="margin-bottom: 1.5rem;">Your final score will be calculated at the end of the practice, combining your results from all three sections.</p>
                     
                     <p style="font-weight: 600; color: var(--primary-blue); margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
                         Click "Begin Practice" to start.
@@ -768,6 +771,22 @@
             },
             expEn: "<strong>1. its:</strong> Replaces 'any business' (singular).<br><strong>2. his:</strong> Replaces Mr. Davis, showing possession of his team.<br><strong>3. them:</strong> Object pronoun. Mr. Davis taught 'them' (the team).<br><strong>4. her:</strong> Shows Linda's possession of the experience.<br><strong>5. they:</strong> Subject pronoun replacing plural 'employees'.<br><strong>6. it:</strong> Dummy subject. Hiding the point makes 'it' (the email) difficult.<br><strong>7. their:</strong> Possessive for 'all the workers' (plural).<br><strong>8. them:</strong> Object pronoun. Mr. Davis was proud of 'them'.",
             expVn: "<strong>1. its:</strong> Thay thế cho 'any business' (doanh nghiệp, số ít).<br><strong>2. his:</strong> Thay thế cho Mr. Davis, thể hiện sự sở hữu.<br><strong>3. them:</strong> Làm tân ngữ. Mr. Davis dạy 'họ'.<br><strong>4. her:</strong> Thể hiện sự sở hữu kinh nghiệm của Linda.<br><strong>5. they:</strong> Chủ ngữ thay thế cho 'employees' (nhân viên, số nhiều).<br><strong>6. it:</strong> Chủ ngữ giả. Việc giấu ý chính làm cho 'nó' (email) khó đọc.<br><strong>7. their:</strong> Sở hữu cách chỉ thói quen của 'tất cả công nhân'.<br><strong>8. them:</strong> Làm tân ngữ. Mr. Davis tự hào về 'họ'."
+        },
+        // Practice 3: General Grammar Dropdown Passage
+        {
+            id: 'q14',
+            type: 'dropdown-passage',
+            title: "14. General Grammar Practice: Complete the passage by selecting the correct options.",
+            passage: "<strong>City Council Renovation Project</strong><br><br>Last year, the city council [DROP1] to renovate the downtown park. Many residents [DROP2] thrilled about the project. However, the new budget [DROP3] without public input. If the mayor [DROP4] about the backlash, she might have delayed the vote. The new park features a playground, a splash pad, and [DROP5].",
+            dropdowns: {
+                "DROP1": { options: ["decided", "decides", "deciding"], correct: "decided" },
+                "DROP2": { options: ["was", "were", "is"], correct: "were" },
+                "DROP3": { options: ["was approved", "approved", "has approved"], correct: "was approved" },
+                "DROP4": { options: ["had known", "knew", "knows"], correct: "had known" },
+                "DROP5": { options: ["to have a picnic area", "a picnic area", "having a picnic area"], correct: "a picnic area" }
+            },
+            expEn: "<strong>1. decided:</strong> 'Last year' indicates past tense.<br><strong>2. were:</strong> 'Residents' is plural, requiring 'were'.<br><strong>3. was approved:</strong> Passive voice is needed here.<br><strong>4. had known:</strong> 3rd conditional requires past perfect 'had known'.<br><strong>5. a picnic area:</strong> Parallel structure (a playground, a splash pad, and a picnic area).",
+            expVn: "<strong>1. decided:</strong> 'Last year' (Năm ngoái) chỉ thì quá khứ.<br><strong>2. were:</strong> 'Residents' (cư dân) là số nhiều, dùng 'were'.<br><strong>3. was approved:</strong> Câu bị động (được phê duyệt).<br><strong>4. had known:</strong> Câu điều kiện loại 3 dùng quá khứ hoàn thành.<br><strong>5. a picnic area:</strong> Cấu trúc song song (các danh từ nối với nhau bằng 'and')."
         }
     ];
 
@@ -865,6 +884,37 @@
                     <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
                 `;
             }
+            else if (q.type === 'dropdown-passage') {
+                let passageHtml = q.passage;
+                Object.keys(q.dropdowns).forEach(dropId => {
+                    let selectHtml = `<select class="inline-select" id="${q.id}-${dropId}" onchange="handleDropdownPassageSelection('${q.id}')">`;
+                    selectHtml += `<option value="" disabled selected>Choose...</option>`;
+                    q.dropdowns[dropId].options.forEach(opt => {
+                        selectHtml += `<option value="${opt}">${opt}</option>`;
+                    });
+                    selectHtml += `</select>`;
+                    passageHtml = passageHtml.replace(`[${dropId}]`, selectHtml);
+                });
+
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)">
+                            Flag for Review
+                        </label>
+                    </div>
+                    <div class="info-box passage-text" style="background: #fff; border: 1px solid var(--border-color);">
+                        ${passageHtml}
+                    </div>
+                    <div style="text-align:center; margin-top: 2rem;">
+                        <button id="btn-check-${q.id}" class="btn-primary" style="font-size: 1.2rem; padding: 0.75rem 2rem;" onclick="evaluateDropdownPassage('${q.id}')" disabled>
+                            Check Answers
+                        </button>
+                    </div>
+                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                `;
+            }
             
             slide.innerHTML = html;
             container.appendChild(slide);
@@ -909,119 +959,6 @@
         document.getElementById('main-footer').style.display = 'none';
         renderReviewMode();
     }
-
-    function startPhase3() {
-        state.phase = 3;
-        document.body.className = 'phase-3'; 
-        
-        const container = document.getElementById('questions-container');
-        
-        container.innerHTML = `
-            <div class="q-title section-title center">Phase 3: General Grammar Practice</div>
-            <div class="info-box">
-                <p style="margin-bottom: 1rem;">Complete the following passage by selecting the grammatically correct option from each drop-down menu. This section tests verb tense, subject-verb agreement, and parallel structure.</p>
-                
-                <div class="passage-text" style="background: #fff; padding: 2rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 1.15rem; line-height: 2.2;">
-                    <strong>City Council Renovation Project</strong><br><br>
-                    Last year, the city council 
-                    <select id="p3-q1" class="inline-select">
-                        <option value="" disabled selected>Choose...</option>
-                        <option value="decided">decided</option>
-                        <option value="decides">decides</option>
-                        <option value="deciding">deciding</option>
-                    </select> 
-                    to renovate the downtown park. Many residents 
-                    <select id="p3-q2" class="inline-select">
-                        <option value="" disabled selected>Choose...</option>
-                        <option value="was">was</option>
-                        <option value="were">were</option>
-                        <option value="is">is</option>
-                    </select> 
-                    thrilled about the project. However, the new budget 
-                    <select id="p3-q3" class="inline-select">
-                        <option value="" disabled selected>Choose...</option>
-                        <option value="was approved">was approved</option>
-                        <option value="approved">approved</option>
-                        <option value="has approved">has approved</option>
-                    </select> 
-                    without public input. If the mayor 
-                    <select id="p3-q4" class="inline-select">
-                        <option value="" disabled selected>Choose...</option>
-                        <option value="had known">had known</option>
-                        <option value="knew">knew</option>
-                        <option value="knows">knows</option>
-                    </select> 
-                    about the backlash, she might have delayed the vote. The new park features a playground, a splash pad, and 
-                    <select id="p3-q5" class="inline-select">
-                        <option value="" disabled selected>Choose...</option>
-                        <option value="to have a picnic area">to have a picnic area</option>
-                        <option value="a picnic area">a picnic area</option>
-                        <option value="having a picnic area">having a picnic area</option>
-                    </select>.
-                </div>
-
-                <div style="text-align:center; margin-top: 2rem;">
-                    <button class="btn-primary" onclick="evaluatePhase3()" style="font-size:1.2rem; padding:1rem 3rem;">
-                        Check Answers
-                    </button>
-                </div>
-                <div id="phase3-feedback" style="display:none; margin-top: 1.5rem;"></div>
-            </div>
-        `;
-        document.getElementById('right-pane').scrollTop = 0;
-    }
-
-    // Evaluation Logic for the General Grammar Passage
-    function evaluatePhase3() {
-        const answers = {
-            'p3-q1': 'decided',
-            'p3-q2': 'were',
-            'p3-q3': 'was approved',
-            'p3-q4': 'had known',
-            'p3-q5': 'a picnic area'
-        };
-        let score = 0;
-        let total = 5;
-
-        for (let id in answers) {
-            const select = document.getElementById(id);
-            if (!select) continue;
-            
-            select.disabled = true;
-            
-            if (select.value === answers[id]) {
-                score++;
-                select.classList.add('correct-ans');
-                select.classList.remove('wrong-ans');
-            } else {
-                select.classList.add('wrong-ans');
-                select.classList.remove('correct-ans');
-                
-                // Show the correct answer inline if they got it wrong
-                if(!select.nextElementSibling || select.nextElementSibling.className !== 'correction-span') {
-                    const correctSpan = document.createElement('span');
-                    correctSpan.className = 'correction-span';
-                    correctSpan.innerHTML = ` <i class="fa-solid fa-arrow-right"></i> ${answers[id]}`;
-                    correctSpan.style.color = 'var(--color-correct)';
-                    correctSpan.style.fontWeight = 'bold';
-                    correctSpan.style.fontSize = '1rem';
-                    correctSpan.style.marginRight = '0.5rem';
-                    select.parentNode.insertBefore(correctSpan, select.nextSibling);
-                }
-            }
-        }
-
-        const fb = document.getElementById('phase3-feedback');
-        fb.style.display = 'block';
-        if (score === total) {
-            fb.className = 'explanation-box correct';
-            fb.innerHTML = `<div style="text-align:center; font-size: 1.25rem;"><strong>Perfect!</strong> You scored ${score} / ${total}. All modules complete!</div>`;
-        } else {
-            fb.className = 'explanation-box incorrect';
-            fb.innerHTML = `<div style="text-align:center; font-size: 1.25rem;"><strong>Review Needed:</strong> You scored ${score} / ${total}. Check the correct answers highlighted in green above.</div>`;
-        }
-    }
-
 
     /* =========================================================================
        5. PHASE 1 PRACTICE LOGIC (Immediate Feedback)
@@ -1184,6 +1121,90 @@
         updateNavigationUI();
     }
 
+    // Evaluates state of Dropdown Passage to toggle the "Check Answers" button
+    function handleDropdownPassageSelection(qId) {
+        if (state.evaluated.has(qId)) return;
+        
+        const qConfig = questionsData.find(q => q.id === qId);
+        let ansObj = {};
+        let filledCount = 0;
+        const totalDropdowns = Object.keys(qConfig.dropdowns).length;
+
+        Object.keys(qConfig.dropdowns).forEach(dropId => {
+            const selectEl = document.getElementById(`${qId}-${dropId}`);
+            if (selectEl && selectEl.value) {
+                ansObj[dropId] = selectEl.value;
+                filledCount++;
+            }
+        });
+
+        state.userAnswers[qId] = ansObj;
+
+        // Enable check button only when all dropdowns are filled
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) {
+            checkBtn.disabled = (filledCount !== totalDropdowns);
+        }
+    }
+
+    // Immediate Feedback for Dropdown Passage
+    function evaluateDropdownPassage(qId) {
+        if (state.evaluated.has(qId)) return;
+        state.evaluated.add(qId);
+        
+        const q = questionsData.find(x => x.id === qId);
+        
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) checkBtn.style.display = 'none';
+        
+        let allCorrect = true;
+        
+        Object.keys(q.dropdowns).forEach(dropId => {
+            const select = document.getElementById(`${qId}-${dropId}`);
+            const userVal = state.userAnswers[qId]?.[dropId];
+            const correctVal = q.dropdowns[dropId].correct;
+            const isCorrect = userVal === correctVal;
+            
+            if(!isCorrect) allCorrect = false;
+            
+            // Lock selection
+            select.disabled = true;
+            if (isCorrect) {
+                select.classList.add('correct-ans');
+            } else {
+                select.classList.add('wrong-ans');
+                // Show the correct answer inline if they got it wrong
+                if(!select.nextElementSibling || select.nextElementSibling.className !== 'correction-span') {
+                    const correctSpan = document.createElement('span');
+                    correctSpan.className = 'correction-span';
+                    correctSpan.innerHTML = ` <i class="fa-solid fa-arrow-right"></i> ${correctVal}`;
+                    correctSpan.style.color = 'var(--color-correct)';
+                    correctSpan.style.fontWeight = 'bold';
+                    correctSpan.style.fontSize = '1rem';
+                    correctSpan.style.marginRight = '0.5rem';
+                    select.parentNode.insertBefore(correctSpan, select.nextSibling);
+                }
+            }
+        });
+        
+        // Reveal Explanation
+        const fb = document.getElementById(`feedback-${qId}`);
+        const expClass = allCorrect ? 'correct' : 'incorrect';
+        const expTitle = allCorrect ? 'Perfect!' : 'Review the correct answers below:';
+        
+        fb.className = `explanation-box ${expClass}`;
+        fb.innerHTML = `
+            <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+            <div class="exp-en">${q.expEn}</div>
+            <div class="exp-vn">${q.expVn}</div>
+        `;
+        fb.style.display = 'block';
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+
     // Final "Submit Gate" logic tracking if they EVALUATED everything
     function updateSubmitSlide() {
         const container = document.getElementById('submit-summary-list');
@@ -1239,6 +1260,16 @@
                 }
             });
             return allBlanksCorrect;
+        } else if (qData.type === 'dropdown-passage') {
+            const ans = state.userAnswers[qId];
+            if(!ans) return false;
+            let allBlanksCorrect = true;
+            Object.keys(qData.dropdowns).forEach(dropId => {
+                if (ans[dropId] !== qData.dropdowns[dropId].correct) {
+                    allBlanksCorrect = false;
+                }
+            });
+            return allBlanksCorrect;
         }
         return false;
     }
@@ -1268,6 +1299,16 @@
                 q.blanks.forEach(b => { if(ans[b] === q.correctAnswers[b]) claimScore++; });
                 score += claimScore;
                 isCorrect = (claimScore === q.blanks.length); 
+            } else if (q.type === 'dropdown-passage') {
+                const dropKeys = Object.keys(q.dropdowns);
+                totalPossibleScore += dropKeys.length;
+                const ans = state.userAnswers[q.id] || {};
+                let claimScore = 0;
+                dropKeys.forEach(dropId => { 
+                    if(ans[dropId] === q.dropdowns[dropId].correct) claimScore++; 
+                });
+                score += claimScore;
+                isCorrect = (claimScore === dropKeys.length); 
             }
 
             let qBlock = `<div class="review-item">
@@ -1306,6 +1347,25 @@
                 });
                 qBlock += `</div></div>`;
             }
+            else if (q.type === 'dropdown-passage') {
+                const ans = state.userAnswers[q.id] || {};
+                qBlock += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">`;
+                
+                Object.keys(q.dropdowns).forEach((dropId, i) => {
+                    const userVal = ans[dropId] || 'None';
+                    const correctVal = q.dropdowns[dropId].correct;
+                    const isBlankCorrect = userVal === correctVal;
+
+                    qBlock += `
+                        <div style="padding: 0.75rem; background: #f8fafc; border-radius:4px; border-left: 4px solid ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                            <strong>Blank ${i + 1}</strong><br>
+                            Your Answer: <span style="font-weight: 600; color: ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">${userVal}</span><br>
+                            ${!isBlankCorrect ? `<span style="color: var(--color-correct); font-weight:bold;">Correct: ${correctVal}</span>` : `<span style="color: var(--color-correct); font-size: 0.85rem;"><i class="fa-solid fa-check"></i> Correct</span>`}
+                        </div>
+                    `;
+                });
+                qBlock += `</div></div>`;
+            }
 
             qHtmlBlocks.push(qBlock);
         });
@@ -1319,10 +1379,8 @@
         `;
         html += qHtmlBlocks.join('');
         html += `
-            <div style="text-align:center; margin-top: 2rem;">
-                <button class="btn-primary" onclick="startPhase3()" style="font-size:1.2rem; padding:1rem 3rem;">
-                    Continue to General Grammar Practice <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
-                </button>
+            <div style="text-align:center; margin-top: 2rem; margin-bottom: 4rem;">
+                <p style="color: var(--text-muted); font-style: italic; font-size: 1.1rem;">You have completed the grammar practice activity. Great job!</p>
             </div>
         `;
 
