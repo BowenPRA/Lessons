@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED RLA: Pronoun Mastery Guide</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEMING
+           ========================================================================== */
+        :root {
+            /* Colors */
+            --bg-page: #f4f5f7;        
+            --bg-panel: #ffffff; 
+            --primary-blue: #005A9C;    
+            --primary-blue-hover: #00447a;
+            --selected-blue: #e6f0fa;
+            --border-color: #cccccc;
+            
+            /* Text Colors */
+            --text-main: #333333;        
+            --text-muted: #666666;
+            --color-correct: #166534;
+            --color-incorrect: #991b1b;
+            
+            /* Layout Dimensions */
+            --header-h: 60px;
+            --footer-h: 70px;
+            
+            /* Typography */
+            --font-ui: 'Open Sans', Arial, sans-serif;            
+            --font-passage: 'Noto Serif', 'Times New Roman', Times, serif; 
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-ui);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT & GRID
+           ========================================================================== */
+        .app-shell { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+        }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            background: var(--primary-blue);
+            z-index: 50;
+        }
+
+        .split-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--header-h) - var(--footer-h));
+            overflow: hidden;
+        }
+
+        .pane-left, .pane-right {
+            background: var(--bg-panel);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .pane-left { flex: 0 0 50%; }
+        .pane-right { flex: 1; position: relative; }
+
+        .resizer {
+            flex: 0 0 8px;
+            background: #e0e0e0;
+            cursor: col-resize;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .resizer:hover, .resizer:active { background: #c0c0c0; }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            z-index: 50;
+        }
+
+        /* ==========================================================================
+           4. TYPOGRAPHY & LESSON STYLING
+           ========================================================================== */
+        .header-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+        .section-title.primary { color: var(--primary-blue); }
+        .section-title.center { text-align: center; }
+
+        .passage-title { 
+            font-family: var(--font-ui); 
+            font-size: 1.4rem; 
+            font-weight: 700;
+            margin: 1.5rem 0 0.5rem 0;
+            color: var(--text-main);
+        }
+
+        .passage-meta { 
+            color: var(--text-muted); 
+            font-style: italic; 
+            font-size: 0.95rem; 
+            margin-bottom: 1.5rem; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 1rem;
+        }
+        
+        .paragraph { 
+            font-family: var(--font-passage);
+            font-size: 1.15rem; 
+            line-height: 1.8; 
+            color: var(--text-main); 
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--text-main);
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        table.grammar-chart {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: #ffffff;
+            font-size: 1.05rem;
+        }
+        table.grammar-chart th, table.grammar-chart td {
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+        table.grammar-chart th {
+            background: var(--selected-blue);
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+        table.grammar-chart td { font-family: var(--font-passage); }
+
+        .rule-box {
+            background: #ffffff;
+            border-left: 4px solid var(--primary-blue);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* ==========================================================================
+           5. COMPONENTS (Buttons, Flags)
+           ========================================================================== */
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-primary:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            color: #666;
+        }
+
+        .btn-nav {
+            background: var(--primary-blue);
+            border: 1px solid var(--primary-blue-hover);
+            padding: 0.6rem 2rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-nav:disabled {
+            background: #cccccc;
+            color: #666666;
+            border-color: #bbbbbb;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .flag-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e65100;
+            cursor: pointer;
+            user-select: none;
+        }
+        .flag-container input { cursor: pointer; transform: scale(1.2); }
+
+        .nav-progress { font-weight: 600; color: var(--text-main); font-size: 1.05rem; }
+
+        /* ==========================================================================
+           6. QUESTION UI (Inline Dropdowns & Drag-and-Drop)
+           ========================================================================== */
+        .question-slide { display: none; }
+        .question-slide.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .q-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .q-title {
+            font-family: var(--font-ui);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        /* Inline Dropdown Styling */
+        .inline-select {
+            font-family: var(--font-ui);
+            font-size: 1.1rem;
+            padding: 0.2rem 0.5rem;
+            border: 2px solid var(--primary-blue);
+            border-radius: 4px;
+            background: #ffffff;
+            color: var(--primary-blue);
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            margin: 0 0.25rem;
+            transition: all 0.2s;
+        }
+        .inline-select:focus { box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.2); }
+        .inline-select:disabled { cursor: not-allowed; opacity: 1; }
+        .inline-select.correct-ans { background: #f0fdf4; border-color: var(--color-correct); color: var(--color-correct); }
+        .inline-select.wrong-ans { background: #fef2f2; border-color: var(--color-incorrect); color: var(--color-incorrect); }
+
+        /* Drag and Drop Container */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        /* Floating/Sticky Word Bank */
+        .options-bank {
+            position: sticky;
+            top: -2rem; /* Matches pane padding for seamless edge */
+            margin: -2rem -2rem 0 -2rem; 
+            padding: 1.5rem 2rem;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 2px solid var(--primary-blue);
+            box-shadow: 0 6px 10px -4px rgba(0,0,0,0.15);
+            min-height: 90px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .draggable-item {
+            background: #ffffff;
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: grab;
+            font-size: 0.95rem;
+            font-family: var(--font-ui);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            user-select: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .draggable-item:active { cursor: grabbing; }
+        .draggable-item.locked { cursor: not-allowed; opacity: 0.8; }
+        
+        /* Inline Dropzones for Passage */
+        .inline-dz {
+            display: inline-flex;
+            min-width: 80px;
+            height: 34px;
+            vertical-align: middle;
+            margin: 0 0.25rem;
+            padding: 0 0.5rem;
+            font-size: 0.95rem;
+            background: #f4f5f7;
+            border: 2px dashed #cccccc;
+            color: var(--text-muted);
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .inline-dz.dragover { background: var(--selected-blue); border-color: var(--primary-blue); }
+        .inline-dz.correct-ans { background: #f0fdf4; border-color: var(--color-correct); }
+        .inline-dz.wrong-ans { background: #fef2f2; border-color: var(--color-incorrect); }
+        
+        .inline-dz .draggable-item {
+            padding: 0; margin: 0; border: none; box-shadow: none; background: transparent;
+            color: var(--primary-blue); font-weight: 700; font-size: 1.1rem; cursor: grab;
+        }
+        .inline-dz.correct-ans .draggable-item { color: var(--color-correct); }
+        .inline-dz.wrong-ans .draggable-item { color: var(--color-incorrect); }
+        .inline-dz .draggable-item i { display: none; }
+        .inline-dz .draggable-item.locked { cursor: not-allowed; }
+
+        .passage-text {
+            font-family: var(--font-passage);
+            font-size: 1.15rem;
+            line-height: 2.2;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        /* ==========================================================================
+           7. PHASE-SPECIFIC STYLES & OVERRIDES
+           ========================================================================== */
+        
+        .esl-tip {
+            background: #fffbe6;
+            border-left: 4px solid #ffe58f;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+        .keyword {
+            background-color: #fffac0;
+            border-bottom: 2px dotted var(--text-muted);
+            color: var(--text-main);
+            font-weight: normal;
+            cursor: pointer;
+            padding: 0 2px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .keyword:hover { background-color: #ffe680; }
+
+        body.phase-1 .keyword, body.phase-4 .keyword {
+            background-color: transparent !important;
+            border-bottom: none !important;
+            color: inherit !important;
+            cursor: text !important;
+            pointer-events: none !important;
+        }
+        body.phase-1 .esl-tip, body.phase-3 .esl-tip, body.phase-4 .esl-tip { display: none !important; }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+        }
+        .summary-item:last-child { border-bottom: none; }
+
+        /* Review Screen / Final Summary */
+        .review-header {
+            text-align: center;
+            padding: 2rem;
+            background: var(--selected-blue);
+            border: 1px solid var(--primary-blue);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .review-score {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-top: 0.5rem;
+        }
+        .review-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: #ffffff;
+        }
+        .review-q-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .review-choice {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            background: #f9f9f9;
+            font-size: 1.1rem;
+        }
+        .review-choice.correct-ans { background-color: #f0fdf4; border-color: #bbf7d0; color: var(--color-correct); }
+        .review-choice.wrong-ans { background-color: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); }
+
+        .explanation-box {
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            line-height: 1.6;
+            border: 1px solid;
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: #334155;
+        }
+        .explanation-box.correct { background-color: #f0fdf4; border-color: #bbf7d0; color: var(--color-correct); }
+        .explanation-box.incorrect { background-color: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); }
+        .exp-en { margin-bottom: 0.8rem; }
+        .exp-vn { font-style: italic; font-family: var(--font-passage); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.8rem; }
+
+        /* Dictionary */
+        .study-instructions {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .study-instructions p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #b45309;
+            line-height: 1.5;
+        }
+        .study-dict {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            min-height: 300px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .dict-term { font-family: var(--font-ui); font-size: 1.8rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 1.5rem; border-bottom: 2px solid var(--selected-blue); padding-bottom: 0.5rem;}
+        .dict-section { margin-bottom: 1.5rem; }
+        .dict-label { font-weight: 700; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dict-text { margin-top: 0.5rem; line-height: 1.6; font-size: 1.1rem;}
+        .dict-empty { color: var(--text-muted); font-style: italic; text-align: center; margin-top: 3rem; }
+
+        /* ==========================================================================
+           8. UTILITIES & RESPONSIVE DESIGN
+           ========================================================================== */
+        @keyframes fadeIn { from {opacity: 0;} to { opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .split-layout { flex-direction: column; }
+            .pane-left, .pane-right { flex: 1 1 50%; }
+            .resizer { height: 8px; width: 100%; cursor: row-resize; }
+        }
+    </style>
+</head>
+<body class="phase-0">
+
+<div class="app-shell">
+    
+    <header class="header">
+        <div class="header-title">GED® Reading Language Arts - Grammar Practice</div>
+    </header>
+
+    <main class="split-layout">
+        
+        <!-- LEFT PANE: LESSON CONTENT -->
+        <section class="pane-left" id="left-pane" aria-label="Lesson Content">
+            
+            <article id="intro-overview" style="display: block;">
+                <h1 class="section-title primary">Activity Overview</h1>
+                <div class="info-box">
+                    <p style="margin-bottom: 1rem;">This is an interactive grammar lesson focusing on Pronoun Agreement, a highly tested topic on the GED RLA exam.</p>
+                    <p>Read the study guide carefully before proceeding to the practice questions.</p>
+                </div>
+            </article>
+
+            <article id="reading-passage" style="display: none;">
+                <div class="esl-tip">
+                    <strong>ESL Tip:</strong> Click on the <span class="keyword" data-term="Grammar Terms">highlighted words</span> to see their English definitions and Vietnamese translations.
+                </div>
+
+                <h1 class="section-title">GED RLA: Pronoun Mastery Guide</h1>
+                <div class="passage-meta">For Vietnamese ESL Students</div>
+
+                <div class="paragraph">
+                    <strong>What is a <span class="keyword" data-term="Pronoun">Pronoun</span>?</strong> (Đại từ là gì?)<br>
+                    A pronoun is a short word that takes the place of a <span class="keyword" data-term="Noun">noun</span> (a person, place, or thing).
+                </div>
+                
+                <div class="paragraph">
+                    <ul>
+                        <li style="margin-bottom: 0.5rem;"><strong>Reason we use them:</strong> We use pronouns so we do not have to repeat the same noun over and over.</li>
+                        <li><strong>Example:</strong> Instead of saying, "Maria left Maria's phone on Maria's desk," we say, "Maria left her phone on her desk."</li>
+                    </ul>
+                </div>
+
+                <h2 class="passage-title" style="margin-top: 2rem;">The Pronoun Chart (Bảng Đại từ)</h2>
+                <div class="paragraph" style="font-size: 1rem;">Use this chart to know which pronoun to use depending on its job in the sentence.</div>
+
+                <table class="grammar-chart">
+                    <thead>
+                        <tr>
+                            <th>Person (Ngôi)</th>
+                            <th><span class="keyword" data-term="Subject">Subject</span><br>(Chủ ngữ - trước ĐT)</th>
+                            <th><span class="keyword" data-term="Object">Object</span><br>(Tân ngữ - sau ĐT)</th>
+                            <th><span class="keyword" data-term="Possessive">Possessive</span><br>(Sở hữu - đi với DT)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1st <span class="keyword" data-term="Singular">Singular</span> (Tôi)</td>
+                            <td><strong>I</strong> (I work)</td>
+                            <td><strong>me</strong> (Call me)</td>
+                            <td><strong>my</strong> (my book)</td>
+                        </tr>
+                        <tr>
+                            <td>2nd Singular/<span class="keyword" data-term="Plural">Plural</span><br>(Bạn/Các bạn)</td>
+                            <td><strong>You</strong> (You work)</td>
+                            <td><strong>you</strong> (Call you)</td>
+                            <td><strong>your</strong> (your book)</td>
+                        </tr>
+                        <tr>
+                            <td>3rd Singular Male (Anh ấy)</td>
+                            <td><strong>He</strong> (He works)</td>
+                            <td><strong>him</strong> (Call him)</td>
+                            <td><strong>his</strong> (his book)</td>
+                        </tr>
+                        <tr>
+                            <td>3rd Singular Female (Cô ấy)</td>
+                            <td><strong>She</strong> (She works)</td>
+                            <td><strong>her</strong> (Call her)</td>
+                            <td><strong>her</strong> (her book)</td>
+                        </tr>
+                        <tr>
+                            <td>3rd Singular Thing (Nó)</td>
+                            <td><strong>It</strong> (It works)</td>
+                            <td><strong>it</strong> (Call it)</td>
+                            <td><strong>its</strong> (its book)</td>
+                        </tr>
+                        <tr>
+                            <td>1st Plural (Chúng tôi)</td>
+                            <td><strong>We</strong> (We work)</td>
+                            <td><strong>us</strong> (Call us)</td>
+                            <td><strong>our</strong> (our book)</td>
+                        </tr>
+                        <tr>
+                            <td>3rd Plural (Họ/Chúng)</td>
+                            <td><strong>They</strong> (They work)</td>
+                            <td><strong>them</strong> (Call them)</td>
+                            <td><strong>their</strong> (their book)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 class="passage-title" style="margin-top: 2rem;">How Pronouns Appear on the GED Test</h2>
+                <div class="paragraph">On the GED RLA test, you will be asked to fix sentences where pronouns are used incorrectly. The test focuses on these main rules:</div>
+
+                <div class="rule-box">
+                    <strong style="color: var(--primary-blue); font-size: 1.2rem;">Rule 1: Pronoun Agreement (Sự hòa hợp số ít/số nhiều)</strong>
+                    <div class="paragraph" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">A pronoun must match the noun it replaces. If the noun is singular (one), the pronoun must be singular. If the noun is plural (many), the pronoun must be plural.</div>
+                    <ul style="list-style-type: none; margin-left: 0;">
+                        <li style="margin-bottom: 0.25rem;"><span style="color: #d32f2f;">☒ Incorrect:</span> The company requires <em>their</em> employees to wear uniforms. (Company is ONE thing, so "their" is wrong).</li>
+                        <li><span style="color: #388e3c;">☑ Correct:</span> The company requires <strong>its</strong> employees to wear uniforms.</li>
+                    </ul>
+                </div>
+
+                <div class="rule-box">
+                    <strong style="color: var(--primary-blue); font-size: 1.2rem;">Rule 2: Unclear Pronouns (Đại từ không rõ ràng)</strong>
+                    <div class="paragraph" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">If a sentence has two people or two things of the same gender/type, a pronoun can confuse the reader. You must rewrite the sentence to make it completely clear.</div>
+                    <ul style="list-style-type: none; margin-left: 0;">
+                        <li style="margin-bottom: 0.25rem;"><span style="color: #d32f2f;">☒ Incorrect:</span> When John spoke to David, <em>he</em> was angry. (Who was angry? John or David? It is unclear!)</li>
+                        <li><span style="color: #388e3c;">☑ Correct:</span> When John spoke to David, <strong>John</strong> was angry.</li>
+                    </ul>
+                </div>
+
+                <div class="rule-box">
+                    <strong style="color: var(--primary-blue); font-size: 1.2rem;">Rule 3: The "They" vs. "He or She" Trap</strong>
+                    <div class="paragraph" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">This is a very common trick on the GED test! In everyday spoken English, people often use the plural pronouns they, them, or their to talk about one person if they don't know the person's gender (like "a student," "a customer," or "anybody").</div>
+                    <div class="paragraph" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">However, formal writing on the GED test requires strict grammar. On the GED, they/them/their is STRICTLY PLURAL (more than one). Because words like "a customer" or "a person" are singular, you MUST use the singular pronoun <strong>he or she</strong> (or his or her).</div>
+                    <ul style="list-style-type: none; margin-left: 0;">
+                        <li style="margin-bottom: 0.25rem;"><span style="color: #d32f2f;">☒ Incorrect (Everyday):</span> If a customer calls, tell <em>them</em> to wait.</li>
+                        <li><span style="color: #388e3c;">☑ Correct (GED):</span> If a customer calls, tell <strong>him or her</strong> to wait.</li>
+                    </ul>
+                    <div style="margin-top: 0.5rem; font-size: 0.95rem; font-style: italic; color: var(--text-muted);">Teacher's Tip: If "him or her" sounds awkward, the best way to fix it is to make the noun plural: If customers call, tell them to wait.</div>
+                </div>
+
+            </article>
+        </section>
+
+        <div class="resizer" id="dragMe" title="Drag to resize"></div>
+
+        <!-- RIGHT PANE: QUESTIONS & MODES -->
+        <aside class="pane-right" id="right-pane" aria-label="Interactive Workspace">
+            <div id="questions-container">
+                <!-- Question Slides injected dynamically here via JS -->
+            </div>
+        </aside>
+    </main>
+
+    <footer class="footer" id="main-footer">
+        <button class="btn-nav" id="btn-prev" onclick="navigate(-1)">Previous</button>
+        <div class="nav-progress" id="nav-progress" aria-live="polite">Start Practice</div>
+        <button class="btn-nav" id="btn-next" onclick="navigate(1)">Next</button>
+    </footer>
+
+</div>
+
+<script>
+    /* =========================================================================
+       1. DATA SCHEMAS & CONFIGURATION
+       ========================================================================= */
+
+    const questionsData = [
+        {
+            id: 'intro',
+            type: 'info',
+            title: "Phase 1: Practice Mode",
+            content: `
+                <div class="info-box" style="padding: 2.5rem; background: #f9f9f9;">
+                    <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><strong>Welcome to the Pronoun Practice.</strong></p>
+                    <p style="margin-bottom: 1.5rem;">This untimed practice contains two types of interactive questions designed for the GED:</p>
+                    
+                    <ul style="margin-left: 2rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.5rem;"><strong>Practice 1: Drop-Down Menus.</strong> Choose the correct pronoun from the inline list. You will receive immediate feedback after your selection.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Practice 2: Drag-and-Drop.</strong> Complete the business passage by dragging pronouns into the correct blanks. Click "Check Answers" when finished.</li>
+                    </ul>
+                    
+                    <p style="font-weight: 600; color: var(--primary-blue); margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        Click "Begin Practice" to start.
+                    </p>
+                    <button class="btn-primary" onclick="startPhase1()" style="font-size: 1.1rem; padding: 1rem 2rem; margin-top: 1rem;">Begin Practice</button>
+                </div>
+            `
+        },
+        // Practice 1: Drop-Downs
+        {
+            id: 'q1', type: 'dropdown',
+            title: "1. Select the correct pronoun from the drop-down menu.",
+            sentence: "The manager asked the new employees to submit [DROP] paperwork by Friday.",
+            options: ["they", "them", "their"],
+            correct: "their",
+            expEn: "\"Employees\" is plural, and the paperwork belongs to them. \"Their\" is the plural possessive pronoun.",
+            expVn: "\"Employees\" (các nhân viên) là số nhiều, và giấy tờ thuộc về họ. Dùng \"their\" (của họ) là đại từ sở hữu số nhiều."
+        },
+        {
+            id: 'q2', type: 'dropdown',
+            title: "2. Select the correct pronoun from the drop-down menu.",
+            sentence: "After the storm damaged the roof, the school had to close [DROP] doors for a week.",
+            options: ["its", "it's", "their"],
+            correct: "its",
+            expEn: "\"The school\" is singular (one thing). \"Its\" means \"belongs to it.\" Never choose \"it's\" for possession, because \"it's\" means \"it is\".",
+            expVn: "Trường học (\"the school\") là số ít, chỉ một sự vật, nên dùng \"its\" (của nó). KHÔNG dùng \"it's\" để chỉ sở hữu vì \"it's\" là viết tắt của \"it is\"."
+        },
+        {
+            id: 'q3', type: 'dropdown',
+            title: "3. Select the correct pronoun from the drop-down menu.",
+            sentence: "Maria and [DROP] are organizing the charity event this weekend.",
+            options: ["I", "me", "my"],
+            correct: "I",
+            expEn: "Maria and \"I\" are the subjects doing the action (organizing). We need a subject pronoun here, not an object pronoun (\"me\").",
+            expVn: "Maria và \"Tôi\" đóng vai trò làm chủ ngữ thực hiện hành động (organizing). Ta cần đại từ chủ ngữ \"I\", không dùng \"me\" (tân ngữ)."
+        },
+        {
+            id: 'q4', type: 'dropdown',
+            title: "4. Select the correct pronoun from the drop-down menu.",
+            sentence: "If a customer is unhappy with the service, [DROP] should speak to the supervisor.",
+            options: ["they", "he or she", "it"],
+            correct: "he or she",
+            expEn: "Rule 3! \"A customer\" is one singular person. On the strict GED test, you must use singular pronouns (\"he or she\") instead of the informal plural \"they.\"",
+            expVn: "Khách hàng (\"A customer\") là số ít. Theo ngữ pháp nghiêm ngặt của bài thi GED, phải dùng đại từ số ít \"he or she\" thay vì dùng \"they\" như trong văn nói."
+        },
+        {
+            id: 'q5', type: 'dropdown',
+            title: "5. Select the correct pronoun from the drop-down menu.",
+            sentence: "Sarah handed the report to Jason, but [DROP] forgot to sign the last page.",
+            options: ["he", "she", "Sarah"],
+            correct: "Sarah",
+            expEn: "Rule 2! Unclear pronoun. If you say \"she,\" we don't know who you mean. You must use the actual name to be perfectly clear.",
+            expVn: "Lỗi đại từ không rõ ràng. Câu có 2 người, nếu dùng \"she\", người đọc không biết chính xác là ai. Phải lặp lại tên \"Sarah\" để tránh hiểu nhầm."
+        },
+        {
+            id: 'q6', type: 'dropdown',
+            title: "6. Select the correct pronoun from the drop-down menu.",
+            sentence: "Every student needs to bring [DROP] own laptop to the GED testing center.",
+            options: ["their", "his or her", "them"],
+            correct: "his or her",
+            expEn: "Rule 3! The word \"every\" makes the subject singular. \"Every student\" means one student at a time, so you must use the formal \"his or her.\"",
+            expVn: "Từ \"every\" (mỗi) làm cho chủ ngữ mang nghĩa số ít. Do đó phải dùng \"his or her\" thay vì \"their\"."
+        },
+        {
+            id: 'q7', type: 'dropdown',
+            title: "7. Select the correct pronoun from the drop-down menu.",
+            sentence: "The dog wagged [DROP] tail when the mail carrier arrived.",
+            options: ["it's", "its", "their"],
+            correct: "its",
+            expEn: "\"The dog\" is singular. Again, no apostrophe for possession!",
+            expVn: "Con chó (\"the dog\") là số ít. Dùng \"its\" (của nó). Nhắc lại: đại từ sở hữu \"its\" không có dấu phẩy trên (!)."
+        },
+        {
+            id: 'q8', type: 'dropdown',
+            title: "8. Select the correct pronoun from the drop-down menu.",
+            sentence: "When the boss yelled at the worker, [DROP] looked very stressed.",
+            options: ["he", "the boss", "they"],
+            correct: "the boss",
+            expEn: "Rule 2! If you say \"he,\" it is unclear if the boss is stressed or the worker is stressed because both could be \"he\". You must state the specific noun.",
+            expVn: "Nếu dùng \"he\", câu sẽ bị tối nghĩa vì không rõ sếp hay nhân viên bị căng thẳng. Phải nhắc lại danh từ \"the boss\"."
+        },
+        {
+            id: 'q9', type: 'dropdown',
+            title: "9. Select the correct pronoun from the drop-down menu.",
+            sentence: "Please give the final documents to [DROP] before you leave today.",
+            options: ["I", "me", "my"],
+            correct: "me",
+            expEn: "The documents are being given TO someone. It receives the action, so you must use the object pronoun \"me\" (not the subject pronoun \"I\").",
+            expVn: "Tài liệu được đưa CHO ai đó. Vị trí này nhận hành động nên phải dùng đại từ tân ngữ \"me\"."
+        },
+        {
+            id: 'q10', type: 'dropdown',
+            title: "10. Select the correct pronoun from the drop-down menu.",
+            sentence: "If someone loses a wallet, [DROP] should check the lost and found box.",
+            options: ["they", "he or she", "it"],
+            correct: "he or she",
+            expEn: "Rule 3! Words ending in -one or -body (someone, anybody, everyone) are always singular on the GED. You must use a singular pronoun.",
+            expVn: "Các từ kết thúc bằng -one hoặc body (Someone - Ai đó) luôn được coi là số ít. Phải dùng đại từ số ít \"he or she\"."
+        },
+        {
+            id: 'q11', type: 'dropdown',
+            title: "11. Select the correct pronoun from the drop-down menu.",
+            sentence: "The chef forgot to add salt to the soup, so [DROP] tasted very bland.",
+            options: ["it", "they", "he"],
+            correct: "it",
+            expEn: "The pronoun replaces \"the soup\" (singular, thing).",
+            expVn: "Đại từ thay thế cho \"the soup\" (món súp - số ít, đồ vật), nên dùng \"it\"."
+        },
+        {
+            id: 'q12', type: 'dropdown',
+            title: "12. Select the correct pronoun from the drop-down menu.",
+            sentence: "Anybody who wants to join the club must write [DROP] name on this list.",
+            options: ["their", "his or her", "them"],
+            correct: "his or her",
+            expEn: "Rule 3 again! \"Anybody\" is singular. You cannot use \"their\" on the GED.",
+            expVn: "\"Anybody\" (Bất cứ ai) là danh từ số ít. Bạn không được dùng \"their\" trong bài thi ngữ pháp chuẩn."
+        },
+        // Practice 2: Drag and Drop Passage
+        {
+            id: 'q13',
+            type: 'dnd-passage',
+            title: "13. Drag and Drop: Complete the passage by dragging the correct pronouns from the Word Bank into the blanks.",
+            bank: ["he", "him", "his", "she", "her", "it", "its", "they", "them", "their", "we"],
+            passage: "<strong>Improving Workplace Communication</strong><br><br>Effective communication is essential for any business to succeed in [Blank 1] daily operations. Last week, the branch manager, Mr. Davis, noticed that [Blank 2] team was making mistakes because of confusing emails. To fix this, Mr. Davis organized a meeting and taught [Blank 3] how to write clear messages.<br><br>He asked the senior supervisor, Linda, to share [Blank 4] experience. Linda explained that when employees write emails, [Blank 5] should always put the main point in the first sentence.<br><br>\"If a worker hides the main point at the bottom, [Blank 6] makes the email too difficult to read,\" Linda stated.<br><br>By the end of the meeting, all the workers agreed to change [Blank 7] email habits. Mr. Davis was very proud of [Blank 8] and bought lunch for the whole office.",
+            blanks: ["Blank 1", "Blank 2", "Blank 3", "Blank 4", "Blank 5", "Blank 6", "Blank 7", "Blank 8"],
+            correctAnswers: {
+                "Blank 1": "its",
+                "Blank 2": "his",
+                "Blank 3": "them",
+                "Blank 4": "her",
+                "Blank 5": "they",
+                "Blank 6": "it",
+                "Blank 7": "their",
+                "Blank 8": "them"
+            },
+            expEn: "<strong>1. its:</strong> Replaces 'any business' (singular).<br><strong>2. his:</strong> Replaces Mr. Davis, showing possession of his team.<br><strong>3. them:</strong> Object pronoun. Mr. Davis taught 'them' (the team).<br><strong>4. her:</strong> Shows Linda's possession of the experience.<br><strong>5. they:</strong> Subject pronoun replacing plural 'employees'.<br><strong>6. it:</strong> Dummy subject. Hiding the point makes 'it' (the email) difficult.<br><strong>7. their:</strong> Possessive for 'all the workers' (plural).<br><strong>8. them:</strong> Object pronoun. Mr. Davis was proud of 'them'.",
+            expVn: "<strong>1. its:</strong> Thay thế cho 'any business' (doanh nghiệp, số ít).<br><strong>2. his:</strong> Thay thế cho Mr. Davis, thể hiện sự sở hữu.<br><strong>3. them:</strong> Làm tân ngữ. Mr. Davis dạy 'họ'.<br><strong>4. her:</strong> Thể hiện sự sở hữu kinh nghiệm của Linda.<br><strong>5. they:</strong> Chủ ngữ thay thế cho 'employees' (nhân viên, số nhiều).<br><strong>6. it:</strong> Chủ ngữ giả. Việc giấu ý chính làm cho 'nó' (email) khó đọc.<br><strong>7. their:</strong> Sở hữu cách chỉ thói quen của 'tất cả công nhân'.<br><strong>8. them:</strong> Làm tân ngữ. Mr. Davis tự hào về 'họ'."
+        }
+    ];
+
+    const glossary = {
+        "Pronoun": { def: "A short word that takes the place of a noun.", vn: "Đại từ", vn_def: "Từ ngắn dùng để thay thế cho một danh từ." },
+        "Noun": { def: "A person, place, or thing.", vn: "Danh từ", vn_def: "Từ chỉ người, địa điểm, hoặc sự vật." },
+        "Subject": { def: "The person or thing doing the action in a sentence.", vn: "Chủ ngữ", vn_def: "Người hoặc vật thực hiện hành động trong câu." },
+        "Object": { def: "The person or thing receiving the action in a sentence.", vn: "Tân ngữ", vn_def: "Người hoặc vật nhận hành động trong câu." },
+        "Possessive": { def: "Showing ownership or belonging.", vn: "Sở hữu", vn_def: "Thể hiện quyền sở hữu hoặc thuộc về." },
+        "Singular": { def: "Only one person or thing.", vn: "Số ít", vn_def: "Chỉ một người hoặc một vật." },
+        "Plural": { def: "More than one person or thing.", vn: "Số nhiều", vn_def: "Nhiều hơn một người hoặc một vật." }
+    };
+
+    /* =========================================================================
+       2. STATE MANAGEMENT
+       ========================================================================= */
+    const state = {
+        phase: 0, 
+        currentQuestionIndex: 0,
+        userAnswers: {},     
+        flagged: new Set(),
+        evaluated: new Set() // Tracks which questions have been locked/checked
+    };
+
+    /* =========================================================================
+       3. INITIALIZATION & TEMPLATE RENDERING
+       ========================================================================= */
+    function init() {
+        const container = document.getElementById('questions-container');
+        
+        questionsData.forEach((q, index) => {
+            const slide = document.createElement('article');
+            slide.className = `question-slide ${index === 0 ? 'active' : ''}`;
+            slide.id = `slide-${index}`;
+            
+            let html = '';
+            
+            if (q.type === 'info') {
+                html += `<div class="q-title section-title center">${q.title}</div>`;
+                html += q.content;
+            } 
+            else if (q.type === 'dropdown') {
+                let selectHtml = `<select class="inline-select" id="select-${q.id}" onchange="handleDropdownSelection('${q.id}', this)">`;
+                selectHtml += `<option value="" disabled selected>Choose...</option>`;
+                q.options.forEach(opt => {
+                    selectHtml += `<option value="${opt}">${opt}</option>`;
+                });
+                selectHtml += `</select>`;
+
+                let sentenceHtml = q.sentence.replace('[DROP]', selectHtml);
+
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)">
+                            Flag for Review
+                        </label>
+                    </div>
+                    <div class="info-box" style="margin-top: 1rem; font-size: 1.25rem; padding: 3rem 2rem;">
+                        ${sentenceHtml}
+                    </div>
+                    <!-- Immediate Feedback Container -->
+                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                `;
+            }
+            else if (q.type === 'dnd-passage') {
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)">
+                            Flag for Review
+                        </label>
+                    </div>
+                    <div class="dnd-container">
+                        <!-- Sticky Word Bank -->
+                        <div class="options-bank" id="bank-${q.id}" ondragover="allowDrop(event)" ondrop="drop(event, 'bank-${q.id}')">
+                `;
+                q.bank.forEach((item, idx) => {
+                    html += `<div class="draggable-item" draggable="true" id="item-${q.id}-${idx}" ondragstart="drag(event)" data-val="${item}">
+                                <i class="fa-solid fa-grip-vertical" style="color:#aaa;"></i> ${item}
+                             </div>`;
+                });
+                html += `</div>`; // Close bank
+
+                let passageHtml = q.passage;
+                q.blanks.forEach(blankId => {
+                    const dzHtml = `<span class="inline-dz dropzone" id="${q.id}-${blankId.replace(' ', '')}" ondragover="allowDrop(event)" ondrop="drop(event, '${q.id}-${blankId.replace(' ', '')}')">Drop Here</span>`;
+                    passageHtml = passageHtml.replace(`[${blankId}]`, dzHtml);
+                });
+
+                html += `
+                        <div class="info-box passage-text">
+                            ${passageHtml}
+                        </div>
+                    </div>
+                    
+                    <div style="text-align:center; margin-top: 2rem;">
+                        <button id="btn-check-${q.id}" class="btn-primary" style="font-size: 1.2rem; padding: 0.75rem 2rem;" onclick="evaluateDnd('${q.id}')" disabled>
+                            Check Answers
+                        </button>
+                    </div>
+                    <!-- Immediate Feedback Container -->
+                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                `;
+            }
+            
+            slide.innerHTML = html;
+            container.appendChild(slide);
+        });
+
+        // Generate Submit Gate Slide
+        const submitSlide = document.createElement('article');
+        submitSlide.className = `question-slide`;
+        submitSlide.id = `slide-${questionsData.length}`;
+        submitSlide.innerHTML = `
+            <div class="q-title section-title center">Practice Complete</div>
+            <div class="info-box" style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Completion Status</h3>
+                <div id="submit-summary-list"></div>
+            </div>
+            <div style="text-align: center;">
+                <button id="btn-final-submit" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="startPhase2()" disabled>
+                    Finish Practice & View Total Score
+                </button>
+            </div>
+        `;
+        container.appendChild(submitSlide);
+
+        // ESL Keyword Listeners 
+        document.querySelectorAll('.keyword').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if(state.phase !== 3) return; 
+                e.stopPropagation();
+                const term = el.dataset.term || el.innerText.trim();
+                if(glossary[term]) renderDictionaryTerm(term);
+            });
+        });
+
+        updateNavigationUI();
+    }
+
+    /* =========================================================================
+       4. PHASE TRANSITION LOGIC
+       ========================================================================= */
+    function startPhase1() {
+        state.phase = 1;
+        document.body.className = 'phase-1';
+        
+        document.getElementById('intro-overview').style.display = 'none';
+        document.getElementById('reading-passage').style.display = 'block';
+        
+        navigate(1); 
+    }
+
+    function startPhase2() {
+        state.phase = 2;
+        document.body.className = 'phase-2';
+        document.getElementById('main-footer').style.display = 'none';
+        renderReviewMode();
+    }
+
+    function startPhase3() {
+        state.phase = 3;
+        document.body.className = 'phase-3'; 
+        
+        const container = document.getElementById('questions-container');
+        container.innerHTML = `
+            <div class="study-instructions">
+                <p>Review the Grammar Guide on the left. Click any highlighted vocabulary word in the guide to see its definition here.</p>
+            </div>
+            <div class="study-dict" id="study-dict" aria-live="polite">
+                <div class="dict-empty">
+                    <i class="fa-solid fa-book-open" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <p>Click any highlighted word in the grammar guide to view its definition.</p>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top: 2rem;">
+                <button class="btn-primary" onclick="startPhase4()" style="font-size:1.2rem; padding:1rem 3rem;">
+                    Continue to Phase 4: Extended Response <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+                </button>
+            </div>
+        `;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+    
+    function startPhase4() {
+        state.phase = 4;
+        document.body.className = 'phase-4'; 
+        
+        const container = document.getElementById('questions-container');
+        container.innerHTML = `
+            <div class="q-title section-title center">Phase 4: Extended Response (Writing)</div>
+            <div class="info-box">
+                <p style="margin-bottom: 1rem;"><strong>Prompt:</strong> Write a brief business email (3-4 sentences) reminding your staff to submit their weekly reports. Ensure that all pronouns agree with their subjects and are crystal clear.</p>
+                
+                <div style="background: #fff3e0; border: 1px solid #ffcc80; padding: 1.5rem; border-radius: 4px; margin-top: 1.5rem;">
+                    <h4 style="margin-bottom: 0.5rem; color: #e65100; font-size: 1.1rem;"><i class="fa-solid fa-pen-nib" style="margin-right: 8px;"></i>Writing Instructions:</h4>
+                    <ol style="margin-left: 1.5rem; color: #e65100; font-weight: 600;">
+                        <li style="margin-bottom: 0.5rem;">Open a blank <a href="https://docs.google.com" target="_blank" style="color: #d84315; text-decoration: underline;">Google Doc</a>.</li>
+                        <li style="margin-bottom: 0.5rem;">Draft your professional email applying the Pronoun Rules you just learned.</li>
+                        <li>When you are finished, share or email your Google Doc to your instructors for review.</li>
+                    </ol>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top: 2rem;">
+                <p style="color: var(--text-muted); font-style: italic; font-size: 1.1rem;">You have completed the grammar practice activity. Great job!</p>
+            </div>
+        `;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    function renderDictionaryTerm(term) {
+        const dictContainer = document.getElementById('study-dict');
+        if (!dictContainer) return; 
+        
+        const data = glossary[term];
+        if(!data) return;
+
+        dictContainer.innerHTML = `
+            <div class="dict-term">${term}</div>
+            <div class="dict-section">
+                <div class="dict-label">English Definition</div>
+                <div class="dict-text">${data.def}</div>
+            </div>
+            <div class="dict-section" style="border-top: 1px solid #eee; padding-top: 1.5rem;">
+                <div class="dict-label">Vietnamese (Tiếng Việt)</div>
+                <div class="dict-text" style="color: var(--primary-blue); font-weight: 700;">${data.vn}</div>
+                <div class="dict-text" style="font-style: italic;">${data.vn_def}</div>
+            </div>
+        `;
+    }
+
+    /* =========================================================================
+       5. PHASE 1 PRACTICE LOGIC (Immediate Feedback)
+       ========================================================================= */
+    function navigate(direction) {
+        if(state.phase !== 0 && state.phase !== 1) return;
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.remove('active');
+        state.currentQuestionIndex += direction;
+        
+        if (state.phase === 1 && state.currentQuestionIndex === 0) {
+            state.currentQuestionIndex = 1;
+        }
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.add('active');
+        document.getElementById('right-pane').scrollTop = 0;
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function updateNavigationUI() {
+        if (state.phase === 0) {
+            document.getElementById('btn-prev').disabled = true;
+            document.getElementById('btn-next').style.display = 'none';
+            return;
+        }
+
+        const totalQs = questionsData.filter(q => q.type !== 'info').length; 
+        const isSubmitGate = (state.currentQuestionIndex === questionsData.length);
+
+        document.getElementById('btn-prev').disabled = (state.currentQuestionIndex === 1);
+        document.getElementById('btn-next').style.display = 'block';
+        document.getElementById('btn-next').disabled = isSubmitGate;
+        
+        const progressContainer = document.getElementById('nav-progress');
+        if (isSubmitGate) {
+            progressContainer.innerHTML = `Review & Submit`;
+        } else {
+            const currentQ = questionsData[state.currentQuestionIndex];
+            progressContainer.innerHTML = currentQ.type === 'info' ? currentQ.title : `Question ${state.currentQuestionIndex} of ${totalQs}`;
+        }
+    }
+
+    function toggleFlag(qId, isChecked) {
+        if (isChecked) state.flagged.add(qId);
+        else state.flagged.delete(qId);
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+    }
+
+    // Immediate Feedback for Dropdown
+    function handleDropdownSelection(qId, selectElement) {
+        if (state.evaluated.has(qId)) return; // Prevent multiple evaluations
+        
+        state.evaluated.add(qId);
+        const q = questionsData.find(x => x.id === qId);
+        state.userAnswers[qId] = selectElement.value;
+        
+        // Lock the selection
+        selectElement.disabled = true;
+        
+        const isCorrect = selectElement.value === q.correct;
+        selectElement.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+        
+        // Reveal Explanation
+        const fb = document.getElementById(`feedback-${qId}`);
+        const expClass = isCorrect ? 'correct' : 'incorrect';
+        const expTitle = isCorrect ? 'Correct!' : `Incorrect. The correct answer is "${q.correct}".`;
+        
+        fb.className = `explanation-box ${expClass}`;
+        fb.innerHTML = `
+            <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+            <div class="exp-en">${q.expEn}</div>
+            <div class="exp-vn">${q.expVn}</div>
+        `;
+        fb.style.display = 'block';
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    // Evaluates state of DnD to toggle the "Check Answers" button
+    function checkDnDPassageState(qId) {
+        if (state.evaluated.has(qId)) return;
+        
+        const qConfig = questionsData.find(q => q.id === qId);
+        let ansObj = {};
+        let filledCount = 0;
+
+        qConfig.blanks.forEach(blankId => {
+            const safeId = blankId.replace(' ', '');
+            const dropzoneEl = document.getElementById(`${qId}-${safeId}`);
+            const val = dropzoneEl.firstElementChild?.dataset.val;
+            if (val) {
+                ansObj[blankId] = val;
+                filledCount++;
+            }
+        });
+
+        state.userAnswers[qId] = ansObj;
+
+        // Enable check button only when all blanks are filled
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) {
+            checkBtn.disabled = (filledCount !== qConfig.blanks.length);
+        }
+    }
+
+    // Immediate Feedback for DnD
+    function evaluateDnd(qId) {
+        if (state.evaluated.has(qId)) return;
+        state.evaluated.add(qId);
+        
+        const q = questionsData.find(x => x.id === qId);
+        
+        // Hide Check Button
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) checkBtn.style.display = 'none';
+        
+        let allCorrect = true;
+        
+        // Evaluate and style each blank
+        q.blanks.forEach(blankId => {
+            const safeId = blankId.replace(' ', '');
+            const dz = document.getElementById(`${qId}-${safeId}`);
+            const userVal = state.userAnswers[qId]?.[blankId];
+            const isCorrect = userVal === q.correctAnswers[blankId];
+            
+            if(!isCorrect) allCorrect = false;
+            
+            dz.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+            
+            // Lock draggable items inside dropzones
+            if (dz.firstElementChild) {
+                dz.firstElementChild.draggable = false;
+                dz.firstElementChild.classList.add('locked');
+            }
+        });
+        
+        // Lock remaining items in the word bank
+        document.querySelectorAll(`#bank-${qId} .draggable-item`).forEach(el => {
+            el.draggable = false;
+            el.classList.add('locked');
+        });
+        
+        // Reveal Explanation
+        const fb = document.getElementById(`feedback-${qId}`);
+        const expClass = allCorrect ? 'correct' : 'incorrect';
+        const expTitle = allCorrect ? 'Perfect!' : 'Review the correct answers below:';
+        
+        fb.className = `explanation-box ${expClass}`;
+        fb.innerHTML = `
+            <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+            <div class="exp-en">${q.expEn}</div>
+            <div class="exp-vn">${q.expVn}</div>
+        `;
+        fb.style.display = 'block';
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    // Final "Submit Gate" logic tracking if they EVALUATED everything
+    function updateSubmitSlide() {
+        const container = document.getElementById('submit-summary-list');
+        let completedCount = 0;
+        let html = '';
+        const qList = questionsData.filter(q => q.type !== 'info');
+        
+        qList.forEach((q, idx) => {
+            // Check if it's evaluated, not just answered
+            const isCompleted = state.evaluated.has(q.id);
+            if (isCompleted) completedCount++;
+            
+            const isFlagged = state.flagged.has(q.id);
+            const flagHtml = isFlagged ? '<i class="fa-solid fa-flag" style="color:#d97706; margin-left:8px;" title="Flagged"></i>' : '';
+            
+            html += `
+                <div class="summary-item">
+                    <span>Question ${idx + 1} ${flagHtml}</span>
+                    <span style="font-weight:bold; color: ${isCompleted ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                        ${isCompleted ? 'Checked' : 'Unanswered'}
+                    </span>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        const btn = document.getElementById('btn-final-submit');
+        
+        if (completedCount === qList.length) {
+            btn.disabled = false;
+            btn.innerText = "Finish Practice & View Total Score";
+            btn.style.background = "var(--color-correct)"; 
+        } else {
+            btn.disabled = true;
+            btn.innerText = `Check all ${qList.length} questions to finish (${completedCount}/${qList.length})`;
+            btn.style.background = "var(--primary-blue)";
+        }
+    }
+
+    /* =========================================================================
+       6. PHASE 2 SCORING & FINAL SUMMARY
+       ========================================================================= */
+    function checkAnswerCorrectness(qId, qData) {
+        if (qData.type === 'dropdown') {
+            return state.userAnswers[qId] === qData.correct;
+        } else if (qData.type === 'dnd-passage') {
+            const ans = state.userAnswers[qId];
+            if(!ans) return false;
+            let allBlanksCorrect = true;
+            qData.blanks.forEach(blankId => {
+                if (ans[blankId] !== qData.correctAnswers[blankId]) {
+                    allBlanksCorrect = false;
+                }
+            });
+            return allBlanksCorrect;
+        }
+        return false;
+    }
+
+    function renderReviewMode() {
+        const container = document.getElementById('questions-container');
+        let html = '';
+        let score = 0;
+        let totalPossibleScore = 0;
+
+        const qList = questionsData.filter(q => q.type !== 'info');
+
+        const qHtmlBlocks = [];
+
+        // Calculate scores and build a clean summary list (explanations hidden since they read them inline)
+        qList.forEach((q, idx) => {
+            let isCorrect = false;
+            
+            if(q.type === 'dropdown') {
+                totalPossibleScore++;
+                isCorrect = checkAnswerCorrectness(q.id, q);
+                if(isCorrect) score++;
+            } else if (q.type === 'dnd-passage') {
+                totalPossibleScore += q.blanks.length;
+                const ans = state.userAnswers[q.id] || {};
+                let claimScore = 0;
+                q.blanks.forEach(b => { if(ans[b] === q.correctAnswers[b]) claimScore++; });
+                score += claimScore;
+                isCorrect = (claimScore === q.blanks.length); 
+            }
+
+            let qBlock = `<div class="review-item">
+                <div class="review-q-title">${idx + 1}. ${q.title}</div>`;
+
+            if (q.type === 'dropdown') {
+                const userAns = state.userAnswers[q.id];
+                let displayAns = userAns ? userAns : "No Answer";
+                
+                let sentenceContext = q.sentence.replace('[DROP]', `<span style="text-decoration: underline; font-weight: bold; color: ${isCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">${displayAns}</span>`);
+                
+                qBlock += `
+                    <div style="font-style: italic; margin-bottom: 1rem; color: #555;">"${sentenceContext}"</div>
+                    <div class="review-choice ${isCorrect ? 'correct-ans' : 'wrong-ans'}">
+                        Your Answer: <strong>${displayAns}</strong>
+                    </div>
+                    ${!isCorrect ? `<div class="review-choice correct-ans">Correct Answer: <strong>${q.correct}</strong></div>` : ''}
+                </div>`;
+            } 
+            else if (q.type === 'dnd-passage') {
+                const ans = state.userAnswers[q.id] || {};
+                qBlock += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">`;
+                
+                q.blanks.forEach(blankId => {
+                    const userVal = ans[blankId] || 'None';
+                    const correctVal = q.correctAnswers[blankId];
+                    const isBlankCorrect = userVal === correctVal;
+
+                    qBlock += `
+                        <div style="padding: 0.75rem; background: #f8fafc; border-radius:4px; border-left: 4px solid ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                            <strong>${blankId}</strong><br>
+                            Your Answer: <span style="font-weight: 600; color: ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">${userVal}</span><br>
+                            ${!isBlankCorrect ? `<span style="color: var(--color-correct); font-weight:bold;">Correct: ${correctVal}</span>` : `<span style="color: var(--color-correct); font-size: 0.85rem;"><i class="fa-solid fa-check"></i> Correct</span>`}
+                        </div>
+                    `;
+                });
+                qBlock += `</div></div>`;
+            }
+
+            qHtmlBlocks.push(qBlock);
+        });
+
+        html += `
+            <div class="review-header">
+                <div style="font-size: 1.2rem; font-weight:600; color:var(--text-main);">Practice Complete</div>
+                <div class="review-score">Final Score: ${score} / ${totalPossibleScore}</div>
+            </div>
+            <h3 style="margin-bottom: 1.5rem; color: var(--text-main);">Summary:</h3>
+        `;
+        html += qHtmlBlocks.join('');
+        html += `
+            <div style="text-align:center; margin-top: 2rem;">
+                <button class="btn-primary" onclick="startPhase3()" style="font-size:1.2rem; padding:1rem 3rem;">
+                    Continue to Study Mode <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+                </button>
+            </div>
+        `;
+
+        container.innerHTML = html;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    /* =========================================================================
+       7. DRAG AND DROP ENGINE
+       ========================================================================= */
+    let draggedItem = null;
+
+    function drag(ev) {
+        if(state.phase !== 1) return;
+        draggedItem = ev.target.closest('.draggable-item');
+        // Prevent drag if locked
+        if(!draggedItem || draggedItem.draggable === false) return;
+
+        ev.dataTransfer.setData("text", draggedItem.id);
+        ev.dataTransfer.effectAllowed = "move";
+        setTimeout(() => draggedItem.style.opacity = "0.5", 0);
+    }
+
+    function allowDrop(ev) {
+        if(state.phase !== 1) return;
+        const dropzone = ev.target.closest('.dropzone');
+        // Prevent drop if evaluated
+        const qId = dropzone ? dropzone.id.split('-')[0] : null;
+        if(qId && state.evaluated.has(qId)) return;
+        
+        ev.preventDefault();
+        if(dropzone) dropzone.classList.add('dragover');
+    }
+
+    document.addEventListener('dragleave', (ev) => {
+        const dropzone = ev.target.closest('.dropzone');
+        if(dropzone) dropzone.classList.remove('dragover');
+    });
+
+    document.addEventListener('dragend', (ev) => {
+        if(draggedItem) draggedItem.style.opacity = "1";
+        document.querySelectorAll('.dropzone').forEach(el => el.classList.remove('dragover'));
+    });
+
+    function drop(ev, targetId) {
+        if(state.phase !== 1) return;
+        
+        const qId = targetId.split('-')[0];
+        // Prevent drop if already evaluated/locked
+        if (state.evaluated.has(qId)) return;
+        
+        ev.preventDefault();
+        const data = ev.dataTransfer.getData("text");
+        const draggedEl = document.getElementById(data);
+        if(!draggedEl) return;
+
+        const dropTarget = document.getElementById(targetId);
+        
+        if (dropTarget.classList.contains('dropzone')) {
+            dropTarget.classList.remove('dragover');
+            
+            // Send existing item back to bank safely
+            if (dropTarget.children.length > 0) {
+                const existingItem = dropTarget.children[0];
+                document.getElementById(`bank-${qId}`).appendChild(existingItem);
+            }
+            
+            dropTarget.innerHTML = '';
+            dropTarget.appendChild(draggedEl);
+            checkDnDPassageState(qId);
+            
+        } 
+        else if (dropTarget.classList.contains('options-bank')) {
+            dropTarget.appendChild(draggedEl);
+            const parentQId = targetId.split('-')[1];
+            checkDnDPassageState(parentQId);
+        }
+    }
+
+    /* =========================================================================
+       8. UTILITIES (Responsive Split Pane Resizer)
+       ========================================================================= */
+    const resizer = document.getElementById('dragMe');
+    const leftPane = document.getElementById('left-pane');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', startResize);
+    resizer.addEventListener('touchstart', startResize, {passive: false});
+
+    function startResize(e) {
+        isResizing = true;
+        document.body.style.cursor = 'col-resize';
+    }
+
+    document.addEventListener('mousemove', doResize);
+    document.addEventListener('touchmove', doResize, {passive: false});
+
+    function doResize(e) {
+        if (!isResizing) return;
+        
+        const layout = document.querySelector('.split-layout');
+        const isColumn = window.getComputedStyle(layout).flexDirection === 'column';
+        
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        if (isColumn) {
+            const containerHeight = layout.offsetHeight;
+            const newHeight = (clientY / containerHeight) * 100;
+            if(newHeight > 20 && newHeight < 80) {
+                leftPane.style.flex = `0 0 ${newHeight}%`;
+            }
+        } else {
+            const containerWidth = layout.offsetWidth;
+            const newWidth = (clientX / containerWidth) * 100;
+            if(newWidth > 20 && newWidth < 80) {
+                leftPane.style.flex = `0 0 ${newWidth}%`;
+            }
+        }
+    }
+
+    function stopResize() {
+        if(isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+        }
+    }
+
+    document.addEventListener('mouseup', stopResize);
+    document.addEventListener('touchend', stopResize);
+
+    window.onload = init;
+</script>
+</body>
+</html>
