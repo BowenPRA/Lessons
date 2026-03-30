@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Classroom Charades</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* --- THEATER COLOR PALETTE --- */
+            --bg-main: #f3e8ff; 
+            --bg-pattern: #e9d5ff;
+            --panel-bg: rgba(255, 255, 255, 0.95);
+            --panel-border: #d8b4fe;
+            --text-primary: #3b0764;
+            --text-secondary: #6b21a8;
+
+            --sidebar-width: 300px;
+            --max-board-width: 800px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-main);
+            background-image: radial-gradient(var(--bg-pattern) 20%, transparent 20%), radial-gradient(var(--bg-pattern) 20%, transparent 20%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            color: var(--text-primary);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* --- LAYOUT --- */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+
+        /* --- SIDEBAR / LEADERBOARD --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--panel-bg);
+            border-right: 4px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            gap: 1.5rem;
+            z-index: 20;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .settings-btn {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            background: #f3e8ff;
+            border: 2px solid #d8b4fe;
+            color: #9333ea;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.2rem;
+            z-index: 30;
+        }
+
+        .settings-btn:hover { background: #e9d5ff; color: #7e22ce; transform: rotate(45deg); }
+
+        .brand {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            line-height: 1.1;
+            color: #9333ea; 
+            text-align: center;
+            text-shadow: 2px 2px 0px #e9d5ff;
+            margin-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        .brand span { color: #f97316; text-shadow: 2px 2px 0px #fed7aa;}
+
+        .leaderboard-title {
+            font-family: 'Fredoka';
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px dashed #d8b4fe;
+            padding-bottom: 8px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .student-list { display: flex; flex-direction: column; gap: 12px; flex: 1; overflow-y: auto;}
+
+        .student-card {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px;
+            border-radius: 16px;
+            background: #faf5ff;
+            border: 2px solid transparent;
+            color: var(--text-primary);
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 0px #e9d5ff;
+        }
+
+        .student-card.active-actor {
+            background: #fff7ed;
+            border: 2px solid #fdba74;
+            color: #c2410c;
+            box-shadow: 0 4px 0px #fdba74;
+            transform: scale(1.02);
+        }
+
+        .score-badge {
+            background: #a855f7;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 0 #7e22ce;
+        }
+
+        /* --- MAIN GAME ARENA --- */
+        .arena {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem; 
+            position: relative;
+        }
+
+        .game-panel {
+            width: 100%;
+            max-width: var(--max-board-width);
+            background: var(--panel-bg);
+            padding: 3rem 2rem;
+            border-radius: 32px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05), 0 0 0 4px #fff inset;
+            border: 2px solid var(--panel-border);
+            text-align: center;
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: none; /* Toggled via JS */
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .game-panel.active { display: flex; }
+
+        @keyframes bounceIn { 
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); } 
+            100% { opacity: 1; transform: scale(1) translateY(0); } 
+        }
+
+        /* Typography inside panels */
+        .status-text { font-size: 1.5rem; color: #6b21a8; font-weight: 700; }
+        .hero-text { font-family: 'Fredoka'; font-size: 3.5rem; color: #a855f7; line-height: 1.2; margin: 10px 0;}
+        .secret-word { font-family: 'Fredoka'; font-size: 3.5rem; color: #ea580c; background: #ffedd5; padding: 10px 40px; border-radius: 20px; border: 4px dashed #fdba74; letter-spacing: 2px; text-transform: uppercase;}
+        
+        .category-badge {
+            background: #fdf4ff;
+            color: #a21caf;
+            border: 2px solid #e879f9;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 0 #f0abfc;
+        }
+
+        .timer-display {
+            font-family: 'Fredoka';
+            font-size: 6rem;
+            color: #10b981;
+            background: #d1fae5;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 8px solid #34d399;
+            box-shadow: 0 10px 0 #059669;
+            margin: 20px auto;
+            transition: all 0.3s;
+        }
+        .timer-display.warning { color: #ea580c; background: #ffedd5; border-color: #fb923c; box-shadow: 0 10px 0 #c2410c; }
+        .timer-display.danger { color: #ef4444; background: #fee2e2; border-color: #f87171; box-shadow: 0 10px 0 #b91c1c; animation: pulse 1s infinite; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* Buttons */
+        .btn-row { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap; justify-content: center; width: 100%;}
+        
+        .action-btn {
+            padding: 16px 32px; border-radius: 16px; border: none;
+            font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.3rem;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 10px;
+            user-select: none;
+        }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        
+        .btn-primary { background: #a855f7; color: white; box-shadow: 0 6px 0 #7e22ce; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 0 #7e22ce; background: #c084fc;}
+        .btn-primary:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 #7e22ce; }
+
+        /* Charades specific: Orange for success, Purple for Time's up */
+        .btn-success { background: #f97316; color: white; box-shadow: 0 6px 0 #c2410c; }
+        .btn-success:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 0 #c2410c; background: #fb923c;}
+        .btn-success:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 #c2410c; }
+
+        .btn-danger { background: #6b21a8; color: white; box-shadow: 0 6px 0 #4c1d95; }
+        .btn-danger:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 0 #4c1d95; background: #7e22ce;}
+        .btn-danger:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 #4c1d95; }
+
+        .btn-secondary { background: #f3e8ff; color: #6b21a8; box-shadow: 0 6px 0 #d8b4fe; border: 2px solid #d8b4fe;}
+        .btn-secondary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 0 #d8b4fe; background: #fff;}
+        .btn-secondary:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 #d8b4fe; }
+
+        /* Modals & Settings */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(59, 7, 100, 0.7); backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center; z-index: 2100;
+        }
+        .modal-card {
+            background: #fff; padding: 3rem; border-radius: 32px;
+            text-align: center; max-width: 600px; width: 90%;
+            max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+            animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 4px solid #f3e8ff;
+        }
+        .modal-card h2 { font-family: 'Fredoka'; font-size: 2.5rem; margin-bottom: 1rem; color: #9333ea; }
+        
+        /* Settings Forms */
+        .settings-group { margin-bottom: 20px; text-align: left; }
+        .settings-group label { display: block; font-weight: 700; color: #6b21a8; margin-bottom: 8px; font-size: 1.1rem; }
+        .settings-input { width: 100%; padding: 12px; border: 2px solid #d8b4fe; border-radius: 12px; font-family: 'Nunito'; font-size: 1rem; user-select: text; }
+        .settings-input:focus { outline: none; border-color: #a855f7; box-shadow: 0 0 0 3px #f3e8ff; }
+        textarea.settings-input { resize: vertical; min-height: 120px; }
+        
+        .settings-student-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .settings-student-row input { flex: 1; }
+        .remove-student-btn { background: #fee2e2; color: #ef4444; border: none; border-radius: 12px; padding: 0 15px; cursor: pointer; font-weight: bold; transition: all 0.2s;}
+        .remove-student-btn:hover { background: #ef4444; color: white; }
+        .add-student-btn { background: #f3e8ff; color: #9333ea; border: 2px dashed #d8b4fe; border-radius: 12px; padding: 12px; width: 100%; font-weight: bold; cursor: pointer; transition: all 0.2s;}
+        .add-student-btn:hover { background: #e9d5ff; }
+
+        /* Guesser Selection Grid */
+        .guesser-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;}
+        .guesser-btn {
+            padding: 15px; background: #faf5ff; border: 2px solid #e9d5ff;
+            border-radius: 16px; font-family: 'Fredoka'; font-size: 1.2rem;
+            cursor: pointer; box-shadow: 0 4px 0 #e9d5ff; transition: all 0.2s;
+            color: #6b21a8;
+        }
+        .guesser-btn:hover { background: #f3e8ff; border-color: #d8b4fe; box-shadow: 0 6px 0 #d8b4fe; transform: translateY(-2px);}
+        .guesser-btn:active { box-shadow: 0 2px 0 #d8b4fe; transform: translateY(2px);}
+
+        /* Podium Sequence */
+        .podium-wrapper { display: flex; align-items: flex-end; justify-content: center; height: 280px; margin: 30px 0; gap: 15px; }
+        .podium-step { display: flex; flex-direction: column; align-items: center; width: 130px; }
+        .podium-block { 
+            width: 100%; display: flex; align-items: flex-start; justify-content: center; padding-top: 15px; 
+            font-family: 'Fredoka'; font-size: 3.5rem; color: white; 
+            border-top-left-radius: 16px; border-top-right-radius: 16px; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.15), 0 -4px 10px rgba(0,0,0,0.1); 
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+        .podium-name { font-family: 'Fredoka'; font-size: 1.5rem; color: var(--text-primary); margin-bottom: 5px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; text-align: center;}
+        .podium-score { font-size: 1.2rem; font-weight: 800; margin-bottom: 5px; color: #9333ea; background: #f3e8ff; padding: 2px 10px; border-radius: 12px;}
+
+        .step-1 .podium-block { height: 220px; background: #fbbf24; border: 4px solid #f59e0b; border-bottom: none; z-index: 3;}
+        .step-2 .podium-block { height: 160px; background: #cbd5e1; border: 4px solid #94a3b8; border-bottom: none; z-index: 2;}
+        .step-3 .podium-block { height: 110px; background: #d97706; border: 4px solid #b45309; border-bottom: none; z-index: 1;}
+
+        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1500; }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti"></canvas>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <button class="settings-btn" onclick="UI.openSettingsModal()" title="Teacher Settings">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+            <div class="brand">Classroom<br><span>Charades</span></div>
+            <div class="leaderboard-title">
+                <span><i class="fa-solid fa-trophy" style="color:#f59e0b"></i> Scoreboard</span>
+                <span id="round-indicator" style="font-size: 0.8rem; color: #9333ea; background: #f3e8ff; padding: 2px 8px; border-radius: 10px;">R 1/3</span>
+            </div>
+            <div class="student-list" id="student-list">
+                <!-- Injected via JS -->
+            </div>
+        </aside>
+
+        <main class="arena">
+            
+            <!-- PANEL: READY -->
+            <div class="game-panel active" id="panel-ready">
+                <p class="status-text">Next Up to Act!</p>
+                <h1 class="hero-text" id="ready-actor-name">...</h1>
+                <p class="status-text" style="margin-bottom: 20px;">Step to the front, leave your voice behind, and reveal your secret word!</p>
+                <button class="action-btn btn-primary" onclick="UI.showSecretWord()">
+                    <i class="fa-solid fa-eye"></i> Reveal Secret Word
+                </button>
+            </div>
+
+            <!-- PANEL: REVEAL -->
+            <div class="game-panel" id="panel-reveal">
+                <p class="status-text">Your Secret Word is...</p>
+                <div class="category-badge" id="secret-word-category">...</div>
+                <div class="secret-word" id="secret-word-display">...</div>
+                <p class="status-text" style="font-size: 1.2rem; margin-top: 10px;">Don't show anyone else! Think about how to act it out.</p>
+                
+                <div class="btn-row" style="margin-top: 30px;">
+                    <button class="action-btn btn-secondary" onclick="UI.refreshWord()">
+                        <i class="fa-solid fa-shuffle"></i> Give me a different word
+                    </button>
+                    <button class="action-btn btn-success" id="btn-start-acting" onclick="UI.startActing()">
+                        <i class="fa-solid fa-masks-theater"></i> Start Acting!
+                    </button>
+                </div>
+            </div>
+
+            <!-- PANEL: TIMER -->
+            <div class="game-panel" id="panel-timer">
+                <div class="category-badge" id="active-timer-category" style="margin-bottom: 0;">...</div>
+                <p class="status-text"><span id="active-actor-name" style="color:#a855f7; font-weight:800;">...</span> is acting...</p>
+                <div class="timer-display" id="timer-display">90</div>
+                
+                <div class="btn-row">
+                    <button class="action-btn btn-success" onclick="UI.handleGuessTrigger()">
+                        <i class="fa-solid fa-check-circle"></i> Someone Guessed It!
+                    </button>
+                    <button class="action-btn btn-danger" onclick="UI.handleTimeUpTrigger()">
+                        <i class="fa-solid fa-xmark-circle"></i> Time's Up / Skip
+                    </button>
+                </div>
+            </div>
+
+            <!-- PANEL: RESULTS -->
+            <div class="game-panel" id="panel-results">
+                <h1 class="hero-text" id="result-title">Time's Up!</h1>
+                <p class="status-text" id="result-subtitle" style="margin-bottom: 20px;">The word was <strong style="color:#f97316" id="result-word">...</strong></p>
+                
+                <button class="action-btn btn-primary" onclick="UI.advanceGame()">
+                    <i class="fa-solid fa-forward-step"></i> Continue
+                </button>
+            </div>
+
+            <!-- PANEL: PODIUM (GAME OVER) -->
+            <div class="game-panel" id="panel-podium">
+                <h1 class="hero-text" style="color: #f59e0b; margin-bottom: 0;">Game Over!</h1>
+                <p class="status-text">Final Standings</p>
+                
+                <div class="podium-wrapper" id="podium-wrapper">
+                    <!-- Injected via JS -->
+                </div>
+
+                <div class="btn-row">
+                    <button class="action-btn btn-primary" onclick="GameManager.resetGameProgress(); UI.updateAll()">
+                        <i class="fa-solid fa-rotate-right"></i> Play Another Game
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL: GUESSER SELECTION -->
+    <div class="modal-overlay" id="guesser-modal">
+        <div class="modal-card">
+            <h2>Who guessed it?</h2>
+            <p style="color: #6b21a8; font-size: 1.2rem; font-weight: 700;">Select the student to award points!</p>
+            <div class="guesser-grid" id="guesser-grid">
+                <!-- Injected via JS -->
+            </div>
+            <button class="action-btn btn-secondary" style="margin-top: 20px; width: 100%; justify-content: center;" onclick="UI.cancelGuess()">
+                Cancel (Resume Timer)
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: TEACHER SETTINGS -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal-card" style="max-width: 700px;">
+            <h2><i class="fa-solid fa-gear"></i> Teacher Settings</h2>
+            
+            <div class="settings-group">
+                <label>Game Rules</label>
+                <div style="display: flex; gap: 15px;">
+                    <div style="flex: 1;">
+                        <small style="color: #6b21a8; font-weight:bold;">Seconds per Turn:</small>
+                        <input type="number" id="setting-time" class="settings-input" min="10" max="300" value="90">
+                    </div>
+                    <div style="flex: 1;">
+                        <small style="color: #6b21a8; font-weight:bold;">Total Rounds:</small>
+                        <input type="number" id="setting-rounds" class="settings-input" min="1" max="10" value="2">
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <label>Word & Category List</label>
+                <textarea id="setting-words" class="settings-input"></textarea>
+                <small style="color: #9333ea; display:block; margin-top:5px;">Format as "Category: Word" separated by commas (e.g. <b>Actions: Jumping, Animals: Cat</b>)</small>
+            </div>
+
+            <div class="settings-group">
+                <label>Students</label>
+                <div id="settings-students-list" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px; padding-right: 5px;">
+                    <!-- Injected via JS -->
+                </div>
+                <button class="add-student-btn" onclick="UI.addStudentInputRow()">
+                    <i class="fa-solid fa-plus"></i> Add Student
+                </button>
+            </div>
+
+            <div class="btn-row" style="margin-top: 30px;">
+                <button class="action-btn btn-secondary" onclick="UI.closeSettingsModal()">Cancel</button>
+                <button class="action-btn btn-danger" onclick="UI.resetScoresFromSettings()">Reset Scores</button>
+                <button class="action-btn btn-primary" onclick="UI.saveSettings()"><i class="fa-solid fa-save"></i> Save & Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * ==========================================
+         * CORE LOGIC: GAME MANAGER
+         * Handles math, scoring, timers, and saving.
+         * Independent of the HTML DOM.
+         * ==========================================
+         */
+        const STORAGE_KEY = 'classroom_charades_save_v1';
+        
+        const DEFAULT_WORDS = [
+            "Actions: Opening a stuck jar", "Actions: Walking on a tightrope", "Actions: Bowling a strike", "Actions: Building a snowman", "Actions: Brushing your teeth", "Actions: Flying a kite", "Actions: Flipping a pancake", "Actions: Painting a picture", "Actions: Fishing", "Actions: Playing tennis",
+            "Animals: A confused penguin", "Animals: A sneaky cat", "Animals: A T-Rex eating a burger", "Animals: A peacock showing off", "Animals: A monkey eating a banana", "Animals: A sleepy sloth", "Animals: A galloping horse", "Animals: A jumping frog", "Animals: A swimming shark", "Animals: A dog chasing its tail",
+            "Professions: An orchestra conductor", "Professions: A pizza chef", "Professions: A frantic scientist", "Professions: A librarian", "Professions: A traffic cop", "Professions: A photographer", "Professions: A surgeon", "Professions: A firefighter", "Professions: A magician", "Professions: An astronaut",
+            "Objects: A Jack-in-the-box", "Objects: A lawnmower", "Objects: A washing machine", "Objects: A pogo stick", "Objects: A blender", "Objects: A toaster popping", "Objects: A ticking clock", "Objects: A kite in the wind", "Objects: A robot", "Objects: A flickering lamp",
+            "Movies/Books: Harry Potter", "Movies/Books: The Matrix", "Movies/Books: Spider-Man", "Movies/Books: Jurassic Park", "Movies/Books: The Lion King", "Movies/Books: Alice in Wonderland", "Movies/Books: Star Wars", "Movies/Books: Cinderella", "Movies/Books: Peter Pan", "Movies/Books: The Wizard of Oz"
+        ];
+
+        const GameManager = {
+            state: {
+                settings: {
+                    maxTime: 90,
+                    rounds: 2,
+                    words: [...DEFAULT_WORDS]
+                },
+                students: [
+                    { id: 's1', name: 'Mat', score: 0 },
+                    { id: 's2', name: 'Chom Chom', score: 0 },
+                    { id: 's3', name: 'Goku', score: 0 },
+                    { id: 's4', name: 'Maxwell', score: 0 }
+                ],
+                progress: {
+                    currentRound: 1,
+                    drawerIndex: 0,
+                    isGameOver: false
+                },
+                // Ephemeral Turn State (doesn't need saving)
+                currentWord: { text: "", category: "" },
+                timeLeft: 0,
+                timerActive: false,
+                hasAwardedPoints: false // Safety flag
+            },
+
+            init() {
+                this.loadState();
+            },
+
+            // --- DATA PERSISTENCE ---
+            saveState() {
+                const dataToSave = {
+                    settings: this.state.settings,
+                    students: this.state.students,
+                    progress: this.state.progress
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+            },
+
+            loadState() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY);
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        this.state.settings = { ...this.state.settings, ...parsed.settings };
+                        this.state.students = parsed.students || this.state.students;
+                        this.state.progress = { ...this.state.progress, ...parsed.progress };
+                    }
+                } catch (e) {
+                    console.error("Failed to load game state", e);
+                }
+                
+                // Sanity check bounds in case students were removed externally
+                if (this.state.progress.drawerIndex >= this.state.students.length) {
+                    this.state.progress.drawerIndex = 0;
+                }
+            },
+
+            // --- SETTINGS CONTROLS ---
+            updateSettings(newSettings, newStudentsList) {
+                this.state.settings = { ...this.state.settings, ...newSettings };
+                
+                // If the words list is empty, put a fallback to prevent crash
+                if (this.state.settings.words.length === 0) {
+                    this.state.settings.words = ["Alert: You need to add words in settings"];
+                }
+
+                // Update students, mapping existing scores by ID if they still exist
+                const oldStudentsMap = new Map(this.state.students.map(s => [s.id, s.score]));
+                this.state.students = newStudentsList.map(s => {
+                    return {
+                        id: s.id,
+                        name: s.name,
+                        score: oldStudentsMap.has(s.id) ? oldStudentsMap.get(s.id) : 0
+                    };
+                });
+
+                // Safety checks
+                if(this.state.students.length === 0) {
+                    this.state.students.push({id: 's_default', name: 'Student 1', score: 0});
+                }
+                if (this.state.progress.drawerIndex >= this.state.students.length) {
+                    this.state.progress.drawerIndex = 0;
+                }
+                if (this.state.progress.currentRound > this.state.settings.rounds) {
+                    this.state.progress.currentRound = this.state.settings.rounds;
+                }
+
+                this.saveState();
+            },
+
+            resetGameProgress() {
+                this.state.progress.currentRound = 1;
+                this.state.progress.drawerIndex = 0;
+                this.state.progress.isGameOver = false;
+                this.state.students.forEach(s => s.score = 0);
+                this.saveState();
+            },
+
+            // --- GAME PLAY LOGIC ---
+            getActor() {
+                if(this.state.students.length === 0) return null;
+                return this.state.students[this.state.progress.drawerIndex];
+            },
+
+            getRandomWord() {
+                const words = this.state.settings.words;
+                // Simple random, could be enhanced to avoid immediate repeats
+                const idx = Math.floor(Math.random() * words.length);
+                const raw = words[idx];
+                
+                let category = "General";
+                let text = raw;
+                
+                // Parse "Category: Word" format
+                if(raw.includes(':')) {
+                    const parts = raw.split(':');
+                    category = parts[0].trim();
+                    text = parts.slice(1).join(':').trim();
+                }
+
+                this.state.currentWord = { text, category };
+                return this.state.currentWord;
+            },
+
+            startTurn() {
+                this.state.timeLeft = this.state.settings.maxTime;
+                this.state.timerActive = true;
+                this.state.hasAwardedPoints = false;
+            },
+
+            pauseTimer() {
+                this.state.timerActive = false;
+            },
+
+            resumeTimer() {
+                this.state.timerActive = true;
+            },
+
+            tickTimer() {
+                if (this.state.timerActive && this.state.timeLeft > 0) {
+                    this.state.timeLeft--;
+                    if (this.state.timeLeft <= 0) {
+                        this.state.timerActive = false;
+                    }
+                }
+                return this.state.timeLeft;
+            },
+
+            /**
+             * SCORING MATH IS HERE
+             * Tweak this formula if you want different point values!
+             */
+            calculatePoints() {
+                const BASE_POINTS = 10;
+                // Points = Base + 1 point for every second remaining
+                return BASE_POINTS + this.state.timeLeft;
+            },
+
+            awardPointsTo(guesserId) {
+                if (this.state.hasAwardedPoints) return 0; // Prevent double trigger
+                this.state.hasAwardedPoints = true;
+                this.state.timerActive = false;
+
+                const points = this.calculatePoints();
+                const actor = this.getActor();
+                
+                // Award points to actor
+                if(actor) actor.score += points;
+                
+                // Award points to guesser
+                const guesser = this.state.students.find(s => s.id === guesserId);
+                if(guesser && guesser.id !== actor.id) {
+                    guesser.score += points;
+                }
+
+                this.saveState();
+                return points;
+            },
+
+            advanceTurn() {
+                this.state.progress.drawerIndex++;
+                
+                // Check if round is over
+                if (this.state.progress.drawerIndex >= this.state.students.length) {
+                    this.state.progress.drawerIndex = 0;
+                    this.state.progress.currentRound++;
+                    
+                    // Check if game is over
+                    if (this.state.progress.currentRound > this.state.settings.rounds) {
+                        this.state.progress.isGameOver = true;
+                    }
+                }
+                this.saveState();
+            },
+            
+            getTopStudents() {
+                // Return top 3, sorted by score descending
+                return [...this.state.students]
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 3);
+            }
+        };
+
+
+        /**
+         * ==========================================
+         * UI MANAGER
+         * Handles DOM updates, button clicks, and visual effects.
+         * ==========================================
+         */
+        const UI = {
+            elements: {},
+            timerInterval: null,
+
+            init() {
+                // Cache DOM elements
+                this.elements = {
+                    studentList: document.getElementById('student-list'),
+                    panels: document.querySelectorAll('.game-panel'),
+                    readyActorName: document.getElementById('ready-actor-name'),
+                    secretWordDisplay: document.getElementById('secret-word-display'),
+                    secretWordCategory: document.getElementById('secret-word-category'),
+                    activeActorName: document.getElementById('active-actor-name'),
+                    activeTimerCategory: document.getElementById('active-timer-category'),
+                    timerDisplay: document.getElementById('timer-display'),
+                    btnStartActing: document.getElementById('btn-start-acting'),
+                    resultTitle: document.getElementById('result-title'),
+                    resultSubtitle: document.getElementById('result-subtitle'),
+                    resultWord: document.getElementById('result-word'),
+                    guesserModal: document.getElementById('guesser-modal'),
+                    guesserGrid: document.getElementById('guesser-grid'),
+                    confetti: document.getElementById('confetti'),
+                    settingsModal: document.getElementById('settings-modal'),
+                    settingsStudentsList: document.getElementById('settings-students-list'),
+                    roundIndicator: document.getElementById('round-indicator'),
+                    podiumWrapper: document.getElementById('podium-wrapper')
+                };
+
+                this.setupConfettiCanvas();
+                this.updateAll();
+            },
+
+            // --- MASTER RENDER ROUTINE ---
+            updateAll() {
+                this.renderLeaderboard();
+                
+                const progress = GameManager.state.progress;
+                const settings = GameManager.state.settings;
+
+                this.elements.roundIndicator.innerText = `R ${progress.currentRound}/${settings.rounds}`;
+
+                if (progress.isGameOver) {
+                    this.showPodium();
+                } else {
+                    this.setupReadyPanel();
+                }
+            },
+
+            showPanel(panelId) {
+                this.elements.panels.forEach(p => p.classList.remove('active'));
+                document.getElementById(panelId).classList.add('active');
+            },
+
+            renderLeaderboard() {
+                this.elements.studentList.innerHTML = '';
+                
+                // Visual sort, but logical turn order remains intact in GameManager
+                const sortedDisplay = [...GameManager.state.students].sort((a, b) => b.score - a.score);
+                const currentActorId = GameManager.getActor()?.id;
+
+                sortedDisplay.forEach(student => {
+                    const isActing = (student.id === currentActorId && !GameManager.state.progress.isGameOver);
+                    const div = document.createElement('div');
+                    div.className = `student-card ${isActing ? 'active-actor' : ''}`;
+                    div.innerHTML = `
+                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:70%;">
+                            ${isActing ? '<i class="fa-solid fa-masks-theater"></i> ' : ''}${student.name}
+                        </span>
+                        <span class="score-badge">${student.score} pts</span>
+                    `;
+                    this.elements.studentList.appendChild(div);
+                });
+            },
+
+            // --- GAME FLOW UI ---
+            setupReadyPanel() {
+                const actor = GameManager.getActor();
+                if(!actor) return; // Edge case safety
+                
+                this.elements.readyActorName.innerText = actor.name;
+                this.elements.activeActorName.innerText = actor.name;
+                
+                this.elements.btnStartActing.innerHTML = `<i class="fa-solid fa-masks-theater"></i> Start Acting! (${GameManager.state.settings.maxTime}s)`;
+                this.showPanel('panel-ready');
+            },
+
+            showSecretWord() {
+                this.refreshWord();
+                this.showPanel('panel-reveal');
+            },
+
+            refreshWord() {
+                const wordObj = GameManager.getRandomWord();
+                this.elements.secretWordDisplay.innerText = wordObj.text;
+                this.elements.secretWordCategory.innerText = "Category: " + wordObj.category;
+                this.elements.activeTimerCategory.innerText = "Category: " + wordObj.category;
+            },
+
+            startActing() {
+                GameManager.startTurn();
+                this.updateTimerDisplay();
+                this.showPanel('panel-timer');
+                
+                clearInterval(this.timerInterval);
+                this.timerInterval = setInterval(() => {
+                    const timeLeft = GameManager.tickTimer();
+                    this.updateTimerDisplay();
+                    
+                    if (timeLeft <= 0) {
+                        this.handleTimeUpTrigger();
+                    }
+                }, 1000);
+            },
+
+            updateTimerDisplay() {
+                const timeLeft = GameManager.state.timeLeft;
+                this.elements.timerDisplay.innerText = timeLeft;
+                
+                this.elements.timerDisplay.className = 'timer-display'; // reset
+                if (timeLeft <= 10) {
+                    this.elements.timerDisplay.classList.add('danger');
+                } else if (timeLeft <= 30) {
+                    this.elements.timerDisplay.classList.add('warning');
+                }
+            },
+
+            // --- GUESS & TIME UP UI ---
+            handleGuessTrigger() {
+                GameManager.pauseTimer();
+                this.buildGuesserModal();
+                this.elements.guesserModal.style.display = 'flex';
+            },
+
+            cancelGuess() {
+                this.elements.guesserModal.style.display = 'none';
+                GameManager.resumeTimer();
+            },
+
+            buildGuesserModal() {
+                this.elements.guesserGrid.innerHTML = '';
+                const currentActorId = GameManager.getActor().id;
+
+                GameManager.state.students.forEach(student => {
+                    // Actor cannot guess their own word
+                    if (student.id !== currentActorId) {
+                        const btn = document.createElement('button');
+                        btn.className = 'guesser-btn';
+                        btn.innerText = student.name;
+                        btn.onclick = () => this.executeGuess(student.id);
+                        this.elements.guesserGrid.appendChild(btn);
+                    }
+                });
+            },
+
+            executeGuess(guesserId) {
+                this.elements.guesserModal.style.display = 'none';
+                clearInterval(this.timerInterval);
+
+                const pointsEarned = GameManager.awardPointsTo(guesserId);
+                const timeLeft = GameManager.state.timeLeft;
+
+                this.renderLeaderboard();
+                this.fireConfetti(false); // Standard confetti
+
+                this.elements.resultTitle.innerText = "Awesome Job!";
+                this.elements.resultTitle.style.color = "#f97316";
+                this.elements.resultWord.innerText = GameManager.state.currentWord.text;
+                this.elements.resultSubtitle.innerHTML = `Guessed with <strong>${timeLeft}s</strong> left!<br><strong>+${pointsEarned} Points</strong> to both players.`;
+                
+                this.showPanel('panel-results');
+            },
+
+            handleTimeUpTrigger() {
+                clearInterval(this.timerInterval);
+                GameManager.pauseTimer();
+
+                this.elements.resultTitle.innerText = "Time's Up!";
+                this.elements.resultTitle.style.color = "#6b21a8";
+                this.elements.resultWord.innerText = GameManager.state.currentWord.text;
+                this.elements.resultSubtitle.innerHTML = "No points this round, but great effort!";
+                
+                this.showPanel('panel-results');
+            },
+
+            advanceGame() {
+                GameManager.advanceTurn();
+                this.updateAll();
+            },
+
+            // --- PODIUM UI ---
+            showPodium() {
+                this.elements.podiumWrapper.innerHTML = '';
+                const top3 = GameManager.getTopStudents();
+                
+                // Map array index to visual podium steps (2nd, 1st, 3rd)
+                const podiumOrder = [
+                    { data: top3[1], class: 'step-2', label: '2nd' },
+                    { data: top3[0], class: 'step-1', label: '1st' },
+                    { data: top3[2], class: 'step-3', label: '3rd' }
+                ];
+
+                podiumOrder.forEach(slot => {
+                    if(!slot.data) return; // In case fewer than 3 students
+                    const stepDiv = document.createElement('div');
+                    stepDiv.className = `podium-step ${slot.class}`;
+                    stepDiv.innerHTML = `
+                        <div class="podium-name">${slot.data.name}</div>
+                        <div class="podium-score">${slot.data.score} pts</div>
+                        <div class="podium-block">${slot.label}</div>
+                    `;
+                    this.elements.podiumWrapper.appendChild(stepDiv);
+                });
+
+                this.showPanel('panel-podium');
+                this.fireConfetti(true); // Massive confetti
+            },
+
+            // --- SETTINGS UI ---
+            openSettingsModal() {
+                GameManager.pauseTimer(); // Pause game if active
+                
+                // Populate forms
+                document.getElementById('setting-time').value = GameManager.state.settings.maxTime;
+                document.getElementById('setting-rounds').value = GameManager.state.settings.rounds;
+                document.getElementById('setting-words').value = GameManager.state.settings.words.join(', ');
+                
+                this.elements.settingsStudentsList.innerHTML = '';
+                GameManager.state.students.forEach(s => this.addStudentInputRow(s.id, s.name));
+
+                this.elements.settingsModal.style.display = 'flex';
+            },
+
+            closeSettingsModal() {
+                this.elements.settingsModal.style.display = 'none';
+                GameManager.resumeTimer();
+            },
+
+            addStudentInputRow(id = null, name = '') {
+                const uniqueId = id || 's_' + Date.now() + Math.floor(Math.random()*1000);
+                const row = document.createElement('div');
+                row.className = 'settings-student-row';
+                row.dataset.id = uniqueId;
+                row.innerHTML = `
+                    <input type="text" class="settings-input student-name-input" value="${name}" placeholder="Student Name" required>
+                    <button class="remove-student-btn" onclick="this.parentElement.remove()" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                this.elements.settingsStudentsList.appendChild(row);
+            },
+
+            saveSettings() {
+                // Parse simple settings
+                const maxTime = parseInt(document.getElementById('setting-time').value) || 90;
+                const rounds = parseInt(document.getElementById('setting-rounds').value) || 2;
+                
+                // Parse words
+                const wordsRaw = document.getElementById('setting-words').value;
+                const words = wordsRaw.split(',').map(w => w.trim()).filter(w => w.length > 0);
+                
+                // Parse students
+                const studentInputs = Array.from(document.querySelectorAll('.settings-student-row'));
+                const newStudents = studentInputs.map(row => {
+                    return {
+                        id: row.dataset.id,
+                        name: row.querySelector('.student-name-input').value.trim() || 'Unnamed'
+                    };
+                });
+
+                GameManager.updateSettings({ maxTime, rounds, words }, newStudents);
+                
+                this.closeSettingsModal();
+                this.updateAll();
+            },
+
+            resetScoresFromSettings() {
+                // Simple custom modal pattern vs standard confirm if preferred, but leaving as standard confirm for utility
+                const isConfirmed = confirm("Are you sure you want to reset all scores and start over?");
+                if(isConfirmed) {
+                    GameManager.resetGameProgress();
+                    this.saveSettings(); // Saves forms and updates UI
+                }
+            },
+
+            // --- VISUAL EFFECTS (CONFETTI) ---
+            setupConfettiCanvas() {
+                const resizeCanvas = () => {
+                    this.elements.confetti.width = window.innerWidth;
+                    this.elements.confetti.height = window.innerHeight;
+                };
+                window.addEventListener('resize', resizeCanvas);
+                resizeCanvas();
+            },
+
+            fireConfetti(isMassive = false) {
+                const canvas = this.elements.confetti;
+                const ctx = canvas.getContext('2d');
+                const particleCount = isMassive ? 500 : 150;
+                
+                const particles = [];
+                const colors = ['#fde047', '#38bdf8', '#86efac', '#f9a8d4', '#f43f5e', '#a855f7', '#fb923c'];
+                
+                for(let i=0; i < particleCount; i++) {
+                    particles.push({
+                        x: canvas.width / 2, y: canvas.height / 2 + (isMassive ? 200 : 0), 
+                        vx: (Math.random() - 0.5) * (isMassive ? 50 : 35), 
+                        vy: (Math.random() - 1) * (isMassive ? 45 : 35) - 5, 
+                        size: Math.random() * 12 + 8, 
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        rot: Math.random() * 360, rotSpeed: (Math.random() - 0.5) * 20
+                    });
+                }
+                
+                function loop() {
+                    ctx.clearRect(0,0,canvas.width,canvas.height);
+                    let active = false;
+                    particles.forEach(p => {
+                        p.x += p.vx; p.y += p.vy; 
+                        p.vy += 0.8; p.vx *= 0.96; p.rot += p.rotSpeed;
+                        if (p.y < canvas.height + 20) active = true;
+                        
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate(p.rot * Math.PI / 180);
+                        ctx.fillStyle = p.color; 
+                        ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                        ctx.restore();
+                    });
+                    if(active) requestAnimationFrame(loop);
+                    else ctx.clearRect(0,0,canvas.width,canvas.height); 
+                }
+                loop();
+            }
+        };
+
+        // --- BOOT UP APP ---
+        document.addEventListener('DOMContentLoaded', () => {
+            GameManager.init();
+            UI.init();
+        });
+
+    </script>
+</body>
+</html>
