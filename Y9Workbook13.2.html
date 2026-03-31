@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13.2 Experimental vs Theoretical Probabilities</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS --- */
+        :root {
+            --bg-paper: #fdfbf7;       
+            --bg-panel: #ffffff;       
+            --primary: #2563eb;        
+            --accent: #16a34a;         
+            --warning: #ea580c;        
+            --danger: #dc2626;         
+            --cold: #0284c7;           
+            --purple: #9333ea;
+            --text-main: #334155;      
+            --text-dim: #64748b;       
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--text-main);
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-main); margin: 0; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; text-align: center; width: 100%; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-main); margin: 0; margin-bottom: 0.5rem;}
+
+        strong { color: var(--text-main); font-weight: 800; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        
+        /* Layout Grids */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; width: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; align-items: stretch; width: 100%; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; align-items: stretch; width: 100%; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+            width: 100vw;
+        }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: #ffffff;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .brand-pill {
+            background: var(--purple);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 2px 2px 0px rgba(147, 51, 234, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            background-image:
+                linear-gradient(90deg, transparent 60px, rgba(220, 38, 38, 0.2) 60px, rgba(220, 38, 38, 0.2) 62px, transparent 62px),
+                linear-gradient(rgba(147, 51, 234, 0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 32px;
+            background-attachment: local;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        /* Strict Slide Container Guidelines */
+        .slide-container {
+            align-items: center;
+            background-color: transparent; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            justify-content: center;
+            padding: 40px 60px 40px 100px;
+            position: relative;
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .slide-container > * { width: 100%; }
+        .content-area { display: flex; flex-direction: column; flex-grow: 1; justify-content: center; width: 100%; align-items: center;}
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+            width: 100%;
+        }
+
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            background: #ffffff;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+            animation: slideIn 0.5s ease;
+            font-family: 'Kalam', cursive;
+            font-size: 1.3rem;
+            width: 100%;
+        }
+        .pedagogical-note p, .pedagogical-note li, .pedagogical-note h3 { font-family: 'Kalam', cursive; }
+        .pedagogical-badge {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        .note-theory { border-color: var(--purple); }
+        .note-theory .pedagogical-badge { color: var(--purple); }
+
+        .problem-block {
+            background: #ffffff;
+            border: 2px dashed var(--purple);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+            width: 100%;
+        }
+        .problem-number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--purple);
+            margin-right: 0.5rem;
+        }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            width: 100%;
+        }
+        .btn-action:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 4px 4px 0px rgba(0,0,0,0.2); }
+        .btn-action.btn-accent { background: var(--accent); }
+        .btn-action.btn-warning { background: var(--warning); }
+        .btn-action.btn-purple { background: var(--purple); }
+        .btn-action.btn-small { padding: 0.5rem 1rem; font-size: 1rem; }
+
+        .answer-box {
+            display: none; 
+            background: #ffffff; 
+            padding: 1.5rem; 
+            border-radius: 8px; 
+            border: 2px solid var(--accent); 
+            margin-top: 1rem; 
+            box-shadow: 3px 3px 0px rgba(22, 163, 74, 0.2);
+            text-align: center;
+            width: 100%;
+        }
+
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; margin-bottom: 0.5rem; color: var(--text-main); background: #ffffff; font-size: 1.2rem; }
+        .data-table th, .data-table td { border: 2px solid rgba(0,0,0,0.2); padding: 0.5rem; text-align: center; }
+        .data-table th { background: rgba(147, 51, 234, 0.1); color: var(--text-main); font-family: 'Outfit'; font-weight: bold; }
+
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: var(--text-main);
+            border: 2px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cold), var(--purple)); transition: width 0.3s ease; }
+
+        /* Formula Containers */
+        .formula-container {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0.5rem 0;
+            width: 100%;
+        }
+        math { font-size: 1.4rem; color: var(--text-main); }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-enter { animation: fadeIn 0.4s ease-out; width: 100%; }
+        .delay-1 { animation: slideIn 0.4s ease-out 0.1s both; }
+        .delay-2 { animation: slideIn 0.4s ease-out 0.2s both; }
+
+        /* Spinner CSS */
+        .spinner-wrapper {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 0 auto;
+        }
+        .spinner-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            color: #1e293b;
+            z-index: 10;
+        }
+        .spinner-svg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+            transition: transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        .spinner-slice { cursor: pointer; transition: opacity 0.2s; }
+        .spinner-slice:hover { opacity: 0.8; }
+        
+        /* Utility */
+        .color-badge { display: inline-block; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+        .bg-red { background-color: var(--danger); }
+        .bg-green { background-color: var(--accent); }
+        .bg-blue { background-color: var(--primary); }
+
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-dice"></i> Year 8 Math</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;">13.2 Experimental vs Theoretical Probabilities</span>
+        </div>
+        <div style="font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-main); font-size: 1.2rem;">
+            31 March 2026
+        </div>
+    </header>
+
+    <main class="viewport">
+        <!-- Slides are injected here -->
+        <div id="slide-root" style="width: 100%; height: 100%;"></div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="progress-container"><div class="progress-fill" id="progress-bar"></div></div>
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+</div>
+
+<script>
+    // --- GLOBAL STATE ---
+    // Start with a mix of colors (No Blank options allowed)
+    window.spinnerColors = ['red', 'green', 'blue', 'red', 'green', 'blue', 'red', 'green', 'blue', 'red'];
+    
+    const state = { currentSlide: 0, slides: [], cleanupFn: null };
+
+    // --- HELPER FUNCTIONS ---
+    const bindReveals = (container) => {
+        const btns = container.querySelectorAll('.reveal-btn');
+        const handlers = [];
+        btns.forEach(btn => {
+            const handler = () => {
+                const targetId = btn.getAttribute('data-target');
+                const target = container.querySelector('#' + targetId);
+                target.style.display = 'block';
+                target.classList.add('anim-enter');
+                btn.style.display = 'none';
+                
+                // Re-typeset math if needed
+                if (window.MathJax) { window.MathJax.typesetPromise([target]); }
+            };
+            handlers.push({ el: btn, fn: handler });
+            btn.addEventListener('click', handler);
+        });
+        return () => handlers.forEach(h => h.el.removeEventListener('click', h.fn));
+    };
+
+    // Generates SVG code for a 10-piece pie chart based on window.spinnerColors
+    const drawSpinnerSVG = (colors) => {
+        let svg = `<svg viewBox="0 0 100 100" class="spinner-svg" id="active-spinner">`;
+        for(let i=0; i<10; i++) {
+            let a1 = (i * 36 - 90) * Math.PI / 180; // Start at -90deg (top)
+            let a2 = ((i+1) * 36 - 90) * Math.PI / 180;
+            let x1 = 50 + 50 * Math.cos(a1);
+            let y1 = 50 + 50 * Math.sin(a1);
+            let x2 = 50 + 50 * Math.cos(a2);
+            let y2 = 50 + 50 * Math.sin(a2);
+            
+            let colorCode = '#cbd5e1'; 
+            if (colors[i] === 'red') colorCode = 'var(--danger)';
+            else if (colors[i] === 'green') colorCode = 'var(--accent)';
+            else if (colors[i] === 'blue') colorCode = 'var(--primary)';
+            
+            // Draw pie slice path
+            svg += `<path d="M 50 50 L ${x1} ${y1} A 50 50 0 0 1 ${x2} ${y2} Z" fill="${colorCode}" stroke="#fff" stroke-width="0.5" data-idx="${i}" class="spinner-slice" />`;
+        }
+        svg += '</svg>';
+        return svg;
+    };
+
+    // Calculate theoretical probability based on current colors
+    const getTheoreticalCount = (color) => {
+        return window.spinnerColors.filter(c => c === color).length;
+    };
+
+    // --- SLIDES DEFINITION ---
+    state.slides = [
+        // SLIDE 1: Title & Objective
+        {
+            template: () => `
+                <div class="slide-container" id="slide1">
+                    <div class="anim-enter text-center content-area" style="justify-content: center;">
+                        <i class="fa-solid fa-bullseye delay-1" style="font-size: 5rem; color: var(--purple); margin-bottom: 1rem;"></i>
+                        <h1 class="delay-1" style="font-size: 3.5rem;">Experimental vs. Theoretical</h1>
+                        <h2 class="delay-1" style="color: var(--accent);">Putting Probability to the Test</h2>
+                        
+                        <div class="pedagogical-note note-write delay-2" style="max-width: 800px; margin: 3rem auto; text-align: left; transform: rotate(-1deg);">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Today's Objective</div>
+                            <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">I will...</h3>
+                            <p style="font-size: 1.6rem; line-height: 1.4;">Calculate theoretical probabilities and compare them directly to experimental probabilities.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => () => {}
+        },
+
+        // SLIDE 2: Crucial Rule Note
+        {
+            template: () => `
+                <div class="slide-container" id="slide2">
+                    <div class="anim-enter content-area" style="justify-content: center;">
+                        <div class="pedagogical-note note-write" style="max-width: 900px; margin: 0 auto; padding: 3rem; transform: rotate(0.5deg);">
+                            <div class="pedagogical-badge" style="font-size: 1.2rem; margin-bottom: 1rem;"><i class="fa-solid fa-book-open"></i> Write This Down in Your Notebook</div>
+                            <h3 style="color: var(--primary); font-size: 2.2rem; margin-bottom: 1.5rem; text-align: center;">The Golden Rule of Probability</h3>
+                            
+                            <p style="font-size: 2rem; text-align: center; margin: 1.5rem 0; color: var(--text-main); line-height: 1.5;">
+                                Probability is always between <strong>0% and 100%</strong>.
+                            </p>
+                            
+                            <hr style="border: 1px dashed rgba(0,0,0,0.1); margin: 2rem 0;">
+                            
+                            <p style="font-size: 2rem; text-align: center; margin: 1.5rem 0; color: var(--purple); line-height: 1.5;">
+                                This is exactly the same as being a decimal between <strong>0 and 1</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => () => {}
+        },
+
+        // SLIDE 3: Interactive Spinner (1 Spin)
+        {
+            template: () => `
+                <div class="slide-container" id="slide3">
+                    <h2>Interactive Spinner (10 Equal Pieces)</h2>
+                    <div class="content-area">
+                        <div class="grid-2">
+                            <!-- Left: Spinner -->
+                            <div class="glass-card" style="text-align: center; border-top: 4px solid var(--primary);">
+                                <h3 style="margin-bottom: 0.5rem;">Customise Your Spinner</h3>
+                                <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1.5rem;">Click the pieces below to change their colours.</p>
+                                
+                                <div class="spinner-wrapper" id="spinner-container-1">
+                                    <i class="fa-solid fa-caret-down spinner-pointer"></i>
+                                    <!-- SVG Injected Here -->
+                                </div>
+                            </div>
+
+                            <!-- Right: Simulation & Results -->
+                            <div class="glass-card" style="border-top: 4px solid var(--warning); display: flex; flex-direction: column;">
+                                <div>
+                                    <h3 style="color: var(--warning);"><i class="fa-solid fa-rotate"></i> Spin 1 Time</h3>
+                                    <p style="margin-bottom: 1.5rem;">Let's test out your spinner. Give it a spin!</p>
+                                    
+                                    <button class="btn-action btn-warning" id="btn-spin-1"><i class="fa-solid fa-play"></i> Spin 1 Time</button>
+                                </div>
+                                
+                                <div id="results-1" style="display: none; margin-top: 1.5rem; background: rgba(0,0,0,0.03); padding: 1.5rem; border-radius: 8px; flex-grow: 1;">
+                                    <h4 style="margin-bottom: 1rem; font-size: 1.4rem;">Result:</h4>
+                                    <p style="font-size: 1.5rem; text-align: center; font-weight: bold; margin-bottom: 1rem;" id="spin-result-text">-</p>
+                                    
+                                    <div class="pedagogical-note note-theory" style="margin-top: 1.5rem; margin-bottom: 0; padding: 1rem; font-size: 1.1rem;">
+                                        <strong>Question for the Class:</strong><br>
+                                        Based on how you coloured the spinner, what is the <strong>Theoretical Probability</strong> of landing on Red? Green? Blue?
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const spinnerDiv = container.querySelector('#spinner-container-1');
+                
+                // Render and bind click events to change slice colors (No blank)
+                const renderSpinner = () => {
+                    spinnerDiv.innerHTML = '<i class="fa-solid fa-caret-down spinner-pointer"></i>' + drawSpinnerSVG(window.spinnerColors);
+                    spinnerDiv.querySelectorAll('.spinner-slice').forEach(el => {
+                        el.addEventListener('click', (e) => {
+                            let idx = parseInt(e.target.getAttribute('data-idx'));
+                            let cycle = { 'red': 'green', 'green': 'blue', 'blue': 'red' };
+                            window.spinnerColors[idx] = cycle[window.spinnerColors[idx]];
+                            renderSpinner(); // Re-render visual
+                        });
+                    });
+                };
+                renderSpinner();
+
+                const btn = container.querySelector('#btn-spin-1');
+                const resultsDiv = container.querySelector('#results-1');
+                const resultText = container.querySelector('#spin-result-text');
+                const handlers = [];
+
+                const spinHandler = () => {
+                    // Pick 1 random slice
+                    let randIdx = Math.floor(Math.random() * 10);
+                    let winningColor = window.spinnerColors[randIdx];
+                    
+                    // Visual Spin Animation
+                    let svg = spinnerDiv.querySelector('.spinner-svg');
+                    let currentRot = parseInt(svg.dataset.rot || 0);
+                    let newRot = currentRot + 1080 + Math.floor(Math.random()*360);
+                    svg.style.transform = `rotate(${newRot}deg)`;
+                    svg.dataset.rot = newRot;
+
+                    setTimeout(() => {
+                        resultsDiv.style.display = 'block';
+                        resultsDiv.classList.add('anim-enter');
+                        
+                        if (winningColor === 'red') {
+                            resultText.innerHTML = '<span style="color: var(--danger);">Landed on Red!</span>';
+                        } else if (winningColor === 'green') {
+                            resultText.innerHTML = '<span style="color: var(--accent);">Landed on Green!</span>';
+                        } else if (winningColor === 'blue') {
+                            resultText.innerHTML = '<span style="color: var(--primary);">Landed on Blue!</span>';
+                        }
+                    }, 1500); // Wait for spin animation
+                };
+
+                btn.addEventListener('click', spinHandler);
+                handlers.push({ el: btn, fn: spinHandler });
+
+                return () => handlers.forEach(h => h.el.removeEventListener('click', h.fn));
+            }
+        },
+
+        // SLIDE 4: Large Simulation (500 Spins)
+        {
+            template: () => `
+                <div class="slide-container" id="slide4">
+                    <h2>Large Scale Simulation (500 Spins)</h2>
+                    <div class="content-area">
+                        <div class="grid-2">
+                            <!-- Left: Spinner Read-Only -->
+                            <div class="glass-card" style="text-align: center; border-top: 4px solid var(--purple);">
+                                <h3 style="margin-bottom: 1rem;">Current Spinner Setup</h3>
+                                <div class="spinner-wrapper" id="spinner-container-2" style="width: 180px; height: 180px; margin-bottom: 2rem;">
+                                    <i class="fa-solid fa-caret-down spinner-pointer" style="top: -10px;"></i>
+                                    <!-- SVG Injected Here -->
+                                </div>
+                                <button class="btn-action btn-purple" id="btn-spin-500"><i class="fa-solid fa-forward-fast"></i> Simulate 500 Spins</button>
+                            </div>
+
+                            <!-- Right: Detailed Table -->
+                            <div class="glass-card" style="padding: 1.5rem;">
+                                <h3 style="color: var(--text-main); font-size: 1.4rem;">Simulation Results</h3>
+                                <table class="data-table" id="sim-table" style="font-size: 1.1rem; opacity: 0.3; transition: opacity 0.5s;">
+                                    <tr>
+                                        <th>Colour</th>
+                                        <th>Frequency</th>
+                                        <th>Experimental Prob</th>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="color-badge bg-red"></span> Red</td>
+                                        <td id="sim-freq-red">-</td>
+                                        <td id="sim-exp-red">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="color-badge bg-green"></span> Green</td>
+                                        <td id="sim-freq-green">-</td>
+                                        <td id="sim-exp-green">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="color-badge bg-blue"></span> Blue</td>
+                                        <td id="sim-freq-blue">-</td>
+                                        <td id="sim-exp-blue">-</td>
+                                    </tr>
+                                </table>
+                                
+                                <div style="text-align: center; margin-top: 1.5rem;">
+                                    <button class="btn-action btn-accent" id="btn-reveal-exp" style="display: none;"><i class="fa-solid fa-eye"></i> Calculate Experimental Probability</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const spinnerDiv = container.querySelector('#spinner-container-2');
+                spinnerDiv.innerHTML = '<i class="fa-solid fa-caret-down spinner-pointer" style="top: -10px;"></i>' + drawSpinnerSVG(window.spinnerColors);
+
+                const btnSimulate = container.querySelector('#btn-spin-500');
+                const btnRevealExp = container.querySelector('#btn-reveal-exp');
+                const table = container.querySelector('#sim-table');
+                const handlers = [];
+                
+                let currentCounts = { red: 0, green: 0, blue: 0 };
+
+                const simHandler = () => {
+                    currentCounts = { red: 0, green: 0, blue: 0 };
+                    for(let i=0; i<500; i++) {
+                        let randIdx = Math.floor(Math.random() * 10);
+                        currentCounts[window.spinnerColors[randIdx]]++;
+                    }
+                    
+                    // Visual Spin Animation
+                    let svg = spinnerDiv.querySelector('.spinner-svg');
+                    let currentRot = parseInt(svg.dataset.rot || 0);
+                    let newRot = currentRot + 1800 + Math.floor(Math.random()*360);
+                    svg.style.transform = `rotate(${newRot}deg)`;
+                    svg.dataset.rot = newRot;
+
+                    setTimeout(() => {
+                        // Reveal Frequencies only
+                        container.querySelector('#sim-freq-red').innerText = currentCounts.red;
+                        container.querySelector('#sim-freq-green').innerText = currentCounts.green;
+                        container.querySelector('#sim-freq-blue').innerText = currentCounts.blue;
+
+                        // Reset Exp Prob column visually
+                        container.querySelector('#sim-exp-red').innerText = '-';
+                        container.querySelector('#sim-exp-green').innerText = '-';
+                        container.querySelector('#sim-exp-blue').innerText = '-';
+
+                        table.style.opacity = '1';
+                        btnRevealExp.style.display = 'inline-flex';
+                        btnRevealExp.classList.add('anim-enter');
+                    }, 1500);
+                };
+
+                const revealExpHandler = () => {
+                    container.querySelector('#sim-exp-red').innerText = ((currentCounts.red / 500) * 100).toFixed(1) + '%';
+                    container.querySelector('#sim-exp-green').innerText = ((currentCounts.green / 500) * 100).toFixed(1) + '%';
+                    container.querySelector('#sim-exp-blue').innerText = ((currentCounts.blue / 500) * 100).toFixed(1) + '%';
+                    btnRevealExp.style.display = 'none';
+                };
+
+                btnSimulate.addEventListener('click', simHandler);
+                btnRevealExp.addEventListener('click', revealExpHandler);
+                
+                handlers.push({ el: btnSimulate, fn: simHandler });
+                handlers.push({ el: btnRevealExp, fn: revealExpHandler });
+
+                return () => handlers.forEach(h => h.el.removeEventListener('click', h.fn));
+            }
+        },
+
+        // SLIDE 5: Fractions to Percentages Practice
+        {
+            template: () => `
+                <div class="slide-container" id="slide5">
+                    <h2>Fractions to Percentages Practice</h2>
+                    <div class="content-area" style="justify-content: start; padding-top: 1rem;">
+                        <p style="text-align: center; margin-bottom: 2rem; color: var(--text-dim);">Convert each fraction or mixed number into a percentage. Write the answers in your notebook.</p>
+                        
+                        <div class="grid-4">
+                            <!-- Prob 1 -->
+                            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                                <p style="font-weight: bold; color: var(--primary); margin-bottom: 0.5rem;">1.</p>
+                                <div class="formula-container" style="margin-bottom: 1.5rem;"><math><mfrac><mn>1</mn><mn>4</mn></mfrac></math></div>
+                                <button class="btn-action btn-small reveal-btn" data-target="frac-ans-1">Reveal</button>
+                                <div id="frac-ans-1" class="answer-box" style="padding: 0.5rem;">
+                                    <p class="final-ans" style="font-size: 1.4rem !important; margin: 0;">25%</p>
+                                    <p style="font-size: 1rem; color: var(--text-dim); margin-top: 0.5rem; line-height: 1.2;">&times;25 to top & bottom<br><math><mfrac><mn>25</mn><mn>100</mn></mfrac></math></p>
+                                </div>
+                            </div>
+                            
+                            <!-- Prob 2 -->
+                            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                                <p style="font-weight: bold; color: var(--primary); margin-bottom: 0.5rem;">2.</p>
+                                <div class="formula-container" style="margin-bottom: 1.5rem;"><math><mfrac><mn>3</mn><mn>5</mn></mfrac></math></div>
+                                <button class="btn-action btn-small reveal-btn" data-target="frac-ans-2">Reveal</button>
+                                <div id="frac-ans-2" class="answer-box" style="padding: 0.5rem;">
+                                    <p class="final-ans" style="font-size: 1.4rem !important; margin: 0;">60%</p>
+                                    <p style="font-size: 1rem; color: var(--text-dim); margin-top: 0.5rem; line-height: 1.2;">&times;20 to top & bottom<br><math><mfrac><mn>60</mn><mn>100</mn></mfrac></math></p>
+                                </div>
+                            </div>
+
+                            <!-- Prob 3 -->
+                            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                                <p style="font-weight: bold; color: var(--primary); margin-bottom: 0.5rem;">3.</p>
+                                <div class="formula-container" style="margin-bottom: 1.5rem;"><math><mfrac><mn>7</mn><mn>10</mn></mfrac></math></div>
+                                <button class="btn-action btn-small reveal-btn" data-target="frac-ans-3">Reveal</button>
+                                <div id="frac-ans-3" class="answer-box" style="padding: 0.5rem;">
+                                    <p class="final-ans" style="font-size: 1.4rem !important; margin: 0;">70%</p>
+                                    <p style="font-size: 1rem; color: var(--text-dim); margin-top: 0.5rem; line-height: 1.2;">&times;10 to top & bottom<br><math><mfrac><mn>70</mn><mn>100</mn></mfrac></math></p>
+                                </div>
+                            </div>
+
+                            <!-- Prob 4 -->
+                            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                                <p style="font-weight: bold; color: var(--primary); margin-bottom: 0.5rem;">4.</p>
+                                <div class="formula-container" style="margin-bottom: 1.5rem;"><math><mfrac><mn>5</mn><mn>8</mn></mfrac></math></div>
+                                <button class="btn-action btn-small reveal-btn" data-target="frac-ans-4">Reveal</button>
+                                <div id="frac-ans-4" class="answer-box" style="padding: 0.5rem;">
+                                    <p class="final-ans" style="font-size: 1.4rem !important; margin: 0;">62.5%</p>
+                                    <p style="font-size: 1rem; color: var(--text-dim); margin-top: 0.5rem; line-height: 1.2;">Divide: 5 &divide; 8<br>= 0.625 &times; 100</p>
+                                </div>
+                            </div>
+
+                            <!-- Prob 5 -->
+                            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                                <p style="font-weight: bold; color: var(--primary); margin-bottom: 0.5rem;">5.</p>
+                                <div class="formula-container" style="margin-bottom: 1.5rem;"><math><mfrac><mn>17</mn><mn>20</mn></mfrac></math></div>
+                                <button class="btn-action btn-small reveal-btn" data-target="frac-ans-5">Reveal</button>
+                                <div id="frac-ans-5" class="answer-box" style="padding: 0.5rem;">
+                                    <p class="final-ans" style="font-size: 1.4rem !important; margin: 0;">85%</p>
+                                    <p style="font-size: 1rem; color: var(--text-dim); margin-top: 0.5rem; line-height: 1.2;">&times;5 to top & bottom<br><math><mfrac><mn>85</mn><mn>100</mn></mfrac></math></p>
+                                </div>
+                            </div>
+
+                            <!-- Prob 6 (Improper) -->
+                            <div class="glass-card" style="padding: 1.5rem; text-align: center; border-color: var(--warning);">
+                                <p style="font-weight: bold; color: var(--warning); margin-bottom: 0.5rem;">6.</p>
+                                <div class="formula-container" style="margin-bottom: 1.5rem;"><math><mfrac><mn>3</mn><mn>2</mn></mfrac></math></div>
+                                <button class="btn-action btn-warning btn-small reveal-btn" data-target="frac-ans-6">Reveal</button>
+                                <div id="frac-ans-6" class="answer-box" style="padding: 0.5rem; border-color: var(--warning);">
+                                    <p class="final-ans" style="font-size: 1.4rem !important; color: var(--warning); margin: 0;">150%</p>
+                                    <p style="font-size: 1rem; color: var(--text-dim); margin-top: 0.5rem; line-height: 1.2;">&times;50 to top & bottom<br><math><mfrac><mn>150</mn><mn>100</mn></mfrac></math></p>
+                                </div>
+                            </div>
+
+                            <!-- Prob 7 (Mixed) -->
+                            <div class="glass-card" style="padding: 1.5rem; text-align: center; border-color: var(--warning);">
+                                <p style="font-weight: bold; color: var(--warning); margin-bottom: 0.5rem;">7.</p>
+                                <div class="formula-container" style="margin-bottom: 1.5rem;"><math><mn>2</mn><mfrac><mn>1</mn><mn>4</mn></mfrac></math></div>
+                                <button class="btn-action btn-warning btn-small reveal-btn" data-target="frac-ans-7">Reveal</button>
+                                <div id="frac-ans-7" class="answer-box" style="padding: 0.5rem; border-color: var(--warning);">
+                                    <p class="final-ans" style="font-size: 1.4rem !important; color: var(--warning); margin: 0;">225%</p>
+                                    <p style="font-size: 1rem; color: var(--text-dim); margin-top: 0.5rem; line-height: 1.2;">2 is 200%.<br>1/4 is 25%.</p>
+                                </div>
+                            </div>
+
+                            <!-- Prob 8 (Whole) -->
+                            <div class="glass-card" style="padding: 1.5rem; text-align: center; border-color: var(--purple);">
+                                <p style="font-weight: bold; color: var(--purple); margin-bottom: 0.5rem;">8.</p>
+                                <div class="formula-container" style="margin-bottom: 1.5rem;"><math><mn>3</mn></math></div>
+                                <button class="btn-action btn-purple btn-small reveal-btn" data-target="frac-ans-8">Reveal</button>
+                                <div id="frac-ans-8" class="answer-box" style="padding: 0.5rem; border-color: var(--purple);">
+                                    <p class="final-ans" style="font-size: 1.4rem !important; color: var(--purple); margin: 0;">300%</p>
+                                    <p style="font-size: 1rem; color: var(--text-dim); margin-top: 0.5rem; line-height: 1.2;"><math><mn>3</mn><mo>=</mo><mfrac><mn>300</mn><mn>100</mn></mfrac></math></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => { 
+                if(window.MathJax) window.MathJax.typesetPromise([container]);
+                return bindReveals(container); 
+            }
+        },
+
+        // SLIDE 6: Quiz Slide
+        {
+            template: () => `
+                <div class="slide-container" id="slide6">
+                    <h2>Quiz Time!</h2>
+                    <div class="content-area" style="justify-content: start; padding-top: 1rem;">
+                        
+                        <div class="grid-2" style="margin-bottom: 1.5rem;">
+                            <!-- Quiz Prob 1 -->
+                            <div class="glass-card" style="padding: 1.5rem;">
+                                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">1. Experimental Prob.</h3>
+                                <p style="font-size: 1.1rem; margin-bottom: 1rem;">A spinner is spun 200 times and lands on Blue 45 times. What is the experimental probability of Blue as a percentage?</p>
+                                <button class="btn-action reveal-btn" data-target="quiz-ans-1"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                                <div id="quiz-ans-1" class="answer-box" style="padding: 1rem;">
+                                    <p style="font-size: 1.1rem; color: var(--text-dim);"><math><mfrac><mn>45</mn><mn>200</mn></mfrac><mo>=</mo><mfrac><mn>22.5</mn><mn>100</mn></mfrac></math></p>
+                                    <p class="final-ans" style="font-size: 1.4rem !important;">22.5%</p>
+                                </div>
+                            </div>
+
+                            <!-- Quiz Prob 2 -->
+                            <div class="glass-card" style="padding: 1.5rem; border-color: var(--purple);">
+                                <h3 style="color: var(--purple); margin-bottom: 0.5rem;">2. Theo vs. Exp.</h3>
+                                <p style="font-size: 1.1rem; margin-bottom: 1rem;">A 6-sided dice is rolled 60 times. It lands on '3' exactly 12 times. Calculate the experimental probability.</p>
+                                <button class="btn-action btn-purple reveal-btn" data-target="quiz-ans-2"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                                <div id="quiz-ans-2" class="answer-box" style="padding: 1rem; border-color: var(--purple);">
+                                    <p style="font-size: 1.1rem; color: var(--text-dim);"><math><mfrac><mn>12</mn><mn>60</mn></mfrac><mo>=</mo><mfrac><mn>1</mn><mn>5</mn></mfrac></math></p>
+                                    <p class="final-ans" style="font-size: 1.4rem !important; color: var(--purple);">20%</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-3">
+                            <!-- Quiz Prob 3 -->
+                            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                                <h3 style="color: var(--accent); margin-bottom: 0.5rem;">3. Convert to %</h3>
+                                <div class="formula-container" style="margin-bottom: 1rem;"><math><mfrac><mn>9</mn><mn>25</mn></mfrac></math></div>
+                                <button class="btn-action btn-accent btn-small reveal-btn" data-target="quiz-ans-3">Reveal</button>
+                                <div id="quiz-ans-3" class="answer-box" style="padding: 0.5rem;"><p class="final-ans" style="font-size: 1.4rem !important; margin: 0;">36%</p></div>
+                            </div>
+
+                            <!-- Quiz Prob 4 -->
+                            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                                <h3 style="color: var(--accent); margin-bottom: 0.5rem;">4. Convert to %</h3>
+                                <div class="formula-container" style="margin-bottom: 1rem;"><math><mfrac><mn>7</mn><mn>8</mn></mfrac></math></div>
+                                <button class="btn-action btn-accent btn-small reveal-btn" data-target="quiz-ans-4">Reveal</button>
+                                <div id="quiz-ans-4" class="answer-box" style="padding: 0.5rem;"><p class="final-ans" style="font-size: 1.4rem !important; margin: 0;">87.5%</p></div>
+                            </div>
+
+                            <!-- Quiz Prob 5 -->
+                            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                                <h3 style="color: var(--accent); margin-bottom: 0.5rem;">5. Convert to %</h3>
+                                <div class="formula-container" style="margin-bottom: 1rem;"><math><mn>1</mn><mfrac><mn>3</mn><mn>5</mn></mfrac></math></div>
+                                <button class="btn-action btn-accent btn-small reveal-btn" data-target="quiz-ans-5">Reveal</button>
+                                <div id="quiz-ans-5" class="answer-box" style="padding: 0.5rem;"><p class="final-ans" style="font-size: 1.4rem !important; margin: 0;">160%</p></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => { 
+                if(window.MathJax) window.MathJax.typesetPromise([container]);
+                return bindReveals(container); 
+            }
+        },
+
+        // SLIDE 7: Homework Problem 3
+        {
+            template: () => `
+                <div class="slide-container" id="slide7">
+                    <h2>Workbook Solutions: Problem 3</h2>
+                    <div class="content-area">
+                        <div class="problem-block">
+                            <p><span class="problem-number">3</span> A 4-colour spinner (Y, B, G, R) is spun 60 times. Based on the grid in your book, the counts were: <strong>Red: 12, Blue: 14, Yellow: 12, Green: 22</strong>.</p>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="glass-card" style="padding: 1.5rem;">
+                                <h3><strong>a</strong> Experimental Probabilities</h3>
+                                <button class="btn-action reveal-btn" data-target="ans-3a"><i class="fa-solid fa-eye"></i> View Solution</button>
+                                <div id="ans-3a" class="answer-box" style="text-align: left; padding: 1rem;">
+                                    <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Divide each count by the total (60 spins), then convert to a percentage:</p>
+                                    <div class="formula-container"><math style="display: inline-block;"><mtext>Red: </mtext><mfrac><mn>12</mn><mn>60</mn></mfrac><mo>=</mo><mfrac><mn>1</mn><mn>5</mn></mfrac><mo>=</mo><mn>20</mn><mo>%</mo></math></div><br>
+                                    <div class="formula-container"><math style="display: inline-block;"><mtext>Yellow: </mtext><mfrac><mn>12</mn><mn>60</mn></mfrac><mo>=</mo><mfrac><mn>1</mn><mn>5</mn></mfrac><mo>=</mo><mn>20</mn><mo>%</mo></math></div><br>
+                                    <div class="formula-container"><math style="display: inline-block;"><mtext>Blue: </mtext><mfrac><mn>14</mn><mn>60</mn></mfrac><mo>=</mo><mfrac><mn>7</mn><mn>30</mn></mfrac><mo>&approx;</mo><mn>23.3</mn><mo>%</mo></math></div><br>
+                                    <div class="formula-container"><math style="display: inline-block;"><mtext>Green: </mtext><mfrac><mn>22</mn><mn>60</mn></mfrac><mo>=</mo><mfrac><mn>11</mn><mn>30</mn></mfrac><mo>&approx;</mo><mn>36.7</mn><mo>%</mo></math></div>
+                                </div>
+                            </div>
+
+                            <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--purple);">
+                                <h3 style="color: var(--purple);"><strong>b</strong> Compare to Theoretical</h3>
+                                <button class="btn-action btn-purple reveal-btn" data-target="ans-3b"><i class="fa-solid fa-eye"></i> View Comparison</button>
+                                <div id="ans-3b" class="answer-box" style="text-align: left; padding: 1rem; border-color: var(--purple);">
+                                    <p style="font-size: 1.1rem;">Because there are 4 equal colours, the <strong>Theoretical Probability</strong> for each is:</p>
+                                    <div class="formula-container"><math style="display: inline-block;"><mfrac><mn>1</mn><mn>4</mn></mfrac><mo>=</mo><mn>25</mn><mo>%</mo></math></div>
+                                    <p style="font-size: 1.1rem; margin-top: 1rem;"><strong>Comparison:</strong></p>
+                                    <ul style="font-size: 1.1rem; margin-left: 1.5rem; color: var(--text-dim);">
+                                        <li>Green (36.7%) occurred much more often than expected.</li>
+                                        <li>Red & Yellow (20%) were slightly lower than expected.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => { 
+                if(window.MathJax) window.MathJax.typesetPromise([container]);
+                return bindReveals(container); 
+            }
+        },
+
+        // SLIDE 8: Homework Problem 4
+        {
+            template: () => `
+                <div class="slide-container" id="slide8">
+                    <h2>Workbook Solutions: Problem 4</h2>
+                    <div class="content-area">
+                        <div class="problem-block">
+                            <p><span class="problem-number">4</span> A spinner has 5 equal sectors (1,2,3,4,5) and is spun 400 times.</p>
+                            <table class="data-table" style="width: 80%; margin: 0.5rem auto;">
+                                <tr><th>Score</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+                                <tr><th>Frequency</th><td>90</td><td>83</td><td>86</td><td>66</td><td>75</td></tr>
+                            </table>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="glass-card" style="padding: 1rem 1.5rem;">
+                                <h3><strong>a</strong> Experimental Probabilities</h3>
+                                <button class="btn-action btn-accent reveal-btn" data-target="ans-4a"><i class="fa-solid fa-eye"></i> Show Experimental</button>
+                                <div id="ans-4a" class="answer-box" style="padding: 1rem; text-align: left;">
+                                    <p style="font-size: 1.1rem; font-weight: bold;">i. Score 2:</p>
+                                    <div class="formula-container"><math style="display: inline-block;"><mfrac><mn>83</mn><mn>400</mn></mfrac><mo>=</mo><mn>20.75</mn><mo>%</mo></math></div>
+                                    
+                                    <p style="font-size: 1.1rem; font-weight: bold; margin-top: 0.5rem;">ii. Odd number (1, 3, or 5):</p>
+                                    <p style="font-size: 1rem; color: var(--text-dim); margin-bottom: 0.2rem;">Freq = 90 + 86 + 75 = 251</p>
+                                    <div class="formula-container"><math style="display: inline-block;"><mfrac><mn>251</mn><mn>400</mn></mfrac><mo>=</mo><mn>62.75</mn><mo>%</mo></math></div>
+
+                                    <p style="font-size: 1.1rem; font-weight: bold; margin-top: 0.5rem;">iii. 4 or 5:</p>
+                                    <p style="font-size: 1rem; color: var(--text-dim); margin-bottom: 0.2rem;">Freq = 66 + 75 = 141</p>
+                                    <div class="formula-container"><math style="display: inline-block;"><mfrac><mn>141</mn><mn>400</mn></mfrac><mo>=</mo><mn>35.25</mn><mo>%</mo></math></div>
+                                </div>
+                            </div>
+
+                            <div class="glass-card" style="padding: 1rem 1.5rem;">
+                                <h3><strong>b</strong> Theoretical Probabilities</h3>
+                                <button class="btn-action btn-warning reveal-btn" data-target="ans-4b"><i class="fa-solid fa-eye"></i> Show Theoretical & Fair?</button>
+                                <div id="ans-4b" class="answer-box" style="padding: 1rem; text-align: left; border-color: var(--warning);">
+                                    <p style="font-size: 1.1rem; font-weight: bold;">i. Score 2 (1 out of 5 sections):</p>
+                                    <div class="formula-container"><math style="display: inline-block;"><mfrac><mn>1</mn><mn>5</mn></mfrac><mo>=</mo><mn>20</mn><mo>%</mo></math></div>
+                                    
+                                    <p style="font-size: 1.1rem; font-weight: bold; margin-top: 0.5rem;">ii. Odd (3 out of 5 sections):</p>
+                                    <div class="formula-container"><math style="display: inline-block;"><mfrac><mn>3</mn><mn>5</mn></mfrac><mo>=</mo><mn>60</mn><mo>%</mo></math></div>
+
+                                    <p style="font-size: 1.1rem; font-weight: bold; margin-top: 0.5rem;">iii. 4 or 5 (2 out of 5 sections):</p>
+                                    <div class="formula-container"><math style="display: inline-block;"><mfrac><mn>2</mn><mn>5</mn></mfrac><mo>=</mo><mn>40</mn><mo>%</mo></math></div>
+
+                                    <hr style="margin: 0.8rem 0; border: 0; border-top: 1px dashed #ccc;">
+                                    <p style="font-size: 1.1rem;"><strong>c) Fair?</strong> Yes. 20.75% is very close to 20%, and 62.75% is close to 60%.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => { 
+                if(window.MathJax) window.MathJax.typesetPromise([container]);
+                return bindReveals(container); 
+            }
+        },
+
+        // SLIDE 9: Homework Problem 5
+        {
+            template: () => `
+                <div class="slide-container" id="slide9">
+                    <h2>Workbook Solutions: Problem 5</h2>
+                    <div class="content-area">
+                        <div class="problem-block" style="margin-bottom: 0.5rem;">
+                            <p><span class="problem-number">5</span> Computer simulation: Throwing 3 coins 500 times.</p>
+                            <table class="data-table" style="width: 70%; margin: 0.5rem auto;">
+                                <tr><th>Heads</th><td>0</td><td>1</td><td>2</td><td>3</td></tr>
+                                <tr><th>Freq</th><td>59</td><td>180</td><td>192</td><td>69</td></tr>
+                            </table>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="glass-card" style="padding: 1rem 1.5rem;">
+                                <h3 style="font-size: 1.3rem;"><strong>a</strong> Experimental Probabilities</h3>
+                                <button class="btn-action reveal-btn" data-target="ans-5a"><i class="fa-solid fa-eye"></i> Show Calculations</button>
+                                <div id="ans-5a" class="answer-box" style="padding: 1rem; text-align: left;">
+                                    <p style="font-size: 1.1rem;">(Divide each frequency by 500)</p>
+                                    <div class="formula-container" style="margin: 0.3rem 0;"><math style="display: inline-block;"><mtext>0 Heads: </mtext><mfrac><mn>59</mn><mn>500</mn></mfrac><mo>=</mo><mn>11.8</mn><mo>%</mo></math></div>
+                                    <div class="formula-container" style="margin: 0.3rem 0;"><math style="display: inline-block;"><mtext>1 Head: </mtext><mfrac><mn>180</mn><mn>500</mn></mfrac><mo>=</mo><mfrac><mn>9</mn><mn>25</mn></mfrac><mo>=</mo><mn>36</mn><mo>%</mo></math></div>
+                                    <div class="formula-container" style="margin: 0.3rem 0;"><math style="display: inline-block;"><mtext>2 Heads: </mtext><mfrac><mn>192</mn><mn>500</mn></mfrac><mo>=</mo><mfrac><mn>48</mn><mn>125</mn></mfrac><mo>=</mo><mn>38.4</mn><mo>%</mo></math></div>
+                                    <div class="formula-container" style="margin: 0.3rem 0;"><math style="display: inline-block;"><mtext>3 Heads: </mtext><mfrac><mn>69</mn><mn>500</mn></mfrac><mo>=</mo><mn>13.8</mn><mo>%</mo></math></div>
+                                </div>
+                            </div>
+
+                            <div class="glass-card" style="padding: 1rem 1.5rem;">
+                                <h3 style="color: var(--purple); font-size: 1.3rem;"><strong>b & c</strong> Theoretical & Compare</h3>
+                                <button class="btn-action btn-purple reveal-btn" data-target="ans-5bc"><i class="fa-solid fa-eye"></i> Show Theoretical</button>
+                                <div id="ans-5bc" class="answer-box" style="padding: 1rem; text-align: left; border-color: var(--purple);">
+                                    <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 0.5rem;">There are exactly 8 total outcomes for 3 coins: (HHH, HHT, HTH, THH, HTT, THT, TTH, TTT).</p>
+                                    <div class="formula-container" style="margin: 0.3rem 0;"><math style="display: inline-block;"><mtext>0H (TTT): </mtext><mfrac><mn>1</mn><mn>8</mn></mfrac><mo>=</mo><mn>12.5</mn><mo>%</mo></math></div>
+                                    <div class="formula-container" style="margin: 0.3rem 0;"><math style="display: inline-block;"><mtext>1H (3 ways): </mtext><mfrac><mn>3</mn><mn>8</mn></mfrac><mo>=</mo><mn>37.5</mn><mo>%</mo></math></div>
+                                    <div class="formula-container" style="margin: 0.3rem 0;"><math style="display: inline-block;"><mtext>2H (3 ways): </mtext><mfrac><mn>3</mn><mn>8</mn></mfrac><mo>=</mo><mn>37.5</mn><mo>%</mo></math></div>
+                                    <div class="formula-container" style="margin: 0.3rem 0;"><math style="display: inline-block;"><mtext>3H (HHH): </mtext><mfrac><mn>1</mn><mn>8</mn></mfrac><mo>=</mo><mn>12.5</mn><mo>%</mo></math></div>
+                                    <p style="font-size: 1.1rem; margin-top: 0.5rem;"><strong>Compare:</strong> They match beautifully! e.g., 36% exp vs 37.5% theo.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => { 
+                if(window.MathJax) window.MathJax.typesetPromise([container]);
+                return bindReveals(container); 
+            }
+        }
+    ];
+
+    // --- ENGINE LOGIC ---
+    function render() {
+        const root = document.getElementById('slide-root');
+        const slide = state.slides[state.currentSlide];
+        
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        root.innerHTML = slide.template();
+        if (slide.script) { state.cleanupFn = slide.script(root); }
+        
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Boot Up
+    render();
+</script>
+
+</body>
+</html>
