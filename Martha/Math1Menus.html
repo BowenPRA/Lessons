@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Perk Math - Confidence Building</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Notebook Edutech Standard) --- */
+        :root {
+            --bg-paper: #fdfbf7;       /* Warm paper white */
+            --bg-panel: #ffffff;       /* Pure white for cards */
+            --primary: #2563eb;        /* Blue Ink */
+            --accent: #16a34a;         /* Green Ink */
+            --warning: #ea580c;        /* Orange Highlighter */
+            --danger: #dc2626;         /* Red Pen */
+            --cold: #0284c7;           /* Light Blue */
+            --text-main: #334155;      /* Dark slate text */
+            --text-dim: #64748b;       /* Secondary text */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-main); }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-main); }
+
+        strong { color: var(--text-main); font-weight: 800; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: stretch; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: #ffffff;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: var(--primary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 2px 2px 0px rgba(37, 99, 235, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            /* Notebook Paper Effect */
+            background-image:
+                linear-gradient(90deg, transparent 60px, rgba(220, 38, 38, 0.2) 60px, rgba(220, 38, 38, 0.2) 62px, transparent 62px),
+                linear-gradient(rgba(37, 99, 235, 0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 32px;
+            background-attachment: local;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 2rem 2rem 80px; 
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+        }
+
+        /* Signposting System (Pedagogical Framework) */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            background: #ffffff;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+            animation: slideIn 0.5s ease;
+            font-family: 'Kalam', cursive;
+            font-size: 1.3rem;
+        }
+        .pedagogical-note p, .pedagogical-note li, .pedagogical-note h3 {
+            font-family: 'Kalam', cursive;
+        }
+        .pedagogical-badge {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Reveal Card */
+        .reveal-card {
+            background: #ffffff;
+            border: 3px dashed var(--primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+        }
+        .reveal-card:hover { transform: translateY(-2px); box-shadow: 6px 6px 0px rgba(0,0,0,0.06); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid rgba(0,0,0,0.05); }
+        .reveal-card.revealed { border-style: solid; border-color: var(--accent); cursor: default; transform: none; box-shadow: 4px 4px 0px rgba(0,0,0,0.06); }
+        .reveal-card.revealed .pre-reveal { display: none; }
+        .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+        }
+        .btn-action.success { background: var(--accent); }
+
+        /* Input fields */
+        .calc-input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-family: 'Outfit', sans-serif;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+        .calc-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.2); }
+
+        /* Tables */
+        .menu-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1.2rem;
+            font-family: 'Outfit', sans-serif;
+            text-align: left;
+        }
+        .menu-table th, .menu-table td {
+            padding: 0.8rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .menu-table th { color: var(--text-dim); text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; }
+        .menu-table tr:last-child td { border-bottom: none; }
+        
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: var(--text-main);
+            border: 2px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 1024px) {
+            .slide-wrapper { padding-left: 60px; }
+        }
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+            .slide-wrapper { padding-left: 2rem; }
+            .viewport { background-image: none; background-color: var(--bg-paper); } 
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill" style="background: var(--warning); box-shadow: 2px 2px 0px rgba(234, 88, 12, 0.3);"><i class="fa-solid fa-mug-hot"></i> Central Perk Math</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;">Applied Calculator Skills</span>
+        </div>
+        <div style="font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-main); text-align: right;">
+            <div style="font-size: 1.2rem;">31 March 2026</div>
+            <div style="color: var(--text-dim); font-size: 1rem;">Student: Martha</div>
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    // Helper function to re-render MathJax formulas on new slides
+    const renderMath = () => {
+        if (window.MathJax) {
+            window.MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+        }
+    };
+
+    // Reusable Menu Component for Problem Slides
+    const compactMenuHTML = `
+        <div class="glass-card" style="padding: 1.5rem; background: var(--bg-paper); border-top: 4px solid var(--warning); height: fit-content;">
+            <h3 style="color: var(--text-main); text-align: center; margin-bottom: 1rem; font-size: 1.3rem;"><i class="fa-solid fa-clipboard-list" style="color: var(--warning);"></i> Gunther's Menu</h3>
+            <table class="menu-table" style="font-size: 1.1rem;">
+                <tr><td><strong>Coffee</strong></td><td style="text-align: right; color: var(--accent); font-weight: bold;">$4.50</td></tr>
+                <tr><td><strong>Latte</strong></td><td style="text-align: right; color: var(--accent); font-weight: bold;">$5.25</td></tr>
+                <tr><td><strong>Scone</strong></td><td style="text-align: right; color: var(--accent); font-weight: bold;">$4.00</td></tr>
+                <tr><td><strong>Muffin</strong></td><td style="text-align: right; color: var(--accent); font-weight: bold;">$4.25</td></tr>
+                <tr><td><strong>Cookie</strong></td><td style="text-align: right; color: var(--accent); font-weight: bold;">$3.50</td></tr>
+            </table>
+        </div>
+    `;
+
+    // Reusable VN Menu Component (Updated with 'K' representation)
+    const vnMenuHTML = `
+        <div class="glass-card" style="padding: 1.5rem; background: var(--bg-paper); border-top: 4px solid var(--danger); height: fit-content;">
+            <h3 style="color: var(--text-main); text-align: center; margin-bottom: 1rem; font-size: 1.3rem;"><i class="fa-solid fa-plane-arrival" style="color: var(--danger);"></i> Hội An Menu</h3>
+            <table class="menu-table" style="font-size: 1.1rem;">
+                <tr><td><strong>Bánh Mì</strong></td><td style="text-align: right; color: var(--accent); font-weight: bold; line-height: 1.2;">30K<br><small style="color: var(--text-dim); font-size:0.8rem;">(30,000 VND)</small></td></tr>
+                <tr><td><strong>Bạc Xỉu</strong><br><small style="color: var(--text-dim); font-size:0.8rem;">(White Coffee)</small></td><td style="text-align: right; color: var(--accent); font-weight: bold; line-height: 1.2;">45K<br><small style="color: var(--text-dim); font-size:0.8rem;">(45,000 VND)</small></td></tr>
+            </table>
+        </div>
+    `;
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: The Hook - Welcome to Central Perk
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-mug-hot delay-1" style="font-size: 5rem; color: var(--warning); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Welcome to Central Perk!</h1>
+                    <h2 class="delay-1" style="color: var(--text-dim);">Let's calculate the bill for the gang.</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 3rem auto; text-align: left; transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objective</div>
+                        <ul style="margin-left: 1rem; display: grid; gap: 1rem; list-style-type: none; padding: 0; margin-top: 0.5rem;">
+                            <li style="font-size: 1.6rem; display: flex; align-items: flex-start; gap: 15px; color: var(--text-main); font-weight: bold;">
+                                <span style="color: var(--accent);"><i class="fa-solid fa-check-circle"></i></span>
+                                <span>I can use my calculator to confidently solve real-world math problems.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 2: The "Pivot!" Pause
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Before We Start...</h2>
+                    
+                    <div class="pedagogical-note note-theory delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; transform: rotate(1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> The Big Rule Today</div>
+                        <h3 style="color: var(--danger); margin-bottom: 1rem; font-family: 'Kalam'; font-size: 2.2rem;">PIVOT! And Pause.</h3>
+                        <p style="font-size: 1.4rem; margin-bottom: 1rem;">Whenever you see a big number or a multi-step order, stop and take a deep breath.</p>
+                        <p style="font-size: 1.4rem;"><strong>You are the Boss.</strong> The calculator is your employee. It does the heavy lifting, you just tell it what the plan is.</p>
+                    </div>
+
+                    <div class="text-center delay-2" style="margin-top: 3rem;">
+                        <button id="btn-ready" class="btn-action success" style="font-size: 1.4rem; padding: 1rem 2rem;">
+                            <i class="fa-solid fa-thumbs-up"></i> I'm ready! Let's do this.
+                        </button>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnReady = container.querySelector('#btn-ready');
+                const handler = () => changeSlide(1);
+                btnReady.addEventListener('click', handler);
+                return () => btnReady.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 3: Menu Brainstorm
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Gunther's Menu</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: stretch;">
+                        
+                        <!-- Left Side: Guessing inputs -->
+                        <div class="glass-card">
+                            <h3 style="color: var(--text-main);"><i class="fa-solid fa-pen-to-square"></i> Guess the Prices</h3>
+                            <p style="color: var(--text-dim); margin-bottom: 1rem; font-family: 'Kalam'; line-height: 1.4;">Write down what you think these items cost in New York vs Vietnam.</p>
+                            
+                            <div style="display: grid; grid-template-columns: 80px 1fr 1fr; gap: 10px; align-items: center; margin-bottom: 0.5rem; text-align: center; font-size: 0.9rem; color: var(--text-dim); text-transform: uppercase; font-weight: bold;">
+                                <div>Item</div>
+                                <div>NY ($)</div>
+                                <div>VN (VND)</div>
+                            </div>
+
+                            <!-- Coffee Row -->
+                            <div style="display: grid; grid-template-columns: 80px 1fr 1fr; gap: 10px; align-items: center; margin-bottom: 1rem;">
+                                <strong>Coffee</strong>
+                                <div style="display: flex; gap: 5px; align-items: center;">
+                                    <span style="font-size: 1.2rem;">$</span><input type="number" class="calc-input" style="margin:0; padding: 0.5rem;" placeholder="e.g. 3.00">
+                                </div>
+                                <div style="display: flex; gap: 5px; align-items: center;">
+                                    <input type="number" class="calc-input" style="margin:0; padding: 0.5rem;" placeholder="e.g. 50000"><span style="font-size: 1.2rem;">₫</span>
+                                </div>
+                            </div>
+
+                            <!-- Latte Row -->
+                            <div style="display: grid; grid-template-columns: 80px 1fr 1fr; gap: 10px; align-items: center; margin-bottom: 1rem;">
+                                <strong>Latte</strong>
+                                <div style="display: flex; gap: 5px; align-items: center;">
+                                    <span style="font-size: 1.2rem;">$</span><input type="number" class="calc-input" style="margin:0; padding: 0.5rem;" placeholder="e.g. 4.50">
+                                </div>
+                                <div style="display: flex; gap: 5px; align-items: center;">
+                                    <input type="number" class="calc-input" style="margin:0; padding: 0.5rem;" placeholder="e.g. 60000"><span style="font-size: 1.2rem;">₫</span>
+                                </div>
+                            </div>
+
+                            <!-- Scone Row -->
+                            <div style="display: grid; grid-template-columns: 80px 1fr 1fr; gap: 10px; align-items: center; margin-bottom: 1rem;">
+                                <strong>Scone</strong>
+                                <div style="display: flex; gap: 5px; align-items: center;">
+                                    <span style="font-size: 1.2rem;">$</span><input type="number" class="calc-input" style="margin:0; padding: 0.5rem;" placeholder="e.g. 2.50">
+                                </div>
+                                <div style="display: flex; gap: 5px; align-items: center;">
+                                    <input type="number" class="calc-input" style="margin:0; padding: 0.5rem;" placeholder="e.g. 30000"><span style="font-size: 1.2rem;">₫</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: The Reveal -->
+                        <div class="reveal-card" id="menu-reveal" role="button" tabindex="0">
+                            <div class="pre-reveal" style="padding-top: 3rem;">
+                                <i class="fa-solid fa-clipboard-list" style="font-size: 3.5rem; margin-bottom: 1rem; color: var(--primary);"></i>
+                                <h3>Click to reveal</h3>
+                                <h3>Gunther's Official Menu</h3>
+                            </div>
+                            <div class="reveal-content text-left">
+                                <h3 style="color: var(--warning); text-align: center; margin-bottom: 1rem;"><i class="fa-solid fa-star"></i> Official NY Prices</h3>
+                                <table class="menu-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th style="text-align: right;">Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Coffee</strong></td>
+                                            <td style="text-align: right; color: var(--accent); font-weight: bold;">$4.50</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Latte</strong></td>
+                                            <td style="text-align: right; color: var(--accent); font-weight: bold;">$5.25</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Scone</strong></td>
+                                            <td style="text-align: right; color: var(--accent); font-weight: bold;">$4.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Muffin</strong></td>
+                                            <td style="text-align: right; color: var(--accent); font-weight: bold;">$4.25</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Cookie</strong></td>
+                                            <td style="text-align: right; color: var(--accent); font-weight: bold;">$3.50</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCard = container.querySelector('#menu-reveal');
+                const handler = () => { revealCard.classList.add('revealed'); };
+                revealCard.addEventListener('click', handler);
+                return () => revealCard.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 4: Translating English to Math
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Translating English to Math</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 900px; margin: 0 auto 2rem auto; transform: rotate(-0.5deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">The Plan</h3>
+                        <p style="font-size: 1.4rem;">Before we touch the calculator, we write the plan. We translate the English sentence into a Math equation.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto;">
+                        <div class="glass-card text-center" style="border-top: 4px solid var(--text-dim);">
+                            <h3 style="color: var(--text-dim); margin-bottom: 1.5rem;"><i class="fa-solid fa-language"></i> The English</h3>
+                            <p style="font-size: 1.5rem; font-family: 'Outfit'; background: rgba(0,0,0,0.03); padding: 1.5rem; border-radius: 8px;">
+                                "Chandler orders 2 Lattes"
+                            </p>
+                        </div>
+                        <div class="glass-card text-center" style="border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary); margin-bottom: 1.5rem;"><i class="fa-solid fa-calculator"></i> The Math Plan</h3>
+                            <p style="font-size: 1.5rem; background: rgba(37,99,235,0.05); padding: 1.5rem; border-radius: 8px;">
+                                $$2 \\times 5.25$$
+                            </p>
+                            <p style="margin-top: 1rem; color: var(--text-dim); font-size: 1.1rem; font-family: 'Kalam';">
+                                Once we write this, the calculator does the rest!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 5: Joey's Appetizer
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Order #1: Joey's Appetizer</h2>
+
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <!-- Left: Workspace -->
+                        <div class="glass-card text-center">
+                            <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-main);">
+                                Joey orders <span style="color: var(--warning);">1 Coffee</span> and <span style="color: var(--accent);">1 Cookie</span>.
+                            </h3>
+                            
+                            <div class="pedagogical-note note-write" style="text-align: left; margin: 1.5rem 0; padding: 1rem;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> In your notebook:</div>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 1.2rem; line-height: 1.8;">
+                                    <li><strong>English:</strong> <em>1 Coffee + 1 Cookie</em></li>
+                                    <li><strong>Math Plan:</strong> <em>Look at the menu. Write the numbers.</em></li>
+                                    <li><strong>Calculate:</strong> <em>Use your calculator for the answer!</em></li>
+                                </ul>
+                            </div>
+
+                            <button id="btn-check-joey" class="btn-action"><i class="fa-solid fa-eye"></i> Reveal Solution to Copy</button>
+
+                            <div id="joey-answer" class="hidden" style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(22, 163, 74, 0.1); border: 2px dashed var(--accent); border-radius: 8px;">
+                                <div style="font-size: 1.6rem; margin-bottom: 0.5rem;">$$4.50 + 3.50 = 8.00$$</div>
+                                <h3 style="color: var(--accent); margin: 0; font-size: 2rem;">Total: $8.00</h3>
+                                <p style="font-family: 'Kalam'; font-size: 1.1rem; color: var(--text-main); margin-top: 0.5rem;">Make sure this is written in your notebook!</p>
+                            </div>
+                        </div>
+
+                        <!-- Right: Menu -->
+                        ${compactMenuHTML}
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                const btn = container.querySelector('#btn-check-joey');
+                const ans = container.querySelector('#joey-answer');
+                const handler = () => {
+                    ans.classList.remove('hidden');
+                    ans.style.animation = "slideIn 0.4s ease";
+                    btn.classList.add('hidden');
+                };
+                btn.addEventListener('click', handler);
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 6: Monica The Host
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Order #2: Monica The Host</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <!-- Left: Workspace -->
+                        <div class="glass-card text-center">
+                            <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-main);">
+                                Monica buys <span style="color: var(--warning);">4 Muffins</span> and <span style="color: var(--accent);">1 Coffee</span>.
+                            </h3>
+                            
+                            <div class="pedagogical-note note-write" style="text-align: left; margin: 1.5rem 0; padding: 1rem;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> In your notebook:</div>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 1.1rem; line-height: 1.8;">
+                                    <li><strong>English:</strong> <em>4 Muffins + 1 Coffee</em></li>
+                                    <li><strong>Step 1 Math:</strong> <em>4 x (Muffin Price) = Subtotal</em></li>
+                                    <li><strong>Step 2 Math:</strong> <em>Subtotal + (Coffee Price) = Total</em></li>
+                                </ul>
+                            </div>
+
+                            <button id="btn-monica-sol" class="btn-action"><i class="fa-solid fa-eye"></i> Reveal Solution to Copy</button>
+                            
+                            <div id="ans-monica" class="hidden" style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(37, 99, 235, 0.05); border: 2px dashed var(--primary); border-radius: 8px;">
+                                <div style="font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--text-dim); text-align: left;">Step 1: Muffins</div>
+                                <div style="font-size: 1.6rem; margin-bottom: 1rem;">$$4 \\times 4.25 = 17.00$$</div>
+                                
+                                <div style="font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--text-dim); text-align: left;">Step 2: Add Coffee</div>
+                                <div style="font-size: 1.6rem; margin-bottom: 1rem;">$$17.00 + 4.50 = 21.50$$</div>
+                                
+                                <h3 style="color: var(--primary); margin: 0; font-size: 2rem;">Total: $21.50</h3>
+                            </div>
+                        </div>
+
+                        <!-- Right: Menu -->
+                        ${compactMenuHTML}
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                const btn = container.querySelector('#btn-monica-sol');
+                const ans = container.querySelector('#ans-monica');
+                const handler = () => {
+                    ans.classList.remove('hidden');
+                    ans.style.animation = "slideIn 0.4s ease";
+                    btn.classList.add('hidden');
+                };
+                btn.addEventListener('click', handler);
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 7: Rachel's Mix-Up
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Order #3: Rachel's Mix-Up</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <!-- Left: Workspace -->
+                        <div class="glass-card text-center">
+                            <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-main);">
+                                Rachel rings up <span style="color: var(--warning);">3 Lattes</span> and <span style="color: var(--accent);">3 Scones</span>.
+                            </h3>
+                            
+                            <div class="pedagogical-note note-write" style="text-align: left; margin: 1.5rem 0; padding: 1rem;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> In your notebook:</div>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 1.1rem; line-height: 1.8;">
+                                    <li><strong>English:</strong> <em>3 Lattes + 3 Scones</em></li>
+                                    <li><strong>Lattes Math:</strong> <em>3 x (Latte Price)</em></li>
+                                    <li><strong>Scones Math:</strong> <em>3 x (Scone Price)</em></li>
+                                    <li><strong>Grand Total:</strong> <em>Add them together!</em></li>
+                                </ul>
+                            </div>
+
+                            <button id="btn-rachel-sol" class="btn-action"><i class="fa-solid fa-eye"></i> Reveal Solution to Copy</button>
+                            
+                            <div id="ans-rachel" class="hidden" style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(220, 38, 38, 0.05); border: 2px dashed var(--danger); border-radius: 8px;">
+                                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">$$3 \\times 5.25 = 15.75$$</div>
+                                <div style="font-size: 1.5rem; margin-bottom: 1rem;">$$3 \\times 4.00 = 12.00$$</div>
+                                <div style="font-size: 1.6rem; margin-bottom: 1rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 1rem;">$$15.75 + 12.00 = 27.75$$</div>
+                                <h3 style="color: var(--danger); margin: 0; font-size: 2rem;">Total: $27.75</h3>
+                            </div>
+                        </div>
+
+                        <!-- Right: Menu -->
+                        ${compactMenuHTML}
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                const btn = container.querySelector('#btn-rachel-sol');
+                const ans = container.querySelector('#ans-rachel');
+                const handler = () => {
+                    ans.classList.remove('hidden');
+                    ans.style.animation = "slideIn 0.4s ease";
+                    btn.classList.add('hidden');
+                };
+                btn.addEventListener('click', handler);
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 8: The Vietnam Vacation Challenge
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">The Vacation Challenge: Hội An</h2>
+
+                    <div class="pedagogical-note note-theory delay-1" style="max-width: 1000px; margin: 0 auto 2rem auto; transform: rotate(-0.5deg); padding: 1.5rem;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> Pivot / Pause Rule</div>
+                        <p style="font-size: 1.3rem;">The numbers in Vietnam are HUGE. Big numbers don't change the rules. Let the calculator do the work.</p>
+                        
+                        <!-- Added explanation for the 'K' -->
+                        <div style="background: rgba(37, 99, 235, 0.08); padding: 1rem; border-radius: 8px; margin-top: 1rem; border-left: 4px solid var(--primary);">
+                            <p style="margin: 0; font-size: 1.15rem; color: var(--text-main);">
+                                <i class="fa-solid fa-lightbulb" style="color: var(--primary);"></i> <strong>Local Tip:</strong> Most prices here use a <strong>"K"</strong> to represent a thousand. So if a menu says <strong>30K</strong>, it means <strong>30,000</strong>. Add the three zeros before typing it into your calculator!
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <!-- Left: Workspace -->
+                        <div class="glass-card text-center">
+                            <h3 style="font-size: 1.6rem; margin-bottom: 1rem; color: var(--text-main);">
+                                Joey orders <span style="color: var(--warning);">3 Bánh Mì</span> and <span style="color: var(--accent);">1 Bạc Xỉu</span>.
+                            </h3>
+                            
+                            <div class="pedagogical-note note-write" style="text-align: left; margin: 1.5rem 0; padding: 1rem;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> In your notebook:</div>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 1.1rem; line-height: 1.8;">
+                                    <li><strong>English:</strong> <em>3 Bánh Mì + 1 Bạc Xỉu</em></li>
+                                    <li><strong>Math Plan:</strong> <em>Use the Hội An Menu below. Write out the big numbers carefully!</em></li>
+                                </ul>
+                            </div>
+
+                            <button id="btn-vn-total" class="btn-action" style="background: var(--warning);"><i class="fa-solid fa-coins"></i> Reveal Solution to Copy</button>
+
+                            <div id="vn-answer" class="hidden" style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(234, 88, 12, 0.1); border: 2px dashed var(--warning); border-radius: 8px;">
+                                <div style="font-size: 1.4rem; margin-bottom: 0.5rem; text-align: left; color: var(--text-dim);">The Plan:</div>
+                                <div style="font-size: 1.5rem; margin-bottom: 1rem;">$$(3 \\times 30000) + 45000$$</div>
+                                <div style="font-size: 1.4rem; margin-bottom: 0.5rem; text-align: left; color: var(--text-dim);">Step-by-step:</div>
+                                <div style="font-size: 1.3rem; margin-bottom: 0.5rem;">$$90000 + 45000 = 135000$$</div>
+                                <h3 style="color: var(--warning); margin: 1rem 0 0 0; font-size: 2.2rem;">135,000 VND</h3>
+                            </div>
+                        </div>
+
+                        <!-- Right: Menu -->
+                        ${vnMenuHTML}
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                const btn = container.querySelector('#btn-vn-total');
+                const ans = container.querySelector('#vn-answer');
+                const handler = () => {
+                    ans.classList.remove('hidden');
+                    ans.style.animation = "slideIn 0.4s ease";
+                    btn.classList.add('hidden');
+                };
+                btn.addEventListener('click', handler);
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 9: Independent Practice
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 1rem;">Your Turn: The Final Challenge</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 1000px; margin: 0 auto 1.5rem auto; padding: 1rem; text-align: center;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-book-open"></i> Independent Practice</div>
+                        <p style="font-size: 1.3rem; margin-top: 0.5rem;">Calculate the total for these 6 orders. Write the English order, the Math plan, and the total in your notebook. <strong style="color: var(--warning);">Show your completed work to Mr. Bowen!</strong></p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: start; gap: 2rem;">
+                        
+                        <!-- Left: 6 Problems -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            
+                            <div class="glass-card text-center" style="padding: 1rem; border-top: 4px solid var(--primary);">
+                                <h4 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Order 1 (NY)</h4>
+                                <p style="font-size: 1.2rem; margin-bottom: 0;">2 Coffees</p>
+                            </div>
+                            
+                            <div class="glass-card text-center" style="padding: 1rem; border-top: 4px solid var(--warning);">
+                                <h4 style="color: var(--warning); font-size: 1.1rem; margin-bottom: 0.5rem;">Order 2 (NY)</h4>
+                                <p style="font-size: 1.2rem; margin-bottom: 0;">3 Muffins<br>1 Cookie</p>
+                            </div>
+                            
+                            <div class="glass-card text-center" style="padding: 1rem; border-top: 4px solid var(--danger);">
+                                <h4 style="color: var(--danger); font-size: 1.1rem; margin-bottom: 0.5rem;">Order 3 (VN)</h4>
+                                <p style="font-size: 1.2rem; margin-bottom: 0;">1 Bánh Mì<br>2 Bạc Xỉu</p>
+                            </div>
+                            
+                            <div class="glass-card text-center" style="padding: 1rem; border-top: 4px solid var(--accent);">
+                                <h4 style="color: var(--accent); font-size: 1.1rem; margin-bottom: 0.5rem;">Order 4 (NY)</h4>
+                                <p style="font-size: 1.2rem; margin-bottom: 0;">2 Lattes<br>2 Scones</p>
+                            </div>
+                            
+                            <div class="glass-card text-center" style="padding: 1rem; border-top: 4px solid var(--danger);">
+                                <h4 style="color: var(--danger); font-size: 1.1rem; margin-bottom: 0.5rem;">Order 5 (VN)</h4>
+                                <p style="font-size: 1.2rem; margin-bottom: 0;">4 Bánh Mì</p>
+                            </div>
+                            
+                            <div class="glass-card text-center" style="padding: 1rem; border-top: 4px solid var(--cold);">
+                                <h4 style="color: var(--cold); font-size: 1.1rem; margin-bottom: 0.5rem;">Order 6 (NY)</h4>
+                                <p style="font-size: 1.2rem; margin-bottom: 0;">1 Coffee<br>1 Muffin<br>1 Scone</p>
+                            </div>
+
+                        </div>
+
+                        <!-- Right: Menus -->
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            ${compactMenuHTML}
+                            ${vnMenuHTML}
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 10: Summary & Final Notebook Check
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-star delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h2 class="delay-1" style="font-size: 2.5rem;">Lesson Complete!</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 700px; margin: 2rem auto; text-align: left; transform: rotate(1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> What We Mastered</div>
+                        <p style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Translation:</strong> We learned to write the math plan before pressing buttons.</p>
+                        <p style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>The Pivot:</strong> We learned to pause and breathe when numbers look scary.</p>
+                        <p><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>Delegation:</strong> You are the boss. The calculator does the heavy lifting.</p>
+                    </div>
+
+                    <div class="pedagogical-note note-task delay-3" style="max-width: 700px; margin: 2rem auto; text-align: left; background: #fffcf2; border: 2px dashed var(--warning); transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> Final Notebook Check</div>
+                        <h3 style="color: var(--warning); margin-bottom: 0.5rem; font-size: 1.8rem;">Ready to Review</h3>
+                        <p style="font-size: 1.4rem; margin-bottom: 1rem;">
+                            Bring your notebook up to the desk. Mr. Bowen will check your math plans and totals for the 6 independent practice problems!
+                        </p>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        // Execute cleanup from previous slide if it exists
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        // Render HTML synchronously
+        container.innerHTML = slide.template();
+        
+        // Execute script immediately
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        // Update UI
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
