@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9.2 Voltage</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Standard - Dark Theme) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Main background (Deep Slate) */
+            --bg-panel: #1e293b;       /* Secondary background (Cards) */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Acid Green (Success) */
+            --warning: #f59e0b;        /* Hazard Orange (Tasks) */
+            --danger: #ef4444;         /* Heat Red (Errors/Theory) */
+            --text-light: #f1f5f9;     /* Main text */
+            --text-dim: #94a3b8;       /* Subtitles, disabled states */
+            --cold: #3b82f6;           /* Cold Blue */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-light); }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-light); }
+        strong { color: #ffffff; font-weight: 800; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: stretch; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: var(--primary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(30, 41, 59, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Signposting System (Cambridge Standard) */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+            background: rgba(15, 23, 42, 0.6);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            animation: slideIn 0.5s ease;
+        }
+        .pedagogical-badge {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Reveal Card */
+        .reveal-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 2px dashed var(--primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .reveal-card:hover { background: rgba(139, 92, 246, 0.1); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .reveal-card.revealed { border-style: solid; border-color: var(--accent); cursor: default; background: rgba(16, 185, 129, 0.05); }
+        .reveal-card.revealed .pre-reveal { display: none; }
+        .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
+
+        /* Action Buttons */
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+        }
+        .btn-action:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+        /* Circuit Diagrams */
+        .circuit-svg { width: 100%; max-height: 280px; stroke: var(--text-light); stroke-width: 3; fill: none; display: block; margin: 1rem auto; }
+        .circuit-accent { stroke: var(--primary); }
+        .circuit-warning { stroke: var(--warning); }
+        .circuit-text { fill: var(--text-light); stroke: none; font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: bold; text-anchor: middle;}
+        
+        /* Quiz Options */
+        .quiz-option {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.1); }
+        .quiz-option.correct { border-color: var(--accent); background: rgba(16, 185, 129, 0.1); color: var(--accent); }
+        .quiz-option.incorrect { border-color: var(--danger); background: rgba(239, 68, 68, 0.1); color: var(--danger); opacity: 0.6; }
+
+        /* Inputs */
+        .calc-input {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: var(--text-light);
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            font-family: 'Plus Jakarta Sans';
+        }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; box-shadow: 0 0 10px var(--primary);}
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.5s ease-out; }
+        .delay-1 { animation: slideIn 0.5s ease-out 0.1s both; }
+        .delay-2 { animation: slideIn 0.5s ease-out 0.2s both; }
+        .delay-3 { animation: slideIn 0.5s ease-out 0.3s both; }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-atom"></i> Cambridge Science</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;">9.2 Voltage</span>
+        </div>
+        <div style="font-weight: 700; color: var(--text-light); font-size: 1.1rem; font-family: 'Outfit', sans-serif;">31 March 2026</div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <div class="progress-container"><div class="progress-fill" id="progress-bar"></div></div>
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- THE BOWEN ENGINE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    const renderMath = () => {
+        if (window.MathJax) {
+            window.MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+        }
+    };
+
+    /* --- LESSON CONTENT --- */
+    state.slides = [
+        // 0. The Hook (Engage)
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-bolt delay-1" style="font-size: 4rem; color: var(--warning); margin-bottom: 1rem; filter: drop-shadow(0 0 10px var(--warning));"></i>
+                    <h1 class="delay-1">9.2 Voltage</h1>
+                    <h2 class="delay-1" style="color: var(--text-dim); font-size: 1.5rem;">in Series & Parallel Circuits</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 700px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objectives</div>
+                        <ul style="margin-left: 1.5rem; margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+                            <li>Compare current and voltage in <strong>series</strong> and <strong>parallel</strong> circuits.</li>
+                            <li>Describe the effects of adding <strong>cells</strong> and <strong>lamps</strong> on current and voltage.</li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // 1. Theory (Explain) - What is Voltage?
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">What is Voltage?</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Voltage (V)</h3>
+                        <p>Voltage is linked to the <strong>electrical energy</strong> supplied to a circuit by a cell, battery, or power supply. It is the electrical "push" moving particles through the wires.</p>
+                        <p style="margin-top: 1rem;">Measured in units called <strong>Volts (V)</strong>.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="margin-top: 2rem;">
+                        <div class="glass-card">
+                            <h3 style="color: var(--accent);"><i class="fa-solid fa-water"></i> Simple Analogy</h3>
+                            <p>Think of water in pipes. <br><br>The wire is the pipe. The current is the water flowing. <strong>Voltage is the water pump</strong> providing the pressure to push the water along.</p>
+                        </div>
+                        <div class="glass-card">
+                            <h3 style="color: var(--warning);"><i class="fa-solid fa-key"></i> Key Words</h3>
+                            <ul style="margin-left: 1.5rem;">
+                                <li><strong>Supply:</strong> The source of energy (cell, battery, or mains).</li>
+                                <li><strong>Mains:</strong> Electrical supply from a wall socket (usually 220-240 V).</li>
+                                <li><strong>Battery:</strong> Two or more cells connected in series.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // 2. Theory (Explain) - Measuring Voltage
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Measuring Voltage</h2>
+                    
+                    <div class="grid-2 delay-1">
+                        <div class="pedagogical-note note-theory" style="margin: 0;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> Crucial Rule</div>
+                            <p>Voltage is measured using a <strong>voltmeter</strong>.</p>
+                            <p style="margin-top: 1rem;">Because voltage looks at the difference in energy across a component, a voltmeter must always be connected in <strong>parallel</strong> with the component.</p>
+                        </div>
+
+                        <div class="glass-card text-center" style="display: flex; flex-direction: column; justify-content: center;">
+                            <h3 style="color: var(--text-light);">Voltmeter Symbol</h3>
+                            <svg viewBox="0 0 100 50" style="width: 100px; height: 50px; stroke: var(--text-light); stroke-width: 3; fill: none; margin: 0 auto;">
+                                <line x1="10" y1="25" x2="30" y2="25" />
+                                <circle cx="50" cy="25" r="20" />
+                                <text x="50" y="32" stroke="none" fill="var(--primary)" font-family="Outfit" font-size="20px" font-weight="bold" text-anchor="middle">V</text>
+                                <line x1="70" y1="25" x2="90" y2="25" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="reveal-card delay-2" id="rating-reveal" style="margin-top: 2rem;">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-question reveal-icon" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                            <h3>What is a "Voltage Rating"?</h3>
+                            <p style="color: var(--text-dim);">(Click to reveal)</p>
+                        </div>
+                        <div class="reveal-content text-left">
+                            <div class="pedagogical-badge" style="color: var(--accent);"><i class="fa-solid fa-check"></i> Answer</div>
+                            <p>Most components (like lamps) have a <strong>voltage rating</strong> (e.g., 3 V or 6 V). This tells us the <strong>maximum voltage</strong> that can be safely used without breaking the component.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCard = container.querySelector('#rating-reveal');
+                const handler = () => revealCard.classList.add('revealed');
+                revealCard.addEventListener('click', handler);
+                return () => revealCard.removeEventListener('click', handler);
+            }
+        },
+
+        // 3. Investigation (Explore) - Voltage in a Series Circuit
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Voltage in a Series Circuit</h2>
+                    
+                    <div class="grid-2 delay-1">
+                        <div class="pedagogical-note note-write" style="margin: 0;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                            <p>In a series circuit, energy is shared. The voltages across each component <strong>add up</strong> to the voltage of the supply.</p>
+                            <p style="margin-top: 1rem; text-align: center; font-size: 1.5rem; color: var(--warning);">$$V_{supply} = V_1 + V_2 + V_3$$</p>
+                        </div>
+
+                        <div class="pedagogical-note note-theory" style="margin: 0;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-list"></i> What happens if...</div>
+                            <ul style="margin-left: 1.5rem;">
+                                <li><strong>Add more components:</strong> Current decreases. Each component gets a smaller share of the voltage.</li>
+                                <li style="margin-top: 0.5rem;"><strong>Add more cells:</strong> Supply voltage increases. Current increases. Voltage across each component increases.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="glass-card delay-2 text-center" style="margin-top: 2rem; padding: 1rem;">
+                        <svg class="circuit-svg" viewBox="0 0 500 250">
+                            <!-- Wires -->
+                            <path d="M 100 50 L 400 50 L 400 180 L 100 180 Z" />
+                            
+                            <!-- Battery (12V) -->
+                            <line x1="230" y1="30" x2="230" y2="70" /> <line x1="250" y1="40" x2="250" y2="60" stroke-width="6"/>
+                            <line x1="260" y1="50" x2="270" y2="50" stroke-width="2" stroke-dasharray="2,2"/>
+                            <line x1="280" y1="30" x2="280" y2="70" /> <line x1="300" y1="40" x2="300" y2="60" stroke-width="6"/>
+                            <text x="265" y="25" class="circuit-text" fill="var(--warning)">12V Battery</text>
+                            
+                            <!-- Lamp 1 (Left) -->
+                            <circle cx="200" cy="180" r="20" fill="var(--bg-panel)" /> 
+                            <path d="M 186 166 L 214 194 M 214 166 L 186 194" />
+                            
+                            <!-- Lamp 2 (Right) -->
+                            <circle cx="300" cy="180" r="20" fill="var(--bg-panel)" /> 
+                            <path d="M 286 166 L 314 194 M 314 166 L 286 194" />
+                            
+                            <!-- Voltmeter 1 (Above Lamp 1) -->
+                            <path d="M 160 180 L 160 120 L 240 120 L 240 180" stroke="var(--primary)"/>
+                            <circle cx="200" cy="120" r="18" fill="var(--bg-panel)" stroke="var(--primary)"/> 
+                            <text x="200" y="126" class="circuit-text" fill="var(--primary)">V</text>
+                            <text x="200" y="95" class="circuit-text" fill="var(--accent)">6V</text>
+
+                            <!-- Voltmeter 2 (Above Lamp 2) -->
+                            <path d="M 260 180 L 260 120 L 340 120 L 340 180" stroke="var(--primary)"/>
+                            <circle cx="300" cy="120" r="18" fill="var(--bg-panel)" stroke="var(--primary)"/> 
+                            <text x="300" y="126" class="circuit-text" fill="var(--primary)">V</text>
+                            <text x="300" y="95" class="circuit-text" fill="var(--accent)">6V</text>
+                        </svg>
+                        <p style="color: var(--text-dim); margin-top: 1rem;">Identical lamps share the 12V supply equally (6V + 6V = 12V).</p>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // 4. Investigation (Explore) - Voltage in a Parallel Circuit
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Voltage in a Parallel Circuit</h2>
+                    
+                    <div class="grid-2 delay-1">
+                        <div class="pedagogical-note note-write" style="margin: 0;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                            <p>In a parallel circuit, the voltage across <strong>each branch</strong> is <strong>equal</strong> to the voltage of the supply.</p>
+                            <p style="margin-top: 1rem; text-align: center; font-size: 1.5rem; color: var(--warning);">$$V_{supply} = V_{branch1} = V_{branch2}$$</p>
+                        </div>
+
+                        <div class="pedagogical-note note-theory" style="margin: 0;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-list"></i> What happens if...</div>
+                            <ul style="margin-left: 1.5rem;">
+                                <li><strong>Add more branches:</strong> More paths for current to flow. Total current from supply increases.</li>
+                                <li style="margin-top: 0.5rem;"><strong>Add components to a branch:</strong> Makes it harder for current to flow in <em>that specific branch</em>.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="glass-card delay-2 text-center" style="margin-top: 2rem; padding: 1rem;">
+                        <svg class="circuit-svg" viewBox="0 0 500 350" style="max-height: 300px;">
+                            <!-- Battery (9V) -->
+                            <line x1="230" y1="30" x2="230" y2="70" /> <line x1="250" y1="40" x2="250" y2="60" stroke-width="6"/>
+                            <line x1="260" y1="50" x2="270" y2="50" stroke-width="2" stroke-dasharray="2,2"/>
+                            <line x1="280" y1="30" x2="280" y2="70" /> <line x1="300" y1="40" x2="300" y2="60" stroke-width="6"/>
+                            <text x="265" y="25" class="circuit-text" fill="var(--warning)">9V Battery</text>
+                            
+                            <!-- Main Loop to Branch 1 -->
+                            <path d="M 230 50 L 150 50 L 150 160 L 350 160 L 350 50 L 300 50" />
+                            
+                            <!-- Lamp (Branch 1) -->
+                            <circle cx="250" cy="160" r="20" fill="var(--bg-panel)"/> 
+                            <path d="M 236 146 L 264 174 M 264 146 L 236 174" />
+                            
+                            <!-- Voltmeter 1 (Above Lamp) -->
+                            <path d="M 190 160 L 190 100 L 310 100 L 310 160" stroke="var(--primary)"/>
+                            <circle cx="250" cy="100" r="18" fill="var(--bg-panel)" stroke="var(--primary)"/> 
+                            <text x="250" y="106" class="circuit-text" fill="var(--primary)">V</text>
+                            <text x="250" y="75" class="circuit-text" fill="var(--accent)">9V</text>
+
+                            <!-- Wires to Branch 2 -->
+                            <path d="M 150 160 L 150 270 L 350 270 L 350 160" />
+                            
+                            <!-- Buzzer (Branch 2) -->
+                            <path d="M 230 270 A 25 25 0 0 1 270 270 Z" fill="var(--bg-panel)"/>
+                            <line x1="240" y1="270" x2="240" y2="290" /> <line x1="260" y1="270" x2="260" y2="290" />
+                            
+                            <!-- Voltmeter 2 (Below Buzzer) -->
+                            <path d="M 190 270 L 190 320 L 310 320 L 310 270" stroke="var(--primary)"/>
+                            <circle cx="250" cy="320" r="18" fill="var(--bg-panel)" stroke="var(--primary)"/> 
+                            <text x="250" y="326" class="circuit-text" fill="var(--primary)">V</text>
+                            <text x="250" y="348" class="circuit-text" fill="var(--accent)">9V</text>
+                        </svg>
+                        <p style="color: var(--text-dim); margin-top: 1rem;">Every branch gets the full 9V, even if the components are different!</p>
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // 5. Interactive Simulation (Explore)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Virtual Lab: Circuit Tester</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem;">Toggle the circuit type to see how the Voltmeters react.</p>
+                    
+                    <div class="glass-card delay-2 text-center" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+                        <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem;">
+                            <button id="btn-series" class="btn-action" style="background: var(--accent);">Series Circuit</button>
+                            <button id="btn-parallel" class="btn-action" style="background: var(--bg-panel); border: 2px solid var(--primary);">Parallel Circuit</button>
+                        </div>
+
+                        <div id="sim-container" style="position: relative; height: 350px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;">
+                            
+                            <!-- Series SVG -->
+                            <svg id="svg-series" class="circuit-svg" viewBox="0 0 500 250" style="display: block; max-height: 250px;">
+                                <path d="M 100 50 L 400 50 L 400 180 L 100 180 Z" />
+                                
+                                <line x1="230" y1="30" x2="230" y2="70" /> <line x1="250" y1="40" x2="250" y2="60" stroke-width="6"/>
+                                <line x1="260" y1="50" x2="270" y2="50" stroke-width="2" stroke-dasharray="2,2"/>
+                                <line x1="280" y1="30" x2="280" y2="70" /> <line x1="300" y1="40" x2="300" y2="60" stroke-width="6"/>
+                                <text x="265" y="25" class="circuit-text" fill="var(--warning)">12V Battery</text>
+                                
+                                <circle cx="200" cy="180" r="20" fill="var(--bg-deep)" /> 
+                                <path d="M 186 166 L 214 194 M 214 166 L 186 194" />
+                                
+                                <circle cx="300" cy="180" r="20" fill="var(--bg-deep)" /> 
+                                <path d="M 286 166 L 314 194 M 314 166 L 286 194" />
+                                
+                                <path d="M 160 180 L 160 120 L 240 120 L 240 180" stroke="var(--primary)"/>
+                                <circle cx="200" cy="120" r="18" fill="var(--bg-deep)" stroke="var(--primary)"/> 
+                                <text x="200" y="126" class="circuit-text" fill="var(--primary)">V</text>
+                                <text x="200" y="95" class="circuit-text" fill="var(--accent)">6V</text>
+
+                                <path d="M 260 180 L 260 120 L 340 120 L 340 180" stroke="var(--primary)"/>
+                                <circle cx="300" cy="120" r="18" fill="var(--bg-deep)" stroke="var(--primary)"/> 
+                                <text x="300" y="126" class="circuit-text" fill="var(--primary)">V</text>
+                                <text x="300" y="95" class="circuit-text" fill="var(--accent)">6V</text>
+
+                                <text x="250" y="240" class="circuit-text" fill="var(--text-light)">Total 12V is SHARED (6V + 6V)</text>
+                            </svg>
+
+                            <!-- Parallel SVG -->
+                            <svg id="svg-parallel" class="circuit-svg" viewBox="0 0 500 350" style="display: none; max-height: 330px;">
+                                <line x1="230" y1="30" x2="230" y2="70" /> <line x1="250" y1="40" x2="250" y2="60" stroke-width="6"/>
+                                <line x1="260" y1="50" x2="270" y2="50" stroke-width="2" stroke-dasharray="2,2"/>
+                                <line x1="280" y1="30" x2="280" y2="70" /> <line x1="300" y1="40" x2="300" y2="60" stroke-width="6"/>
+                                <text x="265" y="25" class="circuit-text" fill="var(--warning)">12V Battery</text>
+                                
+                                <path d="M 230 50 L 150 50 L 150 160 L 350 160 L 350 50 L 300 50" />
+                                
+                                <circle cx="250" cy="160" r="20" fill="var(--bg-deep)"/> 
+                                <path d="M 236 146 L 264 174 M 264 146 L 236 174" />
+                                
+                                <path d="M 190 160 L 190 100 L 310 100 L 310 160" stroke="var(--primary)"/>
+                                <circle cx="250" cy="100" r="18" fill="var(--bg-deep)" stroke="var(--primary)"/> 
+                                <text x="250" y="106" class="circuit-text" fill="var(--primary)">V</text>
+                                <text x="250" y="75" class="circuit-text" fill="var(--accent)">12V</text>
+
+                                <path d="M 150 160 L 150 270 L 350 270 L 350 160" />
+                                
+                                <circle cx="250" cy="270" r="20" fill="var(--bg-deep)"/> 
+                                <path d="M 236 256 L 264 284 M 264 256 L 236 284" />
+                                
+                                <path d="M 190 270 L 190 320 L 310 320 L 310 270" stroke="var(--primary)"/>
+                                <circle cx="250" cy="320" r="18" fill="var(--bg-deep)" stroke="var(--primary)"/> 
+                                <text x="250" y="326" class="circuit-text" fill="var(--primary)">V</text>
+                                <text x="250" y="348" class="circuit-text" fill="var(--accent)">12V</text>
+
+                                <text x="430" y="165" class="circuit-text" fill="var(--text-light)">Branch 1</text>
+                                <text x="430" y="275" class="circuit-text" fill="var(--text-light)">Branch 2</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnSeries = container.querySelector('#btn-series');
+                const btnParallel = container.querySelector('#btn-parallel');
+                const svgSeries = container.querySelector('#svg-series');
+                const svgParallel = container.querySelector('#svg-parallel');
+
+                const showSeries = () => {
+                    svgSeries.style.display = 'block';
+                    svgParallel.style.display = 'none';
+                    btnSeries.style.background = 'var(--accent)';
+                    btnSeries.style.border = 'none';
+                    btnParallel.style.background = 'var(--bg-panel)';
+                    btnParallel.style.border = '2px solid var(--primary)';
+                };
+
+                const showParallel = () => {
+                    svgSeries.style.display = 'none';
+                    svgParallel.style.display = 'block';
+                    btnParallel.style.background = 'var(--accent)';
+                    btnParallel.style.border = 'none';
+                    btnSeries.style.background = 'var(--bg-panel)';
+                    btnSeries.style.border = '2px solid var(--primary)';
+                };
+
+                btnSeries.addEventListener('click', showSeries);
+                btnParallel.addEventListener('click', showParallel);
+
+                return () => {
+                    btnSeries.removeEventListener('click', showSeries);
+                    btnParallel.removeEventListener('click', showParallel);
+                };
+            }
+        },
+
+        // 6. Video Embed
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2 style="margin-bottom: 1rem;">Video Review: Series & Parallel</h2>
+                    <p class="delay-1" style="color: var(--text-dim); margin-bottom: 2rem;">Watch this quick review of how voltage behaves in different circuits.</p>
+                    
+                    <div class="glass-card delay-2" style="max-width: 800px; margin: 0 auto; padding: 1rem;">
+                        <div style="position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 8px;">
+                            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                                    src="https://www.youtube.com/embed/x2EuYqj_0Uk" 
+                                    title="Series vs Parallel Circuits" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // 7. Extra Video - Deep Dive
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2 style="margin-bottom: 1rem;">Video Deep Dive</h2>
+                    <p class="delay-1" style="color: var(--text-dim); margin-bottom: 2rem;">Let's look a little deeper at how current and voltage work together.</p>
+                    
+                    <div class="glass-card delay-2" style="max-width: 800px; margin: 0 auto; padding: 1rem;">
+                        <div style="position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 8px;">
+                            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                                    src="https://www.youtube.com/embed/BbizKa6eywo?start=68" 
+                                    title="Current and Voltage Deep Dive" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // 8. Textbook Q1
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Textbook Practice: Question 1</h2>
+                    
+                    <div class="glass-card delay-1" style="max-width: 800px; margin: 2rem auto;">
+                        <h3 style="color: var(--primary);">Fill in the Blanks</h3>
+                        <p style="margin-bottom: 1rem; font-size: 1.1rem;">Copy and complete the sentences using words from the list:</p>
+                        
+                        <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
+                            <span style="background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 8px; font-weight: bold;">series</span>
+                            <span style="background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 8px; font-weight: bold;">parallel</span>
+                            <span style="background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 8px; font-weight: bold;">current</span>
+                            <span style="background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 8px; font-weight: bold;">voltage</span>
+                        </div>
+
+                        <ul style="list-style: none; margin-left: 0; font-size: 1.2rem; line-height: 2;">
+                            <li>An ammeter is used to measure the <strong>______</strong> through a component.</li>
+                            <li>An ammeter should be connected in <strong>______</strong> with the component.</li>
+                            <li>A voltmeter is used to measure the <strong>______</strong> across a component.</li>
+                            <li>A voltmeter should be connected in <strong>______</strong> with the component.</li>
+                        </ul>
+                        
+                        <div class="reveal-card" id="q1-reveal" style="margin-top: 2rem; padding: 1.5rem;">
+                            <div class="pre-reveal">
+                                <i class="fa-solid fa-hand-pointer reveal-icon" style="font-size: 1.5rem; color: var(--warning); margin-bottom: 0.5rem;"></i>
+                                <p>Click to show answers</p>
+                            </div>
+                            <div class="reveal-content text-left" style="margin-top: 0; padding-top: 0; border: none; font-size: 1.2rem; line-height: 2;">
+                                <p>An ammeter measures the <strong style="color: var(--accent);">current</strong>.</p>
+                                <p>An ammeter is connected in <strong style="color: var(--accent);">series</strong>.</p>
+                                <p>A voltmeter measures the <strong style="color: var(--warning);">voltage</strong>.</p>
+                                <p>A voltmeter is connected in <strong style="color: var(--warning);">parallel</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCard = container.querySelector('#q1-reveal');
+                const handleReveal = () => revealCard.classList.add('revealed');
+                revealCard.addEventListener('click', handleReveal);
+                return () => revealCard.removeEventListener('click', handleReveal);
+            }
+        },
+
+        // 9. Textbook Q2
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Textbook Practice: Question 2</h2>
+                    
+                    <div class="glass-card delay-1" style="max-width: 800px; margin: 2rem auto;">
+                        <h3 style="color: var(--primary);">Meter Placement</h3>
+                        <p style="margin-bottom: 1.5rem; font-size: 1.2rem;">Sofia wants to measure the <strong>current</strong> through a lamp and the <strong>voltage</strong> across the lamp. Which of these correctly describes the way to do this?</p>
+                        
+                        <div class="quiz-option q2-opt" data-correct="false">
+                            A. Both meters connected in series with the lamp.
+                        </div>
+                        <div class="quiz-option q2-opt" data-correct="true">
+                            B. Ammeter in series with the lamp, Voltmeter in parallel across the lamp.
+                        </div>
+                        <div class="quiz-option q2-opt" data-correct="false">
+                            C. Voltmeter in series with the lamp, Ammeter in parallel across the lamp.
+                        </div>
+                        <div class="quiz-option q2-opt" data-correct="false">
+                            D. Both meters connected in parallel across the lamp.
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const options = container.querySelectorAll('.q2-opt');
+                const handleQuizClick = (e) => {
+                    const opt = e.currentTarget;
+                    if (opt.dataset.correct === 'true') {
+                        opt.classList.add('correct');
+                        opt.innerHTML += ' <i class="fa-solid fa-check" style="float: right;"></i>';
+                    } else {
+                        opt.classList.add('incorrect');
+                        opt.innerHTML += ' <i class="fa-solid fa-xmark" style="float: right;"></i>';
+                    }
+                    options.forEach(o => o.style.pointerEvents = 'none');
+                };
+                options.forEach(opt => opt.addEventListener('click', handleQuizClick));
+                return () => options.forEach(opt => opt.removeEventListener('click', handleQuizClick));
+            }
+        },
+
+        // 10. Textbook Q3
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Textbook Practice: Question 3</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 900px; margin: 0 auto 2rem auto;">
+                        <p style="font-size: 1.2rem;">A school classroom has six identical lamps. Each of the lamps is connected in <strong>parallel</strong> across a 220 V mains supply.</p>
+                    </div>
+
+                    <div class="grid-3 delay-2" style="max-width: 1000px; margin: 0 auto;">
+                        <div class="reveal-card q3-card">
+                            <div class="pre-reveal">
+                                <h3 style="color: var(--primary);">Part a)</h3>
+                                <p>State the voltage across ONE of the lamps.</p>
+                                <p style="font-size:0.85rem; color:var(--text-dim); margin-top:1rem;">(Click to reveal)</p>
+                            </div>
+                            <div class="reveal-content">
+                                <h3 style="color: var(--accent);">220 V</h3>
+                                <p style="font-size: 1rem;">In a parallel circuit, every branch receives the full supply voltage.</p>
+                            </div>
+                        </div>
+
+                        <div class="reveal-card q3-card">
+                            <div class="pre-reveal">
+                                <h3 style="color: var(--primary);">Part c)(i)</h3>
+                                <p>The total current from the mains supply is 2.4 A. Calculate the current through ONE lamp.</p>
+                                <p style="font-size:0.85rem; color:var(--text-dim); margin-top:1rem;">(Click to reveal)</p>
+                            </div>
+                            <div class="reveal-content">
+                                <h3 style="color: var(--accent);">0.4 A</h3>
+                                <p style="font-size: 1rem;">Current is shared equally across identical branches.<br>$$2.4 A \\div 6 = 0.4 A$$</p>
+                            </div>
+                        </div>
+
+                        <div class="reveal-card q3-card">
+                            <div class="pre-reveal">
+                                <h3 style="color: var(--primary);">Part c)(ii)</h3>
+                                <p>Two more identical lamps are added, each in a new parallel branch. State what happens to the total current.</p>
+                                <p style="font-size:0.85rem; color:var(--text-dim); margin-top:1rem;">(Click to reveal)</p>
+                            </div>
+                            <div class="reveal-content">
+                                <h3 style="color: var(--accent);">It Increases</h3>
+                                <p style="font-size: 1rem;">Adding branches provides more paths for the current to flow, increasing the total current drawn from the supply.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                const cards = container.querySelectorAll('.q3-card');
+                const handlers = [];
+                cards.forEach(card => {
+                    const h = () => card.classList.add('revealed');
+                    card.addEventListener('click', h);
+                    handlers.push({ card, h });
+                });
+                return () => handlers.forEach(obj => obj.card.removeEventListener('click', obj.h));
+            }
+        },
+
+        // 11. Textbook Q4
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Textbook Practice: Question 4</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 800px; margin: 0 auto 2rem auto;">
+                        <p style="font-size: 1.2rem;">Marcus has a box containing ten identical lamps rated at <strong>2.0 V</strong>. He also has a <strong>12 V battery</strong>.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto;">
+                        <div class="reveal-card q4-card">
+                            <div class="pre-reveal">
+                                <h3 style="color: var(--warning);">Part a)</h3>
+                                <p>Explain why Marcus cannot connect these lamps individually in parallel across the battery.</p>
+                                <p style="font-size:0.85rem; color:var(--text-dim); margin-top:1rem;">(Click to reveal)</p>
+                            </div>
+                            <div class="reveal-content">
+                                <p style="color: var(--danger); font-weight: bold; font-size: 1.3rem;"><i class="fa-solid fa-burst"></i> They would break!</p>
+                                <p style="font-size: 1.1rem; margin-top: 0.5rem;">In a parallel circuit, every branch gets the full 12V. Because the lamps are only rated for 2.0V, they would blow out.</p>
+                            </div>
+                        </div>
+
+                        <div class="reveal-card q4-card">
+                            <div class="pre-reveal">
+                                <h3 style="color: var(--accent);">Part b)</h3>
+                                <p>He connects them in series. Calculate the number of lamps that can be connected in series to operate properly.</p>
+                                <p style="font-size:0.85rem; color:var(--text-dim); margin-top:1rem;">(Click to reveal)</p>
+                            </div>
+                            <div class="reveal-content">
+                                <h3 style="color: var(--accent);">6 Lamps</h3>
+                                <p style="font-size: 1.1rem; margin-top: 0.5rem;">In a series circuit, the total voltage is shared equally among identical components.<br>$$12 V \\div 2.0 V = 6$$</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                const cards = container.querySelectorAll('.q4-card');
+                const handlers = [];
+                cards.forEach(card => {
+                    const h = () => card.classList.add('revealed');
+                    card.addEventListener('click', h);
+                    handlers.push({ card, h });
+                });
+                return () => handlers.forEach(obj => obj.card.removeEventListener('click', obj.h));
+            }
+        },
+
+        // 12. Textbook Q5
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Textbook Practice: Question 5</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 900px; margin: 0 auto 2rem auto;">
+                        <p style="font-size: 1.2rem;">Zara has a <strong>series circuit</strong> with a 9 V battery, a lamp ($L_1$), and a buzzer ($B_1$). The voltage across the lamp $L_1$ is <strong>2 V</strong>.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto;">
+                        <div class="reveal-card q5-card">
+                            <div class="pre-reveal">
+                                <h3 style="color: var(--primary);">Part a)</h3>
+                                <p>Calculate the voltage across the buzzer, $B_1$.</p>
+                                <p style="font-size:0.85rem; color:var(--text-dim); margin-top:1rem;">(Click to reveal)</p>
+                            </div>
+                            <div class="reveal-content">
+                                <h3 style="color: var(--accent);">7 V</h3>
+                                <p style="font-size: 1.1rem;">In series, components share the total supply voltage.<br>$$9 V - 2 V = 7 V$$</p>
+                            </div>
+                        </div>
+
+                        <div class="reveal-card q5-card">
+                            <div class="pre-reveal">
+                                <h3 style="color: var(--warning);">Part b)</h3>
+                                <p>Zara adds another lamp, $L_2$, in series with the other components. State what happens to the voltage across $L_1$ and the current in the circuit.</p>
+                                <p style="font-size:0.85rem; color:var(--text-dim); margin-top:1rem;">(Click to reveal)</p>
+                            </div>
+                            <div class="reveal-content">
+                                <p style="font-size: 1.1rem; margin-bottom: 0.5rem;"><strong>Voltage across $L_1$:</strong> <span style="color: var(--danger);">Decreases</span>. The 9V must now be shared with a 3rd component.</p>
+                                <p style="font-size: 1.1rem;"><strong>Current in circuit:</strong> <span style="color: var(--danger);">Decreases</span>. Adding more components in series makes it harder to push the electrons.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                const cards = container.querySelectorAll('.q5-card');
+                const handlers = [];
+                cards.forEach(card => {
+                    const h = () => card.classList.add('revealed');
+                    card.addEventListener('click', h);
+                    handlers.push({ card, h });
+                });
+                return () => handlers.forEach(obj => obj.card.removeEventListener('click', obj.h));
+            }
+        },
+
+        // 13. Textbook Q6
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Textbook Practice: Question 6</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 900px; margin: 0 auto 2rem auto;">
+                        <p style="font-size: 1.2rem;">Arun has a <strong>series circuit</strong> with a 6 V battery, two identical buzzers, and two identical lamps. The voltage across one buzzer is <strong>1 V</strong>.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto;">
+                        <div class="glass-card">
+                            <h3 style="color: var(--primary);">Part a)</h3>
+                            <p style="margin-bottom: 1rem; font-size: 1.1rem;">Calculate the voltage across one lamp.</p>
+                            
+                            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                <input id="q6-input" class="calc-input" type="number" placeholder="Voltage (V)" style="margin:0;">
+                                <button id="btn-q6-check" class="btn-action">Check</button>
+                            </div>
+                            <div id="q6-result" style="font-size: 1.1rem; font-weight: bold; min-height: 50px;"></div>
+                        </div>
+
+                        <div class="reveal-card q6-card">
+                            <div class="pre-reveal">
+                                <h3 style="color: var(--warning);">Part b)</h3>
+                                <p>Arun adds another 6 V battery in series. State the effect on the voltage across one buzzer and the current in the circuit.</p>
+                                <p style="font-size:0.85rem; color:var(--text-dim); margin-top:1rem;">(Click to reveal)</p>
+                            </div>
+                            <div class="reveal-content">
+                                <p style="font-size: 1.1rem; margin-bottom: 0.5rem;"><strong>Voltage across one buzzer:</strong> <span style="color: var(--accent);">Increases</span>. The total supply is now 12V, so every component gets double its share (2V).</p>
+                                <p style="font-size: 1.1rem;"><strong>Current in circuit:</strong> <span style="color: var(--accent);">Increases</span>. More batteries = a stronger "push" for the electrons.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnCheck = container.querySelector('#btn-q6-check');
+                const input = container.querySelector('#q6-input');
+                const result = container.querySelector('#q6-result');
+
+                const handleCheck = () => {
+                    const val = parseFloat(input.value);
+                    if (val === 2) {
+                        result.style.color = 'var(--accent)';
+                        result.innerHTML = '<i class="fa-solid fa-check"></i> Correct!<br><span style="font-size: 0.95rem; font-weight: normal; color: var(--text-light);">2 buzzers = 2V. Remaining voltage = 6V - 2V = 4V. Shared by 2 lamps = 4V / 2 = 2V.</span>';
+                    } else {
+                        result.style.color = 'var(--danger)';
+                        result.innerHTML = '<i class="fa-solid fa-xmark"></i> Not quite. Find the voltage left after BOTH buzzers, then divide by 2.';
+                    }
+                };
+                btnCheck.addEventListener('click', handleCheck);
+
+                const revealCard = container.querySelector('.q6-card');
+                const handleReveal = () => revealCard.classList.add('revealed');
+                revealCard.addEventListener('click', handleReveal);
+
+                return () => {
+                    btnCheck.removeEventListener('click', handleCheck);
+                    revealCard.removeEventListener('click', handleReveal);
+                };
+            }
+        }
+    ];
+
+    /* --- RENDER LOGIC --- */
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        container.innerHTML = slide.template();
+        
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    /* --- EVENT LISTENERS --- */
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    render();
+</script>
+
+</body>
+</html>
