@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED RLA: Reading Comprehension Practice</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEMING
+           ========================================================================== */
+        :root {
+            /* Colors */
+            --bg-page: #f4f5f7;        
+            --bg-panel: #ffffff; 
+            --primary-blue: #005A9C;    
+            --primary-blue-hover: #00447a;
+            --selected-blue: #e6f0fa;
+            --border-color: #cccccc;
+            
+            /* Text Colors */
+            --text-main: #333333;        
+            --text-muted: #666666;
+            --color-correct: #166534;
+            --color-incorrect: #991b1b;
+            
+            /* Layout Dimensions */
+            --header-h: 60px;
+            --footer-h: 70px;
+            
+            /* Typography */
+            --font-ui: 'Open Sans', Arial, sans-serif;            
+            --font-passage: 'Noto Serif', 'Times New Roman', Times, serif; 
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-ui);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT & GRID
+           ========================================================================== */
+        .app-shell { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+        }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            background: var(--primary-blue);
+            z-index: 50;
+        }
+
+        .split-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--header-h) - var(--footer-h));
+            overflow: hidden;
+        }
+
+        .pane-left, .pane-right {
+            background: var(--bg-panel);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .pane-left { flex: 0 0 50%; }
+        .pane-right { flex: 1; position: relative; }
+
+        .resizer {
+            flex: 0 0 8px;
+            background: #e0e0e0;
+            cursor: col-resize;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .resizer:hover, .resizer:active { background: #c0c0c0; }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            z-index: 50;
+        }
+
+        /* ==========================================================================
+           4. TYPOGRAPHY & PASSAGE STYLING
+           ========================================================================== */
+        .header-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+        .section-title.primary { color: var(--primary-blue); }
+        .section-title.center { text-align: center; }
+
+        .passage-title { 
+            font-family: var(--font-ui); 
+            font-size: 1.4rem; 
+            font-weight: 700;
+            margin: 1.5rem 0 0.5rem 0;
+            color: var(--text-main);
+        }
+
+        .passage-meta { 
+            color: var(--text-muted); 
+            font-style: italic; 
+            font-size: 0.95rem; 
+            margin-bottom: 1.5rem; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 1rem;
+        }
+        
+        .paragraph { 
+            font-family: var(--font-passage);
+            font-size: 1.15rem; 
+            line-height: 1.8; 
+            color: var(--text-main); 
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .para-num {
+            font-family: var(--font-ui);
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 1rem;
+            user-select: none;
+            min-width: 20px;
+        }
+
+        .info-box {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--text-main);
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* ==========================================================================
+           5. COMPONENTS (Buttons, Timers, Flags)
+           ========================================================================== */
+        .timer {
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: rgba(0,0,0,0.2);
+            padding: 0.25rem 1rem;
+            border-radius: 4px;
+            display: none; /* Hidden until Phase 1 starts */
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-primary:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            color: #666;
+        }
+
+        .btn-nav {
+            background: var(--primary-blue);
+            border: 1px solid var(--primary-blue-hover);
+            padding: 0.6rem 2rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-nav:disabled {
+            background: #cccccc;
+            color: #666666;
+            border-color: #bbbbbb;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .flag-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e65100;
+            cursor: pointer;
+            user-select: none;
+        }
+        .flag-container input { cursor: pointer; transform: scale(1.2); }
+
+        .nav-progress { font-weight: 600; color: var(--text-main); font-size: 1.05rem; }
+
+        /* ==========================================================================
+           6. QUESTION UI (MCQ & Drag-and-Drop)
+           ========================================================================== */
+        .question-slide { display: none; }
+        .question-slide.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .q-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .q-title {
+            font-family: var(--font-ui);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        /* Radio Options */
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .radio-option:hover { background-color: #f9f9f9; }
+        .radio-option input[type="radio"] {
+            margin-top: 0.25rem;
+            margin-right: 1rem;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        .radio-option span {
+            font-family: var(--font-ui);
+            font-size: 1.05rem;
+            line-height: 1.4;
+        }
+        .radio-option.selected {
+            background-color: var(--selected-blue);
+            border-color: var(--primary-blue);
+        }
+
+        /* Drag and Drop Container */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .options-bank {
+            background: #f9f9f9;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+            min-height: 120px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .draggable-item {
+            background: #ffffff;
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            cursor: grab;
+            font-size: 0.95rem;
+            font-family: var(--font-ui);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            user-select: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .draggable-item:active { cursor: grabbing; }
+        
+        .claims-area { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media(max-width: 1200px) { .claims-area { grid-template-columns: 1fr; } }
+        
+        .claim-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+        }
+        .claim-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .dropzone {
+            background: #f4f5f7;
+            border: 2px dashed #cccccc;
+            border-radius: 4px;
+            min-height: 50px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            padding: 0.25rem;
+        }
+        .dropzone.dragover {
+            background: var(--selected-blue);
+            border-color: var(--primary-blue);
+        }
+
+        /* ==========================================================================
+           7. PHASE-SPECIFIC STYLES & OVERRIDES
+           ========================================================================== */
+        
+        /* Interactive Keywords (ESL Features - Active in Phase 0, 2, 3) */
+        .esl-tip {
+            background: #fffbe6;
+            border-left: 4px solid #ffe58f;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+        .keyword {
+            background-color: #fffac0;
+            border-bottom: 2px dotted var(--text-muted);
+            color: var(--text-main);
+            font-weight: normal;
+            cursor: pointer;
+            padding: 0 2px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .keyword:hover { background-color: #ffe680; }
+
+        /* Phase 1 & 4 (Testing Mode): Disable ESL Features entirely */
+        body.phase-1 .keyword, body.phase-4 .keyword {
+            background-color: transparent !important;
+            border-bottom: none !important;
+            color: inherit !important;
+            cursor: text !important;
+            pointer-events: none !important;
+        }
+        body.phase-1 .esl-tip, body.phase-3 .esl-tip, body.phase-4 .esl-tip { display: none !important; }
+
+        /* Submit Summary List */
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+        }
+        .summary-item:last-child { border-bottom: none; }
+
+        /* Phase 2: Review Screen */
+        .review-header {
+            text-align: center;
+            padding: 1rem;
+            background: var(--selected-blue);
+            border: 1px solid var(--primary-blue);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .review-score {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        .review-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: #ffffff;
+        }
+        .review-q-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .review-choice {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            background: #f9f9f9;
+        }
+        .review-choice.correct-ans {
+            background-color: #f0fdf4;
+            border-color: #bbf7d0;
+            color: var(--color-correct);
+            font-weight: 600;
+        }
+        .review-choice.wrong-ans {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+            color: var(--color-incorrect);
+            text-decoration: line-through;
+        }
+
+        /* Explanations */
+        .explanation-box {
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            line-height: 1.6;
+            border: 1px solid;
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: #334155;
+        }
+        .explanation-box.correct { background-color: #f0fdf4; border-color: #bbf7d0; color: var(--color-correct); }
+        .explanation-box.incorrect { background-color: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); }
+        .exp-en { margin-bottom: 0.8rem; }
+        .exp-vn { font-style: italic; font-family: var(--font-passage); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.8rem; }
+
+        /* Phase 3: Dictionary Styling */
+        .study-instructions {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .study-instructions p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #b45309;
+            line-height: 1.5;
+        }
+        .study-dict {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            min-height: 300px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .dict-term { font-family: var(--font-ui); font-size: 1.8rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 1.5rem; border-bottom: 2px solid var(--selected-blue); padding-bottom: 0.5rem;}
+        .dict-section { margin-bottom: 1.5rem; }
+        .dict-label { font-weight: 700; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dict-text { margin-top: 0.5rem; line-height: 1.6; font-size: 1.1rem;}
+        .dict-empty { color: var(--text-muted); font-style: italic; text-align: center; margin-top: 3rem; }
+
+        /* ==========================================================================
+           8. UTILITIES & RESPONSIVE DESIGN
+           ========================================================================== */
+        @keyframes fadeIn { from {opacity: 0;} to { opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .split-layout { flex-direction: column; }
+            .pane-left, .pane-right { flex: 1 1 50%; }
+            .resizer { height: 8px; width: 100%; cursor: row-resize; }
+        }
+    </style>
+</head>
+<body class="phase-0">
+
+<div class="app-shell">
+    
+    <!-- STANDARD TESTING HEADER -->
+    <header class="header">
+        <div class="header-title">GED® Reading Language Arts (RLA) - Practice Test</div>
+        <div id="timer-display" class="timer" aria-live="polite">15:00</div>
+    </header>
+
+    <!-- SPLIT LAYOUT -->
+    <main class="split-layout">
+        
+        <!-- LEFT PANE: DYNAMIC CONTENT BASED ON PHASE -->
+        <section class="pane-left" id="left-pane" aria-label="Passage Content">
+            
+            <!-- OVERVIEW: SHOWN ONLY IN PHASE 0 -->
+            <article id="intro-overview" style="display: block;">
+                <h1 class="section-title primary">Activity Overview</h1>
+                <div class="info-box">
+                    <p style="margin-bottom: 1rem;">This is a practice test giving you a similar format to the official GED test.</p>
+                    <p>It also has similar pacing to help you prepare effectively for the real exam.</p>
+                </div>
+            </article>
+
+            <!-- READING PASSAGE: HIDDEN IN PHASE 0 -->
+            <article id="reading-passage" style="display: none;">
+                <div class="esl-tip">
+                    <strong>ESL Tip:</strong> Click on the <span class="keyword">highlighted words</span> to see their English definitions and Vietnamese translations.
+                </div>
+
+                <h1 class="section-title">Birth of a Nation: The Revolution and the Constitution</h1>
+
+                <div class="passage-title">Historical Reading Passage</div>
+
+                <div class="paragraph">
+                    <div class="para-num">1</div>
+                    <div>In the 1700s, the United States was not an independent country. Instead, it was made up of 13 separate <span class="keyword" data-term="colony">colonies</span> located on the east coast of North America. These colonies were ruled by the British <span class="keyword" data-term="empire">Empire</span> across the ocean in England. For many years, the colonists and the British government had a good relationship. However, this changed when Great Britain fought a costly war and decided to make the American colonists pay for it through new <span class="keyword" data-term="taxation">taxes</span>.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">2</div>
+                    <div>The colonists were furious, not just because they had to pay money, but because they had no voice in the British government. This led to the famous protest slogan: "No <span class="keyword" data-term="taxation">taxation</span> without <span class="keyword" data-term="representation">representation</span>." They believed it was unfair for a king thousands of miles away to demand their money without giving them the right to vote on the laws. This anger and desire for fairness sparked the American <span class="keyword" data-term="revolution">Revolution</span>, a war for freedom against British rule.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">3</div>
+                    <div>In 1776, a leader named Thomas Jefferson wrote the <span class="keyword" data-term="declaration">Declaration</span> of <span class="keyword" data-term="independence">Independence</span>. This historic document officially announced that the 13 colonies were breaking away from Great Britain to form their own country. The Declaration stated that all people are born with basic, natural rights that no government can take away, including the rights to "life, <span class="keyword" data-term="liberty">liberty</span>, and the pursuit of happiness."</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">4</div>
+                    <div>To win their freedom, the colonists had to fight the powerful British army. George Washington, a brilliant and respected leader, took command of the American forces. Despite facing a larger and better-equipped enemy, Washington led the Continental Army to victory. The American Revolution finally ended in 1783, and the United States of America was officially recognized as a free and independent nation.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">5</div>
+                    <div>However, winning the war was only the first step. The new country needed a government. At first, they created a system called the <span class="keyword" data-term="Articles of Confederation">Articles of Confederation</span>. Because the Americans were afraid of having another powerful king, they made this first national government extremely weak. It had no president and no power to collect taxes. Very quickly, the founders realized this weak system was failing because the country could not pay its debts or keep order.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">6</div>
+                    <div>To fix this problem, leaders from across the country met in Philadelphia in 1787 for the Constitutional <span class="keyword" data-term="convention">Convention</span>. Instead of fixing the old rules, they decided to write a completely new plan for the government: the U.S. <span class="keyword" data-term="constitution">Constitution</span>. They wanted a national government that was strong enough to lead the country, but not so strong that it would <span class="keyword" data-term="abuse">abuse</span> its power. To achieve this, they divided the government into three separate <span class="keyword" data-term="branches">branches</span> (Executive, Legislative, and Judicial) and created a system of <span class="keyword" data-term="checks and balances">checks and balances</span>. This meant each branch could limit the power of the other two, ensuring no single group had total control.</div>
+                </div>
+
+                <div class="paragraph">
+                    <div class="para-num">7</div>
+                    <div>Even with this new balanced system, some people were still worried that the new government might take away their individual freedoms. To calm these fears, the leaders agreed to add the <span class="keyword" data-term="Bill of Rights">Bill of Rights</span> to the Constitution. The Bill of Rights consists of the first ten <span class="keyword" data-term="amendment">amendments</span> (changes) to the Constitution. It <span class="keyword" data-term="guarantee">guarantees</span> specific personal freedoms, such as the <span class="keyword" data-term="freedom of speech">freedom of speech</span>, the freedom of religion, and the right to a fair trial, which Americans still cherish today.</div>
+                </div>
+            </article>
+            
+        </section>
+
+        <!-- DRAGGABLE DIVIDER -->
+        <div class="resizer" id="dragMe" title="Drag to resize"></div>
+
+        <!-- RIGHT PANE: QUESTIONS & MODES -->
+        <aside class="pane-right" id="right-pane" aria-label="Interactive Workspace">
+            <div id="questions-container">
+                <!-- Question Slides injected dynamically here via JS -->
+            </div>
+        </aside>
+    </main>
+
+    <!-- STICKY FOOTER NAVIGATION -->
+    <footer class="footer" id="main-footer">
+        <button class="btn-nav" id="btn-prev" onclick="navigate(-1)">Previous</button>
+        <div class="nav-progress" id="nav-progress" aria-live="polite">Start Test</div>
+        <button class="btn-nav" id="btn-next" onclick="navigate(1)">Next</button>
+    </footer>
+
+</div>
+
+<script>
+    /* =========================================================================
+       1. DATA SCHEMAS & CONFIGURATION (AI TEMPLATING GUIDE)
+       ========================================================================= */
+
+    const questionsData = [
+        {
+            id: 'intro',
+            type: 'info',
+            title: "Phase 1: Strict Testing Mode",
+            content: `
+                <div class="info-box" style="padding: 2.5rem; background: #f9f9f9;">
+                    <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><strong>Welcome to the GED Practice Test.</strong></p>
+                    <p style="margin-bottom: 1.5rem;">This test has been structured into 4 formal phases to optimize your learning:</p>
+                    
+                    <ul style="margin-left: 2rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 1: Timed Testing.</strong> You have 15 minutes to complete 7 questions. ESL features are disabled to simulate a real testing environment. You must answer all questions to submit.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 2: Review & Score.</strong> See your grade, discover the correct answers, and read bilingual explanations.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 2.5: Strategy Guide.</strong> Learn how to answer questions faster and better using the test you just completed.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 3: Deep Study.</strong> Re-read the passage with full dictionary access to master difficult vocabulary.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Phase 4: Extended Response (Essay).</strong> At the end of the test, you will complete a 45-minute GED-style essay in Google Docs and email it to your instructors.</li>
+                    </ul>
+                    
+                    <p style="font-weight: 600; color: var(--primary-blue); margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        Click "Start Timer & Begin" to enter Phase 1.
+                    </p>
+                    <button class="btn-primary" onclick="startPhase1()" style="font-size: 1.1rem; padding: 1rem 2rem; margin-top: 1rem;">Start Timer & Begin</button>
+                </div>
+            `
+        },
+        {
+            id: 'q1',
+            type: 'mcq',
+            title: "1. What was the main reason the American colonists were angry about British taxes?",
+            options: [
+                { val: 'A', text: 'A. The taxes were used to buy land from Native Americans.' },
+                { val: 'B', text: 'B. They had to pay taxes but had no representation or voting power in the British government.' },
+                { val: 'C', text: 'C. The British government used the tax money to build schools in the colonies.' },
+                { val: 'D', text: 'D. The taxes were only collected from poor farmers instead of wealthy merchants.' }
+            ],
+            correct: 'B',
+            expEn: "The passage states that the colonists were furious because they had \"no voice in the British government,\" leading to the slogan \"No taxation without representation.\" Option B correctly captures this main idea. The other options are historically incorrect and not mentioned in the text.",
+            expVn: "Đoạn văn nêu rõ rằng những người thuộc địa rất tức giận vì họ \"không có tiếng nói trong chính phủ Anh\", dẫn đến khẩu hiệu \"Không nộp thuế nếu không có đại diện\". Lựa chọn B nắm bắt đúng ý chính này. Các lựa chọn khác sai về mặt lịch sử và không được đề cập trong bài."
+        },
+        {
+            id: 'q2',
+            type: 'mcq',
+            title: "2. What was the primary purpose of the Declaration of Independence?",
+            options: [
+                { val: 'A', text: 'A. To create a new system of taxes for the 13 colonies.' },
+                { val: 'B', text: 'B. To announce that the colonies were breaking away from Great Britain to form a new country.' },
+                { val: 'C', text: 'C. To establish the three branches of the new American government.' },
+                { val: 'D', text: 'D. To free all enslaved people living in the American colonies.' }
+            ],
+            correct: 'B',
+            expEn: "The passage directly states that the Declaration of Independence \"officially announced that the 13 colonies were breaking away from Great Britain to form their own country.\" Options A, C, and D describe other historical events or documents, not the Declaration.",
+            expVn: "Đoạn văn nêu trực tiếp rằng Bản Tuyên ngôn Độc lập \"chính thức thông báo rằng 13 thuộc địa đang tách khỏi nước Anh để thành lập quốc gia riêng của họ.\" Các lựa chọn A, C và D mô tả các sự kiện hoặc tài liệu lịch sử khác, không phải Bản Tuyên ngôn."
+        },
+        {
+            id: 'q3',
+            type: 'mcq',
+            title: "3. Why did the Articles of Confederation fail as the first U.S. government?",
+            options: [
+                { val: 'A', text: 'A. It created a king who had too much power over the people.' },
+                { val: 'B', text: 'B. It gave the president too much control over the military.' },
+                { val: 'C', text: 'C. The national government was too weak and did not have the power to collect taxes.' },
+                { val: 'D', text: 'D. It forced all citizens to follow the same religion.' }
+            ],
+            correct: 'C',
+            expEn: "The text explains that because the Americans feared a powerful king, they made the Articles of Confederation \"extremely weak\" and it \"had no power to collect taxes.\" This led to its failure. Options A and B are the opposite of the truth (it had no king and no president).",
+            expVn: "Bài đọc giải thích rằng vì người Mỹ sợ một vị vua quyền lực, họ đã làm cho Các Điều khoản Hợp bang \"cực kỳ yếu kém\" và \"không có quyền thu thuế.\" Điều này dẫn đến sự thất bại của nó. Lựa chọn A và B hoàn toàn trái ngược với sự thật (hệ thống này không có vua và không có tổng thống)."
+        },
+        {
+            id: 'q4',
+            type: 'mcq',
+            title: "4. At the Constitutional Convention, why did the founders divide the new government into three branches?",
+            options: [
+                { val: 'A', text: 'A. To make sure no single group or person had total control over the country.' },
+                { val: 'B', text: 'B. To save money by having fewer people work in the government.' },
+                { val: 'C', text: 'C. To make it easier for Great Britain to control the colonies.' },
+                { val: 'D', text: 'D. To ensure that only wealthy landowners could vote in elections.' }
+            ],
+            correct: 'A',
+            expEn: "The passage states they divided the government into three branches and created checks and balances to ensure that the government was not \"so strong that it would abuse its power\" and that \"no single group had total control.\" Therefore, A is correct.",
+            expVn: "Đoạn văn nói rằng họ đã chia chính phủ thành ba nhánh và tạo ra hệ thống kiểm soát và đối trọng để đảm bảo rằng chính phủ không \"quá mạnh đến mức lạm quyền\" và \"không có một nhóm đơn lẻ nào có toàn quyền kiểm soát.\" Do đó, A là đáp án đúng."
+        },
+        {
+            id: 'q5',
+            type: 'mcq',
+            title: "5. What is the Bill of Rights?",
+            options: [
+                { val: 'A', text: 'A. A letter written by George Washington to the British King asking for peace.' },
+                { val: 'B', text: 'B. The document that ended the American Revolution.' },
+                { val: 'C', text: 'C. The first ten amendments to the Constitution that protect individual freedoms.' },
+                { val: 'D', text: 'D. A set of laws that created the Articles of Confederation.' }
+            ],
+            correct: 'C',
+            expEn: "The last paragraph defines the Bill of Rights perfectly: it consists of \"the first ten amendments\" and it \"guarantees specific personal freedoms.\" The other options describe different historical documents.",
+            expVn: "Đoạn cuối định nghĩa hoàn hảo về Tuyên ngôn Nhân quyền (Bill of Rights): nó bao gồm \"10 tu chính án đầu tiên\" và nó \"đảm bảo các quyền tự do cá nhân cụ thể\". Các lựa chọn khác mô tả các tài liệu lịch sử khác."
+        },
+        {
+            id: 'q6',
+            type: 'dnd',
+            title: "6. Categorize the following descriptions to match either the \"American Revolution Era\" or the \"Constitutional Convention Era\".",
+            bank: [
+                { val: 'A', text: '[A] Colonists protested against unfair taxes using the slogan "No taxation without representation."' },
+                { val: 'B', text: '[B] Leaders met in Philadelphia in 1787 to replace the weak Articles of Confederation.' },
+                { val: 'C', text: '[C] Thomas Jefferson wrote the Declaration of Independence.' },
+                { val: 'D', text: '[D] The founders created a system of "checks and balances" with three branches of government.' }
+            ],
+            claims: [
+                { id: 'c1', text: 'Category 1: American Revolution Era (Breaking away from Britain)', dropzones: ['dz1', 'dz2'] },
+                { id: 'c2', text: 'Category 2: Constitutional Convention Era (Building a new government)', dropzones: ['dz3', 'dz4'] }
+            ],
+            correctSets: { c1: ['A', 'C'], c2: ['B', 'D'] },
+            expEn: "Events A and C are related to the American Revolution, which was about fighting unfair taxes and declaring independence from Britain. Events B and D happened later during the Constitutional Convention, where leaders gathered to fix the weak government and write the new Constitution with checks and balances.",
+            expVn: "Các sự kiện A và C liên quan đến Thời kỳ Cách mạng Mỹ, nói về việc chống lại các loại thuế bất công và tuyên bố độc lập khỏi nước Anh. Các sự kiện B và D xảy ra sau đó trong Thời kỳ Hội nghị Lập hiến, nơi các nhà lãnh đạo tập hợp lại để sửa đổi chính phủ yếu kém và viết Hiến pháp mới với cơ chế kiểm soát và đối trọng."
+        },
+        {
+            id: 'q7',
+            type: 'mcq',
+            title: "7. Based on the passage, what can be concluded about the relationship between the Articles of Confederation and the U.S. Constitution?",
+            options: [
+                { val: 'A', text: 'A. The Constitution was written first, but it was replaced by the Articles of Confederation.' },
+                { val: 'B', text: 'B. The Articles of Confederation and the Constitution were written by the British government.' },
+                { val: 'C', text: 'C. The Constitution was created to replace the Articles of Confederation because it was too weak.' },
+                { val: 'D', text: 'D. Both documents gave the national government total power to act like a king.' }
+            ],
+            correct: 'C',
+            expEn: "The passage details a clear cause-and-effect relationship: The first government (Articles of Confederation) was too weak and failed, which directly caused the leaders to meet at the Constitutional Convention to write a new, better plan (the Constitution). Thus, C is the correct conclusion.",
+            expVn: "Đoạn văn trình bày chi tiết mối quan hệ nguyên nhân - kết quả rõ ràng: Chính phủ đầu tiên (Các Điều khoản Hợp bang) quá yếu và thất bại, điều này trực tiếp khiến các nhà lãnh đạo phải họp tại Hội nghị Lập hiến để viết một kế hoạch mới, tốt hơn (Hiến pháp). Do đó, C là kết luận đúng."
+        }
+    ];
+
+    const glossary = {
+        "colony": { def: "An area completely controlled by another country, usually far away.", vn: "Thuộc địa", vn_def: "Một vùng đất bị kiểm soát và cai trị bởi một quốc gia khác hùng mạnh hơn." },
+        "empire": { def: "A large group of countries or territories ruled by a single powerful country or leader.", vn: "Đế quốc", vn_def: "Một nhóm lớn các quốc gia hoặc vùng lãnh thổ do một quốc gia hùng mạnh cai trị." },
+        "taxation": { def: "The system of making people pay money to the government.", vn: "Sự thu thuế", vn_def: "Việc chính phủ yêu cầu người dân đóng tiền để chi trả cho các hoạt động công cộng." },
+        "representation": { def: "Having someone speak, vote, or make decisions on your behalf in government.", vn: "Sự đại diện", vn_def: "Có người thay mặt bạn để bỏ phiếu hoặc đưa ra quyết định trong chính phủ." },
+        "revolution": { def: "A forceful overthrow of a government by the people to create a new one.", vn: "Cuộc cách mạng", vn_def: "Cuộc đấu tranh mạnh mẽ của người dân để lật đổ chính phủ cũ và lập chính phủ mới." },
+        "independence": { def: "Freedom from being controlled or ruled by another country.", vn: "Sự độc lập", vn_def: "Trạng thái tự do, không bị kiểm soát hay cai trị bởi một quốc gia khác." },
+        "declaration": { def: "A formal or official public statement.", vn: "Bản tuyên ngôn / Sự tuyên bố", vn_def: "Một thông báo hoặc tuyên bố chính thức công khai." },
+        "liberty": { def: "The state of being free within society from oppressive restrictions.", vn: "Quyền tự do", vn_def: "Trạng thái được tự do, không bị áp bức hoặc bị hạn chế vô lý bởi chính quyền." },
+        "Articles of Confederation": { def: "The first constitution of the United States, which created a very weak national government.", vn: "Các Điều khoản Hợp bang", vn_def: "Bản hiến pháp đầu tiên của Hoa Kỳ, tạo ra một chính phủ quốc gia rất yếu kém." },
+        "convention": { def: "A large formal meeting of people to discuss or decide on important matters.", vn: "Hội nghị / Đại hội", vn_def: "Một cuộc họp chính thức lớn để thảo luận và đưa ra quyết định quan trọng." },
+        "constitution": { def: "A document containing the basic rules and laws that determine how a country is governed.", vn: "Hiến pháp", vn_def: "Tài liệu chứa các quy tắc và luật pháp cơ bản xác định cách thức cai trị đất nước." },
+        "branches": { def: "The different parts or divisions of a government (Executive, Legislative, Judicial).", vn: "Các nhánh / Các cơ quan (của chính phủ)", vn_def: "Các bộ phận khác nhau của chính phủ thực hiện các chức năng khác nhau." },
+        "checks and balances": { def: "A system where each branch of government can limit the power of the other branches.", vn: "Kiểm soát và đối trọng", vn_def: "Hệ thống mà mỗi nhánh chính phủ có thể giới hạn quyền lực của các nhánh khác để không ai có quá nhiều quyền." },
+        "abuse": { def: "To use power in a bad, dishonest, or harmful way.", vn: "Lạm dụng (quyền lực)", vn_def: "Sử dụng quyền lực một cách tồi tệ, không trung thực hoặc gây hại cho người khác." },
+        "Bill of Rights": { def: "The first ten additions to the U.S. Constitution that protect citizens' basic rights.", vn: "Tuyên ngôn Nhân quyền", vn_def: "Mười phần bổ sung đầu tiên vào Hiến pháp Hoa Kỳ nhằm bảo vệ các quyền cơ bản của công dân." },
+        "amendment": { def: "An official change, addition, or correction made to a law or constitution.", vn: "Tu chính án / Điều sửa đổi", vn_def: "Một sự thay đổi, bổ sung hoặc chỉnh sửa chính thức đối với luật hoặc hiến pháp." },
+        "guarantee": { def: "A formal promise or assurance that something will happen or be protected.", vn: "Sự bảo đảm / Cam kết", vn_def: "Lời hứa hoặc sự cam kết chính thức rằng một điều gì đó sẽ được bảo vệ hoặc thực hiện." },
+        "freedom of speech": { def: "The right to express opinions publicly without government interference.", vn: "Quyền tự do ngôn luận", vn_def: "Quyền được bày tỏ ý kiến cá nhân công khai mà không bị chính phủ ngăn cản." }
+    };
+
+    /* =========================================================================
+       STRATEGY SLIDE DATA
+       ========================================================================= */
+    const strategyData = [
+        {
+            tipTitle: "GED RLA: Reading Strategy Guide<br><span style='font-size:1.1rem; color:var(--text-muted);'>For Vietnamese ESL Students</span>",
+            tipContent: `
+                <div style="background: #fff3e0; border: 1px solid #ffcc80; padding: 1.5rem; border-radius: 4px; margin-bottom: 1.5rem;">
+                    <h3 style="color: #e65100; margin-bottom: 0.5rem;"><i class="fa-solid fa-triangle-exclamation"></i> IMPORTANT: Study Carefully</h3>
+                    <p style="color: #e65100; font-size: 1.05rem; line-height: 1.5;">Please go through these strategy steps carefully and fully. These techniques will save you time and dramatically improve your score.</p>
+                </div>
+                <div class="info-box">
+                    <p>You do not need to understand every word to pass the GED Reading section. We are going to use the test you just took to learn <strong>4 critical steps</strong> to find answers efficiently.</p>
+                </div>
+            `,
+            exampleContent: `
+                <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 2.5rem; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <h2 style="color: var(--primary-blue); margin-bottom: 2rem; font-size: 1.8rem;"><i class="fa-solid fa-list-check" style="margin-right: 10px;"></i> The 4-Step Strategy</h2>
+                    <ul style="list-style: none; padding: 0; font-size: 1.3rem; line-height: 2.5; text-align: left; display: inline-block; margin: 0 auto;">
+                        <li><i class="fa-solid fa-1" style="color: var(--primary-blue); margin-right: 12px;"></i> Read the Question FIRST</li>
+                        <li><i class="fa-solid fa-2" style="color: var(--primary-blue); margin-right: 12px;"></i> Jump to the Clues</li>
+                        <li><i class="fa-solid fa-3" style="color: var(--primary-blue); margin-right: 12px;"></i> Find the Main Point at the Edges</li>
+                        <li><i class="fa-solid fa-4" style="color: var(--primary-blue); margin-right: 12px;"></i> Use Process of Elimination</li>
+                    </ul>
+                </div>
+            `
+        },
+        {
+            tipTitle: "Step 1: Read the Question FIRST<br><span style='font-size: 1.2rem; color: var(--text-muted);'>(Đọc câu hỏi trước tiên)</span>",
+            tipContent: `
+                <div class="info-box" style="margin-bottom: 1.5rem;">
+                    <ul style="margin-left: 1.5rem; line-height: 1.6; font-size: 1.1rem; padding-left:0;">
+                        <li style="margin-bottom: 1rem;"><strong>Action:</strong> Read the question <em>before</em> reading the passage. Identify exactly what information you need.</li>
+                        <li><strong>Reason:</strong> Knowing what to look for makes scanning the text faster and more accurate.</li>
+                    </ul>
+                </div>
+                <div style="background: var(--selected-blue); padding: 1.5rem; border-radius: 4px; border: 1px solid var(--primary-blue);">
+                    <p style="font-size: 1.1rem; line-height: 1.6;"><strong style="color: var(--primary-blue);">Example:</strong> Instead of reading the entire historical passage first, look directly at Question 1. You now have a specific, targeted goal.</p>
+                </div>
+            `,
+            exampleContent: `
+                <div class="review-item" style="border: 2px solid var(--primary-blue); box-shadow: 0 4px 12px rgba(0,90,156,0.15);">
+                    <div class="review-q-title" style="background: var(--selected-blue); padding: 1rem; margin: -1.5rem -1.5rem 1.5rem -1.5rem; border-bottom: 1px solid var(--primary-blue); color: var(--primary-blue);"><i class="fa-solid fa-bullseye" style="margin-right: 8px;"></i> Target Goal Acquired</div>
+                    <p style="font-size: 1.2rem; font-weight: 600; line-height: 1.5;">1. What was the main reason the American colonists were angry about British taxes?</p>
+                    <div style="margin-top: 1.5rem; pointer-events: none;">
+                        <div class="review-choice" style="background: #fff;">A. The taxes were used to buy land from Native Americans.</div>
+                        <div class="review-choice" style="background: #fff;">B. They had to pay taxes but had no representation or voting power in the British government.</div>
+                        <div class="review-choice" style="background: #fff;">C. The British government used the tax money to build schools in the colonies.</div>
+                        <div class="review-choice" style="background: #fff;">D. The taxes were only collected from poor farmers instead of wealthy merchants.</div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            tipTitle: "Step 2: Jump to the Clues<br><span style='font-size: 1.2rem; color: var(--text-muted);'>(Tìm manh mối và nhảy đến đúng vị trí)</span>",
+            tipContent: `
+                <div class="info-box" style="margin-bottom: 1.5rem;">
+                    <ul style="margin-left: 1.5rem; line-height: 1.6; font-size: 1.1rem; padding-left:0;">
+                        <li style="margin-bottom: 1rem;"><strong>Action:</strong> If a question mentions a specific topic or keyword, jump straight to the section that contains that word. Only read the targeted sentence and the ones immediately surrounding it.</li>
+                    </ul>
+                </div>
+                <div style="background: var(--selected-blue); padding: 1.5rem; border-radius: 4px; border: 1px solid var(--primary-blue);">
+                    <p style="font-size: 1.1rem; line-height: 1.6;"><strong style="color: var(--primary-blue);">Example:</strong> Question 5 specifically asks "What is the Bill of Rights?". Scan the text for those exact words and you will find them in paragraph 7. Read only that paragraph for the answer.</p>
+                </div>
+            `,
+            exampleContent: `
+                <div style="background: #fff; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <div style="background: #f1f5f9; padding: 1rem; font-weight: bold; border-bottom: 1px solid var(--border-color);"><i class="fa-solid fa-magnifying-glass" style="margin-right:8px; color: var(--text-muted);"></i> Excerpt from Paragraph 7</div>
+                    <div style="padding: 1.5rem;">
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem; background: #fffbe6; padding: 1rem; border-left: 4px solid #f59e0b; border-radius: 0 4px 4px 0;">
+                            <div class="para-num" style="color: #b45309;">7</div>
+                            <div style="font-family: var(--font-passage); font-size: 1.1rem; line-height: 1.6;">Even with this new balanced system, some people were still worried that the new government might take away their individual freedoms. To calm these fears, the leaders agreed to add the <mark style="background-color: #fde047; font-weight: bold; padding: 0 4px;">Bill of Rights</mark> to the Constitution. The Bill of Rights consists of the first ten amendments (changes) to the Constitution. It guarantees specific personal freedoms...</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            tipTitle: "Step 3: Find the Main Point at the Edges<br><span style='font-size: 1.2rem; color: var(--text-muted);'>(Tìm ý chính ở đầu hoặc cuối)</span>",
+            tipContent: `
+                <div class="info-box" style="margin-bottom: 1.5rem;">
+                    <ul style="margin-left: 1.5rem; line-height: 1.6; font-size: 1.1rem; padding-left:0;">
+                        <li style="margin-bottom: 1rem;"><strong>Action:</strong> When searching a paragraph for a main idea or primary purpose, look at the very first sentence or the very last sentence of the paragraph.</li>
+                    </ul>
+                </div>
+                <div style="background: var(--selected-blue); padding: 1.5rem; border-radius: 4px; border: 1px solid var(--primary-blue);">
+                    <p style="font-size: 1.1rem; line-height: 1.6;"><strong style="color: var(--primary-blue);">Example:</strong> Question 2 asks for the primary purpose of the Declaration of Independence. Check paragraph 3 where it is introduced. The immediate next sentence (at the edge) tells you the exact purpose.</p>
+                </div>
+            `,
+            exampleContent: `
+                <div class="review-item" style="border: 2px solid var(--border-color); margin-bottom: 1rem;">
+                    <p style="font-size: 1.1rem; font-weight: 600;">2. What was the primary purpose of the Declaration of Independence?</p>
+                </div>
+                <div style="background: #fff; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <div style="background: #f1f5f9; padding: 1rem; font-weight: bold; border-bottom: 1px solid var(--border-color);"><i class="fa-regular fa-file-lines" style="margin-right:8px; color: var(--text-muted);"></i> Excerpt from Paragraph 3</div>
+                    <div style="padding: 1.5rem; font-family: var(--font-passage); font-size: 1.1rem; line-height: 1.6;">
+                        <p style="opacity: 0.5;">In 1776, a leader named Thomas Jefferson wrote the Declaration of Independence.</p>
+                        <p style="margin-top: 1rem; background: #e0f2fe; padding: 0.5rem; border-left: 4px solid var(--primary-blue); font-weight: bold;">This historic document officially announced that the 13 colonies were breaking away from Great Britain to form their own country.</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            tipTitle: "Step 4: Process of Elimination<br><span style='font-size: 1.2rem; color: var(--text-muted);'>(Loại trừ các đáp án sai)</span>",
+            tipContent: `
+                <div class="info-box" style="margin-bottom: 1.5rem;">
+                    <ul style="margin-left: 1.5rem; line-height: 1.6; font-size: 1.1rem; padding-left:0;">
+                        <li style="margin-bottom: 1rem;"><strong>Action:</strong> If the correct answer is not obvious, eliminate the incorrect options. Cross out choices that are:
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem; margin-bottom: 0.5rem; list-style-type: circle;">
+                                <li>Not mentioned in the text.</li>
+                                <li>The exact opposite of what the text states.</li>
+                                <li>Too extreme (using words like <em>always, never, everyone, impossible</em>).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div style="background: var(--selected-blue); padding: 1.5rem; border-radius: 4px; border: 1px solid var(--primary-blue);">
+                    <p style="font-size: 1.1rem; line-height: 1.6;"><strong style="color: var(--primary-blue);">Example:</strong> Question 3 asks why the Articles of Confederation failed. The text explicitly says the Americans were "afraid of having another powerful king." Eliminate choices A and B because they claim the exact opposite of reality!</p>
+                </div>
+            `,
+            exampleContent: `
+                <div class="review-item" style="border: 2px solid var(--border-color);">
+                    <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">3. Why did the Articles of Confederation fail as the first U.S. government?</p>
+                    <div style="pointer-events: none;">
+                        <div class="review-choice" style="background: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); text-decoration: line-through; margin-bottom: 0.5rem; font-weight: bold;">A. It created a king who had too much power over the people.</div>
+                        <div class="review-choice" style="background: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); text-decoration: line-through; margin-bottom: 0.5rem; font-weight: bold;">B. It gave the president too much control over the military.</div>
+                        <div class="review-choice" style="background: #fff; margin-bottom: 0.5rem;">C. The national government was too weak and did not have the power to collect taxes.</div>
+                        <div class="review-choice" style="background: #fff; opacity: 0.5;">D. It forced all citizens to follow the same religion.</div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            tipTitle: "📝 Notebook Checklist<br><span style='font-size: 1.2rem; color: var(--text-muted);'>(Ghi chú vào vở)</span>",
+            tipContent: `
+                <div style="background: #fff3e0; border: 1px solid #ffcc80; padding: 2rem; border-radius: 8px;">
+                    <p style="margin-bottom: 1.5rem; color: #e65100; font-size: 1.15rem; font-weight: 600;">Copy these steps into your notebook and review them before every practice test.</p>
+                    <ul style="list-style-type: none; padding-left: 0; color: #b45309; font-weight: 600; line-height: 1.8; font-size: 1.1rem;">
+                        <li style="margin-bottom: 1rem;"><i class="fa-regular fa-square" style="margin-right: 10px;"></i> Read the question FIRST. <br><span style="font-weight: normal; font-size: 0.95rem; margin-left: 26px;">(Đọc câu hỏi trước. Không đọc cả bài văn ngay lập tức.)</span></li>
+                        <li style="margin-bottom: 1rem;"><i class="fa-regular fa-square" style="margin-right: 10px;"></i> Jump to the clues. <br><span style="font-weight: normal; font-size: 0.95rem; margin-left: 26px;">(Tìm từ khoá và nhảy thẳng đến đoạn chứa từ khoá. Không đọc lan man.)</span></li>
+                        <li style="margin-bottom: 1rem;"><i class="fa-regular fa-square" style="margin-right: 10px;"></i> Find the Main Idea at the edges. <br><span style="font-weight: normal; font-size: 0.95rem; margin-left: 26px;">(Ý chính thường nằm ở CÂU ĐẦU TIÊN hoặc CÂU CUỐI CÙNG của đoạn.)</span></li>
+                        <li style="margin-bottom: 1rem;"><i class="fa-regular fa-square" style="margin-right: 10px;"></i> Eliminate wrong answers. <br><span style="font-weight: normal; font-size: 0.95rem; margin-left: 26px;">(Gạch bỏ câu trả lời sai rõ ràng, không có trong bài, hoặc có ý nghĩa ngược lại.)</span></li>
+                    </ul>
+                </div>
+            `,
+            exampleContent: `
+                <div style="text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%; padding: 2rem;">
+                    <i class="fa-solid fa-book-journal-whills" style="font-size: 5rem; color: var(--primary-blue); margin-bottom: 2rem;"></i>
+                    <h2 style="color: var(--text-main); margin-bottom: 1rem;">Ready to Study?</h2>
+                    <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem;">When you are finished copying this checklist, click below to begin Phase 3: Deep Study.</p>
+                    <button class="btn-primary" onclick="startPhase3()" style="font-size: 1.2rem; padding: 1rem 3rem; margin: 0 auto; display: inline-block;">
+                        Continue to Vocabulary Study <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+                    </button>
+                </div>
+            `
+        }
+    ];
+
+    /* =========================================================================
+       2. STATE MANAGEMENT
+       ========================================================================= */
+    const state = {
+        phase: 0, // 0: Start, 1: Testing, 2: Review, 2.5: Strategy, 3: Study, 4: Essay
+        currentQuestionIndex: 0,
+        userAnswers: {},     
+        flagged: new Set(),  
+        timerInterval: null,
+        timeRemaining: 15 * 60,
+        strategyStep: 0
+    };
+
+    /* =========================================================================
+       3. INITIALIZATION & TEMPLATE RENDERING
+       ========================================================================= */
+    function init() {
+        const container = document.getElementById('questions-container');
+        
+        questionsData.forEach((q, index) => {
+            const slide = document.createElement('article');
+            slide.className = `question-slide ${index === 0 ? 'active' : ''}`;
+            slide.id = `slide-${index}`;
+            
+            let html = '';
+            
+            if (q.type === 'info') {
+                html += `<div class="q-title section-title center">${q.title}</div>`;
+                html += q.content;
+            } else {
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)">
+                            Flag for Review
+                        </label>
+                    </div>
+                `;
+                
+                if (q.type === 'mcq') {
+                    html += `<div class="options-container" id="opts-${q.id}">`;
+                    q.options.forEach(opt => {
+                        html += `
+                            <label class="radio-option" id="label-${q.id}-${opt.val}">
+                                <input type="radio" name="${q.id}" value="${opt.val}" onchange="handleAnswerSelection('${q.id}', '${opt.val}')">
+                                <span class="radio-text">${opt.text}</span>
+                            </label>
+                        `;
+                    });
+                    html += `</div>`;
+                } 
+                else if (q.type === 'dnd') {
+                    html += `<div class="dnd-container">`;
+                    html += `<div class="options-bank" id="bank-${q.id}" ondragover="allowDrop(event)" ondrop="drop(event, 'bank-${q.id}')">`;
+                    q.bank.forEach(item => {
+                        html += `<div class="draggable-item" draggable="true" id="item-${q.id}-${item.val}" ondragstart="drag(event)" data-val="${item.val}">
+                                    <i class="fa-solid fa-grip-vertical" style="color:#aaa;"></i> ${item.text}
+                                 </div>`;
+                    });
+                    html += `</div><div class="claims-area">`;
+                    q.claims.forEach(claim => {
+                        html += `<div class="claim-box">
+                                    <div class="claim-title">${claim.text}</div>`;
+                        claim.dropzones.forEach(dz => {
+                            html += `<div class="dropzone" id="${q.id}-${dz}" ondragover="allowDrop(event)" ondrop="drop(event, '${q.id}-${dz}')">Drop Evidence Here</div>`;
+                        });
+                        html += `</div>`;
+                    });
+                    html += `</div></div>`;
+                }
+            }
+            
+            slide.innerHTML = html;
+            container.appendChild(slide);
+        });
+
+        const submitSlide = document.createElement('article');
+        submitSlide.className = `question-slide`;
+        submitSlide.id = `slide-${questionsData.length}`;
+        submitSlide.innerHTML = `
+            <div class="q-title section-title center">Review & Submit</div>
+            <div class="info-box" style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Question Status</h3>
+                <div id="submit-summary-list"></div>
+            </div>
+            <div style="text-align: center;">
+                <button id="btn-final-submit" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="startPhase2()" disabled>
+                    Answer all questions to submit
+                </button>
+            </div>
+        `;
+        container.appendChild(submitSlide);
+
+        document.querySelectorAll('.keyword').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if(state.phase !== 3) return; 
+                e.stopPropagation();
+                const term = el.dataset.term;
+                if(glossary[term]) renderDictionaryTerm(term);
+            });
+        });
+
+        updateNavigationUI();
+    }
+
+    /* =========================================================================
+       4. PHASE TRANSITION LOGIC
+       ========================================================================= */
+    function startPhase1() {
+        state.phase = 1;
+        document.body.className = 'phase-1';
+        
+        document.getElementById('intro-overview').style.display = 'none';
+        document.getElementById('reading-passage').style.display = 'block';
+        
+        if (state.timerInterval) clearInterval(state.timerInterval);
+        
+        document.getElementById('timer-display').style.display = 'block';
+        updateTimerDisplay();
+        
+        state.timerInterval = setInterval(() => {
+            state.timeRemaining--;
+            updateTimerDisplay();
+            if(state.timeRemaining <= 0) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+                alert("Time is up! Submitting your test.");
+                startPhase2();
+            }
+        }, 1000);
+
+        navigate(1); 
+    }
+
+    function updateTimerDisplay() {
+        const m = Math.floor(state.timeRemaining / 60);
+        const s = state.timeRemaining % 60;
+        document.getElementById('timer-display').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function startPhase2() {
+        state.phase = 2;
+        document.body.className = 'phase-2';
+        
+        if (state.timerInterval) {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+        }
+        
+        document.getElementById('main-footer').style.display = 'none';
+        renderReviewMode();
+    }
+
+    // PHASE 2.5: Interactive Strategy Guide
+    function startStrategyGuide() {
+        state.phase = 2.5;
+        state.strategyStep = 0;
+
+        // Hide passage
+        document.getElementById('reading-passage').style.display = 'none';
+
+        // Set up Strategy Left Pane
+        const leftPane = document.getElementById('left-pane');
+        let strategyLeft = document.getElementById('strategy-left');
+        if(!strategyLeft) {
+            strategyLeft = document.createElement('div');
+            strategyLeft.id = 'strategy-left';
+            leftPane.appendChild(strategyLeft);
+        }
+        strategyLeft.style.display = 'block';
+
+        // Set up Strategy Right Pane
+        const rightPane = document.getElementById('questions-container');
+        rightPane.innerHTML = '<div id="strategy-right" style="padding-bottom: 2rem; height: 100%;"></div>';
+
+        // Show Footer and Bind Custom Navigation
+        const footer = document.getElementById('main-footer');
+        footer.style.display = 'flex';
+        
+        renderStrategySlide();
+    }
+
+    function renderStrategySlide() {
+        const slide = strategyData[state.strategyStep];
+        
+        document.getElementById('strategy-left').innerHTML = `
+            <div style="animation: fadeIn 0.3s ease-out forwards;">
+                <h1 class="section-title primary" style="font-size: 1.6rem; margin-bottom: 1.5rem;">${slide.tipTitle}</h1>
+                ${slide.tipContent}
+            </div>
+        `;
+
+        document.getElementById('strategy-right').innerHTML = `
+            <div style="animation: fadeIn 0.3s ease-out forwards; height: 100%;">
+                ${slide.exampleContent}
+            </div>
+        `;
+
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const progress = document.getElementById('nav-progress');
+
+        progress.innerText = `Strategy Guide: Step ${state.strategyStep + 1} of ${strategyData.length}`;
+        
+        btnPrev.disabled = (state.strategyStep === 0);
+        btnPrev.onclick = () => { state.strategyStep--; renderStrategySlide(); };
+        
+        btnNext.disabled = false;
+        btnNext.style.display = 'block';
+        if (state.strategyStep === strategyData.length - 1) {
+            btnNext.innerText = "Continue to Vocab";
+            btnNext.onclick = startPhase3;
+        } else {
+            btnNext.innerText = "Next Tip";
+            btnNext.onclick = () => { state.strategyStep++; renderStrategySlide(); };
+        }
+    }
+
+    function startPhase3() {
+        state.phase = 3;
+        document.body.className = 'phase-3'; 
+        
+        // Hide strategy items and restore traditional layout
+        const strategyLeft = document.getElementById('strategy-left');
+        if(strategyLeft) strategyLeft.style.display = 'none';
+        
+        document.getElementById('reading-passage').style.display = 'block';
+        document.getElementById('main-footer').style.display = 'none'; // hide footer again
+        
+        const container = document.getElementById('questions-container');
+        container.innerHTML = `
+            <div class="study-instructions" style="animation: fadeIn 0.3s ease-out forwards;">
+                <p>Write down all highlighted vocabulary words and their definitions in your notebook. If there are any other words in the passage you do not know, look them up and write them down as well.</p>
+            </div>
+            <div class="study-dict" id="study-dict" aria-live="polite">
+                <div class="dict-empty">
+                    <i class="fa-solid fa-book-open" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <p>Click any highlighted word in the passage to view its definition here.</p>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top: 2rem;">
+                <button class="btn-primary" onclick="startPhase4()" style="font-size:1.2rem; padding:1rem 3rem;">
+                    Continue to Phase 4: Essay <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+                </button>
+            </div>
+        `;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+    
+    function startPhase4() {
+        state.phase = 4;
+        document.body.className = 'phase-4'; 
+        
+        const container = document.getElementById('questions-container');
+        container.innerHTML = `
+            <div class="q-title section-title center" style="animation: fadeIn 0.3s ease-out forwards;">Phase 4: Extended Response (Essay)</div>
+            <div class="info-box">
+                <p style="margin-bottom: 1rem;"><strong>Prompt:</strong> In your response, explain the cause-and-effect relationship between the American colonists' grievances against British rule and the eventual creation of a balanced U.S. Constitution. Incorporate relevant and specific evidence from the passage to support your explanation.</p>
+                
+                <div style="background: #fff3e0; border: 1px solid #ffcc80; padding: 1.5rem; border-radius: 4px; margin-top: 1.5rem;">
+                    <h4 style="margin-bottom: 0.5rem; color: #e65100; font-size: 1.1rem;"><i class="fa-solid fa-pen-nib" style="margin-right: 8px;"></i>Essay Instructions:</h4>
+                    <ol style="margin-left: 1.5rem; color: #e65100; font-weight: 600;">
+                        <li style="margin-bottom: 0.5rem;">Open a blank <a href="https://docs.google.com" target="_blank" style="color: #d84315; text-decoration: underline;">Google Doc</a>.</li>
+                        <li style="margin-bottom: 0.5rem;">You have exactly <strong>45 minutes</strong> to complete this essay.</li>
+                        <li style="margin-bottom: 0.5rem;">At the very top of your Google Doc, type your <strong>Start Time: [Time]</strong> and <strong>End Time: [Time]</strong>.</li>
+                        <li style="margin-bottom: 0.5rem;">Write a complete, GED-style essay answering the prompt above.</li>
+                        <li>When you are finished, email your Google Doc to <strong>Mr. Bowen</strong> and <strong>Mr. Landon</strong> for review.</li>
+                    </ol>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top: 2rem;">
+                <p style="color: var(--text-muted); font-style: italic; font-size: 1.1rem;">You have completed the practice activity. Great job!</p>
+            </div>
+        `;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    function renderDictionaryTerm(term) {
+        const dictContainer = document.getElementById('study-dict');
+        if (!dictContainer) return; 
+        
+        const data = glossary[term];
+        dictContainer.innerHTML = `
+            <div class="dict-term">${term}</div>
+            <div class="dict-section">
+                <div class="dict-label">English Definition</div>
+                <div class="dict-text">${data.def}</div>
+            </div>
+            <div class="dict-section" style="border-top: 1px solid #eee; padding-top: 1.5rem;">
+                <div class="dict-label">Vietnamese (Tiếng Việt)</div>
+                <div class="dict-text" style="color: var(--primary-blue); font-weight: 700;">${data.vn}</div>
+                <div class="dict-text" style="font-style: italic;">${data.vn_def}</div>
+            </div>
+        `;
+    }
+
+    /* =========================================================================
+       5. PHASE 1 QUIZ LOGIC (Navigation, Tracking, Submitting)
+       ========================================================================= */
+    function navigate(direction) {
+        if(state.phase !== 0 && state.phase !== 1) return;
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.remove('active');
+        state.currentQuestionIndex += direction;
+        
+        if (state.phase === 1 && state.currentQuestionIndex === 0) {
+            state.currentQuestionIndex = 1;
+        }
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.add('active');
+        document.getElementById('right-pane').scrollTop = 0;
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function updateNavigationUI() {
+        if (state.phase === 0) {
+            document.getElementById('btn-prev').disabled = true;
+            document.getElementById('btn-next').style.display = 'none';
+            return;
+        }
+
+        const totalQs = questionsData.filter(q => q.type !== 'info').length; 
+        const isSubmitGate = (state.currentQuestionIndex === questionsData.length);
+
+        document.getElementById('btn-prev').disabled = (state.currentQuestionIndex === 1);
+        document.getElementById('btn-next').style.display = 'block';
+        document.getElementById('btn-next').disabled = isSubmitGate;
+        
+        // Ensure standard navigation behavior is restored
+        document.getElementById('btn-prev').onclick = () => navigate(-1);
+        document.getElementById('btn-next').onclick = () => navigate(1);
+        
+        const progressContainer = document.getElementById('nav-progress');
+        if (isSubmitGate) {
+            progressContainer.innerHTML = `Review & Submit`;
+        } else {
+            const currentQ = questionsData[state.currentQuestionIndex];
+            progressContainer.innerHTML = currentQ.type === 'info' ? currentQ.title : `Question ${state.currentQuestionIndex} of ${totalQs}`;
+        }
+    }
+
+    function toggleFlag(qId, isChecked) {
+        if (isChecked) state.flagged.add(qId);
+        else state.flagged.delete(qId);
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+    }
+
+    function handleAnswerSelection(qId, value) {
+        const labels = document.querySelectorAll(`#opts-${qId} .radio-option`);
+        labels.forEach(lbl => lbl.classList.remove('selected'));
+        
+        const selectedLabel = document.getElementById(`label-${qId}-${value}`);
+        if(selectedLabel) selectedLabel.classList.add('selected');
+
+        state.userAnswers[qId] = value;
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+    }
+
+    function checkDnDState(qId) {
+        const qConfig = questionsData.find(q => q.id === qId);
+        if (!qConfig) return;
+
+        let ansObj = {};
+        let hasAnyAnswer = false;
+
+        qConfig.claims.forEach(claim => {
+            claim.dropzones.forEach(dz => {
+                const dropzoneEl = document.getElementById(`${qId}-${dz}`);
+                const val = dropzoneEl.firstElementChild?.dataset.val;
+                if (val) {
+                    ansObj[dz] = val;
+                    hasAnyAnswer = true;
+                }
+            });
+        });
+
+        if (hasAnyAnswer) {
+            state.userAnswers[qId] = ansObj;
+        } else {
+            delete state.userAnswers[qId];
+        }
+    }
+
+    function updateSubmitSlide() {
+        const container = document.getElementById('submit-summary-list');
+        let answeredCount = 0;
+        let html = '';
+        const qList = questionsData.filter(q => q.type !== 'info');
+        
+        qList.forEach((q, idx) => {
+            let isAnswered = false;
+            if (q.type === 'mcq') {
+                isAnswered = !!state.userAnswers[q.id];
+            } else if (q.type === 'dnd') {
+                const ans = state.userAnswers[q.id];
+                const totalExpectedDz = q.claims.reduce((acc, curr) => acc + curr.dropzones.length, 0);
+                const totalAnsweredDz = ans ? Object.keys(ans).length : 0;
+                isAnswered = (totalExpectedDz === totalAnsweredDz);
+            }
+            
+            if (isAnswered) answeredCount++;
+            
+            const isFlagged = state.flagged.has(q.id);
+            const flagHtml = isFlagged ? '<i class="fa-solid fa-flag" style="color:#d97706; margin-left:8px;" title="Flagged"></i>' : '';
+            
+            html += `
+                <div class="summary-item">
+                    <span>Question ${idx + 1} ${flagHtml}</span>
+                    <span style="font-weight:bold; color: ${isAnswered ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                        ${isAnswered ? 'Answered' : 'Unanswered'}
+                    </span>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        const btn = document.getElementById('btn-final-submit');
+        
+        if (answeredCount === qList.length) {
+            btn.disabled = false;
+            btn.innerText = "Submit Test for Grading";
+            btn.style.background = "var(--color-correct)"; 
+        } else {
+            btn.disabled = true;
+            btn.innerText = `Answer all ${qList.length} questions to submit (${answeredCount}/${qList.length})`;
+            btn.style.background = "var(--primary-blue)";
+        }
+    }
+
+    /* =========================================================================
+       6. PHASE 2 SCORING & REVIEW LOGIC
+       ========================================================================= */
+    function checkAnswerCorrectness(qId, qData) {
+        if (qData.type === 'mcq') {
+            return state.userAnswers[qId] === qData.correct;
+        } else if (qData.type === 'dnd') {
+            const ans = state.userAnswers[qId];
+            if(!ans) return false;
+            
+            let allClaimsCorrect = true;
+            
+            for (const claim of qData.claims) {
+                const userVals = claim.dropzones.map(dz => ans[dz]).filter(Boolean);
+                const correctVals = qData.correctSets[claim.id];
+                const claimIsCorrect = userVals.length === correctVals.length && correctVals.every(val => userVals.includes(val));
+                
+                if (!claimIsCorrect) {
+                    allClaimsCorrect = false;
+                    break;
+                }
+            }
+            return allClaimsCorrect;
+        }
+        return false;
+    }
+
+    function renderReviewMode() {
+        const container = document.getElementById('questions-container');
+        let html = '';
+        let score = 0;
+        const qList = questionsData.filter(q => q.type !== 'info');
+        const totalQs = qList.length;
+
+        const qHtmlBlocks = [];
+
+        qList.forEach((q, idx) => {
+            const isCorrect = checkAnswerCorrectness(q.id, q);
+            if (isCorrect) score++;
+
+            let qBlock = `<div class="review-item">
+                <div class="review-q-title">${idx + 1}. ${q.title}</div>`;
+
+            if (q.type === 'mcq') {
+                const userAns = state.userAnswers[q.id];
+                q.options.forEach(opt => {
+                    let className = "review-choice";
+                    let icon = "";
+                    if (opt.val === q.correct) {
+                        className += " correct-ans";
+                        icon = '<i class="fa-solid fa-check" style="margin-right:8px;"></i>';
+                    } else if (opt.val === userAns && opt.val !== q.correct) {
+                        className += " wrong-ans";
+                        icon = '<i class="fa-solid fa-xmark" style="margin-right:8px;"></i>';
+                    }
+                    qBlock += `<div class="${className}">${icon}${opt.text}</div>`;
+                });
+            } 
+            else if (q.type === 'dnd') {
+                const ans = state.userAnswers[q.id] || {};
+                const getTexts = (vals) => vals.map(v => q.bank.find(b => b.val === v)?.text).join(' & ');
+
+                q.claims.forEach(claim => {
+                    const userVals = claim.dropzones.map(dz => ans[dz]).filter(Boolean);
+                    const correctVals = q.correctSets[claim.id];
+                    const isClaimCorrect = userVals.length === correctVals.length && correctVals.every(val => userVals.includes(val));
+
+                    qBlock += `
+                        <div style="margin-bottom:1rem; padding: 1rem; background: #f8fafc; border-radius:4px;">
+                            <strong>${claim.text}</strong><br>
+                            <span style="color: ${isClaimCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">Your Answer: ${getTexts(userVals) || 'None'}</span><br>
+                            <span style="color: var(--color-correct); font-weight:bold;">Correct Answer: ${getTexts(correctVals)}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            const expClass = isCorrect ? 'correct' : 'incorrect';
+            const expTitle = isCorrect ? 'Correct!' : 'Incorrect. Review the explanation below:';
+            
+            qBlock += `
+                <div class="explanation-box ${expClass}" style="display:block;">
+                    <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+                    <div class="exp-en">${q.expEn}</div>
+                    <div class="exp-vn">${q.expVn}</div>
+                </div>
+            </div>`;
+
+            qHtmlBlocks.push(qBlock);
+        });
+
+        html += `
+            <div class="review-header" style="animation: fadeIn 0.3s ease-out forwards;">
+                <div style="font-size: 1.2rem; margin-bottom: 0.5rem; font-weight:600; color:var(--text-main);">Test Complete</div>
+                <div class="review-score">Score: ${score} / ${totalQs}</div>
+            </div>
+        `;
+        html += qHtmlBlocks.join('');
+        html += `
+            <div style="text-align:center; margin-top: 2rem;">
+                <button class="btn-primary" onclick="startStrategyGuide()" style="font-size:1.2rem; padding:1rem 3rem;">
+                    Continue to Strategy Guide <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+                </button>
+            </div>
+        `;
+
+        container.innerHTML = html;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    /* =========================================================================
+       7. DRAG AND DROP ENGINE
+       ========================================================================= */
+    let draggedItem = null;
+
+    function drag(ev) {
+        if(state.phase !== 1) return;
+        draggedItem = ev.target.closest('.draggable-item');
+        if(!draggedItem) return;
+
+        ev.dataTransfer.setData("text", draggedItem.id);
+        ev.dataTransfer.effectAllowed = "move";
+        setTimeout(() => draggedItem.style.opacity = "0.5", 0);
+    }
+
+    function allowDrop(ev) {
+        if(state.phase !== 1) return;
+        ev.preventDefault();
+        const dropzone = ev.target.closest('.dropzone');
+        if(dropzone) dropzone.classList.add('dragover');
+    }
+
+    document.addEventListener('dragleave', (ev) => {
+        const dropzone = ev.target.closest('.dropzone');
+        if(dropzone) dropzone.classList.remove('dragover');
+    });
+
+    document.addEventListener('dragend', (ev) => {
+        if(draggedItem) draggedItem.style.opacity = "1";
+        document.querySelectorAll('.dropzone').forEach(el => el.classList.remove('dragover'));
+    });
+
+    function drop(ev, targetId) {
+        if(state.phase !== 1) return;
+        ev.preventDefault();
+        const data = ev.dataTransfer.getData("text");
+        const draggedEl = document.getElementById(data);
+        if(!draggedEl) return;
+
+        const dropTarget = document.getElementById(targetId);
+        
+        if (dropTarget.classList.contains('dropzone')) {
+            dropTarget.classList.remove('dragover');
+            
+            if (dropTarget.children.length > 0) {
+                const existingItem = dropTarget.children[0];
+                const qId = targetId.split('-')[0];
+                document.getElementById(`bank-${qId}`).appendChild(existingItem);
+            }
+            
+            dropTarget.innerHTML = ''; 
+            dropTarget.appendChild(draggedEl);
+            
+            const qId = targetId.split('-')[0];
+            checkDnDState(qId);
+            
+        } 
+        else if (dropTarget.classList.contains('options-bank')) {
+            dropTarget.appendChild(draggedEl);
+            const qId = targetId.split('-')[1];
+            checkDnDState(qId);
+        }
+    }
+
+    /* =========================================================================
+       8. UTILITIES (Responsive Split Pane Resizer)
+       ========================================================================= */
+    const resizer = document.getElementById('dragMe');
+    const leftPane = document.getElementById('left-pane');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', startResize);
+    resizer.addEventListener('touchstart', startResize, {passive: false});
+
+    function startResize(e) {
+        isResizing = true;
+        document.body.style.cursor = 'col-resize';
+    }
+
+    document.addEventListener('mousemove', doResize);
+    document.addEventListener('touchmove', doResize, {passive: false});
+
+    function doResize(e) {
+        if (!isResizing) return;
+        
+        const layout = document.querySelector('.split-layout');
+        const isColumn = window.getComputedStyle(layout).flexDirection === 'column';
+        
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        if (isColumn) { 
+            const containerHeight = layout.offsetHeight;
+            const newHeight = (clientY / containerHeight) * 100;
+            if(newHeight > 20 && newHeight < 80) {
+                leftPane.style.flex = `0 0 ${newHeight}%`;
+            }
+        } else { 
+            const containerWidth = layout.offsetWidth;
+            const newWidth = (clientX / containerWidth) * 100;
+            if(newWidth > 20 && newWidth < 80) {
+                leftPane.style.flex = `0 0 ${newWidth}%`;
+            }
+        }
+    }
+
+    function stopResize() {
+        if(isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+        }
+    }
+
+    document.addEventListener('mouseup', stopResize);
+    document.addEventListener('touchend', stopResize);
+
+    window.onload = init;
+</script>
+</body>
+</html>
