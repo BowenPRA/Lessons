@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 9.2 Voltage & Solutions</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Standard - Dark Theme) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Main background (Deep Slate) */
+            --bg-panel: #1e293b;       /* Secondary background (Cards) */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Acid Green (Success) */
+            --warning: #f59e0b;        /* Hazard Orange (Tasks) */
+            --danger: #ef4444;         /* Heat Red (Errors/Theory) */
+            --text-light: #f1f5f9;     /* Main text */
+            --text-dim: #94a3b8;       /* Subtitles, disabled states */
+            --cold: #3b82f6;           /* Cold Blue */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-light); }
+        h1 { font-size: 2.8rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2.2rem; margin-bottom: 1.5rem; }
+        h3 { font-size: 1.6rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.3rem; line-height: 1.6; color: var(--text-light); }
+        strong { color: #ffffff; font-weight: 800; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: var(--primary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(30, 41, 59, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Signposting System (Cambridge Standard) */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+            background: rgba(15, 23, 42, 0.6);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            animation: slideIn 0.5s ease;
+        }
+        .pedagogical-note p, .pedagogical-note li {
+            font-family: 'Kalam', cursive;
+            font-size: 1.4rem;
+        }
+        .pedagogical-badge {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Problem Blocks & Answers */
+        .problem-block {
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .answer-box {
+            display: none; 
+            background: rgba(16, 185, 129, 0.1); 
+            padding: 1.5rem; 
+            border-radius: 8px; 
+            border: 2px solid var(--accent); 
+            margin-top: 1rem; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .answer-box p { font-family: 'Kalam', cursive; font-size: 1.4rem; color: var(--text-light); }
+        .final-ans { color: var(--accent) !important; font-weight: bold; font-size: 1.8rem !important; margin-top: 0.5rem; }
+
+        /* Action Buttons */
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-action:hover:not(:disabled) { filter: brightness(1.2); transform: translateY(-2px); }
+
+        /* Circuit Diagrams */
+        .circuit-svg { width: 100%; max-height: 200px; stroke: var(--text-light); stroke-width: 3; fill: none; display: block; margin: 1rem auto; }
+        .circuit-text { fill: var(--text-light); stroke: none; font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: bold; text-anchor: middle;}
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; box-shadow: 0 0 10px var(--primary);}
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.5s ease-out; }
+        .delay-1 { animation: slideIn 0.5s ease-out 0.1s both; }
+        .delay-2 { animation: slideIn 0.5s ease-out 0.2s both; }
+        .delay-3 { animation: slideIn 0.5s ease-out 0.3s both; }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-atom"></i> Cambridge Science</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1.1rem;">Unit 9.2 Voltage</span>
+        </div>
+        <div style="font-weight: 800; color: var(--accent); font-size: 1.2rem; font-family: 'Outfit', sans-serif;">
+            1 April 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <div class="progress-container"><div class="progress-fill" id="progress-bar"></div></div>
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- THE BOWEN ENGINE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    const renderMath = () => {
+        if (window.MathJax) {
+            window.MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+        }
+    };
+
+    const bindReveals = (container) => {
+        const btns = container.querySelectorAll('.reveal-btn');
+        const handlers = [];
+        btns.forEach(btn => {
+            const handler = () => {
+                const targetId = btn.getAttribute('data-target');
+                const target = container.querySelector('#' + targetId);
+                target.style.display = 'block';
+                target.classList.add('anim-enter');
+                btn.style.display = 'none';
+                renderMath();
+            };
+            handlers.push({ el: btn, fn: handler });
+            btn.addEventListener('click', handler);
+        });
+        return () => handlers.forEach(h => h.el.removeEventListener('click', h.fn));
+    };
+
+    /* --- LESSON CONTENT --- */
+    state.slides = [
+        // 1. Title Slide
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-battery-three-quarters delay-1" style="font-size: 5rem; color: var(--accent); margin-bottom: 1rem; filter: drop-shadow(0 0 15px rgba(16,185,129,0.5));"></i>
+                    <h1 class="delay-1" style="font-size: 4rem;">Unit 9.2 Voltage</h1>
+                    <h2 class="delay-1" style="color: var(--text-dim); font-family: 'Kalam', cursive;">1 April 2026</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 800px; margin: 3rem auto; text-align: left; transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Today's Objective</div>
+                        <p style="font-size: 1.6rem; color: var(--text-light);">We will understand exactly <strong>how batteries work</strong>, what voltage means in the real world, and apply this to solve parallel circuit problems.</p>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // 2. Power vs Electricity & Batteries
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Electricity vs. Power</h2>
+                    
+                    <div class="grid-2 delay-1">
+                        <div class="glass-card" style="border-top: 4px solid var(--cold);">
+                            <h3 style="color: var(--cold);"><i class="fa-solid fa-bolt"></i> Electricity (Current)</h3>
+                            <p style="font-size: 1.2rem;">Electricity is simply the <strong>flow of electrons</strong> through a wire. Think of it like water flowing through a hose.</p>
+                        </div>
+                        <div class="glass-card" style="border-top: 4px solid var(--danger);">
+                            <h3 style="color: var(--danger);"><i class="fa-solid fa-fire"></i> Power (Energy)</h3>
+                            <p style="font-size: 1.2rem;">Power is how much <strong>energy</strong> that flow delivers every second. This energy creates the heat, light, and motion!</p>
+                        </div>
+                    </div>
+
+                    <div class="pedagogical-note note-write delay-2" style="max-width: 1000px; margin: 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down: How Batteries Work</div>
+                        <p>Inside a battery, a <strong>chemical reaction</strong> forces electrons to one side (creating a Negative charge), leaving the other side empty (Positive charge).</p>
+                        <p style="margin-top: 1rem; color: var(--warning);">When a battery "dies", it does NOT run out of electrons. It runs out of the <em>chemicals</em> needed to separate the charges!</p>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // 3. Parallel Circuits & Battery Drain Cost
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Parallel Circuits: The Hidden Cost</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem;">Remember: Every branch in a parallel circuit gets the <strong>FULL Voltage</strong>.</p>
+                    
+                    <div class="grid-2 delay-2">
+                        <div class="glass-card text-center" style="display: flex; flex-direction: column; justify-content: center;">
+                            <i class="fa-solid fa-house-signal" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--primary);">The Benefit</h3>
+                            <p>Every lightbulb gets the full 9V of power, so they all shine <strong>equally bright</strong>. If one breaks, the others stay on!</p>
+                        </div>
+
+                        <div class="pedagogical-note note-theory" style="margin: 0; display: flex; flex-direction: column; justify-content: center;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-sack-dollar"></i> The Cost</div>
+                            <p style="font-size: 1.3rem;">If every branch demands full power, the battery has to push <strong>more total current (Amps)</strong> out of the source.</p>
+                            <p style="margin-top: 1rem; color: var(--danger); font-weight: bold; font-size: 1.5rem;">Result: The battery will drain and die much faster!</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // 4. The Electric Bill
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">The Electric Bill</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 900px; margin: 0 auto 2rem auto; transform: rotate(1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-brain"></i> Think about it</div>
+                        <p style="text-align: center; font-size: 1.6rem; padding: 1rem;">Every month, your parents pay the power company. But what are they actually buying?</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto;">
+                        <div class="glass-card text-center" style="border: 2px dashed rgba(255,255,255,0.2);">
+                            <i class="fa-solid fa-xmark" style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--danger);">They DO NOT buy Electrons</h3>
+                            <p>The power company sends electrons into your house, through your TV, and they go <em>right back</em> to the power plant. You don't keep them!</p>
+                        </div>
+
+                        <div class="glass-card text-center" style="border: 2px solid var(--accent); background: rgba(16, 185, 129, 0.05);">
+                            <i class="fa-solid fa-bolt-lightning" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--accent);">They buy ENERGY (Joules)</h3>
+                            <p>The power station burns coal or uses wind to give those electrons the "push" (Voltage). You are paying for the <strong>work</strong> those pushed electrons do in your house before returning empty.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // 5. Workbook 9.1A (Current Flow) Q1 & Q2
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Workbook: 9.1A Current Flow</h2>
+                    
+                    <div class="grid-2 delay-1" style="align-items: stretch;">
+                        <div class="problem-block">
+                            <p><strong class="problem-number">1</strong> Two lamps are connected to a cell. Explain whether it is series or parallel, and where the current divides.</p>
+                            <svg class="circuit-svg" viewBox="0 0 300 150">
+                                <line x1="150" y1="20" x2="150" y2="40"/> <line x1="160" y1="25" x2="160" y2="35" stroke-width="5"/>
+                                <path d="M 150 30 L 50 30 L 50 130 L 160 130" />
+                                <path d="M 160 30 L 250 30 L 250 130 L 160 130" />
+                                <!-- Branch 1 -->
+                                <path d="M 50 80 L 250 80" />
+                                <circle cx="150" cy="80" r="15" fill="var(--bg-panel)" /> <path d="M 139 69 L 161 91 M 161 69 L 139 91" />
+                                <!-- Branch 2 -->
+                                <circle cx="150" cy="130" r="15" fill="var(--bg-panel)" /> <path d="M 139 119 L 161 141 M 161 119 L 139 141" />
+                                <!-- Labels -->
+                                <text x="100" y="25" class="circuit-text">A (Junction)</text>
+                            </svg>
+                            <button class="btn-action reveal-btn" data-target="ans-91a-1"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div id="ans-91a-1" class="answer-box">
+                                <p><strong>a)</strong> It is a <span class="final-ans">Parallel Circuit</span> because there are multiple branches.</p>
+                                <p><strong>b)</strong> It divides at point <span class="final-ans">A</span>.</p>
+                            </div>
+                        </div>
+
+                        <div class="problem-block">
+                            <p><strong class="problem-number">2</strong> Calculate the current at position X (on the main line) if both branches read 3A.</p>
+                            <svg class="circuit-svg" viewBox="0 0 300 150">
+                                <line x1="150" y1="20" x2="150" y2="40"/> <line x1="160" y1="25" x2="160" y2="35" stroke-width="5"/>
+                                <path d="M 150 30 L 50 30 L 50 130 L 160 130" /> <path d="M 160 30 L 250 30 L 250 130 L 160 130" />
+                                <!-- Branch 1 -->
+                                <path d="M 50 80 L 250 80" />
+                                <circle cx="150" cy="80" r="15" fill="var(--bg-panel)" /> <path d="M 139 69 L 161 91 M 161 69 L 139 91" />
+                                <text x="210" y="70" class="circuit-text" fill="var(--warning)">3A</text>
+                                <!-- Branch 2 -->
+                                <circle cx="150" cy="130" r="15" fill="var(--bg-panel)" /> <path d="M 139 119 L 161 141 M 161 119 L 139 141" />
+                                <text x="210" y="120" class="circuit-text" fill="var(--warning)">3A</text>
+                                <!-- Label X -->
+                                <text x="35" y="85" class="circuit-text" fill="var(--accent)">X</text>
+                            </svg>
+                            <button class="btn-action reveal-btn" data-target="ans-91a-2"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div id="ans-91a-2" class="answer-box">
+                                <p>The main line (X) must supply the current for ALL branches combined.</p>
+                                <p>$$3A + 3A = 6A$$</p>
+                                <p class="final-ans">X = 6 A</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => bindReveals(container)
+        },
+
+        // 6. Workbook 9.1A Q3
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Workbook: 9.1A Q3</h2>
+                    
+                    <div class="grid-2 delay-1" style="align-items: center;">
+                        <div class="problem-block" style="margin:0;">
+                            <p><strong class="problem-number">3</strong> This circuit contains two identical buzzers. The total current at the top is <strong>4A</strong>. Calculate the currents at positions P and R inside the branches.</p>
+                            
+                            <svg class="circuit-svg" viewBox="0 0 300 200" style="margin-top: 2rem;">
+                                <!-- Supply -->
+                                <line x1="150" y1="20" x2="150" y2="40"/> <line x1="160" y1="25" x2="160" y2="35" stroke-width="5"/>
+                                <path d="M 150 30 L 50 30 L 50 160 L 160 160" /> <path d="M 160 30 L 250 30 L 250 160 L 160 160" />
+                                <text x="270" y="40" class="circuit-text" fill="var(--warning)">4A Total</text>
+                                
+                                <!-- Branch P -->
+                                <path d="M 50 90 L 250 90" />
+                                <path d="M 130 90 A 20 20 0 0 1 170 90 Z" fill="var(--bg-panel)"/> <line x1="140" y1="90" x2="140" y2="105"/> <line x1="160" y1="90" x2="160" y2="105"/>
+                                <text x="230" y="80" class="circuit-text" fill="var(--accent)">P</text>
+
+                                <!-- Branch R -->
+                                <path d="M 130 160 A 20 20 0 0 1 170 160 Z" fill="var(--bg-panel)"/> <line x1="140" y1="160" x2="140" y2="175"/> <line x1="160" y1="160" x2="160" y2="175"/>
+                                <text x="230" y="150" class="circuit-text" fill="var(--accent)">R</text>
+                            </svg>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                            <button class="btn-action reveal-btn" data-target="ans-91a-3" style="padding: 1.5rem; font-size: 1.4rem;"><i class="fa-solid fa-eye"></i> Show Answer & Working</button>
+                            <div id="ans-91a-3" class="answer-box">
+                                <p style="margin-bottom: 1rem;">Because the two buzzers are <strong>identical</strong>, they will share the total 4A current exactly equally.</p>
+                                <p>$$4A \\div 2 \\text{ branches} = 2A$$</p>
+                                <p class="final-ans" style="margin-top: 1rem;">P = 2 A <br> R = 2 A</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => bindReveals(container)
+        },
+
+        // 7. Workbook 9.1B Q1 & Q2
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Workbook: 9.1B Facts about parallel circuits</h2>
+                    
+                    <div class="grid-2 delay-1" style="align-items: stretch;">
+                        <div class="problem-block">
+                            <p><strong class="problem-number">1</strong> Which facts are correct? (Tick all that apply)</p>
+                            
+                            <ul style="list-style:none; margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem; font-family: 'Plus Jakarta Sans'; font-size: 1.1rem;">
+                                <li>[ &nbsp; ] More than one path for current</li>
+                                <li>[ &nbsp; ] There are no branches</li>
+                                <li>[ &nbsp; ] Current divides through different parts</li>
+                                <li>[ &nbsp; ] One fails, they all stop working</li>
+                            </ul>
+
+                            <button class="btn-action reveal-btn" data-target="ans-91b-1" style="margin-top: 1.5rem;"><i class="fa-solid fa-eye"></i> Show</button>
+                            <div id="ans-91b-1" class="answer-box text-left">
+                                <p><span class="final-ans">✓</span> More than one path for current</p>
+                                <p><span class="final-ans" style="color:var(--danger)!important;">✗</span> <s style="color:var(--text-dim);">There are no branches</s></p>
+                                <p><span class="final-ans">✓</span> Current divides through different parts</p>
+                                <p><span class="final-ans" style="color:var(--danger)!important;">✗</span> <s style="color:var(--text-dim);">One fails, they all stop working</s></p>
+                            </div>
+                        </div>
+
+                        <div class="problem-block">
+                            <p><strong class="problem-number">2</strong> The circuit has two identical lamps. A1 and A4 are on the main lines. A2 and A3 are on branches.</p>
+                            <button class="btn-action reveal-btn" data-target="ans-91b-2" style="margin-top: 1.5rem;"><i class="fa-solid fa-eye"></i> Show Answers</button>
+                            <div id="ans-91b-2" class="answer-box text-left">
+                                <p><strong>a)</strong> Same current as A1? <span class="final-ans" style="font-size:1.4rem!important; float:right;">A4</span></p>
+                                <hr style="border: 1px dashed rgba(255,255,255,0.1); margin: 0.5rem 0;">
+                                <p><strong>b)</strong> Same current as A2? <span class="final-ans" style="font-size:1.4rem!important; float:right;">A3</span></p>
+                                <hr style="border: 1px dashed rgba(255,255,255,0.1); margin: 0.5rem 0;">
+                                <p><strong>c)</strong> Half the current of A4? <span class="final-ans" style="font-size:1.4rem!important; float:right;">A2 or A3</span></p>
+                                <hr style="border: 1px dashed rgba(255,255,255,0.1); margin: 0.5rem 0;">
+                                <p><strong>d)</strong> Double the current of A3? <span class="final-ans" style="font-size:1.4rem!important; float:right;">A1 or A4</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => bindReveals(container)
+        },
+
+        // 8. Workbook 9.1B Q3 & 9.1C Q1
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Workbook: 9.1B Q3 & 9.1C Q1</h2>
+                    
+                    <div class="grid-2 delay-1" style="align-items: stretch;">
+                        <div class="problem-block">
+                            <p><strong class="problem-number">3</strong> 3 identical lamps in parallel. A1 is main line. A2, A3, A4 are branches. Tick TWO true boxes.</p>
+                            <button class="btn-action reveal-btn" data-target="ans-91b-3" style="margin-top: 1.5rem;"><i class="fa-solid fa-eye"></i> Show True Statements</button>
+                            <div id="ans-91b-3" class="answer-box text-left">
+                                <p style="margin-bottom: 0.5rem;"><span class="final-ans">✓</span> <strong>Reading on A1 must be largest.</strong> (It is the total current).</p>
+                                <p><span class="final-ans">✓</span> <strong>Reading on A2 must be smaller than A1.</strong> (A2 is just a piece of the total).</p>
+                                <p style="font-size:1.1rem; color:var(--text-dim); margin-top: 1rem;">(The branches A2, A3, A4 are identical, so they are all equal to each other!)</p>
+                            </div>
+                        </div>
+
+                        <div class="problem-block">
+                            <p><strong class="problem-number">1C</strong> 2 lamps (A1, A2) and 1 buzzer (A3). Ammeter A3 shows the <strong>smallest</strong> current. A4 is the main line.</p>
+                            <button class="btn-action reveal-btn" data-target="ans-91c-1" style="margin-top: 1.5rem;"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div id="ans-91c-1" class="answer-box text-left">
+                                <p><strong>a) Describe how A1, A2, A3 compare:</strong></p>
+                                <p style="font-size:1.2rem; color:var(--text-dim); margin-bottom: 1rem;">A1 and A2 are identical lamps, so their currents are equal. A3 is the smallest.</p>
+                                <p class="final-ans" style="font-size: 1.4rem!important;">A1 = A2. Both are larger than A3.</p>
+                                <hr style="border: 1px dashed rgba(255,255,255,0.1); margin: 1rem 0;">
+                                <p><strong>b) Write equation for A4:</strong></p>
+                                <p style="font-size:1.2rem; color:var(--text-dim); margin-bottom: 0.5rem;">A4 is the total current from the battery.</p>
+                                <p class="final-ans" style="font-size: 1.4rem!important;">A4 = A1 + A2 + A3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => bindReveals(container)
+        },
+
+        // 9. Workbook 9.1C Q2
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Workbook: 9.1C Q2</h2>
+                    
+                    <div class="grid-2 delay-1" style="align-items: center;">
+                        <div class="problem-block" style="margin:0;">
+                            <p><strong class="problem-number">2</strong> The buzzer in branch A3 breaks and stops working. It now reads zero. State the effect on:</p>
+                            <ul style="list-style: none; margin-left:0; margin-top: 1rem; font-family: 'Plus Jakarta Sans'; font-size: 1.2rem; line-height: 1.8;">
+                                <li><strong>a)</strong> The readings on A1 and A2 (the lamps)</li>
+                                <li><strong>b)</strong> The reading on A4 (the total main line)</li>
+                            </ul>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                            <button class="btn-action reveal-btn" data-target="ans-91c-2" style="padding: 1.5rem; font-size: 1.4rem;"><i class="fa-solid fa-eye"></i> Show Answers</button>
+                            <div id="ans-91c-2" class="answer-box text-left">
+                                <p style="color: var(--text-light);"><strong>a) A1 and A2:</strong></p>
+                                <p class="final-ans" style="font-size: 1.5rem!important; margin-bottom:1rem;">They stay exactly the same.</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1.5rem;"><em>Why? Parallel branches are independent. The broken buzzer does not stop the other paths!</em></p>
+                                
+                                <p style="color: var(--text-light);"><strong>b) A4:</strong></p>
+                                <p class="final-ans" style="font-size: 1.5rem!important; margin-bottom:1rem;">It decreases.</p>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);"><em>Why? The battery is now only pushing current to 2 branches instead of 3.</em></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => bindReveals(container)
+        },
+
+        // 10. Workbook 9.2A Q1 & Q2
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Workbook: 9.2A Voltage</h2>
+                    
+                    <div class="grid-2 delay-1" style="align-items: stretch;">
+                        <div class="problem-block">
+                            <p><strong class="problem-number">1</strong> Understanding Voltage units and batteries.</p>
+                            <button class="btn-action reveal-btn" data-target="ans-92a-1" style="margin-top: 1.5rem;"><i class="fa-solid fa-eye"></i> Show Answers</button>
+                            <div id="ans-92a-1" class="answer-box text-left">
+                                <p><strong>a)</strong> Write down the word for the unit of voltage.</p>
+                                <p class="final-ans" style="font-size:1.5rem!important; margin-bottom: 1rem;">Volts</p>
+                                <hr style="border: 1px dashed rgba(255,255,255,0.1); margin: 1rem 0;">
+                                <p><strong>b)</strong> What does the voltage of a battery show?</p>
+                                <p class="final-ans" style="font-size:1.3rem!important;">The energy that the battery can supply.</p>
+                            </div>
+                        </div>
+
+                        <div class="problem-block">
+                            <p><strong class="problem-number">2</strong> This circuit has a lamp and a buzzer in <strong>parallel</strong>. The cell is <strong>1.5 V</strong>.</p>
+                            <button class="btn-action reveal-btn" data-target="ans-92a-2" style="margin-top: 1.5rem;"><i class="fa-solid fa-eye"></i> Show Answers</button>
+                            <div id="ans-92a-2" class="answer-box text-left">
+                                <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 1rem;">Rule: In parallel, EVERY branch receives the full supply voltage.</p>
+                                <p><strong>a)</strong> Voltage across the lamp?</p>
+                                <p class="final-ans" style="font-size:1.5rem!important; margin-bottom: 1rem;">1.5 V</p>
+                                <hr style="border: 1px dashed rgba(255,255,255,0.1); margin: 1rem 0;">
+                                <p><strong>b)</strong> Voltage across the buzzer?</p>
+                                <p class="final-ans" style="font-size:1.5rem!important;">1.5 V</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => bindReveals(container)
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        container.innerHTML = slide.template();
+        
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    render();
+</script>
+
+</body>
+</html>
