@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acids, Bases, and Hydrogen - Year 8 Science</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Bible Standard) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Secondary Background */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Success/Acid Green */
+            --warning: #f59e0b;        /* Hazard Orange */
+            --danger: #ef4444;         /* Heat Red */
+            --cold: #0ea5e9;           /* Cold Blue */
+            --text-light: #f1f5f9;     /* Main Text */
+            --text-dim: #94a3b8;       /* Subtitles */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.15rem; line-height: 1.6; color: var(--text-dim); }
+
+        strong { color: var(--text-light); }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Signposting System (Pedagogical Framework) */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            animation: slideIn 0.5s ease;
+        }
+        .pedagogical-badge {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { background: rgba(139, 92, 246, 0.1); border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { background: rgba(16, 185, 129, 0.1); border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Reveal Card */
+        .reveal-card {
+            background: var(--bg-panel);
+            border: 2px dashed var(--primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .reveal-card:hover { background: rgba(139, 92, 246, 0.1); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .reveal-card.revealed { border-style: solid; background: rgba(16, 185, 129, 0.1); border-color: var(--accent); cursor: default; }
+        .reveal-card.revealed .pre-reveal { display: none; }
+        .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        /* Atom Animation Elements */
+        .atom-diagram {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nucleus-cluster {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            z-index: 5;
+        }
+        .nucleon {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 900;
+            color: white;
+        }
+        .proton { background: var(--danger); z-index: 2; top: 13px; left: 13px; }
+        
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .orbit-1 { width: 140px; height: 140px; animation: spin 3s linear infinite; }
+        
+        .electron {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: var(--cold);
+            border-radius: 50%;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px var(--cold);
+        }
+
+        @keyframes spin {
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* pH Scale Grid */
+        .ph-scale {
+            display: flex;
+            width: 100%;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 2rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .ph-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            border-right: 1px solid rgba(0,0,0,0.1);
+        }
+        .ph-box:last-child { border-right: none; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-flask"></i> Year 8 Science</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">Crash Course</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; color: var(--primary);">
+            2 April 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Title & Objectives
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-flask delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Acids, Bases & Hydrogen</h1>
+                    <h2 class="delay-1" style="color: var(--text-dim);">The Chemistry of Reactions</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 650px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objectives</div>
+                        <ul style="margin-left: 1rem; display: grid; gap: 1rem; list-style-type: none; padding: 0; margin-top: 0.5rem;">
+                            <li style="font-size: 1.2rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>🔄</span>
+                                <span style="color: white; font-weight: 500;">Recall reactants, products, and particle rearrangement.</span>
+                            </li>
+                            <li style="font-size: 1.2rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>⚛️</span>
+                                <span style="color: white; font-weight: 500;">Understand why the Hydrogen atom is special.</span>
+                            </li>
+                            <li style="font-size: 1.2rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>🍋</span>
+                                <span style="color: white; font-weight: 500;">Define acids, bases, and salts.</span>
+                            </li>
+                            <li style="font-size: 1.2rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>🌈</span>
+                                <span style="color: white; font-weight: 500;">Read and understand the pH scale.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: Recap
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Quick Recap: The Building Blocks</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">Before we mix acids, let's remember the rules of the game!</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: stretch;">
+                        
+                        <div class="glass-card" style="border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary);"><i class="fa-solid fa-cube"></i> Atoms & Molecules</h3>
+                            <div class="pedagogical-badge" style="color: var(--primary); margin-bottom: 1rem;"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                            <ul style="margin-left: 1.5rem; color: white;">
+                                <li style="margin-bottom: 0.5rem;"><strong>Atom:</strong> The smallest, single building block of matter.</li>
+                                <li><strong>Molecule:</strong> Two or more atoms strongly bonded together.</li>
+                            </ul>
+                        </div>
+
+                        <div class="glass-card" style="border-top: 4px solid var(--warning);">
+                            <h3 style="color: var(--warning);"><i class="fa-solid fa-recycle"></i> Chemical Reactions</h3>
+                            <div class="pedagogical-badge" style="color: var(--warning); margin-bottom: 1rem;"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                            <p style="color: white; margin-bottom: 1rem;">Reactions are all about <strong>rearranging particles</strong>. Old bonds break, new bonds form!</p>
+                            
+                            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; text-align: center;">
+                                <p style="font-size: 1.2rem; color: white; font-family: 'Outfit', sans-serif;">
+                                    <span style="color: var(--warning);">Reactants</span>
+                                    <span style="margin: 0 0.5rem; color: var(--text-dim);">&rarr;</span>
+                                    <span style="color: var(--accent);">Products</span>
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: Hydrogen
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Hydrogen: The Special Atom</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">Element #1 on the Periodic Table</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto;">
+                        <div>
+                            <div class="pedagogical-note note-write">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                                <h3 style="color: var(--primary);">The Simplest Atom</h3>
+                                <ul style="margin-left: 1.5rem; color: white;">
+                                    <li>Hydrogen is the simplest atom in the universe.</li>
+                                    <li>It contains exactly <strong>1 Proton</strong> and <strong>1 Electron</strong>.</li>
+                                </ul>
+                            </div>
+
+                            <div class="pedagogical-note note-theory delay-3">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-bolt"></i> The H⁺ Ion</div>
+                                <p style="color: white; font-size: 1.1rem;">If Hydrogen loses its only electron, it becomes an <strong>H⁺ ion</strong>. Because the electron is gone, it is literally just a <strong>flying proton</strong>!</p>
+                                <p style="color: var(--text-dim); margin-top: 0.5rem; font-size: 0.9rem;">(We will cover ions in much more detail next year!)</p>
+                            </div>
+                        </div>
+
+                        <!-- Animated CSS Atom -->
+                        <div class="glass-card text-center delay-3" style="border: none; background: transparent; box-shadow: none;">
+                            <h3 style="color: var(--text-light); font-size: 1.2rem; margin-bottom: 2rem;">A Neutral Hydrogen Atom</h3>
+                            <div class="atom-diagram">
+                                <div class="nucleus-cluster">
+                                    <div class="nucleon proton">+</div>
+                                </div>
+                                <div class="orbit orbit-1">
+                                    <div class="electron e1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: Acids
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>What is an Acid?</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); font-size: 1.8rem; margin-bottom: 0.5rem;">Acids are H⁺ Donors</h3>
+                        <p style="font-size: 1.2rem; color: white; line-height: 1.6;">An acid is a substance that releases <strong>Hydrogen ions (H⁺)</strong> when it is dissolved in water.</p>
+                    </div>
+
+                    <div class="grid-3 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: stretch;">
+                        
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--danger);">
+                            <i class="fa-solid fa-lemon" style="font-size: 2.5rem; color: var(--danger); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--danger); font-size: 1.2rem;">Taste</h3>
+                            <p style="font-size: 1rem; color: white;">Edible acids taste <strong>sour</strong>. (Think lemons, vinegar, and sour candy).</p>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--warning);">
+                            <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; color: var(--warning); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--warning); font-size: 1.2rem;">Properties</h3>
+                            <p style="font-size: 1rem; color: white;">Strong acids are <strong>corrosive</strong>, meaning they can eat away at metals and skin.</p>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--accent);">
+                            <i class="fa-solid fa-vial" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--accent); font-size: 1.2rem;">Examples</h3>
+                            <p style="font-size: 1rem; color: white;">Stomach acid (Hydrochloric Acid), Vinegar, Citric Acid.</p>
+                        </div>
+
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: Bases
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>What is a Base?</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); font-size: 1.8rem; margin-bottom: 0.5rem;">The Chemical Opposite</h3>
+                        <p style="font-size: 1.2rem; color: white; line-height: 1.6;">A base is the chemical opposite of an acid. They "steal" or accept H⁺ ions. <br><span style="font-size:1rem; color:var(--text-dim);">(Note: A base that dissolves in water is called an <strong>Alkali</strong>).</span></p>
+                    </div>
+
+                    <div class="grid-3 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: stretch;">
+                        
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--cold);">
+                            <i class="fa-solid fa-soap" style="font-size: 2.5rem; color: var(--cold); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--cold); font-size: 1.2rem;">Feel & Taste</h3>
+                            <p style="font-size: 1rem; color: white;">Bases feel <strong>soapy/slippery</strong> to touch and taste bitter.</p>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--warning);">
+                            <i class="fa-solid fa-skull-crossbones" style="font-size: 2.5rem; color: var(--warning); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--warning); font-size: 1.2rem;">Properties</h3>
+                            <p style="font-size: 1rem; color: white;">Strong bases are just as <strong>corrosive</strong> and dangerous as strong acids!</p>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--accent);">
+                            <i class="fa-solid fa-spray-can-sparkles" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--accent); font-size: 1.2rem;">Examples</h3>
+                            <p style="font-size: 1rem; color: white;">Soap, bleach, baking soda, toothpaste.</p>
+                        </div>
+
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: Neutralisation and Salts
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Neutralisation & Salts</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">What happens when the ultimate battle occurs: Acid vs Base?</p>
+
+                    <div class="glass-card delay-2" style="max-width: 900px; margin: 0 auto; padding: 2.5rem;">
+                        <div class="pedagogical-badge" style="color: var(--primary); margin-bottom: 1rem;"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        
+                        <p style="font-size: 1.2rem; color: white; margin-bottom: 2rem;">When an acid and a base mix, they cancel each other out. This is called a <strong>neutralisation reaction</strong>. They form harmless water and a <strong>salt</strong>.</p>
+                        
+                        <div style="background: rgba(0,0,0,0.3); padding: 2rem; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                            <p style="color: var(--text-dim); margin-bottom: 1rem; font-size: 1rem; text-transform: uppercase; font-weight: bold;">The Golden Equation:</p>
+                            
+                            <p style="font-size: 2rem; color: white; font-family: 'Outfit', sans-serif;">
+                                <span style="color: var(--danger);">Acid</span> + <span style="color: var(--cold);">Base</span>
+                                <span style="margin: 0 1rem; color: var(--text-dim);">&rarr;</span>
+                                <span style="color: var(--accent);">Salt</span> + <span style="color: #60a5fa;">Water</span>
+                            </p>
+                        </div>
+
+                        <div class="pedagogical-note note-theory" style="margin-top: 2rem; padding: 1rem;">
+                            <p style="color: white; font-size: 1rem;"><i class="fa-solid fa-info-circle" style="color: var(--danger);"></i> <strong>Note:</strong> In Chemistry, a "salt" isn't just the stuff you put on chips. It's the scientific name for the compound left over when an acid and base react!</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: The pH Scale
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>The pH Scale</h2>
+                    <p class="delay-1" style="margin-bottom: 1rem;">How do we measure exactly <em>how</em> acidic or basic something is?</p>
+
+                    <div class="pedagogical-note note-write delay-2" style="max-width: 800px; margin: 0 auto 1rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <ul style="margin-left: 1.5rem; color: white; font-size: 1.15rem;">
+                            <li>The pH scale goes from <strong>0 to 14</strong>.</li>
+                            <li><strong>0 to 6</strong> = Acidic (Red/Yellow)</li>
+                            <li><strong>7</strong> = Neutral (Green)</li>
+                            <li><strong>8 to 14</strong> = Basic / Alkaline (Blue/Purple)</li>
+                        </ul>
+                    </div>
+
+                    <div class="delay-3" style="max-width: 1000px; margin: 0 auto;">
+                        <div class="ph-scale">
+                            <div class="ph-box" style="background: #ef4444;">0</div>
+                            <div class="ph-box" style="background: #f97316;">1</div>
+                            <div class="ph-box" style="background: #f59e0b;">2</div>
+                            <div class="ph-box" style="background: #eab308;">3</div>
+                            <div class="ph-box" style="background: #fde047; color: #333; text-shadow: none;">4</div>
+                            <div class="ph-box" style="background: #bef264; color: #333; text-shadow: none;">5</div>
+                            <div class="ph-box" style="background: #86efac; color: #333; text-shadow: none;">6</div>
+                            <div class="ph-box" style="background: #10b981; border: 2px solid white; transform: scale(1.1); z-index: 2;">7</div>
+                            <div class="ph-box" style="background: #2dd4bf; color: #333; text-shadow: none;">8</div>
+                            <div class="ph-box" style="background: #0ea5e9;">9</div>
+                            <div class="ph-box" style="background: #3b82f6;">10</div>
+                            <div class="ph-box" style="background: #6366f1;">11</div>
+                            <div class="ph-box" style="background: #8b5cf6;">12</div>
+                            <div class="ph-box" style="background: #a855f7;">13</div>
+                            <div class="ph-box" style="background: #d946ef;">14</div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0 10px; font-weight: bold; color: var(--text-dim);">
+                            <span>Strong Acid</span>
+                            <span style="color: white;">Neutral (Water)</span>
+                            <span>Strong Base</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: Check Your Understanding (Active Recall)
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Check Your Understanding</h2>
+                    <p class="delay-1" style="margin-bottom: 2rem;">Click the cards to see if you can guess where these common items sit on the pH scale.</p>
+
+                    <div class="grid-3 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: stretch;">
+                        
+                        <div class="reveal-card" role="button" tabindex="0">
+                            <div class="pre-reveal">
+                                <i class="fa-solid fa-lemon" style="font-size: 3rem; margin-bottom: 1rem; color: #eab308;"></i>
+                                <h3 style="color: white;">Lemon Juice</h3>
+                                <p style="font-size: 0.95rem; color: var(--text-dim);">Is it Acid, Neutral, or Base?</p>
+                            </div>
+                            <div class="reveal-content">
+                                <h3 style="color: var(--danger); font-size: 1.5rem; margin-bottom: 0.5rem;">Acidic!</h3>
+                                <p style="font-size: 1.2rem; color: white;">pH ~ 2</p>
+                            </div>
+                        </div>
+
+                        <div class="reveal-card" role="button" tabindex="0">
+                            <div class="pre-reveal">
+                                <i class="fa-solid fa-glass-water" style="font-size: 3rem; margin-bottom: 1rem; color: var(--cold);"></i>
+                                <h3 style="color: white;">Pure Water</h3>
+                                <p style="font-size: 0.95rem; color: var(--text-dim);">Is it Acid, Neutral, or Base?</p>
+                            </div>
+                            <div class="reveal-content">
+                                <h3 style="color: var(--accent); font-size: 1.5rem; margin-bottom: 0.5rem;">Neutral</h3>
+                                <p style="font-size: 1.2rem; color: white;">pH = 7</p>
+                            </div>
+                        </div>
+
+                        <div class="reveal-card" role="button" tabindex="0">
+                            <div class="pre-reveal">
+                                <i class="fa-solid fa-pump-soap" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary);"></i>
+                                <h3 style="color: white;">Liquid Soap</h3>
+                                <p style="font-size: 0.95rem; color: var(--text-dim);">Is it Acid, Neutral, or Base?</p>
+                            </div>
+                            <div class="reveal-content">
+                                <h3 style="color: #6366f1; font-size: 1.5rem; margin-bottom: 0.5rem;">Basic / Alkaline</h3>
+                                <p style="font-size: 1.2rem; color: white;">pH ~ 9</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCards = container.querySelectorAll('.reveal-card');
+                const handlers = [];
+
+                revealCards.forEach(card => {
+                    const handler = () => { card.classList.add('revealed'); };
+                    handlers.push({ element: card, fn: handler });
+                    card.addEventListener('click', handler);
+                });
+
+                return () => {
+                    handlers.forEach(h => h.element.removeEventListener('click', h.fn));
+                };
+            }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        // Execute cleanup from previous slide if it exists
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        // Render HTML synchronously
+        container.innerHTML = slide.template();
+        
+        // Execute script immediately
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        // Update UI
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
