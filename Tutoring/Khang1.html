@@ -5,15 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Polynomials & The Factor Theorem - Additional Maths</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- MathJax for Formulas -->
     <script>
     MathJax = {
       tex: {
@@ -52,11 +49,12 @@
             background-color: var(--bg-paper);
             color: var(--text-main);
             overflow: hidden;
+            font-size: 16px;
         }
 
         h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-main); }
-        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+        h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 0.5rem; }
+        h2 { font-size: clamp(1.5rem, 4vw, 2.5rem); margin-bottom: 1.5rem; }
         h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
         p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-main); }
 
@@ -64,9 +62,9 @@
         
         .text-center { text-align: center; }
         .text-left { text-align: left; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
 
         /* --- LAYOUT SHELL --- */
         .app-shell { display: flex; flex-direction: column; height: 100vh; }
@@ -76,7 +74,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 2rem;
+            padding: 0 1rem;
             background: #ffffff;
             border-bottom: 2px solid rgba(0, 0, 0, 0.05);
             z-index: 10;
@@ -93,6 +91,7 @@
             letter-spacing: 1px;
             color: white;
             box-shadow: 2px 2px 0px rgba(37, 99, 235, 0.3);
+            white-space: nowrap;
         }
 
         .viewport {
@@ -124,7 +123,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 2rem;
+            padding: 0 1rem;
             z-index: 10;
         }
 
@@ -133,12 +132,13 @@
             background: var(--bg-panel);
             border: 2px solid rgba(0, 0, 0, 0.08);
             border-radius: var(--border-radius);
-            padding: 2rem;
+            padding: clamp(1rem, 3vw, 2rem);
             box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+            height: 100%;
         }
 
         .pedagogical-note {
-            padding: 1.5rem;
+            padding: clamp(1rem, 3vw, 1.5rem);
             border-radius: 12px;
             margin: 1.5rem 0;
             border-left: 5px solid;
@@ -202,6 +202,7 @@
             font-family: 'Outfit', sans-serif;
             font-size: 1.1rem;
             box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            white-space: nowrap;
         }
         .btn-action:hover, .btn-action:focus {
             transform: translateY(-2px);
@@ -217,8 +218,16 @@
         .active-step { visibility: visible; opacity: 1; filter: blur(0); }
         
         /* Division Table */
-        .div-table { width: 100%; font-family: 'Outfit', sans-serif; font-size: 1.6rem; text-align: center; border-collapse: collapse; }
-        .div-table td { padding: 12px; }
+        .div-table-wrapper {
+            flex: 1; 
+            overflow-x: auto; 
+            display: flex; 
+            justify-content: center; 
+            padding: 2rem 1rem;
+            -webkit-overflow-scrolling: touch;
+        }
+        .div-table { width: max-content; font-family: 'Outfit', sans-serif; font-size: clamp(1.2rem, 3vw, 1.6rem); text-align: center; border-collapse: collapse; margin: 0 auto; }
+        .div-table td { padding: 12px; min-width: 60px; }
         .div-table .bb { border-bottom: 2px solid var(--text-main); }
         .div-table .bt { border-top: 2px solid var(--text-main); }
         .div-table .br { border-right: 2px solid var(--text-main); font-weight: bold; text-align: right; padding-right: 20px; }
@@ -236,11 +245,12 @@
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+            flex-shrink: 0;
         }
         .btn-nav:hover:not(:disabled), .btn-nav:focus:not(:disabled) { background: var(--primary); color: white; border-color: var(--primary); }
         .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
 
-        .progress-container { flex: 1; margin: 0 2rem; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-container { flex: 1; margin: 0 1rem; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
         .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
 
         /* SVG Graph Styling */
@@ -257,15 +267,20 @@
         .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
         .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
 
+        /* Responsive Utilities */
         @media (max-width: 1024px) {
-            .grid-4 { grid-template-columns: repeat(2, 1fr); }
             .slide-wrapper { padding-left: 60px; }
         }
         @media (max-width: 768px) {
-            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 1rem; }
-            h1 { font-size: 2rem; }
-            .slide-wrapper { padding-left: 2rem; }
+            .slide-wrapper { padding: 1.5rem; }
             .viewport { background-image: none; background-color: var(--bg-paper); }
+            .header-date { display: none; }
+            
+            /* Make instructions stacked naturally on small screens */
+            .instructions-stack { flex-direction: column !important; align-items: flex-start !important; gap: 1rem; }
+            .instructions-stack > div { padding-right: 0 !important; }
+            .btn-action-group { width: 100%; display: flex; justify-content: stretch; }
+            .btn-action-group button { flex: 1; }
         }
     </style>
 </head>
@@ -274,18 +289,17 @@
 <div class="app-shell">
     <header class="header">
         <div style="display: flex; align-items: center; gap: 1rem;">
-            <div class="brand-pill"><i class="fa-solid fa-superscript"></i> Additional Maths</div>
-            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;">Unit 3: Polynomials</span>
+            <div class="brand-pill"><i class="fa-solid fa-superscript"></i> Add Maths</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;" class="header-subtitle">Unit 3: Polynomials</span>
         </div>
-        <div style="font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-main); font-size: 1.2rem;">
-            2 April 2026
+        <div class="header-date" style="font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-main); font-size: 1.2rem;">
+            Polynomial & Factor Theorem
         </div>
     </header>
 
     <main class="viewport" id="viewport">
         <div id="slide-container" class="slide-wrapper" aria-live="polite">
-            <!-- Slide content injected here -->
-        </div>
+            </div>
     </main>
 
     <footer class="footer">
@@ -318,14 +332,74 @@
         }
     };
 
+    // Helper function to create interactive long division scripts
+    const createLongDivisionScript = (texts) => {
+        return (container) => {
+            renderMath();
+            const btnNext = container.querySelector('.btn-next-step');
+            const btnReset = container.querySelector('.btn-reset-step');
+            const instTitle = container.querySelector('.inst-title');
+            const instDesc = container.querySelector('.inst-desc');
+            
+            const step1Els = container.querySelectorAll('.step1');
+            const step2Els = container.querySelectorAll('.step2');
+            const step3Els = container.querySelectorAll('.step3');
+            
+            let currentStep = 0;
+
+            const updateUI = () => {
+                instTitle.innerHTML = texts[currentStep].t;
+                instDesc.innerHTML = texts[currentStep].d;
+                renderMath(); 
+                
+                if (currentStep >= 1) step1Els.forEach(el => el.classList.add('active-step'));
+                else step1Els.forEach(el => el.classList.remove('active-step'));
+                
+                if (currentStep >= 2) step2Els.forEach(el => el.classList.add('active-step'));
+                else step2Els.forEach(el => el.classList.remove('active-step'));
+                
+                if (currentStep >= 3) step3Els.forEach(el => el.classList.add('active-step'));
+                else step3Els.forEach(el => el.classList.remove('active-step'));
+
+                if (currentStep === 3) {
+                    btnNext.style.display = 'none';
+                    btnReset.style.display = 'flex';
+                } else {
+                    btnNext.style.display = 'flex';
+                    btnReset.style.display = 'none';
+                }
+            };
+
+            const nextHandler = () => {
+                if (currentStep < 3) {
+                    currentStep++;
+                    updateUI();
+                }
+            };
+            
+            const resetHandler = () => {
+                currentStep = 0;
+                updateUI();
+            };
+
+            btnNext.addEventListener('click', nextHandler);
+            btnReset.addEventListener('click', resetHandler);
+
+            return () => {
+                btnNext.removeEventListener('click', nextHandler);
+                btnReset.removeEventListener('click', resetHandler);
+            };
+        };
+    };
+
     // --- SLIDE DEFINITIONS ---
     state.slides = [
-        // SLIDE 1: Title & Objectives
+        // SLIDE 0: Title & Objectives
         {
             template: () => `
                 <div class="anim-enter text-center">
                     <i class="fa-solid fa-calculator delay-1" style="font-size: 5rem; color: var(--primary); margin-bottom: 1rem;"></i>
-                    <h1 class="delay-1" style="font-size: 3.5rem;">Polynomials & The Factor Theorem</h1>
+                    <h1 class="delay-1" style="font-size: clamp(2.5rem, 6vw, 3.5rem);">Polynomials & The Factor Theorem</h1>
                     <h2 class="delay-1" style="color: var(--accent);">Breaking down complex equations</h2>
                     
                     <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 3rem auto; text-align: left; transform: rotate(-1deg);">
@@ -350,7 +424,7 @@
             script: () => { renderMath(); return () => {}; }
         },
 
-        // SLIDE 2: Polynomial Basics (Vocabulary)
+        // SLIDE 1: Polynomial Basics (Vocabulary)
         {
             template: () => `
                 <div class="anim-enter">
@@ -359,7 +433,7 @@
                     <div class="glass-card delay-1" style="max-width: 900px; margin: 0 auto 2rem auto; text-align: center;">
                         <h3 style="color: var(--primary);">What is a Polynomial?</h3>
                         <p style="font-size: 1.3rem;">An algebraic expression made up of variables and constants. <br>The general form looks like this:</p>
-                        <p style="font-size: 1.8rem; margin-top: 1rem; color: var(--warning); font-weight: bold;">
+                        <p style="font-size: clamp(1.2rem, 3vw, 1.8rem); margin-top: 1rem; color: var(--warning); font-weight: bold; overflow-x: auto;">
                             $a_nx^n + a_{n-1}x^{n-1} + ... + a_1x + a_0$
                         </p>
                     </div>
@@ -388,7 +462,7 @@
             script: () => { renderMath(); return () => {}; }
         },
 
-        // SLIDE 3: Types of Polynomials & Graphs
+        // SLIDE 2: Types of Polynomials & Graphs
         {
             template: () => `
                 <div class="anim-enter">
@@ -403,7 +477,6 @@
                             <svg class="math-graph" viewBox="0 0 100 100">
                                 <line x1="10" y1="50" x2="90" y2="50" class="axis"/>
                                 <line x1="50" y1="10" x2="50" y2="90" class="axis"/>
-                                <!-- Straight line passing exactly through (50,50) -->
                                 <path d="M 10 90 L 90 10" class="curve"/>
                                 <circle cx="50" cy="50" class="root-dot"/>
                             </svg>
@@ -415,7 +488,6 @@
                             <svg class="math-graph" viewBox="0 0 100 100">
                                 <line x1="10" y1="50" x2="90" y2="50" class="axis"/>
                                 <line x1="50" y1="10" x2="50" y2="90" class="axis"/>
-                                <!-- Exact bezier intersection coordinates computed to 1 decimal place -->
                                 <path d="M 10 10 Q 50 130 90 10" class="curve" style="stroke: var(--warning);"/>
                                 <circle cx="26.9" cy="50" class="root-dot"/>
                                 <circle cx="73.1" cy="50" class="root-dot"/>
@@ -428,7 +500,6 @@
                             <svg class="math-graph" viewBox="0 0 100 100">
                                 <line x1="10" y1="50" x2="90" y2="50" class="axis"/>
                                 <line x1="50" y1="10" x2="50" y2="90" class="axis"/>
-                                <!-- Exact bezier intersection coordinates computed to 1 decimal place -->
                                 <path d="M 10 90 Q 25 10 50 50 T 90 10" class="curve" style="stroke: var(--accent);"/>
                                 <circle cx="21.1" cy="50" class="root-dot"/>
                                 <circle cx="50" cy="50" class="root-dot"/>
@@ -442,7 +513,6 @@
                             <svg class="math-graph" viewBox="0 0 100 100">
                                 <line x1="10" y1="50" x2="90" y2="50" class="axis"/>
                                 <line x1="50" y1="10" x2="50" y2="90" class="axis"/>
-                                <!-- Exact bezier intersection coordinates computed to 1 decimal place -->
                                 <path d="M 10 20 Q 25 100 50 40 Q 75 100 90 20" class="curve" style="stroke: var(--danger);"/>
                                 <circle cx="17.7" cy="50" class="root-dot"/>
                                 <circle cx="45.4" cy="50" class="root-dot"/>
@@ -457,7 +527,7 @@
             script: () => { renderMath(); return () => {}; }
         },
 
-        // SLIDE 4: Roots, Solutions, and Zeroes 
+        // SLIDE 3: Roots, Solutions, and Zeroes 
         {
             template: () => `
                 <div class="anim-enter">
@@ -481,14 +551,12 @@
 
                         <div class="glass-card" style="text-align: center;">
                             <h3 style="color: var(--text-main); margin-bottom: 1rem;">Example: A Cubic Graph</h3>
-                            <svg viewBox="0 0 100 100" style="width: 100%; max-width: 300px; aspect-ratio: 1; background: rgba(0,0,0,0.02); border-radius: 8px; overflow: visible;">
-                                <!-- Grid lines -->
+                            <svg viewBox="0 0 100 100" style="width: 100%; max-width: 300px; aspect-ratio: 1; background: rgba(0,0,0,0.02); border-radius: 8px; overflow: visible; margin: 0 auto;">
                                 <line x1="10" y1="50" x2="90" y2="50" class="axis"/>
                                 <line x1="50" y1="10" x2="50" y2="90" class="axis"/>
                                 
                                 <path d="M 10 90 Q 25 10 50 50 T 90 10" class="curve"/>
                                 
-                                <!-- Root Dots perfectly aligned -->
                                 <circle cx="21.1" cy="50" class="root-dot"/>
                                 <circle cx="50" cy="50" class="root-dot"/>
                                 <circle cx="78.9" cy="50" class="root-dot"/>
@@ -505,7 +573,7 @@
             script: () => { renderMath(); return () => {}; }
         },
 
-        // SLIDE 5: The Quest for Formulas
+        // SLIDE 4: The Quest for Formulas
         {
             template: () => `
                 <div class="anim-enter">
@@ -517,7 +585,7 @@
                         <div class="glass-card" style="border-top: 4px solid var(--warning);">
                             <h3 style="color: var(--warning);"><i class="fa-solid fa-square-root-variable"></i> Quadratic Roots</h3>
                             <p style="font-size: 1.1rem; margin-bottom: 1rem;">You likely already know the neat, straightforward formula for degree 2 polynomials:</p>
-                            <div style="background: rgba(0,0,0,0.03); padding: 1.5rem; border-radius: 8px; text-align: center;">
+                            <div style="background: rgba(0,0,0,0.03); padding: 1.5rem; border-radius: 8px; text-align: center; overflow-x: auto;">
                                 <p style="font-size: 1.4rem; font-weight: bold; color: var(--text-main);">
                                     $x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$
                                 </p>
@@ -526,8 +594,8 @@
 
                         <div class="glass-card" style="border-top: 4px solid var(--primary);">
                             <h3 style="color: var(--primary);"><i class="fa-solid fa-scroll"></i> Cubic Roots</h3>
-                            <p style="font-size: 1.1rem; margin-bottom: 1rem;">Finding a formula for degree 3 was a <strong>massive deal</strong> in the 1500s. It was kept as a heavily guarded secret! It looks like this:</p>
-                            <div style="background: rgba(0,0,0,0.03); padding: 1.5rem; border-radius: 8px; text-align: center; overflow: hidden; white-space: nowrap;">
+                            <p style="font-size: 1.1rem; margin-bottom: 1rem;">Finding a formula for degree 3 was a <strong>massive deal</strong> in the 1500s. It was kept as a guarded secret!</p>
+                            <div style="background: rgba(0,0,0,0.03); padding: 1.5rem; border-radius: 8px; text-align: center; overflow-x: auto; white-space: nowrap;">
                                 <p style="font-size: 1.2rem; color: var(--text-dim);">
                                     $x = \\sqrt[3]{-\\frac{q}{2} + \\sqrt{\\frac{q^2}{4} + \\frac{p^3}{27}}} + \\dots$
                                 </p>
@@ -545,7 +613,7 @@
             script: () => { renderMath(); return () => {}; }
         },
 
-        // SLIDE 6: Polynomial Long Division Concept
+        // SLIDE 5: Polynomial Long Division Concept
         {
             template: () => `
                 <div class="anim-enter">
@@ -561,7 +629,7 @@
 
                     <div class="glass-card delay-3" style="max-width: 800px; margin: 2rem auto; text-align: center; border-top: 4px solid var(--primary);">
                         <p style="font-size: 1.2rem; color: var(--text-dim); margin-bottom: 1rem;">Example: Before dividing $2x^3 - x + 51$, rewrite it as:</p>
-                        <p style="font-size: 1.8rem; font-weight: bold; color: var(--primary);">
+                        <p style="font-size: 1.8rem; font-weight: bold; color: var(--primary); overflow-x: auto;">
                             $2x^3 + \\mathbf{0x^2} - x + 51$
                         </p>
                     </div>
@@ -570,36 +638,33 @@
             script: () => { renderMath(); return () => {}; }
         },
 
-        // SLIDE 7: Step-by-Step Long Division
+        // SLIDE 6: Step-by-Step Long Division (Original)
         {
             template: () => `
                 <div class="anim-enter" style="display: flex; flex-direction: column; height: 100%; max-height: 80vh;">
                     <h2 class="text-center" style="margin-bottom: 1rem;">Step-by-Step: Long Division</h2>
                     
-                    <!-- Top Instructions Header (Stacked) -->
-                    <div class="glass-card delay-1" style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem; margin-bottom: 1.5rem; border-left: 5px solid var(--primary);">
+                    <div class="glass-card instructions-stack delay-1" style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem; margin-bottom: 1.5rem; border-left: 5px solid var(--primary);">
                         <div style="flex: 1; padding-right: 2rem;">
-                            <h3 id="inst-title" style="color: var(--primary); font-size: 1.4rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <h3 class="inst-title" style="color: var(--primary); font-size: 1.4rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
                                 <i class="fa-solid fa-circle-info"></i> Ready to divide
                             </h3>
-                            <p id="inst-desc" style="font-size: 1.2rem; margin: 0; color: var(--text-main);">
+                            <p class="inst-desc" style="font-size: 1.2rem; margin: 0; color: var(--text-main);">
                                 We are dividing $(x^3 - 5x^2 + 8x - 4)$ by $(x - 2)$. <br>Click Next Step to begin the sequence.
                             </p>
                         </div>
-                        <div style="display: flex; gap: 1rem;">
-                            <button id="btn-next-step" class="btn-action" aria-label="Next step in division" style="min-width: 150px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <div class="btn-action-group" style="display: flex; gap: 1rem;">
+                            <button class="btn-action btn-next-step" aria-label="Next step in division" style="min-width: 150px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                                 Next Step <i class="fa-solid fa-arrow-right"></i>
                             </button>
-                            <button id="btn-reset-step" class="btn-action" aria-label="Restart division" style="background: var(--text-dim); display: none; min-width: 150px; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <button class="btn-action btn-reset-step" aria-label="Restart division" style="background: var(--text-dim); display: none; min-width: 150px; align-items: center; justify-content: center; gap: 0.5rem;">
                                 <i class="fa-solid fa-rotate-right"></i> Restart
                             </button>
                         </div>
                     </div>
 
-                    <!-- Full Width Table Container -->
-                    <div class="glass-card delay-2" style="flex: 1; overflow-x: auto; display: flex; justify-content: center; padding: 2rem 1rem;">
+                    <div class="glass-card div-table-wrapper delay-2">
                         <table class="div-table">
-                            <!-- Row 0: Quotient -->
                             <tr>
                                 <td></td>
                                 <td class="step1 hidden-step blue">$x^2$</td>
@@ -607,7 +672,6 @@
                                 <td class="step3 hidden-step blue">$+ 2$</td>
                                 <td></td>
                             </tr>
-                            <!-- Row 1: Divisor & Dividend -->
                             <tr>
                                 <td class="br">$x - 2$</td>
                                 <td class="bt">$x^3$</td>
@@ -615,7 +679,6 @@
                                 <td class="bt">$+ 8x$</td>
                                 <td class="bt">$- 4$</td>
                             </tr>
-                            <!-- Step 1 Subtract -->
                             <tr class="step1 hidden-step">
                                 <td></td>
                                 <td class="red">$-(x^3$</td>
@@ -626,14 +689,12 @@
                             <tr class="step1 hidden-step">
                                 <td></td><td class="bb"></td><td class="bb"></td><td></td><td></td>
                             </tr>
-                            <!-- Step 1 Result -->
                             <tr class="step1 hidden-step">
                                 <td></td><td></td>
                                 <td>$- 3x^2$</td>
                                 <td>$+ 8x$</td>
                                 <td></td>
                             </tr>
-                            <!-- Step 2 Subtract -->
                             <tr class="step2 hidden-step">
                                 <td></td><td></td>
                                 <td class="red">$-(-3x^2$</td>
@@ -643,13 +704,11 @@
                             <tr class="step2 hidden-step">
                                 <td></td><td></td><td class="bb"></td><td class="bb"></td><td></td>
                             </tr>
-                            <!-- Step 2 Result -->
                             <tr class="step2 hidden-step">
                                 <td></td><td></td><td></td>
                                 <td>$2x$</td>
                                 <td>$- 4$</td>
                             </tr>
-                            <!-- Step 3 Subtract -->
                             <tr class="step3 hidden-step">
                                 <td></td><td></td><td></td>
                                 <td class="red">$-(2x$</td>
@@ -658,7 +717,6 @@
                             <tr class="step3 hidden-step">
                                 <td></td><td></td><td></td><td class="bb"></td><td class="bb"></td>
                             </tr>
-                            <!-- Final Remainder -->
                             <tr class="step3 hidden-step">
                                 <td></td><td></td><td></td><td></td>
                                 <td style="font-weight: bold; color: var(--accent); font-size: 2rem;">$0$</td>
@@ -667,73 +725,205 @@
                     </div>
                 </div>
             `,
-            script: (container) => {
-                renderMath();
-                
-                const btnNext = container.querySelector('#btn-next-step');
-                const btnReset = container.querySelector('#btn-reset-step');
-                const instTitle = container.querySelector('#inst-title');
-                const instDesc = container.querySelector('#inst-desc');
-                
-                const step1Els = container.querySelectorAll('.step1');
-                const step2Els = container.querySelectorAll('.step2');
-                const step3Els = container.querySelectorAll('.step3');
-                
-                let currentStep = 0;
-                
-                const texts = [
-                    { t: "<i class='fa-solid fa-circle-info'></i> Ready to divide", d: "We are dividing $(x^3 - 5x^2 + 8x - 4)$ by $(x - 2)$. <br>Click Next Step to begin the sequence." },
-                    { t: "<i class='fa-solid fa-1'></i> Divide & Subtract", d: "1. Divide $x^3$ by $x$ to get <strong>$x^2$</strong>.<br>2. Multiply $x^2$ by $(x-2)$. 3. Subtract and bring down $+ 8x$." },
-                    { t: "<i class='fa-solid fa-2'></i> Repeat Process", d: "1. Divide $-3x^2$ by $x$ to get <strong>$-3x$</strong>.<br>2. Multiply $-3x$ by $(x-2)$. 3. Subtract and bring down $- 4$." },
-                    { t: "<i class='fa-solid fa-3'></i> Final Division", d: "1. Divide $2x$ by $x$ to get <strong>$+2$</strong>.<br>2. Multiply & subtract. Remainder is $0$!<br><strong style='color:var(--accent); font-family: Outfit;'>Quotient: $x^2 - 3x + 2$</strong>" }
-                ];
-
-                const updateUI = () => {
-                    instTitle.innerHTML = texts[currentStep].t;
-                    instDesc.innerHTML = texts[currentStep].d;
-                    renderMath(); 
-                    
-                    if (currentStep >= 1) step1Els.forEach(el => el.classList.add('active-step'));
-                    else step1Els.forEach(el => el.classList.remove('active-step'));
-                    
-                    if (currentStep >= 2) step2Els.forEach(el => el.classList.add('active-step'));
-                    else step2Els.forEach(el => el.classList.remove('active-step'));
-                    
-                    if (currentStep >= 3) step3Els.forEach(el => el.classList.add('active-step'));
-                    else step3Els.forEach(el => el.classList.remove('active-step'));
-
-                    if (currentStep === 3) {
-                        btnNext.style.display = 'none';
-                        btnReset.style.display = 'flex';
-                    } else {
-                        btnNext.style.display = 'flex';
-                        btnReset.style.display = 'none';
-                    }
-                };
-
-                const nextHandler = () => {
-                    if (currentStep < 3) {
-                        currentStep++;
-                        updateUI();
-                    }
-                };
-                
-                const resetHandler = () => {
-                    currentStep = 0;
-                    updateUI();
-                };
-
-                btnNext.addEventListener('click', nextHandler);
-                btnReset.addEventListener('click', resetHandler);
-
-                return () => {
-                    btnNext.removeEventListener('click', nextHandler);
-                    btnReset.removeEventListener('click', resetHandler);
-                };
-            }
+            script: createLongDivisionScript([
+                { t: "<i class='fa-solid fa-circle-info'></i> Ready to divide", d: "We are dividing $(x^3 - 5x^2 + 8x - 4)$ by $(x - 2)$. <br>Click Next Step to begin the sequence." },
+                { t: "<i class='fa-solid fa-1'></i> Divide & Subtract", d: "1. Divide $x^3$ by $x$ to get <strong>$x^2$</strong>.<br>2. Multiply $x^2$ by $(x-2)$. 3. Subtract and bring down $+ 8x$." },
+                { t: "<i class='fa-solid fa-2'></i> Repeat Process", d: "1. Divide $-3x^2$ by $x$ to get <strong>$-3x$</strong>.<br>2. Multiply $-3x$ by $(x-2)$. 3. Subtract and bring down $- 4$." },
+                { t: "<i class='fa-solid fa-3'></i> Final Division", d: "1. Divide $2x$ by $x$ to get <strong>$+2$</strong>.<br>2. Multiply & subtract. Remainder is $0$!<br><strong style='color:var(--accent); font-family: Outfit;'>Quotient: $x^2 - 3x + 2$</strong>" }
+            ])
         },
 
-        // SLIDE 8: The Factor Theorem
+        // SLIDE 7: Step-by-Step Long Division (Example A) - NEW
+        {
+            template: () => `
+                <div class="anim-enter" style="display: flex; flex-direction: column; height: 100%; max-height: 80vh;">
+                    <h2 class="text-center" style="margin-bottom: 1rem;">Practice Example A</h2>
+                    
+                    <div class="glass-card instructions-stack delay-1" style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem; margin-bottom: 1.5rem; border-left: 5px solid var(--warning);">
+                        <div style="flex: 1; padding-right: 2rem;">
+                            <h3 class="inst-title" style="color: var(--warning); font-size: 1.4rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-circle-info"></i> Ready to divide
+                            </h3>
+                            <p class="inst-desc" style="font-size: 1.2rem; margin: 0; color: var(--text-main);">
+                                We are dividing $(2x^3 - 5x^2 - 4x + 3)$ by $(x - 3)$. <br>Click Next Step to begin the sequence.
+                            </p>
+                        </div>
+                        <div class="btn-action-group" style="display: flex; gap: 1rem;">
+                            <button class="btn-action btn-next-step" aria-label="Next step in division" style="min-width: 150px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                Next Step <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                            <button class="btn-action btn-reset-step" aria-label="Restart division" style="background: var(--text-dim); display: none; min-width: 150px; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-rotate-right"></i> Restart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="glass-card div-table-wrapper delay-2">
+                        <table class="div-table">
+                            <tr>
+                                <td></td>
+                                <td class="step1 hidden-step blue">$2x^2$</td>
+                                <td class="step2 hidden-step blue">$+ x$</td>
+                                <td class="step3 hidden-step blue">$- 1$</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="br">$x - 3$</td>
+                                <td class="bt">$2x^3$</td>
+                                <td class="bt">$- 5x^2$</td>
+                                <td class="bt">$- 4x$</td>
+                                <td class="bt">$+ 3$</td>
+                            </tr>
+                            <tr class="step1 hidden-step">
+                                <td></td>
+                                <td class="red">$-(2x^3$</td>
+                                <td class="red">$- 6x^2)$</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr class="step1 hidden-step">
+                                <td></td><td class="bb"></td><td class="bb"></td><td></td><td></td>
+                            </tr>
+                            <tr class="step1 hidden-step">
+                                <td></td><td></td>
+                                <td>$x^2$</td>
+                                <td>$- 4x$</td>
+                                <td></td>
+                            </tr>
+                            <tr class="step2 hidden-step">
+                                <td></td><td></td>
+                                <td class="red">$-(x^2$</td>
+                                <td class="red">$- 3x)$</td>
+                                <td></td>
+                            </tr>
+                            <tr class="step2 hidden-step">
+                                <td></td><td></td><td class="bb"></td><td class="bb"></td><td></td>
+                            </tr>
+                            <tr class="step2 hidden-step">
+                                <td></td><td></td><td></td>
+                                <td>$- x$</td>
+                                <td>$+ 3$</td>
+                            </tr>
+                            <tr class="step3 hidden-step">
+                                <td></td><td></td><td></td>
+                                <td class="red">$-(-x$</td>
+                                <td class="red">$+ 3)$</td>
+                            </tr>
+                            <tr class="step3 hidden-step">
+                                <td></td><td></td><td></td><td class="bb"></td><td class="bb"></td>
+                            </tr>
+                            <tr class="step3 hidden-step">
+                                <td></td><td></td><td></td><td></td>
+                                <td style="font-weight: bold; color: var(--accent); font-size: 2rem;">$0$</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            `,
+            script: createLongDivisionScript([
+                { t: "<i class='fa-solid fa-circle-info'></i> Ready to divide", d: "We are dividing $(2x^3 - 5x^2 - 4x + 3)$ by $(x - 3)$. <br>Click Next Step to begin the sequence." },
+                { t: "<i class='fa-solid fa-1'></i> Divide & Subtract", d: "1. Divide $2x^3$ by $x$ to get <strong>$2x^2$</strong>.<br>2. Multiply $2x^2$ by $(x-3)$. 3. Subtract and bring down $- 4x$." },
+                { t: "<i class='fa-solid fa-2'></i> Repeat Process", d: "1. Divide $x^2$ by $x$ to get <strong>$+ x$</strong>.<br>2. Multiply $x$ by $(x-3)$. 3. Subtract and bring down $+ 3$." },
+                { t: "<i class='fa-solid fa-3'></i> Final Division", d: "1. Divide $-x$ by $x$ to get <strong>$-1$</strong>.<br>2. Multiply & subtract. Remainder is $0$!<br><strong style='color:var(--accent); font-family: Outfit;'>Quotient: $2x^2 + x - 1$</strong>" }
+            ])
+        },
+
+        // SLIDE 8: Step-by-Step Long Division (Example B) - NEW
+        {
+            template: () => `
+                <div class="anim-enter" style="display: flex; flex-direction: column; height: 100%; max-height: 80vh;">
+                    <h2 class="text-center" style="margin-bottom: 1rem;">Practice Example B: Placeholders</h2>
+                    
+                    <div class="glass-card instructions-stack delay-1" style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem; margin-bottom: 1.5rem; border-left: 5px solid var(--danger);">
+                        <div style="flex: 1; padding-right: 2rem;">
+                            <h3 class="inst-title" style="color: var(--danger); font-size: 1.4rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-circle-info"></i> Ready to divide
+                            </h3>
+                            <p class="inst-desc" style="font-size: 1.2rem; margin: 0; color: var(--text-main);">
+                                We are dividing $(x^3 - 7x - 6)$ by $(x + 2)$. Notice the <strong>$0x^2$</strong> placeholder!<br>Click Next Step.
+                            </p>
+                        </div>
+                        <div class="btn-action-group" style="display: flex; gap: 1rem;">
+                            <button class="btn-action btn-next-step" aria-label="Next step in division" style="min-width: 150px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                Next Step <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                            <button class="btn-action btn-reset-step" aria-label="Restart division" style="background: var(--text-dim); display: none; min-width: 150px; align-items: center; justify-content: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-rotate-right"></i> Restart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="glass-card div-table-wrapper delay-2">
+                        <table class="div-table">
+                            <tr>
+                                <td></td>
+                                <td class="step1 hidden-step blue">$x^2$</td>
+                                <td class="step2 hidden-step blue">$- 2x$</td>
+                                <td class="step3 hidden-step blue">$- 3$</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="br">$x + 2$</td>
+                                <td class="bt">$x^3$</td>
+                                <td class="bt">$\\mathbf{+ 0x^2}$</td>
+                                <td class="bt">$- 7x$</td>
+                                <td class="bt">$- 6$</td>
+                            </tr>
+                            <tr class="step1 hidden-step">
+                                <td></td>
+                                <td class="red">$-(x^3$</td>
+                                <td class="red">$+ 2x^2)$</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr class="step1 hidden-step">
+                                <td></td><td class="bb"></td><td class="bb"></td><td></td><td></td>
+                            </tr>
+                            <tr class="step1 hidden-step">
+                                <td></td><td></td>
+                                <td>$- 2x^2$</td>
+                                <td>$- 7x$</td>
+                                <td></td>
+                            </tr>
+                            <tr class="step2 hidden-step">
+                                <td></td><td></td>
+                                <td class="red">$-(-2x^2$</td>
+                                <td class="red">$- 4x)$</td>
+                                <td></td>
+                            </tr>
+                            <tr class="step2 hidden-step">
+                                <td></td><td></td><td class="bb"></td><td class="bb"></td><td></td>
+                            </tr>
+                            <tr class="step2 hidden-step">
+                                <td></td><td></td><td></td>
+                                <td>$- 3x$</td>
+                                <td>$- 6$</td>
+                            </tr>
+                            <tr class="step3 hidden-step">
+                                <td></td><td></td><td></td>
+                                <td class="red">$-(-3x$</td>
+                                <td class="red">$- 6)$</td>
+                            </tr>
+                            <tr class="step3 hidden-step">
+                                <td></td><td></td><td></td><td class="bb"></td><td class="bb"></td>
+                            </tr>
+                            <tr class="step3 hidden-step">
+                                <td></td><td></td><td></td><td></td>
+                                <td style="font-weight: bold; color: var(--accent); font-size: 2rem;">$0$</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            `,
+            script: createLongDivisionScript([
+                { t: "<i class='fa-solid fa-circle-info'></i> Ready to divide", d: "We are dividing $(x^3 + 0x^2 - 7x - 6)$ by $(x + 2)$. <br>Click Next Step to begin the sequence." },
+                { t: "<i class='fa-solid fa-1'></i> Divide & Subtract", d: "1. Divide $x^3$ by $x$ to get <strong>$x^2$</strong>.<br>2. Multiply $x^2$ by $(x+2)$. 3. Subtract from the $0x^2$ placeholder." },
+                { t: "<i class='fa-solid fa-2'></i> Repeat Process", d: "1. Divide $-2x^2$ by $x$ to get <strong>$-2x$</strong>.<br>2. Multiply $-2x$ by $(x+2)$. 3. Subtract and bring down $- 6$." },
+                { t: "<i class='fa-solid fa-3'></i> Final Division", d: "1. Divide $-3x$ by $x$ to get <strong>$-3$</strong>.<br>2. Multiply & subtract. Remainder is $0$!<br><strong style='color:var(--accent); font-family: Outfit;'>Quotient: $x^2 - 2x - 3$</strong>" }
+            ])
+        },
+
+        // SLIDE 9: The Factor Theorem
         {
             template: () => `
                 <div class="anim-enter text-center">
@@ -770,7 +960,44 @@
             script: () => { renderMath(); return () => {}; }
         },
 
-        // SLIDE 9: Interactive Factor Theorem Example
+        // SLIDE 10: Common Sense Factor Theorem Analogy - NEW
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">The "Common Sense" Factor Theorem</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">Let's break down the mathematical jargon into something intuitive.</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: center;">
+                        
+                        <div class="glass-card text-center" style="border-top: 4px solid var(--primary); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-key" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem; transform: rotate(-45deg);"></i>
+                            <h3 style="color: var(--primary);">The "Perfect Key" Analogy</h3>
+                            <p style="font-size: 1.2rem; color: var(--text-main);">Think of the polynomial $P(x)$ as a lock, and the expression $(x - c)$ as a key.</p>
+                            <p style="font-size: 1.2rem; margin-top: 1rem; color: var(--text-dim);">
+                                If you try to fit the key into the lock by substituting $x = c$, and the result is exactly <strong>$0$</strong> (no friction, no leftover pieces, no remainder)...<br><br>
+                                <strong style="color: var(--accent); font-size: 1.4rem;">The key fits perfectly! It is a factor!</strong>
+                            </p>
+                        </div>
+
+                        <div class="pedagogical-note note-success" style="margin: 0; transform: rotate(1deg);">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-lightbulb"></i> The Golden Rule of Numbers</div>
+                            <p style="font-size: 1.4rem; margin-bottom: 1rem; line-height: 1.6;">
+                                "If you divide a number and the remainder is zero, you've found a factor. Polynomials work the exact same way!"
+                            </p>
+                            <ul style="margin-left: 1.5rem; font-size: 1.2rem; color: var(--text-main); font-family: 'Outfit'; list-style-type: square;">
+                                <li>$12 \\div 4 = 3$ (Remainder 0) &#8594; 4 is a factor.</li>
+                                <li>$12 \\div 5 = 2$ (Remainder 2) &#8594; 5 is NOT a factor.</li>
+                                <li>$P(x) \\div (x-c) = Q(x)$ (Remainder 0) &#8594; $(x-c)$ is a factor.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { renderMath(); return () => {}; }
+        },
+
+        // SLIDE 11: Interactive Factor Theorem Example
         {
             template: () => `
                 <div class="anim-enter">
@@ -817,7 +1044,7 @@
             }
         },
 
-        // SLIDE 10: The 3-Step Master Plan
+        // SLIDE 12: The 3-Step Master Plan
         {
             template: () => `
                 <div class="anim-enter">
@@ -826,7 +1053,6 @@
                     
                     <div class="grid-3 delay-2" style="max-width: 1100px; margin: 0 auto; align-items: stretch;">
                         
-                        <!-- Step 1 -->
                         <div class="glass-card" style="border-top: 4px solid var(--danger); padding: 1.5rem;">
                             <h3 style="color: var(--danger); font-size: 1.3rem;">Step 1: The First Factor</h3>
                             <p style="font-size: 1.1rem; margin-bottom: 1rem;">Use the Factor Theorem to Guess & Check.</p>
@@ -835,7 +1061,6 @@
                             </div>
                         </div>
 
-                        <!-- Step 2 -->
                         <div class="glass-card" style="border-top: 4px solid var(--primary); padding: 1.5rem;">
                             <h3 style="color: var(--primary); font-size: 1.3rem;">Step 2: Find the Quadratic</h3>
                             <p style="font-size: 1.1rem; margin-bottom: 1rem;">A Cubic $\\div$ Linear = Quadratic.</p>
@@ -844,7 +1069,6 @@
                             </div>
                         </div>
 
-                        <!-- Step 3 -->
                         <div class="glass-card" style="border-top: 4px solid var(--accent); padding: 1.5rem;">
                             <h3 style="color: var(--accent); font-size: 1.3rem;">Step 3: Factorise the Rest</h3>
                             <p style="font-size: 1.1rem; margin-bottom: 1rem;">Factorise the leftover quadratic into two brackets.</p>
@@ -859,7 +1083,7 @@
             script: () => { renderMath(); return () => {}; }
         },
 
-        // SLIDE 11: Practice Question 3a
+        // SLIDE 13: Practice Question 3a
         {
             template: () => `
                 <div class="anim-enter">
@@ -868,7 +1092,7 @@
                     
                     <div class="pedagogical-note note-task delay-1" style="max-width: 900px; margin: 0 auto 2rem auto; transform: rotate(1deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-pen-nib"></i> Problem 3a</div>
-                        <p style="text-align: center; font-size: 1.8rem; font-weight: bold; color: var(--primary); padding: 1rem 0;">
+                        <p style="text-align: center; font-size: clamp(1.4rem, 4vw, 1.8rem); font-weight: bold; color: var(--primary); padding: 1rem 0; overflow-x: auto;">
                             $x^3 - 3x^2 - 33x + 35 = 0$
                         </p>
                     </div>
@@ -882,25 +1106,25 @@
                             <div class="pedagogical-badge" style="color: var(--accent); margin-bottom: 1rem;"><i class="fa-solid fa-check-double"></i> Solution</div>
                             
                             <h4 style="color: var(--text-main); margin-top: 1rem; font-size: 1.2rem;">1. Find a root using the Factor Theorem</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 Testing small integers, let $x = 1$:<br>
                                 $1^3 - 3(1)^2 - 33(1) + 35 = 1 - 3 - 33 + 35 = 0$<br>
                                 Since the result is 0, <strong style="color: var(--text-main);">$(x - 1)$ is a factor.</strong>
                             </p>
 
                             <h4 style="color: var(--text-main); font-size: 1.2rem;">2. Factorize the polynomial</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 Dividing the cubic by $(x - 1)$ gives:<br>
                                 $(x - 1)(x^2 - 2x - 35) = 0$
                             </p>
 
                             <h4 style="color: var(--text-main); font-size: 1.2rem;">3. Solve the quadratic part</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 $(x - 1)(x - 7)(x + 5) = 0$
                             </p>
                             
                             <div style="background: rgba(22, 163, 74, 0.1); padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--accent); display: inline-block;">
-                                <p style="font-size: 1.4rem; font-weight: bold; margin: 0; color: var(--accent);">
+                                <p style="font-size: clamp(1.2rem, 3vw, 1.4rem); font-weight: bold; margin: 0; color: var(--accent); overflow-x: auto;">
                                     Roots: $x = 1, \\quad x = 7, \\quad x = -5$
                                 </p>
                             </div>
@@ -920,7 +1144,7 @@
             }
         },
 
-        // SLIDE 12: Practice Question 3b
+        // SLIDE 14: Practice Question 3b
         {
             template: () => `
                 <div class="anim-enter">
@@ -929,7 +1153,7 @@
                     
                     <div class="pedagogical-note note-task delay-1" style="max-width: 900px; margin: 0 auto 2rem auto; transform: rotate(-1deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-pen-nib"></i> Problem 3b</div>
-                        <p style="text-align: center; font-size: 1.8rem; font-weight: bold; color: var(--primary); padding: 1rem 0;">
+                        <p style="text-align: center; font-size: clamp(1.4rem, 4vw, 1.8rem); font-weight: bold; color: var(--primary); padding: 1rem 0; overflow-x: auto;">
                             $x^3 - 6x^2 + 11x - 6 = 0$
                         </p>
                     </div>
@@ -943,25 +1167,25 @@
                             <div class="pedagogical-badge" style="color: var(--accent); margin-bottom: 1rem;"><i class="fa-solid fa-check-double"></i> Solution</div>
                             
                             <h4 style="color: var(--text-main); margin-top: 1rem; font-size: 1.2rem;">1. Find a root</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 Let $x = 1$:<br>
                                 $1^3 - 6(1)^2 + 11(1) - 6 = 1 - 6 + 11 - 6 = 0$<br>
                                 So <strong style="color: var(--text-main);">$(x - 1)$ is a factor.</strong>
                             </p>
 
                             <h4 style="color: var(--text-main); font-size: 1.2rem;">2. Factorize</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 Dividing by $(x - 1)$ gives:<br>
                                 $(x - 1)(x^2 - 5x + 6) = 0$
                             </p>
 
                             <h4 style="color: var(--text-main); font-size: 1.2rem;">3. Solve the quadratic part</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 $(x - 1)(x - 2)(x - 3) = 0$
                             </p>
                             
                             <div style="background: rgba(22, 163, 74, 0.1); padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--accent); display: inline-block;">
-                                <p style="font-size: 1.4rem; font-weight: bold; margin: 0; color: var(--accent);">
+                                <p style="font-size: clamp(1.2rem, 3vw, 1.4rem); font-weight: bold; margin: 0; color: var(--accent); overflow-x: auto;">
                                     Roots: $x = 1, \\quad x = 2, \\quad x = 3$
                                 </p>
                             </div>
@@ -981,7 +1205,7 @@
             }
         },
 
-        // SLIDE 13: Practice Question 4a
+        // SLIDE 15: Practice Question 4a
         {
             template: () => `
                 <div class="anim-enter">
@@ -990,7 +1214,7 @@
                     
                     <div class="pedagogical-note note-task delay-1" style="max-width: 900px; margin: 0 auto 2rem auto; transform: rotate(1deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-pen-nib"></i> Problem 4a</div>
-                        <p style="text-align: center; font-size: 1.8rem; font-weight: bold; color: var(--primary); padding: 1rem 0;">
+                        <p style="text-align: center; font-size: clamp(1.4rem, 4vw, 1.8rem); font-weight: bold; color: var(--primary); padding: 1rem 0; overflow-x: auto;">
                             $x^3 + 5x^2 - 4x - 2 = 0$
                         </p>
                     </div>
@@ -1004,20 +1228,20 @@
                             <div class="pedagogical-badge" style="color: var(--accent); margin-bottom: 1rem;"><i class="fa-solid fa-check-double"></i> Solution</div>
                             
                             <h4 style="color: var(--text-main); margin-top: 1rem; font-size: 1.2rem;">1. Find a root</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 Let $x = 1$:<br>
                                 $1^3 + 5(1)^2 - 4(1) - 2 = 1 + 5 - 4 - 2 = 0$<br>
                                 So <strong style="color: var(--text-main);">$(x - 1)$ is a factor.</strong>
                             </p>
 
                             <h4 style="color: var(--text-main); font-size: 1.2rem;">2. Factorize</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 Dividing by $(x - 1)$ gives:<br>
                                 $(x - 1)(x^2 + 6x + 2) = 0$
                             </p>
 
                             <h4 style="color: var(--text-main); font-size: 1.2rem;">3. Solve the quadratic using the Quadratic Formula</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 For $x^2 + 6x + 2 = 0$:<br>
                                 $x = \\frac{-6 \\pm \\sqrt{6^2 - 4(1)(2)}}{2(1)} = \\frac{-6 \\pm \\sqrt{36 - 8}}{2} = \\frac{-6 \\pm \\sqrt{28}}{2}$<br><br>
                                 Simplify the surd: $\\sqrt{28} = \\sqrt{4 \\times 7} = 2\\sqrt{7}$<br>
@@ -1025,7 +1249,7 @@
                             </p>
                             
                             <div style="background: rgba(22, 163, 74, 0.1); padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--accent); display: inline-block;">
-                                <p style="font-size: 1.4rem; font-weight: bold; margin: 0; color: var(--accent);">
+                                <p style="font-size: clamp(1.2rem, 3vw, 1.4rem); font-weight: bold; margin: 0; color: var(--accent); overflow-x: auto;">
                                     Roots: $x = 1, \\quad x = -3 \\pm \\sqrt{7}$
                                 </p>
                             </div>
@@ -1045,7 +1269,7 @@
             }
         },
 
-        // SLIDE 14: Practice Question 4b
+        // SLIDE 16: Practice Question 4b
         {
             template: () => `
                 <div class="anim-enter">
@@ -1054,7 +1278,7 @@
                     
                     <div class="pedagogical-note note-task delay-1" style="max-width: 900px; margin: 0 auto 2rem auto; transform: rotate(-1deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-pen-nib"></i> Problem 4b</div>
-                        <p style="text-align: center; font-size: 1.8rem; font-weight: bold; color: var(--primary); padding: 1rem 0;">
+                        <p style="text-align: center; font-size: clamp(1.4rem, 4vw, 1.8rem); font-weight: bold; color: var(--primary); padding: 1rem 0; overflow-x: auto;">
                             $x^3 + 8x^2 + 12x - 9 = 0$
                         </p>
                     </div>
@@ -1068,26 +1292,26 @@
                             <div class="pedagogical-badge" style="color: var(--accent); margin-bottom: 1rem;"><i class="fa-solid fa-check-double"></i> Solution</div>
                             
                             <h4 style="color: var(--text-main); margin-top: 1rem; font-size: 1.2rem;">1. Find a root</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 Testing values, let $x = -3$:<br>
                                 $(-3)^3 + 8(-3)^2 + 12(-3) - 9 = -27 + 72 - 36 - 9 = 0$<br>
                                 So <strong style="color: var(--text-main);">$(x + 3)$ is a factor.</strong>
                             </p>
 
                             <h4 style="color: var(--text-main); font-size: 1.2rem;">2. Factorize</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 Dividing by $(x + 3)$ gives:<br>
                                 $(x + 3)(x^2 + 5x - 3) = 0$
                             </p>
 
                             <h4 style="color: var(--text-main); font-size: 1.2rem;">3. Solve the quadratic</h4>
-                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim);">
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dim); overflow-x: auto;">
                                 For $x^2 + 5x - 3 = 0$:<br>
                                 $x = \\frac{-5 \\pm \\sqrt{5^2 - 4(1)(-3)}}{2(1)} = \\frac{-5 \\pm \\sqrt{25 + 12}}{2}$
                             </p>
                             
                             <div style="background: rgba(22, 163, 74, 0.1); padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--accent); display: inline-block;">
-                                <p style="font-size: 1.4rem; font-weight: bold; margin: 0; color: var(--accent);">
+                                <p style="font-size: clamp(1.2rem, 3vw, 1.4rem); font-weight: bold; margin: 0; color: var(--accent); overflow-x: auto;">
                                     Roots: $x = -3, \\quad x = \\frac{-5 \\pm \\sqrt{37}}{2}$
                                 </p>
                             </div>
@@ -1107,12 +1331,12 @@
             }
         },
 
-        // SLIDE 15: Summary & Task
+        // SLIDE 17: Summary & Task
         {
             template: () => `
                 <div class="anim-enter text-center">
                     <i class="fa-solid fa-flag-checkered delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
-                    <h2 class="delay-1" style="font-size: 2.5rem;">Lesson Complete!</h2>
+                    <h2 class="delay-1" style="font-size: clamp(2rem, 5vw, 2.5rem);">Lesson Complete!</h2>
                     
                     <div class="pedagogical-note note-success delay-2" style="max-width: 700px; margin: 2rem auto; text-align: left; transform: rotate(1deg);">
                         <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> Quick Summary</div>
@@ -1128,7 +1352,7 @@
                         <p style="font-size: 1.4rem; margin-bottom: 1rem;">
                             In your notebooks, fully factorise the following cubic expression:
                         </p>
-                        <p style="font-size: 2rem; font-weight: bold; text-align: center; color: var(--primary); margin-bottom: 1rem;">
+                        <p style="font-size: clamp(1.5rem, 4vw, 2rem); font-weight: bold; text-align: center; color: var(--primary); margin-bottom: 1rem; overflow-x: auto;">
                             $x^3 + 8x^2 + 4ax - 3a$
                         </p>
                         <p style="font-size: 1.2rem; text-align: center;"><em>Hint: The question states $(x + a)$ is a factor. Start there!</em></p>
