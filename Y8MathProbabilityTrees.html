@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13.2 Probability Trees - Year 8 Math</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Notebook Edutech Standard) --- */
+        :root {
+            --bg-paper: #fdfbf7;       /* Warm paper white */
+            --bg-panel: #ffffff;       /* Pure white for cards */
+            --primary: #2563eb;        /* Blue Ink */
+            --accent: #16a34a;         /* Green Ink */
+            --warning: #ea580c;        /* Orange Highlighter */
+            --danger: #dc2626;         /* Red Pen */
+            --cold: #0284c7;           /* Light Blue */
+            --purple: #7c3aed;         /* Purple Ink */
+            --text-main: #334155;      /* Dark slate text */
+            --text-dim: #64748b;       /* Secondary text */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-main); }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-main); }
+
+        strong { color: var(--text-main); font-weight: 800; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; align-items: start; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: #ffffff;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: var(--primary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 2px 2px 0px rgba(37, 99, 235, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            background-image:
+                linear-gradient(90deg, transparent 60px, rgba(220, 38, 38, 0.2) 60px, rgba(220, 38, 38, 0.2) 62px, transparent 62px),
+                linear-gradient(rgba(37, 99, 235, 0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 32px;
+            background-attachment: local;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 2rem 2rem 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+        }
+
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            background: #ffffff;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+            animation: slideIn 0.5s ease;
+            font-family: 'Kalam', cursive;
+            font-size: 1.3rem;
+        }
+        .pedagogical-note p, .pedagogical-note li, .pedagogical-note h3 {
+            font-family: 'Kalam', cursive;
+        }
+        .pedagogical-badge {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        .note-theory { border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        .note-success { border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        .problem-block {
+            background: #ffffff;
+            border: 2px dashed var(--purple);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            font-size: 1.4rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+        }
+        .problem-number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--purple);
+            margin-right: 0.5rem;
+        }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            width: 100%;
+        }
+        .btn-action:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+        }
+        .btn-action.btn-accent { background: var(--accent); }
+        .btn-action.btn-warning { background: var(--warning); }
+        .btn-action.btn-purple { background: var(--purple); }
+
+        .answer-box {
+            display: none; 
+            background: #ffffff; 
+            padding: 1.5rem; 
+            border-radius: 8px; 
+            border: 2px solid var(--accent); 
+            margin-top: 1rem; 
+            box-shadow: 3px 3px 0px rgba(22, 163, 74, 0.2);
+            text-align: center;
+        }
+        .answer-box p {
+            font-family: 'Kalam', cursive;
+            font-size: 1.5rem;
+            line-height: 1.5;
+        }
+        .final-ans {
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.8rem !important;
+            margin-top: 0.5rem;
+        }
+
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; margin-bottom: 1rem; color: var(--text-main); background: #ffffff; font-size: 1.3rem; }
+        .data-table th, .data-table td { border: 2px solid rgba(0,0,0,0.2); padding: 0.8rem; text-align: left; }
+        .data-table th { background: rgba(37,99,235,0.1); color: var(--text-main); font-family: 'Outfit'; font-weight: bold; }
+
+        .list-item {
+            background: white;
+            border: 2px solid rgba(0,0,0,0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            font-family: 'Kalam', cursive;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+        }
+        .list-icon { color: var(--primary); font-size: 1.5rem; width: 30px; text-align: center; }
+
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: var(--text-main);
+            border: 2px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cold), var(--primary)); transition: width 0.3s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-enter { animation: fadeIn 0.4s ease-out; }
+        .delay-1 { animation: slideIn 0.4s ease-out 0.1s both; }
+        .delay-2 { animation: slideIn 0.4s ease-out 0.2s both; }
+
+        /* Tree SVG Classes */
+        .svg-tree { width: 100%; height: auto; max-height: 55vh; display: block; margin: 0 auto; }
+        .tree-line { stroke: var(--text-dim); stroke-width: 3; fill: none; stroke-linecap: round; }
+        .tree-node { fill: white; stroke: var(--primary); stroke-width: 3; }
+        .tree-node-text { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px; fill: var(--primary); text-anchor: middle; dominant-baseline: central; }
+        .tree-prob { font-family: 'Kalam', cursive; font-size: 20px; font-weight: bold; fill: var(--danger); text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 6px; }
+        .tree-outcome { font-family: 'Outfit', sans-serif; font-weight: bold; font-size: 20px; fill: var(--text-main); alignment-baseline: central; }
+
+        /* Spinner CSS */
+        .spinner-container { position: relative; width: 220px; height: 220px; margin: 0 auto; }
+        .spinner-wheel {
+            width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--text-main);
+            background: conic-gradient(var(--danger) 0% 50%, var(--accent) 50% 80%, var(--primary) 80% 100%);
+            transition: transform 3s cubic-bezier(0.25, 1, 0.1, 1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .spinner-pointer {
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid var(--text-main); z-index: 10;
+        }
+
+        @media (max-width: 1024px) { .slide-wrapper { padding-left: 60px; } }
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+            .slide-wrapper { padding-left: 2rem; }
+            .viewport { background-image: none; background-color: var(--bg-paper); }
+            .svg-tree { max-height: 40vh; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-tree"></i> Year 8 Math</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;">13.2 Probability Trees</span>
+        </div>
+        <div style="font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-main); font-size: 1.2rem;">
+            7 April 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- ENGINE CORE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    const renderMath = () => {
+        if (window.MathJax) {
+            window.MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+        }
+    };
+
+    const bindReveals = (container) => {
+        const btns = container.querySelectorAll('.reveal-btn');
+        const handlers = [];
+        btns.forEach(btn => {
+            const handler = () => {
+                const targetId = btn.getAttribute('data-target');
+                const target = container.querySelector('#' + targetId);
+                target.style.display = 'block';
+                target.classList.add('anim-enter');
+                btn.style.display = 'none';
+                renderMath();
+            };
+            handlers.push({ el: btn, fn: handler });
+            btn.addEventListener('click', handler);
+        });
+        return () => handlers.forEach(h => h.el.removeEventListener('click', h.fn));
+    };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Title
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-network-wired delay-1" style="font-size: 5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Probability Trees</h1>
+                    <h2 class="delay-1" style="color: var(--accent);">Visualizing Multiple Events</h2>
+                    
+                    <div class="pedagogical-note note-write delay-2" style="max-width: 700px; margin: 3rem auto; text-align: left; transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">Today's Objective:</h3>
+                        <p style="font-size: 1.4rem;">I can draw and use probability trees to calculate the chance of multiple events happening in a row.</p>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 2: Warm Up
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Warm Up: Rank the Events</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.3rem;">Order these 5 events from <strong>Least Likely</strong> to <strong>Most Likely</strong> to happen.</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: stretch;">
+                        
+                        <!-- Events List -->
+                        <div class="glass-card" style="border-top: 4px solid var(--purple);">
+                            <h3 style="color: var(--purple); margin-bottom: 1.5rem;"><i class="fa-solid fa-list"></i> The Events</h3>
+                            
+                            <div class="list-item"><i class="fa-solid fa-coins list-icon"></i> A: Flipping 1 Head on 1 Coin</div>
+                            <div class="list-item"><i class="fa-solid fa-dice list-icon"></i> B: Rolling 6 Sixes on 6 Dice Rolls</div>
+                            <div class="list-item"><i class="fa-solid fa-ticket list-icon"></i> C: Winning the Jackpot Lottery</div>
+                            <div class="list-item"><i class="fa-solid fa-leaf list-icon" style="color:var(--accent)"></i> F: Finding a 4-Leaf Clover</div>
+                            <div class="list-item"><i class="fa-solid fa-coins list-icon" style="color:var(--warning)"></i> D: Getting 10 Heads on 10 Coins</div>
+                            <div class="list-item"><i class="fa-solid fa-crown list-icon" style="color:var(--danger)"></i> E: A Royal Flush in Poker</div>
+                            
+                            <p style="font-size: 1rem; color: var(--text-dim); margin-top: 1rem; text-align: center;">Write your predicted order (e.g., A, B, C...) in your notebook.</p>
+                        </div>
+
+                        <!-- Answer Reveal -->
+                        <div class="glass-card" style="border-top: 4px solid var(--accent); display: flex; flex-direction: column; justify-content: center;">
+                            <div style="text-align: center;">
+                                <button class="btn-action btn-accent reveal-btn" data-target="warmup-ans" style="font-size: 1.3rem; padding: 1rem 2rem;"><i class="fa-solid fa-ranking-star"></i> Reveal Correct Order</button>
+                            </div>
+                            
+                            <div id="warmup-ans" class="answer-box" style="text-align: left; padding: 1rem;">
+                                <h4 style="font-family: 'Outfit'; margin-bottom: 1rem; color: var(--text-main);">From Least to Most Likely:</h4>
+                                <ol style="font-family: 'Plus Jakarta Sans'; font-size: 1.1rem; line-height: 1.8; margin-left: 1.5rem; color: var(--text-main);">
+                                    <li><strong>C: Lottery</strong> <span style="color: var(--text-dim); font-size: 0.9rem;">(1 in 14 Million)</span></li>
+                                    <li><strong>E: Royal Flush</strong> <span style="color: var(--text-dim); font-size: 0.9rem;">(1 in 649,740)</span></li>
+                                    <li><strong>B: 6 Sixes</strong> <span style="color: var(--text-dim); font-size: 0.9rem;">(1 in 46,656)</span></li>
+                                    <li><strong>F: 4-Leaf Clover</strong> <span style="color: var(--accent); font-weight: bold; font-size: 0.9rem;">(1 in 10,000)</span></li>
+                                    <li><strong>D: 10 Heads</strong> <span style="color: var(--text-dim); font-size: 0.9rem;">(1 in 1,024)</span></li>
+                                    <li><strong>A: 1 Head</strong> <span style="color: var(--accent); font-weight: bold; font-size: 1rem;">(1 in 2)</span></li>
+                                </ol>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => bindReveals(container)
+        },
+
+        // SLIDE 3: Theory of Trees
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">How Probability Trees Work</h2>
+                    
+                    <div class="pedagogical-note note-theory delay-1" style="max-width: 900px; margin: 1rem auto; text-align: center; transform: rotate(0.5deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-code-branch"></i> The Branch Rules</div>
+                        <p style="font-size: 1.5rem; color: var(--text-main);">When events happen one after another (like flipping a coin twice), a tree helps us organize the outcomes.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 2rem auto; align-items: start;">
+                        
+                        <div class="glass-card" style="border-top: 4px solid var(--danger); text-align: center;">
+                            <h3 style="color: var(--danger);"><i class="fa-solid fa-xmark"></i> Rule 1: Multiply ALONG branches</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; margin-top: 1rem;">When moving left to right (Event 1 <strong>AND</strong> Event 2), you <strong>multiply</strong> the fractions or decimals.</p>
+                            <div style="background: rgba(220, 38, 38, 0.1); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                                <p style="font-family: 'Outfit'; font-weight: bold; color: var(--danger);">The "AND" Rule = Multiply</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card" style="border-top: 4px solid var(--primary); text-align: center;">
+                            <h3 style="color: var(--primary);"><i class="fa-solid fa-plus"></i> Rule 2: Add DOWN columns</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.4rem; margin-top: 1rem;">If there are multiple winning paths (Outcome A <strong>OR</strong> Outcome B), you <strong>add</strong> the final probabilities together.</p>
+                            <div style="background: rgba(37, 99, 235, 0.1); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                                <p style="font-family: 'Outfit'; font-weight: bold; color: var(--primary);">The "OR" Rule = Add</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 4: Fair Coin Tree (3 Flips) + Questions
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Example 1: Flipping 3 Coins</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 1.5rem; font-size: 1.3rem;">A fair coin is flipped 3 times. Calculate the probabilities based on the tree below.</p>
+
+                    <div class="glass-card delay-2" style="max-width: 1100px; margin: 0 auto 1.5rem auto; padding: 1rem; overflow-x: auto;">
+                        <svg class="svg-tree" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Flip 1 Lines -->
+                            <line x1="50" y1="285" x2="250" y2="145" class="tree-line" />
+                            <line x1="50" y1="285" x2="250" y2="425" class="tree-line" />
+                            
+                            <!-- Flip 2 Lines (Top) -->
+                            <line x1="250" y1="145" x2="450" y2="75" class="tree-line" />
+                            <line x1="250" y1="145" x2="450" y2="215" class="tree-line" />
+                            <!-- Flip 2 Lines (Bottom) -->
+                            <line x1="250" y1="425" x2="450" y2="355" class="tree-line" />
+                            <line x1="250" y1="425" x2="450" y2="495" class="tree-line" />
+
+                            <!-- Flip 3 Lines -->
+                            <line x1="450" y1="75" x2="650" y2="40" class="tree-line" />
+                            <line x1="450" y1="75" x2="650" y2="110" class="tree-line" />
+                            <line x1="450" y1="215" x2="650" y2="180" class="tree-line" />
+                            <line x1="450" y1="215" x2="650" y2="250" class="tree-line" />
+                            <line x1="450" y1="355" x2="650" y2="320" class="tree-line" />
+                            <line x1="450" y1="355" x2="650" y2="390" class="tree-line" />
+                            <line x1="450" y1="495" x2="650" y2="460" class="tree-line" />
+                            <line x1="450" y1="495" x2="650" y2="530" class="tree-line" />
+
+                            <!-- Probabilities Text (1/2 everywhere, carefully spaced above lines) -->
+                            <text x="150" y="205" class="tree-prob">1/2</text>
+                            <text x="150" y="375" class="tree-prob">1/2</text>
+                            
+                            <text x="350" y="100" class="tree-prob">1/2</text>
+                            <text x="350" y="195" class="tree-prob">1/2</text>
+                            <text x="350" y="380" class="tree-prob">1/2</text>
+                            <text x="350" y="475" class="tree-prob">1/2</text>
+                            
+                            <text x="550" y="47" class="tree-prob">1/2</text>
+                            <text x="550" y="107" class="tree-prob">1/2</text>
+                            <text x="550" y="187" class="tree-prob">1/2</text>
+                            <text x="550" y="247" class="tree-prob">1/2</text>
+                            <text x="550" y="327" class="tree-prob">1/2</text>
+                            <text x="550" y="387" class="tree-prob">1/2</text>
+                            <text x="550" y="467" class="tree-prob">1/2</text>
+                            <text x="550" y="527" class="tree-prob">1/2</text>
+
+                            <!-- Nodes Flip 1 -->
+                            <circle cx="250" cy="145" r="20" class="tree-node" />
+                            <text x="250" y="145" class="tree-node-text">H</text>
+                            <circle cx="250" cy="425" r="20" class="tree-node" />
+                            <text x="250" y="425" class="tree-node-text">T</text>
+
+                            <!-- Nodes Flip 2 -->
+                            <circle cx="450" cy="75" r="20" class="tree-node" />
+                            <text x="450" y="75" class="tree-node-text">H</text>
+                            <circle cx="450" cy="215" r="20" class="tree-node" />
+                            <text x="450" y="215" class="tree-node-text">T</text>
+                            <circle cx="450" cy="355" r="20" class="tree-node" />
+                            <text x="450" y="355" class="tree-node-text">H</text>
+                            <circle cx="450" cy="495" r="20" class="tree-node" />
+                            <text x="450" y="495" class="tree-node-text">T</text>
+
+                            <!-- Nodes Flip 3 & Outcomes -->
+                            <circle cx="650" cy="40" r="20" class="tree-node" />
+                            <text x="650" y="40" class="tree-node-text">H</text>
+                            <text x="680" y="40" class="tree-outcome">HHH = 1/8</text>
+
+                            <circle cx="650" cy="110" r="20" class="tree-node" />
+                            <text x="650" y="110" class="tree-node-text">T</text>
+                            <text x="680" y="110" class="tree-outcome">HHT = 1/8</text>
+
+                            <circle cx="650" cy="180" r="20" class="tree-node" />
+                            <text x="650" y="180" class="tree-node-text">H</text>
+                            <text x="680" y="180" class="tree-outcome">HTH = 1/8</text>
+
+                            <circle cx="650" cy="250" r="20" class="tree-node" />
+                            <text x="650" y="250" class="tree-node-text">T</text>
+                            <text x="680" y="250" class="tree-outcome">HTT = 1/8</text>
+
+                            <circle cx="650" cy="320" r="20" class="tree-node" />
+                            <text x="650" y="320" class="tree-node-text">H</text>
+                            <text x="680" y="320" class="tree-outcome">THH = 1/8</text>
+
+                            <circle cx="650" cy="390" r="20" class="tree-node" />
+                            <text x="650" y="390" class="tree-node-text">T</text>
+                            <text x="680" y="390" class="tree-outcome">THT = 1/8</text>
+
+                            <circle cx="650" cy="460" r="20" class="tree-node" />
+                            <text x="650" y="460" class="tree-node-text">H</text>
+                            <text x="680" y="460" class="tree-outcome">TTH = 1/8</text>
+
+                            <circle cx="650" cy="530" r="20" class="tree-node" />
+                            <text x="650" y="530" class="tree-node-text">T</text>
+                            <text x="680" y="530" class="tree-outcome">TTT = 1/8</text>
+
+                            <!-- Column Labels -->
+                            <text x="250" y="20" font-family="Outfit" font-size="20" font-weight="bold" fill="var(--text-dim)" text-anchor="middle">Flip 1</text>
+                            <text x="450" y="20" font-family="Outfit" font-size="20" font-weight="bold" fill="var(--text-dim)" text-anchor="middle">Flip 2</text>
+                            <text x="650" y="20" font-family="Outfit" font-size="20" font-weight="bold" fill="var(--text-dim)" text-anchor="middle">Flip 3</text>
+                            <text x="730" y="20" font-family="Outfit" font-size="20" font-weight="bold" fill="var(--text-main)" text-anchor="start">Outcome</text>
+                        </svg>
+                    </div>
+
+                    <!-- Questions Grid Below Diagram -->
+                    <div class="grid-3 delay-2" style="max-width: 1100px; margin: 0 auto;">
+                        <div class="glass-card" style="padding: 1.5rem;">
+                            <h3 style="color: var(--text-main); font-size: 1.3rem; margin-bottom: 1rem;"><strong>1</strong> &nbsp; Exactly 3 Heads</h3>
+                            <button class="btn-action reveal-btn" data-target="ans-3coin-1"><i class="fa-solid fa-eye"></i> Check</button>
+                            <div id="ans-3coin-1" class="answer-box" style="padding: 1rem;">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">There is only ONE path: H-H-H.</p>
+                                <p style="font-size: 1.2rem;">$$\\frac{1}{2} \\times \\frac{1}{2} \\times \\frac{1}{2}$$</p>
+                                <p class="final-ans" style="font-size: 1.5rem !important;">$$\\frac{1}{8}$$</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.5rem;">
+                            <h3 style="color: var(--text-main); font-size: 1.3rem; margin-bottom: 1rem;"><strong>2</strong> &nbsp; Exactly 2 Heads</h3>
+                            <button class="btn-action btn-purple reveal-btn" data-target="ans-3coin-2"><i class="fa-solid fa-eye"></i> Check</button>
+                            <div id="ans-3coin-2" class="answer-box" style="padding: 1rem; border-color: var(--purple);">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Find all paths with 2 Hs: HHT, HTH, THH. Each path is $1/8$. Add them!</p>
+                                <p style="font-size: 1.2rem; margin-top:0.5rem;">$$\\frac{1}{8} + \\frac{1}{8} + \\frac{1}{8}$$</p>
+                                <p class="final-ans" style="font-size: 1.5rem !important; color: var(--purple);">$$\\frac{3}{8}$$</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.5rem;">
+                            <h3 style="color: var(--text-main); font-size: 1.3rem; margin-bottom: 1rem;"><strong>3</strong> &nbsp; At least 1 Tail</h3>
+                            <button class="btn-action btn-warning reveal-btn" data-target="ans-3coin-3"><i class="fa-solid fa-eye"></i> Check</button>
+                            <div id="ans-3coin-3" class="answer-box" style="padding: 1rem; border-color: var(--warning);">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Use the NOT rule! "At least 1 tail" means NOT 3 heads.</p>
+                                <p style="font-size: 1.2rem; margin-top:0.5rem;">$$1 - \\frac{1}{8}$$</p>
+                                <p class="final-ans" style="font-size: 1.5rem !important; color: var(--warning);">$$\\frac{7}{8}$$</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                return bindReveals(container);
+            }
+        },
+
+        // SLIDE 5: Unfair Coin Tree + Questions
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Example 2: The Unfair Coin</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 1.5rem; font-size: 1.3rem;">
+                        A biased coin has a <strong style="color: var(--text-main);">60% (0.6)</strong> chance of Heads and a <strong style="color: var(--text-main);">40% (0.4)</strong> chance of Tails. It is flipped twice.
+                    </p>
+
+                    <div class="glass-card delay-2" style="max-width: 900px; margin: 0 auto 1.5rem auto; padding: 2rem;">
+                        <svg class="svg-tree" viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Flip 1 Lines -->
+                            <line x1="100" y1="210" x2="400" y2="110" class="tree-line" />
+                            <line x1="100" y1="210" x2="400" y2="310" class="tree-line" />
+                            
+                            <!-- Flip 2 Lines -->
+                            <line x1="400" y1="110" x2="700" y2="60" class="tree-line" />
+                            <line x1="400" y1="110" x2="700" y2="160" class="tree-line" />
+                            <line x1="400" y1="310" x2="700" y2="260" class="tree-line" />
+                            <line x1="400" y1="310" x2="700" y2="360" class="tree-line" />
+
+                            <!-- Probabilities -->
+                            <text x="250" y="145" class="tree-prob" style="font-size: 24px;">0.6</text>
+                            <text x="250" y="275" class="tree-prob" style="font-size: 24px;">0.4</text>
+                            
+                            <text x="550" y="70" class="tree-prob" style="font-size: 24px;">0.6</text>
+                            <text x="550" y="150" class="tree-prob" style="font-size: 24px;">0.4</text>
+                            <text x="550" y="270" class="tree-prob" style="font-size: 24px;">0.6</text>
+                            <text x="550" y="350" class="tree-prob" style="font-size: 24px;">0.4</text>
+
+                            <!-- Nodes Flip 1 -->
+                            <circle cx="400" cy="110" r="26" class="tree-node" />
+                            <text x="400" y="110" class="tree-node-text" style="font-size:26px;">H</text>
+                            <circle cx="400" cy="310" r="26" class="tree-node" />
+                            <text x="400" y="310" class="tree-node-text" style="font-size:26px;">T</text>
+
+                            <!-- Nodes Flip 2 & Outcomes -->
+                            <circle cx="700" cy="60" r="26" class="tree-node" />
+                            <text x="700" y="60" class="tree-node-text" style="font-size:26px;">H</text>
+                            <text x="740" y="60" class="tree-outcome" style="font-size: 26px;">HH</text>
+
+                            <circle cx="700" cy="160" r="26" class="tree-node" />
+                            <text x="700" y="160" class="tree-node-text" style="font-size:26px;">T</text>
+                            <text x="740" y="160" class="tree-outcome" style="font-size: 26px;">HT</text>
+
+                            <circle cx="700" cy="260" r="26" class="tree-node" />
+                            <text x="700" y="260" class="tree-node-text" style="font-size:26px;">H</text>
+                            <text x="740" y="260" class="tree-outcome" style="font-size: 26px;">TH</text>
+
+                            <circle cx="700" cy="360" r="26" class="tree-node" />
+                            <text x="700" y="360" class="tree-node-text" style="font-size:26px;">T</text>
+                            <text x="740" y="360" class="tree-outcome" style="font-size: 26px;">TT</text>
+
+                            <!-- Labels -->
+                            <text x="400" y="30" font-family="Outfit" font-size="24" font-weight="bold" fill="var(--text-dim)" text-anchor="middle">Flip 1</text>
+                            <text x="700" y="30" font-family="Outfit" font-size="24" font-weight="bold" fill="var(--text-dim)" text-anchor="middle">Flip 2</text>
+                        </svg>
+                    </div>
+
+                    <!-- Questions Grid Below Diagram -->
+                    <div class="grid-3 delay-2" style="max-width: 1100px; margin: 0 auto;">
+                        <div class="glass-card" style="padding: 1.5rem;">
+                            <h3 style="color: var(--text-main); font-size: 1.3rem; margin-bottom: 1rem;"><strong>1</strong> &nbsp; Two Heads (HH)</h3>
+                            <button class="btn-action reveal-btn" data-target="ans-unfair-1"><i class="fa-solid fa-eye"></i> Check</button>
+                            <div id="ans-unfair-1" class="answer-box" style="padding: 1rem;">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Multiply along the branches for H then H.</p>
+                                <p style="font-size: 1.2rem;">$$0.6 \\times 0.6$$</p>
+                                <p class="final-ans" style="font-size: 1.5rem !important;">0.36</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.5rem;">
+                            <h3 style="color: var(--text-main); font-size: 1.3rem; margin-bottom: 1rem;"><strong>2</strong> &nbsp; One Head, One Tail</h3>
+                            <button class="btn-action btn-accent reveal-btn" data-target="ans-unfair-2"><i class="fa-solid fa-eye"></i> Check</button>
+                            <div id="ans-unfair-2" class="answer-box" style="padding: 1rem;">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">This is HT <strong>OR</strong> TH. Add the paths together!</p>
+                                <p style="font-size: 1.2rem; margin-top:0.5rem;">HT = $$0.6 \\times 0.4 = 0.24$$</p>
+                                <p style="font-size: 1.2rem;">TH = $$0.4 \\times 0.6 = 0.24$$</p>
+                                <p class="final-ans" style="font-size: 1.5rem !important;">0.48</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.5rem;">
+                            <h3 style="color: var(--text-main); font-size: 1.3rem; margin-bottom: 1rem;"><strong>3</strong> &nbsp; Two Tails (TT)</h3>
+                            <button class="btn-action btn-warning reveal-btn" data-target="ans-unfair-3"><i class="fa-solid fa-eye"></i> Check</button>
+                            <div id="ans-unfair-3" class="answer-box" style="padding: 1rem; border-color: var(--warning);">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Multiply along the branches for T then T.</p>
+                                <p style="font-size: 1.2rem; margin-top:0.5rem;">$$0.4 \\times 0.4$$</p>
+                                <p class="final-ans" style="font-size: 1.5rem !important; color: var(--warning);">0.16</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                return bindReveals(container);
+            }
+        },
+
+        // SLIDE 6: Interactive Spinner Problem
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Example 3: The RGB Spinner</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 1.5rem; font-size: 1.3rem;">
+                        A spinner has 3 colours: <strong style="color: var(--danger);">Red (50%)</strong>, <strong style="color: var(--accent);">Green (30%)</strong>, and <strong style="color: var(--primary);">Blue (20%)</strong>.
+                    </p>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <!-- Interactive Spinner -->
+                        <div class="glass-card text-center" style="border-top: 4px solid var(--text-main);">
+                            <div class="spinner-container">
+                                <div class="spinner-pointer"></div>
+                                <div id="rgb-spinner" class="spinner-wheel"></div>
+                            </div>
+                            <button id="spin-btn" class="btn-action" style="margin-top: 2rem; width: 200px;"><i class="fa-solid fa-arrows-rotate"></i> Spin!</button>
+                            <p id="spin-result" style="margin-top: 1rem; font-family: 'Outfit'; font-size: 1.5rem; font-weight: bold; height: 2rem;"></p>
+                        </div>
+
+                        <!-- The Problem -->
+                        <div class="glass-card" style="border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--accent); margin-bottom: 1rem;"><i class="fa-solid fa-clipboard-question"></i> The Challenge</h3>
+                            <p style="font-size: 1.4rem; font-family: 'Kalam'; line-height: 1.6; margin-bottom: 1rem;">
+                                You spin this spinner exactly <strong>2 times</strong>.<br>
+                                What is the probability that you get <strong style="color: var(--accent);">Green</strong> exactly <strong>ONCE</strong>?
+                            </p>
+                            <div style="background: rgba(0,0,0,0.05); padding: 1rem; border-radius: 8px; border: 1px dashed var(--text-dim); margin-bottom: 1rem;">
+                                <p style="font-size: 1.1rem; color: var(--text-dim);"><em>Hint: If we draw all 3 branches (R, G, B) for both spins, it gets quite large! Let's see it on the next slide.</em></p>
+                            </div>
+                            <button class="btn-action btn-accent" onclick="document.getElementById('btn-next').click()">See the Full Diagram <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                const btn = container.querySelector('#spin-btn');
+                const wheel = container.querySelector('#rgb-spinner');
+                const res = container.querySelector('#spin-result');
+                let rotation = 0;
+                
+                const handleSpin = () => {
+                    btn.disabled = true;
+                    res.textContent = "...";
+                    // Add random spins (5 to 10 full rotations) plus a random extra angle
+                    const extraSpins = Math.floor(Math.random() * 5 + 5) * 360;
+                    const randomAngle = Math.floor(Math.random() * 360);
+                    rotation += extraSpins + randomAngle;
+                    
+                    wheel.style.transform = `rotate(${rotation}deg)`;
+                    
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        // Calculate outcome (0 at top, going clockwise)
+                        const finalAngle = rotation % 360;
+                        let outcome = "";
+                        // Conic gradient mapping: Red 0-50% (0-180deg), Green 50-80% (180-288deg), Blue 80-100% (288-360deg)
+                        // Wheel rotation moves coordinates so the top angle is 360 - rotation.
+                        const topAngle = (360 - finalAngle) % 360;
+                        if (topAngle < 180) {
+                            outcome = "Red!";
+                            res.style.color = "var(--danger)";
+                        } else if (topAngle < 288) {
+                            outcome = "Green!";
+                            res.style.color = "var(--accent)";
+                        } else {
+                            outcome = "Blue!";
+                            res.style.color = "var(--primary)";
+                        }
+                        res.textContent = outcome;
+                    }, 3000);
+                };
+                
+                btn.addEventListener('click', handleSpin);
+                return () => btn.removeEventListener('click', handleSpin);
+            }
+        },
+
+        // SLIDE 7: Full RGB Tree Diagram
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">The Full RGB Tree (2 Spins)</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 1.5rem; font-size: 1.3rem;">Drawing all 3 outcomes requires a lot of branches! Can you find the paths with exactly 1 Green?</p>
+
+                    <div class="glass-card delay-2" style="max-width: 1100px; margin: 0 auto 1.5rem auto; padding: 1rem; overflow-x: auto;">
+                        <svg class="svg-tree" viewBox="0 0 900 650" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Spin 1 Lines -->
+                            <line x1="50" y1="325" x2="300" y2="100" class="tree-line" />
+                            <line x1="50" y1="325" x2="300" y2="325" class="tree-line" />
+                            <line x1="50" y1="325" x2="300" y2="550" class="tree-line" />
+                            
+                            <!-- Spin 2 Lines (from R) -->
+                            <line x1="300" y1="100" x2="600" y2="40" class="tree-line" />
+                            <line x1="300" y1="100" x2="600" y2="100" class="tree-line" />
+                            <line x1="300" y1="100" x2="600" y2="160" class="tree-line" />
+
+                            <!-- Spin 2 Lines (from G) -->
+                            <line x1="300" y1="325" x2="600" y2="265" class="tree-line" />
+                            <line x1="300" y1="325" x2="600" y2="325" class="tree-line" />
+                            <line x1="300" y1="325" x2="600" y2="385" class="tree-line" />
+
+                            <!-- Spin 2 Lines (from B) -->
+                            <line x1="300" y1="550" x2="600" y2="490" class="tree-line" />
+                            <line x1="300" y1="550" x2="600" y2="550" class="tree-line" />
+                            <line x1="300" y1="550" x2="600" y2="610" class="tree-line" />
+
+                            <!-- Probabilities Spin 1 -->
+                            <text x="175" y="195" class="tree-prob" style="fill: var(--danger);">0.5</text>
+                            <text x="175" y="310" class="tree-prob" style="fill: var(--accent);">0.3</text>
+                            <text x="175" y="475" class="tree-prob" style="fill: var(--primary);">0.2</text>
+
+                            <!-- Probabilities Spin 2 -->
+                            <text x="450" y="60" class="tree-prob" style="fill: var(--danger);">0.5</text>
+                            <text x="450" y="90" class="tree-prob" style="fill: var(--accent);">0.3</text>
+                            <text x="450" y="145" class="tree-prob" style="fill: var(--primary);">0.2</text>
+
+                            <text x="450" y="285" class="tree-prob" style="fill: var(--danger);">0.5</text>
+                            <text x="450" y="315" class="tree-prob" style="fill: var(--accent);">0.3</text>
+                            <text x="450" y="370" class="tree-prob" style="fill: var(--primary);">0.2</text>
+
+                            <text x="450" y="510" class="tree-prob" style="fill: var(--danger);">0.5</text>
+                            <text x="450" y="540" class="tree-prob" style="fill: var(--accent);">0.3</text>
+                            <text x="450" y="595" class="tree-prob" style="fill: var(--primary);">0.2</text>
+
+                            <!-- Nodes Spin 1 -->
+                            <circle cx="300" cy="100" r="18" class="tree-node" style="stroke: var(--danger);" />
+                            <text x="300" y="100" class="tree-node-text" style="fill: var(--danger);">R</text>
+
+                            <circle cx="300" cy="325" r="18" class="tree-node" style="stroke: var(--accent);" />
+                            <text x="300" y="325" class="tree-node-text" style="fill: var(--accent);">G</text>
+
+                            <circle cx="300" cy="550" r="18" class="tree-node" style="stroke: var(--primary);" />
+                            <text x="300" y="550" class="tree-node-text" style="fill: var(--primary);">B</text>
+
+                            <!-- Nodes Spin 2 & Outcomes -->
+                            <circle cx="600" cy="40" r="18" class="tree-node" style="stroke: var(--danger);" />
+                            <text x="600" y="40" class="tree-node-text" style="fill: var(--danger);">R</text>
+                            <text x="630" y="40" class="tree-outcome">R R</text>
+
+                            <circle cx="600" cy="100" r="18" class="tree-node" style="stroke: var(--accent);" />
+                            <text x="600" y="100" class="tree-node-text" style="fill: var(--accent);">G</text>
+                            <text x="630" y="100" class="tree-outcome" style="fill: var(--accent);">R G = 0.5 × 0.3 = 0.15</text>
+
+                            <circle cx="600" cy="160" r="18" class="tree-node" style="stroke: var(--primary);" />
+                            <text x="600" y="160" class="tree-node-text" style="fill: var(--primary);">B</text>
+                            <text x="630" y="160" class="tree-outcome">R B</text>
+
+                            <circle cx="600" cy="265" r="18" class="tree-node" style="stroke: var(--danger);" />
+                            <text x="600" y="265" class="tree-node-text" style="fill: var(--danger);">R</text>
+                            <text x="630" y="265" class="tree-outcome" style="fill: var(--accent);">G R = 0.3 × 0.5 = 0.15</text>
+
+                            <circle cx="600" cy="325" r="18" class="tree-node" style="stroke: var(--accent);" />
+                            <text x="600" y="325" class="tree-node-text" style="fill: var(--accent);">G</text>
+                            <text x="630" y="325" class="tree-outcome">G G (Two greens!)</text>
+
+                            <circle cx="600" cy="385" r="18" class="tree-node" style="stroke: var(--primary);" />
+                            <text x="600" y="385" class="tree-node-text" style="fill: var(--primary);">B</text>
+                            <text x="630" y="385" class="tree-outcome" style="fill: var(--accent);">G B = 0.3 × 0.2 = 0.06</text>
+
+                            <circle cx="600" cy="490" r="18" class="tree-node" style="stroke: var(--danger);" />
+                            <text x="600" y="490" class="tree-node-text" style="fill: var(--danger);">R</text>
+                            <text x="630" y="490" class="tree-outcome">B R</text>
+
+                            <circle cx="600" cy="550" r="18" class="tree-node" style="stroke: var(--accent);" />
+                            <text x="600" y="550" class="tree-node-text" style="fill: var(--accent);">G</text>
+                            <text x="630" y="550" class="tree-outcome" style="fill: var(--accent);">B G = 0.2 × 0.3 = 0.06</text>
+
+                            <circle cx="600" cy="610" r="18" class="tree-node" style="stroke: var(--primary);" />
+                            <text x="600" y="610" class="tree-node-text" style="fill: var(--primary);">B</text>
+                            <text x="630" y="610" class="tree-outcome">B B</text>
+
+                            <!-- Column Labels -->
+                            <text x="300" y="20" font-family="Outfit" font-size="20" font-weight="bold" fill="var(--text-dim)" text-anchor="middle">Spin 1</text>
+                            <text x="600" y="20" font-family="Outfit" font-size="20" font-weight="bold" fill="var(--text-dim)" text-anchor="middle">Spin 2</text>
+                        </svg>
+                    </div>
+
+                    <div class="glass-card" style="max-width: 1100px; margin: 0 auto; padding: 1.5rem; text-align: center;">
+                        <h3 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 1rem;">Solving "Exactly 1 Green"</h3>
+                        <button class="btn-action reveal-btn" data-target="ans-spinner-full" style="max-width: 300px;"><i class="fa-solid fa-eye"></i> Show Calculation</button>
+                        <div id="ans-spinner-full" class="answer-box" style="padding: 1.5rem;">
+                            <p style="font-size: 1.2rem; color: var(--text-dim); margin-bottom: 0.5rem;">We must add all 4 successful paths: <strong>RG + GR + GB + BG</strong></p>
+                            <p style="font-size: 1.4rem; font-family: 'Kalam';">$$0.15 + 0.15 + 0.06 + 0.06$$</p>
+                            <p class="final-ans" style="font-size: 1.8rem !important; margin-top: 1rem;">0.42 <span style="color: var(--text-dim); font-size: 1.2rem;">(42%)</span></p>
+                            <p style="font-size: 1.1rem; color: var(--text-main); margin-top: 1rem;"><em>That was a lot of adding! Let's look at a smarter way on the next slide.</em></p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                return bindReveals(container);
+            }
+        },
+
+        // SLIDE 8: Smart Tree Diagram
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">The "Smart" Tree Diagram</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 1.5rem; font-size: 1.3rem;">Instead of a massive 9-branch RGB tree, we simplify it to just <strong style="color: var(--accent);">Green (G)</strong> vs <strong style="color: var(--text-dim);">Not Green (N)</strong>.</p>
+
+                    <div class="glass-card delay-2" style="max-width: 900px; margin: 0 auto 1.5rem auto; padding: 2rem;">
+                        <svg class="svg-tree" viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Spin 1 Lines -->
+                            <line x1="100" y1="210" x2="400" y2="110" class="tree-line" />
+                            <line x1="100" y1="210" x2="400" y2="310" class="tree-line" />
+                            
+                            <!-- Spin 2 Lines -->
+                            <line x1="400" y1="110" x2="700" y2="60" class="tree-line" />
+                            <line x1="400" y1="110" x2="700" y2="160" class="tree-line" />
+                            <line x1="400" y1="310" x2="700" y2="260" class="tree-line" />
+                            <line x1="400" y1="310" x2="700" y2="360" class="tree-line" />
+
+                            <!-- Probabilities -->
+                            <text x="250" y="145" class="tree-prob" style="font-size: 24px; fill: var(--accent);">0.3</text>
+                            <text x="250" y="275" class="tree-prob" style="font-size: 24px; fill: var(--text-dim);">0.7</text>
+                            
+                            <text x="550" y="70" class="tree-prob" style="font-size: 24px; fill: var(--accent);">0.3</text>
+                            <text x="550" y="150" class="tree-prob" style="font-size: 24px; fill: var(--text-dim);">0.7</text>
+                            <text x="550" y="270" class="tree-prob" style="font-size: 24px; fill: var(--accent);">0.3</text>
+                            <text x="550" y="350" class="tree-prob" style="font-size: 24px; fill: var(--text-dim);">0.7</text>
+
+                            <!-- Nodes Spin 1 -->
+                            <circle cx="400" cy="110" r="26" class="tree-node" style="stroke: var(--accent);" />
+                            <text x="400" y="110" class="tree-node-text" style="font-size:26px; fill: var(--accent);">G</text>
+                            <circle cx="400" cy="310" r="26" class="tree-node" style="stroke: var(--text-dim);" />
+                            <text x="400" y="310" class="tree-node-text" style="font-size:26px; fill: var(--text-dim);">N</text>
+
+                            <!-- Nodes Spin 2 & Outcomes -->
+                            <circle cx="700" cy="60" r="26" class="tree-node" style="stroke: var(--accent);" />
+                            <text x="700" y="60" class="tree-node-text" style="font-size:26px; fill: var(--accent);">G</text>
+                            <text x="740" y="60" class="tree-outcome" style="font-size: 24px;">G G</text>
+
+                            <circle cx="700" cy="160" r="26" class="tree-node" style="stroke: var(--text-dim);" />
+                            <text x="700" y="160" class="tree-node-text" style="font-size:26px; fill: var(--text-dim);">N</text>
+                            <text x="740" y="160" class="tree-outcome" style="font-size: 24px; fill: var(--accent);">G N = 0.3 × 0.7 = 0.21</text>
+
+                            <circle cx="700" cy="260" r="26" class="tree-node" style="stroke: var(--accent);" />
+                            <text x="700" y="260" class="tree-node-text" style="font-size:26px; fill: var(--accent);">G</text>
+                            <text x="740" y="260" class="tree-outcome" style="font-size: 24px; fill: var(--accent);">N G = 0.7 × 0.3 = 0.21</text>
+
+                            <circle cx="700" cy="360" r="26" class="tree-node" style="stroke: var(--text-dim);" />
+                            <text x="700" y="360" class="tree-node-text" style="font-size:26px; fill: var(--text-dim);">N</text>
+                            <text x="740" y="360" class="tree-outcome" style="font-size: 24px;">N N</text>
+
+                            <!-- Labels -->
+                            <text x="400" y="30" font-family="Outfit" font-size="24" font-weight="bold" fill="var(--text-dim)" text-anchor="middle">Spin 1</text>
+                            <text x="700" y="30" font-family="Outfit" font-size="24" font-weight="bold" fill="var(--text-dim)" text-anchor="middle">Spin 2</text>
+                        </svg>
+                    </div>
+
+                    <div class="glass-card" style="max-width: 900px; margin: 0 auto; padding: 1.5rem; text-align: center;">
+                        <h3 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 1rem;">Solving "Exactly 1 Green"</h3>
+                        <button class="btn-action btn-accent reveal-btn" data-target="ans-spinner-smart" style="max-width: 300px;"><i class="fa-solid fa-eye"></i> Show Calculation</button>
+                        <div id="ans-spinner-smart" class="answer-box" style="padding: 1.5rem;">
+                            <p style="font-size: 1.2rem; color: var(--text-dim); margin-bottom: 0.5rem;">There are only 2 successful paths here: <strong>G N + N G</strong></p>
+                            <p style="font-size: 1.4rem; font-family: 'Kalam';">$$0.21 + 0.21$$</p>
+                            <p class="final-ans" style="font-size: 1.8rem !important; margin-top: 1rem;">0.42 <span style="color: var(--text-dim); font-size: 1.2rem;">(42%)</span></p>
+                            <p style="font-size: 1.1rem; color: var(--text-main); margin-top: 1rem;"><em>The exact same answer as the big tree, but much easier to draw!</em></p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                renderMath();
+                return bindReveals(container);
+            }
+        },
+
+        // SLIDE 9: Summary
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Lesson Summary</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 2rem auto; align-items: stretch;">
+                        
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <div class="pedagogical-note note-success" style="margin: 0; transform: rotate(-1deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> Key Takeaways</div>
+                                <p style="font-size: 1.3rem; margin-bottom: 0.8rem;"><i class="fa-solid fa-star" style="color: var(--accent);"></i> <strong>Trees organise outcomes:</strong> They help us make sure we don't miss any possible combinations.</p>
+                                <p style="font-size: 1.3rem; margin-bottom: 0.8rem;"><i class="fa-solid fa-star" style="color: var(--accent);"></i> <strong>Multiply along the branch:</strong> For events happening one after the other (AND).</p>
+                                <p style="font-size: 1.3rem;"><i class="fa-solid fa-star" style="color: var(--accent);"></i> <strong>Add down the column:</strong> If multiple paths give the result you want (OR).</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <div class="glass-card" style="border-top: 4px solid var(--danger); padding: 1.5rem;">
+                                <h3 style="color: var(--danger); font-size: 1.5rem; margin-bottom: 1rem;"><i class="fa-solid fa-brain"></i> Sanity Check</h3>
+                                <p style="font-size: 1.3rem; margin-bottom: 1rem;">Look back at the Unfair Coin slide. Add up the final answers for all 4 paths (HH, HT, TH, TT).</p>
+                                <p style="font-size: 1.4rem; font-family: 'Kalam'; color: var(--text-main);">$$0.36 + 0.24 + 0.24 + 0.16$$</p>
+                                <p style="font-size: 1.3rem; margin-top: 1rem;">What does it equal? <strong>1.0 (or 100%)</strong>. Our rule from yesterday still works!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => {
+                renderMath();
+                return () => {}; 
+            }
+        },
+
+        // SLIDE 10: Practice Problems
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Your Turn: Practice Problems</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.3rem;">
+                        Draw a probability tree in your notebook for each problem to find the answer!
+                    </p>
+
+                    <div class="delay-2" style="max-width: 1100px; margin: 0 auto; padding-bottom: 2rem;">
+                        
+                        <div class="grid-2" style="margin-bottom: 2rem;">
+                            <!-- Problem 1 -->
+                            <div class="problem-block" style="margin-bottom: 0;">
+                                <p><span class="problem-number">1</span> <strong>The 4th Flip</strong></p>
+                                <p style="margin-top: 0.5rem; font-size: 1.2rem;">A fair coin is flipped <strong>4 times</strong>. What is the probability of getting exactly 4 Tails? (T-T-T-T)</p>
+                            </div>
+
+                            <!-- Problem 2 -->
+                            <div class="problem-block" style="margin-bottom: 0; border-color: var(--cold);">
+                                <p><span class="problem-number" style="color: var(--cold);">2</span> <strong>Weekend Weather</strong></p>
+                                <p style="margin-top: 0.5rem; font-size: 1.2rem;">There is a <strong>70% (0.7)</strong> chance of rain on Saturday, and a <strong>70% (0.7)</strong> chance of rain on Sunday. What is the probability that it rains on <strong>exactly one</strong> of the days?</p>
+                            </div>
+
+                            <!-- Problem 3 -->
+                            <div class="problem-block" style="margin-bottom: 0; border-color: var(--accent);">
+                                <p><span class="problem-number" style="color: var(--accent);">3</span> <strong>Marble Draw</strong></p>
+                                <p style="margin-top: 0.5rem; font-size: 1.2rem;">A bag has 4 Red marbles and 6 Blue marbles. You draw one, <strong>put it back</strong>, and draw a second time. What is the probability of drawing two Red marbles?</p>
+                            </div>
+
+                            <!-- Problem 4 -->
+                            <div class="problem-block" style="margin-bottom: 0; border-color: var(--warning);">
+                                <p><span class="problem-number" style="color: var(--warning);">4</span> <strong>Football Season</strong></p>
+                                <p style="margin-top: 0.5rem; font-size: 1.2rem;">A football team has a <strong>0.6</strong> chance of winning, <strong>0.3</strong> chance of drawing, and <strong>0.1</strong> chance of losing a match. If they play 2 matches, what is the probability they win both?</p>
+                            </div>
+                        </div>
+
+                        <!-- Problem 5 -->
+                        <div class="problem-block" style="max-width: 800px; margin: 0 auto; border-color: var(--danger);">
+                            <p><span class="problem-number" style="color: var(--danger);">5</span> <strong>Challenge: The Factory</strong></p>
+                            <p style="margin-top: 0.5rem; font-size: 1.2rem;">A factory makes lightbulbs. There is a <strong>5% (0.05)</strong> chance a bulb is broken. If you test 2 bulbs, what is the probability that <strong>at least one</strong> is broken?</p>
+                            <div style="background: rgba(220, 38, 38, 0.05); padding: 0.8rem; border-radius: 8px; margin-top: 1rem; border: 1px dashed var(--danger);">
+                                <p style="font-size: 1.1rem; color: var(--danger); font-family: 'Kalam';"><i class="fa-solid fa-lightbulb"></i> <em>Hint: Use a "Smart Tree" (Broken vs Not Broken). How many paths give you "at least one" broken bulb?</em></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        container.innerHTML = slide.template();
+        
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    render();
+</script>
+
+</body>
+</html>
