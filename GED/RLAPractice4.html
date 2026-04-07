@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED RLA Practice Test - Workplace Internet Use</title>
+    <style>
+        :root {
+            --primary: #1a56db;
+            --primary-hover: #1e40af;
+            --secondary: #f3f4f6;
+            --text-main: #1f2937;
+            --text-light: #6b7280;
+            --border-color: #e5e7eb;
+            --correct-bg: #def7ec;
+            --correct-border: #31c48d;
+            --incorrect-bg: #fde8e8;
+            --incorrect-border: #f8b4b4;
+            --esl-bg: #fffbeb;
+            --esl-border: #faca15;
+            --dict-bg: #1e293b;
+            --dict-text: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #ffffff;
+            color: var(--text-main);
+        }
+
+        /* --- Layout --- */
+        #left-pane {
+            width: 50%;
+            height: 100%;
+            padding: 2rem;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+            background-color: #fafafa;
+        }
+
+        #resizer {
+            width: 6px;
+            background-color: var(--border-color);
+            cursor: ew-resize;
+            transition: background-color 0.2s;
+        }
+        
+        #resizer:hover, #resizer:active {
+            background-color: var(--primary);
+        }
+
+        #right-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: #ffffff;
+        }
+
+        /* --- Left Pane Content --- */
+        .esl-tip-box {
+            background-color: var(--esl-bg);
+            border-left: 4px solid var(--esl-border);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .passage-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .passage-header h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #111827;
+        }
+
+        .passage-meta {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            background: #fff;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .paragraph {
+            display: flex;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .para-num {
+            font-weight: bold;
+            color: var(--text-light);
+            margin-right: 1rem;
+            min-width: 25px;
+        }
+
+        .keyword {
+            border-bottom: 2px dashed transparent;
+            border-radius: 2px;
+            transition: all 0.2s;
+        }
+
+        body.phase-3 .keyword {
+            border-bottom-color: var(--primary);
+            cursor: pointer;
+            background-color: #eff6ff;
+        }
+
+        body.phase-3 .keyword:hover {
+            background-color: #dbeafe;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: var(--border-color);
+            margin: 2rem 0;
+        }
+
+        /* --- Right Pane Content --- */
+        #top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #fff;
+        }
+
+        .phase-badge {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timer-display {
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: #b91c1c;
+        }
+
+        #question-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .slide {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            list-style: none;
+        }
+
+        .option-item {
+            display: block;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .option-item:hover {
+            border-color: #9ca3af;
+            background: #f9fafb;
+        }
+
+        .option-item.selected {
+            border-color: var(--primary);
+            background-color: #eff6ff;
+        }
+
+        /* Result Styles for Phase 2 & 3 */
+        .option-item.correct-ans {
+            border-color: var(--correct-border);
+            background-color: var(--correct-bg);
+        }
+
+        .option-item.wrong-ans {
+            border-color: var(--incorrect-border);
+            background-color: var(--incorrect-bg);
+        }
+
+        .explanation-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .explanation-box.visible {
+            display: block;
+        }
+
+        .exp-en { margin-bottom: 1rem; }
+        .exp-vn { color: #475569; font-style: italic; border-top: 1px solid #e2e8f0; padding-top: 1rem;}
+
+        /* --- Drag and Drop Styles --- */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .dnd-bank {
+            min-height: 80px;
+            padding: 1rem;
+            border: 2px dashed #9ca3af;
+            border-radius: 8px;
+            background-color: #f9fafb;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .dnd-targets {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .dnd-zone-wrapper {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dnd-zone-title {
+            background: #f3f4f6;
+            padding: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        .dnd-zone {
+            min-height: 150px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            background: #ffffff;
+        }
+
+        .draggable-item {
+            background-color: #ffffff;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: grab;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .draggable-item:active {
+            cursor: grabbing;
+            transform: scale(0.98);
+        }
+        
+        .draggable-item.correct-drag {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-border);
+        }
+        
+        .draggable-item.wrong-drag {
+            background-color: var(--incorrect-bg);
+            border-color: var(--incorrect-border);
+        }
+
+        /* --- Essay / Intro Prompts --- */
+        .prompt-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            line-height: 1.7;
+        }
+
+        .instruction-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        /* --- Footer Navigation --- */
+        #bottom-nav {
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9fafb;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #f3f4f6;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        #progress-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* --- Dictionary Dock --- */
+        #dictionary-tooltip {
+            position: fixed;
+            background: var(--dict-bg);
+            color: var(--dict-text);
+            width: 320px;
+            border-radius: 8px;
+            padding: 1.2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            pointer-events: none;
+            line-height: 1.5;
+        }
+        
+        .dict-word {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+            text-transform: capitalize;
+        }
+        
+        .dict-def {
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .dict-vn-word {
+            font-weight: 600;
+            color: #fcd34d;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .dict-vn-def {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Pane: Reading Passages -->
+    <div id="left-pane">
+        <div class="esl-tip-box">
+            <strong>ESL Tip:</strong> Underline or highlight words you don't know on real tests. In <strong>Phase 3 (Deep Study)</strong> of this practice, you can hover over highlighted words to see their exact English and Vietnamese definitions!
+        </div>
+
+        <div class="passage-header">
+            <h2>Source Material #1</h2>
+        </div>
+        
+        <div class="passage-meta">
+            <strong>Email From:</strong> Justine Timmons, CEO<br>
+            <strong>Sent:</strong> Monday, September 24<br>
+            <strong>To:</strong> Employees of Niagara Equipment Corp.<br>
+            <strong>Subject:</strong> Workplace Internet Use
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num">[1]</div>
+            <p>Beginning next month, we are <span class="keyword" data-term="institute">instituting</span> a new <span class="keyword" data-term="policy">policy</span> for all employees regarding Internet use at work. To limit access to <span class="keyword" data-term="inappropriate">inappropriate</span> and social media websites, we are installing new <span class="keyword" data-term="filtering">filtering</span> software that will block those sites on every company-owned computer.</p>
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num">[2]</div>
+            <p>Although management <span class="keyword" data-term="recognize">recognizes</span> that the Internet is a <span class="keyword" data-term="valuable">valuable</span> tool, especially for our creative department and sales team, we are also aware of the potentially costly <span class="keyword" data-term="downside">downsides</span> to unlimited access. According to a survey by Salary.com, at least 64 percent of employees nationwide admit to visiting non-work-related websites while on the job. This "cyberslacking," as it is called, hurts <span class="keyword" data-term="productivity">productivity</span> and wastes company resources. Workers who are <span class="keyword" data-term="distracted">distracted</span> by checking their social media sites are clearly not giving their full attention to their jobs.</p>
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num">[3]</div>
+            <p>The other important reason that we are installing filters is to <span class="keyword" data-term="promote">promote</span> a positive workplace for all of our valued employees. When staff members use their computers to access offensive or inappropriate material that can be seen by their fellow workers, this creates a <span class="keyword" data-term="hostile">hostile</span> workplace environment, thereby exposing the company to expensive and <span class="keyword" data-term="demoralizing">demoralizing</span> lawsuits. Even social networking sites can lead to legal <span class="keyword" data-term="jeopardy">jeopardy</span> if they are used to bully fellow workers. Other businesses have already faced <span class="keyword" data-term="harassment">harassment</span> suits for just such activities.</p>
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num">[4]</div>
+            <p>A committee comprising representatives of each team will be formed to determine which sites to block. Please tell your team leader if you are interested in serving on this committee.</p>
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num">[5]</div>
+            <p>Thank you all for your cooperation and for your commitment to making Niagara Equipment the best place to work in Buffalo!</p>
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num"></div>
+            <p>Best,<br>Justine Timmons, CEO</p>
+        </div>
+
+        <hr>
+
+        <div class="passage-header">
+            <h2>Source Material #2</h2>
+        </div>
+        
+        <div class="passage-meta">
+            <strong>Email From:</strong> Honoria Bell<br>
+            <strong>Sent:</strong> Tuesday, September 25<br>
+            <strong>To:</strong> Justine Timmons, CEO<br>
+            <strong>CC:</strong> Employees of Niagara Equipment Corp.<br>
+            <strong>Subject:</strong> Workplace Internet Use
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num">[6]</div>
+            <p>Dear Ms. Timmons,</p>
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num">[7]</div>
+            <p>We, the undersigned employees of Niagara Equipment Corp., urge management to <span class="keyword" data-term="reconsider">reconsider</span> the installation of Internet-filtering software. While we recognize that it is in all our interests to promote productivity and a positive workplace environment, we believe that blocking our free access to the Internet is the wrong way to go about this.</p>
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num">[8]</div>
+            <p>First, there is more to that Salary.com statistic that you cite than meets the eye. Most of the "cyberslackers" in that survey surf the Internet for only one hour per week. This is <span class="keyword" data-term="comparable">comparable</span> to taking a walk to the water cooler or chatting about last night's game with a <span class="keyword" data-term="colleague">colleague</span>. According to author Laura Vanderkam, "no one can get through a whole workday without taking a break." In fact, one 2009 study found that workers who could occasionally check the Internet were happier at work than those who could not. Another study, this one from the National University of Singapore, found that Web-surfing <span class="keyword" data-term="refreshed">refreshed</span> employees, actually making them more productive, not less.</p>
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num">[9]</div>
+            <p>Second, one important function of the Internet is as a communication tool, just like the telephone. Just as workers are permitted to make brief personal calls at work, so should they be allowed to use the Internet for the same purpose.</p>
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num">[10]</div>
+            <p>Third, we believe that the best way to grow as a business and protect the company from lawsuits is to hire responsible employees and then <span class="keyword" data-term="demonstrate">demonstrate</span> your trust in them. Instead of treating us like children, why not establish clear <span class="keyword" data-term="guidelines">guidelines</span> concerning Internet use? All employees can understand the reasons that offensive websites are off limits.</p>
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num">[11]</div>
+            <p>Finally, installing an Internet filter may create <span class="keyword" data-term="resentment">resentment</span> and tempt some employees to find ways around the filters. It is an unnecessary solution in search of a problem.</p>
+        </div>
+
+        <div class="paragraph">
+            <div class="para-num"></div>
+            <p>Thank you for your attention.<br><br>Honoria Bell, Chief Designer<br>and the undersigned 53 employees</p>
+        </div>
+        <br><br><br>
+    </div>
+
+    <!-- Draggable Splitter -->
+    <div id="resizer"></div>
+
+    <!-- Right Pane: Test Interface -->
+    <div id="right-pane">
+        <div id="top-bar">
+            <div class="phase-badge" id="phase-badge">Phase 1: Test</div>
+            <div class="timer-display" id="timer">15:00</div>
+        </div>
+
+        <div id="question-area">
+            <!-- Content injected by JS -->
+        </div>
+
+        <div id="bottom-nav">
+            <button class="btn btn-secondary" id="btn-prev" onclick="prevSlide()">Previous</button>
+            <div id="progress-text">Intro</div>
+            <button class="btn btn-primary" id="btn-next" onclick="nextSlide()">Next Question</button>
+        </div>
+    </div>
+
+    <!-- Hover Dictionary -->
+    <div id="dictionary-tooltip">
+        <div class="dict-word" id="dict-w">word</div>
+        <div class="dict-def" id="dict-d">definition</div>
+        <div class="dict-vn-word" id="dict-v">vietnamese translation</div>
+        <div class="dict-vn-def" id="dict-vd">vietnamese description</div>
+    </div>
+
+<script>
+/* =========================================
+   DATA & CONFIGURATION
+========================================= */
+
+const glossary = {
+    "institute": { "def": "To start or establish a new rule or system.", "vn": "Ban hành, thiết lập.", "vn_def": "Bắt đầu áp dụng một quy định hoặc hệ thống mới." },
+    "policy": { "def": "A set of rules or a plan of action made by a business or government.", "vn": "Chính sách, quy định.", "vn_def": "Tập hợp các quy tắc hoặc kế hoạch hành động của một tổ chức." },
+    "inappropriate": { "def": "Not proper or suitable for a specific situation (like work).", "vn": "Không phù hợp, không thích hợp.", "vn_def": "Không đúng mực hoặc không phù hợp với hoàn cảnh (ví dụ: ở nơi làm việc)." },
+    "filtering": { "def": "The process of blocking certain things from passing through (like blocking websites).", "vn": "Lọc, chặn.", "vn_def": "Quá trình ngăn chặn những thứ nhất định đi qua (như chặn trang web)." },
+    "recognize": { "def": "To know, understand, or accept that something is true.", "vn": "Nhận ra, công nhận.", "vn_def": "Hiểu hoặc chấp nhận một sự thật nào đó." },
+    "valuable": { "def": "Very useful, important, or worth a lot of money.", "vn": "Có giá trị, hữu ích.", "vn_def": "Rất hữu ích, quan trọng hoặc có giá trị cao." },
+    "downside": { "def": "The negative part or disadvantage of something.", "vn": "Khuyết điểm, mặt trái.", "vn_def": "Điểm bất lợi hoặc phần tiêu cực của một vấn đề." },
+    "productivity": { "def": "How much work is done within a certain amount of time.", "vn": "Năng suất.", "vn_def": "Khối lượng công việc được hoàn thành trong một khoảng thời gian nhất định." },
+    "distracted": { "def": "Unable to pay attention because something else is happening.", "vn": "Bị phân tâm.", "vn_def": "Không thể tập trung vì bị thu hút bởi một việc khác." },
+    "promote": { "def": "To help something grow, happen, or succeed.", "vn": "Thúc đẩy, khuyến khích.", "vn_def": "Giúp một điều gì đó phát triển hoặc thành công." },
+    "hostile": { "def": "Very unfriendly, aggressive, or intimidating.", "vn": "Thù địch, không thân thiện.", "vn_def": "Rất không thân thiện, hung hăng hoặc mang tính đe dọa." },
+    "demoralizing": { "def": "Causing someone to lose hope, confidence, or motivation.", "vn": "Làm nản lòng, làm nhụt chí.", "vn_def": "Làm cho ai đó mất đi hy vọng, sự tự tin hoặc động lực." },
+    "jeopardy": { "def": "Danger of loss, harm, or failure.", "vn": "Nguy hiểm, rủi ro.", "vn_def": "Tình trạng nguy hiểm có thể dẫn đến tổn thất hoặc thất bại." },
+    "harassment": { "def": "Aggressive pressure, bullying, or intimidation against someone.", "vn": "Sự quấy rối.", "vn_def": "Hành động gây áp lực, bắt nạt hoặc đe dọa người khác một cách hung hăng." },
+    "reconsider": { "def": "To think about something again, often to change a decision.", "vn": "Xem xét lại.", "vn_def": "Suy nghĩ lại về một vấn đề, thường là để thay đổi quyết định." },
+    "comparable": { "def": "Similar to something else in size, amount, or quality.", "vn": "Có thể so sánh được, tương đương.", "vn_def": "Tương tự với một thứ khác về kích thước, số lượng hoặc chất lượng." },
+    "colleague": { "def": "A person you work with.", "vn": "Đồng nghiệp.", "vn_def": "Người làm việc cùng bạn trong một công ty hoặc tổ chức." },
+    "refreshed": { "def": "Feeling less tired and having more energy again.", "vn": "Sảng khoái, tươi mới.", "vn_def": "Cảm thấy bớt mệt mỏi và tràn đầy năng lượng trở lại." },
+    "demonstrate": { "def": "To show something clearly by giving proof or an example.", "vn": "Thể hiện, chứng minh.", "vn_def": "Cho thấy một điều gì đó rõ ràng bằng bằng chứng hoặc ví dụ." },
+    "guidelines": { "def": "General rules or pieces of advice on how to do something.", "vn": "Nguyên tắc chỉ đạo, hướng dẫn.", "vn_def": "Các quy tắc chung hoặc lời khuyên về cách thực hiện một việc gì đó." },
+    "resentment": { "def": "A feeling of anger because you think you have been treated unfairly.", "vn": "Sự oán giận, phẫn uất.", "vn_def": "Cảm giác tức giận vì cho rằng mình bị đối xử bất công." }
+};
+
+const questionsData = [
+    {
+        type: "intro",
+        title: "GED RLA Practice Test",
+        content: `
+            <p class="instruction-text">Welcome to the GED Reading Language Arts Practice Test.</p>
+            <p class="instruction-text">This module contains a <strong>4-Phase Learning Process:</strong></p>
+            <ul style="margin-left: 20px; line-height: 1.6; margin-bottom: 20px; font-size: 1.05rem;">
+                <li><strong>Phase 1: Timed Test</strong> (15 Minutes) - Answer 6 reading comprehension questions without help.</li>
+                <li><strong>Phase 2: Review</strong> - See your score and which questions you got right/wrong.</li>
+                <li><strong>Phase 3: Deep Study</strong> - Read English & Vietnamese explanations. The Dictionary feature unlocks!</li>
+                <li><strong>Phase 4: Extended Response</strong> - A 45-minute essay prompt based on the passages.</li>
+            </ul>
+            <p class="instruction-text">Click <strong>"Start Test"</strong> when you are ready to begin.</p>
+        `
+    },
+    {
+        id: 1,
+        type: 'mcq',
+        question: "What is the main purpose of the email written by CEO Justine Timmons (Source Material #1)?",
+        options: [
+            "A. To fire employees who have been caught wasting time on social media.",
+            "B. To announce and explain a new company policy regarding internet access.",
+            "C. To ask employees for their opinions on how to improve productivity.",
+            "D. To provide instructions on how to download new software on company computers."
+        ],
+        correctAnswer: 1, 
+        expEn: "The CEO explicitly states at the beginning of the email that the company is \"instituting a new policy\" and installing \"new filtering software.\" The rest of the email explains the reasons for this new policy (productivity and legal protection). The other choices are incorrect because no one is being fired (A), it is an announcement rather than a request for opinions (C), and the company is installing the software, not asking employees to download it (D).",
+        expVn: "Giám đốc điều hành (CEO) đã nói rõ ở đầu email rằng công ty đang \"ban hành một chính sách mới\" và cài đặt \"phần mềm lọc mới\". Phần còn lại của email giải thích lý do cho chính sách mới này (để bảo vệ năng suất làm việc và tránh các vấn đề pháp lý). Các lựa chọn khác sai vì không có ai bị sa thải (A), đây là một thông báo chứ không phải là yêu cầu đóng góp ý kiến (C), và công ty đang tự cài đặt phần mềm chứ không yêu cầu nhân viên tải về (D)."
+    },
+    {
+        id: 2,
+        type: 'mcq',
+        question: "How does Honoria Bell (Source Material #2) counter the CEO's argument about the Salary.com \"cyberslacking\" survey?",
+        options: [
+            "A. She claims the survey is entirely fake and made up by management.",
+            "B. She argues that the survey only surveyed people who work from home.",
+            "C. She points out that the time spent \"cyberslacking\" is minimal and comparable to taking a normal break.",
+            "D. She states that \"cyberslacking\" is actually a requirement for the creative department."
+        ],
+        correctAnswer: 2, 
+        expEn: "In her email, Honoria Bell states that most of the \"cyberslackers\" in the survey only surf the internet for one hour per week, which is \"comparable to taking a walk to the water cooler.\" She argues this minimal time is just a normal work break.",
+        expVn: "Trong email của mình, Honoria Bell nói rằng hầu hết những người \"lướt web việc riêng\" trong cuộc khảo sát chỉ sử dụng internet khoảng một giờ mỗi tuần, điều này \"tương đương với việc đi bộ đến máy lọc nước\". Cô lập luận rằng khoảng thời gian ít ỏi này chỉ giống như một khoảng nghỉ ngơi bình thường trong công việc."
+    },
+    {
+        id: 3,
+        type: 'mcq',
+        question: "In Source Material #1, what does the word \"hostile\" most likely mean in the phrase \"hostile workplace environment\"?",
+        options: [
+            "A. Welcoming and friendly",
+            "B. Unfriendly, intimidating, or offensive",
+            "C. Highly competitive and fast-paced",
+            "D. Technologically advanced and modern"
+        ],
+        correctAnswer: 1, 
+        expEn: "The CEO uses \"hostile\" to describe an environment created when employees access \"offensive or inappropriate material\" or use the internet to \"bully fellow workers.\" This context clearly points to an environment that is unfriendly, intimidating, or offensive to others.",
+        expVn: "CEO sử dụng từ \"hostile\" để mô tả một môi trường được tạo ra khi nhân viên truy cập vào \"tài liệu xúc phạm hoặc không phù hợp\" hoặc sử dụng internet để \"bắt nạt đồng nghiệp\". Ngữ cảnh này chỉ rõ một môi trường làm việc không thân thiện, mang tính đe dọa hoặc xúc phạm người khác."
+    },
+    {
+        id: 4,
+        type: 'mcq',
+        question: "Which statement best identifies a core disagreement between Justine Timmons and Honoria Bell?",
+        options: [
+            "A. Whether the internet is a useful tool for the creative and sales teams.",
+            "B. Whether occasional internet browsing harms or helps employee productivity.",
+            "C. Whether the company has the legal right to monitor company-owned computers.",
+            "D. Whether bullying in the workplace is an acceptable behavior."
+        ],
+        correctAnswer: 1, 
+        expEn: "Justine Timmons argues that visiting non-work websites \"hurts productivity,\" while Honoria Bell cites a study claiming that web-surfing refreshes employees, \"actually making them more productive, not less.\" They both agree the internet is useful (A) and that bullying is bad (D), but they completely disagree on how personal web browsing affects productivity.",
+        expVn: "Justine Timmons lập luận rằng việc truy cập các trang web ngoài công việc \"làm giảm năng suất\", trong khi Honoria Bell trích dẫn một nghiên cứu khẳng định việc lướt web giúp nhân viên thư giãn, \"thực sự làm cho họ làm việc năng suất hơn, chứ không phải ít đi\". Cả hai đều đồng ý rằng internet là hữu ích (A) và bắt nạt là xấu (D), nhưng họ hoàn toàn bất đồng về việc lướt web cá nhân ảnh hưởng đến năng suất làm việc như thế nào."
+    },
+    {
+        id: 5,
+        type: 'mcq',
+        question: "Which detail from Source Material #2 best supports Honoria Bell's claim that management should \"demonstrate your trust\" in employees instead of using filters?",
+        options: [
+            "A. \"Most of the 'cyberslackers' in that survey surf the Internet for only one hour per week.\"",
+            "B. \"Another study, this one from the National University of Singapore, found that Web-surfing refreshed employees...\"",
+            "C. \"Instead of treating us like children, why not establish clear guidelines concerning Internet use?\"",
+            "D. \"A committee comprising representatives of each team will be formed to determine which sites to block.\""
+        ],
+        correctAnswer: 2, 
+        expEn: "Choice C directly connects to the idea of trust. Honoria Bell suggests that trusting employees means giving them \"clear guidelines\" as adults, rather than forcing a block on them like they are children. Choice D is actually a quote from the CEO, not Honoria Bell.",
+        expVn: "Lựa chọn C liên quan trực tiếp đến ý tưởng về sự tin tưởng. Honoria Bell gợi ý rằng tin tưởng nhân viên có nghĩa là đưa ra cho họ \"những hướng dẫn rõ ràng\" như những người trưởng thành, thay vì ép buộc chặn các trang web như thể họ là trẻ con. Lựa chọn D thực ra là câu nói của CEO, không phải của Honoria Bell."
+    },
+    {
+        id: 6,
+        type: 'dnd',
+        question: "Drag-and-Drop: Categorize the following pieces of evidence to support Claim 1 or Claim 2.",
+        draggables: [
+            { id: 'itemA', text: "[A] Employees checking the Internet occasionally are happier and more refreshed." },
+            { id: 'itemB', text: "[B] Unrestricted internet access hurts productivity and wastes company resources." },
+            { id: 'itemC', text: "[C] The company should trust its employees and set guidelines instead of using filters." },
+            { id: 'itemD', text: "[D] Accessing offensive material can expose the company to expensive harassment lawsuits." }
+        ],
+        targets: [
+            { id: 'claim1', title: "Claim 1: Justine Timmons' View (Filters are necessary)", correctIds: ['itemB', 'itemD'] },
+            { id: 'claim2', title: "Claim 2: Honoria Bell's View (Filters are a bad idea)", correctIds: ['itemA', 'itemC'] }
+        ],
+        expEn: "Justine Timmons (Claim 1) believes internet use hurts productivity (B) and can cause lawsuits (D). Honoria Bell (Claim 2) believes internet use makes people refreshed/happier (A) and that the company should use guidelines instead of filters (C).",
+        expVn: "Justine Timmons (Nhận định 1) tin rằng việc sử dụng internet làm giảm năng suất (B) và có thể gây ra các vụ kiện tụng (D). Honoria Bell (Nhận định 2) tin rằng việc sử dụng internet giúp mọi người sảng khoái/hạnh phúc hơn (A) và công ty nên sử dụng các hướng dẫn thay vì phần mềm lọc (C)."
+    },
+    {
+        type: "essay",
+        title: "Phase 4: Extended Response",
+        content: `
+            <p class="instruction-text"><strong>Instructions:</strong> You have exactly <strong>45 minutes</strong> to complete this essay. Please open a new Google Doc.</p>
+            <div class="prompt-box" style="background:#fff3cd; border-color:#ffeeba;">
+                <p><strong>At the very top of your Google Doc, you MUST type:</strong><br><br>
+                Start Time: [Your Current Time]<br>
+                End Time: [Time 45 minutes from now]</p>
+            </div>
+            <div class="prompt-box">
+                <p style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">Prompt:</p>
+                <p>In the two emails provided, CEO Justine Timmons and Chief Designer Honoria Bell present opposing views on the company's decision to install Internet-filtering software. Timmons argues that the software is necessary to protect productivity and prevent legal issues, while Bell argues that the software is unnecessary, restricts communication, and damages employee morale.</p>
+                <br>
+                <p>Write an essay analyzing both arguments. Determine which position is best supported by the evidence and reasoning provided in the emails. Use specific details from both passages to support your claim.</p>
+            </div>
+            <p class="instruction-text"><strong>Submission:</strong> When finished, share or email your Google Doc directly to Mr. Bowen and Mr. Landon.</p>
+        `
+    }
+];
+
+/* =========================================
+   STATE MANAGEMENT
+========================================= */
+let currentPhase = 1; // 1: Test, 2: Review, 3: Study, 4: Essay
+let currentSlide = 0; 
+let userAnswers = {}; // { 1: 2, 6: { claim1: ['itemB'], claim2: [] } }
+let timerInterval;
+let timeRemaining = 15 * 60; // 15 mins
+
+// DOM Elements
+const questionArea = document.getElementById('question-area');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+const progressText = document.getElementById('progress-text');
+const phaseBadge = document.getElementById('phase-badge');
+const timerDisplay = document.getElementById('timer');
+const dictTooltip = document.getElementById('dictionary-tooltip');
+
+/* =========================================
+   INITIALIZATION & RENDERING
+========================================= */
+function initApp() {
+    renderSlides();
+    showSlide(0);
+    setupResizer();
+    setupDictionary();
+}
+
+function renderSlides() {
+    questionArea.innerHTML = '';
+    
+    questionsData.forEach((q, index) => {
+        const slideDiv = document.createElement('div');
+        slideDiv.className = 'slide';
+        slideDiv.id = `slide-${index}`;
+        
+        if (q.type === 'intro') {
+            slideDiv.innerHTML = `<h2>${q.title}</h2><br>${q.content}`;
+        } 
+        else if (q.type === 'mcq') {
+            let optionsHTML = '';
+            q.options.forEach((opt, optIdx) => {
+                optionsHTML += `<div class="option-item" onclick="selectOption(${index}, ${optIdx})" id="opt-${index}-${optIdx}">${opt}</div>`;
+            });
+            slideDiv.innerHTML = `
+                <div class="question-text"><strong>Question ${q.id}:</strong> ${q.question}</div>
+                <div class="options-list">${optionsHTML}</div>
+                <div class="explanation-box" id="exp-${index}">
+                    <div class="exp-en"><strong>Explanation:</strong> ${q.expEn}</div>
+                    <div class="exp-vn"><strong>Giải thích:</strong> ${q.expVn}</div>
+                </div>
+            `;
+        }
+        else if (q.type === 'dnd') {
+            let bankHTML = '';
+            q.draggables.forEach(d => {
+                bankHTML += `<div class="draggable-item" draggable="true" id="${d.id}" ondragstart="drag(event)">${d.text}</div>`;
+            });
+            
+            let targetsHTML = '';
+            q.targets.forEach(t => {
+                targetsHTML += `
+                    <div class="dnd-zone-wrapper">
+                        <div class="dnd-zone-title">${t.title}</div>
+                        <div class="dnd-zone drop-zone" id="${t.id}" ondrop="drop(event, ${index})" ondragover="allowDrop(event)"></div>
+                    </div>
+                `;
+            });
+
+            slideDiv.innerHTML = `
+                <div class="question-text"><strong>Question ${q.id}:</strong> ${q.question}</div>
+                <div class="dnd-container">
+                    <div class="dnd-bank drop-zone" id="bank-${index}" ondrop="drop(event, ${index})" ondragover="allowDrop(event)">
+                        ${bankHTML}
+                    </div>
+                    <div class="dnd-targets">
+                        ${targetsHTML}
+                    </div>
+                </div>
+                <div class="explanation-box" id="exp-${index}">
+                    <div class="exp-en"><strong>Explanation:</strong> ${q.expEn}</div>
+                    <div class="exp-vn"><strong>Giải thích:</strong> ${q.expVn}</div>
+                </div>
+            `;
+            // Init empty answer structure for DnD
+            userAnswers[index] = {};
+            q.targets.forEach(t => { userAnswers[index][t.id] = []; });
+        }
+        else if (q.type === 'essay') {
+            slideDiv.innerHTML = `<h2>${q.title}</h2><br>${q.content}`;
+        }
+        
+        questionArea.appendChild(slideDiv);
+    });
+}
+
+function showSlide(n) {
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.getElementById(`slide-${n}`).classList.add('active');
+    currentSlide = n;
+    
+    updateNavButtons();
+    updateProgressText();
+}
+
+function updateNavButtons() {
+    btnPrev.disabled = currentSlide === 0;
+    
+    const isLastSlide = currentSlide === questionsData.length - 1;
+    const currentQData = questionsData[currentSlide];
+
+    if (currentPhase === 1) {
+        if (currentSlide === 0) {
+            btnNext.textContent = "Start Test";
+        } else if (isLastSlide - 1 === currentSlide) { // Last Question before Essay
+            btnNext.textContent = "Submit Test";
+        } else {
+            btnNext.textContent = "Next";
+        }
+        
+        // Don't show essay slide in Phase 1
+        if (currentQData.type === 'essay') {
+            // Should not reach here normally via Phase 1 clicks
+        }
+    } else if (currentPhase >= 2) {
+        if (isLastSlide) {
+            btnNext.style.display = 'none'; // End of app
+        } else if (currentSlide === questionsData.length - 2 && currentPhase !== 4) {
+             btnNext.textContent = "Continue to Essay";
+        } else {
+            btnNext.textContent = "Next";
+            btnNext.style.display = 'block';
+        }
+    }
+}
+
+function updateProgressText() {
+    if (currentSlide === 0) progressText.textContent = "Intro";
+    else if (currentSlide === questionsData.length - 1) progressText.textContent = "Phase 4: Essay";
+    else progressText.textContent = `Question ${currentSlide} of ${questionsData.length - 2}`;
+}
+
+function nextSlide() {
+    if (currentPhase === 1 && currentSlide === 0) {
+        startTimer();
+    }
+
+    if (currentPhase === 1 && currentSlide === questionsData.length - 2) {
+        if(confirm("Are you sure you want to submit your answers?")) {
+            submitTest();
+        }
+        return;
+    }
+
+    if (currentPhase >= 2 && currentSlide === questionsData.length - 2) {
+        startPhase4();
+    }
+
+    if (currentSlide < questionsData.length - 1) {
+        showSlide(currentSlide + 1);
+    }
+}
+
+function prevSlide() {
+    if (currentSlide > 0) {
+        showSlide(currentSlide - 1);
+    }
+}
+
+/* =========================================
+   INTERACTION LOGIC (MCQ & DnD)
+========================================= */
+function selectOption(qIndex, optIndex) {
+    if (currentPhase !== 1) return; // Locked after Phase 1
+
+    userAnswers[qIndex] = optIndex;
+    
+    // UI Update
+    document.querySelectorAll(`#slide-${qIndex} .option-item`).forEach(el => el.classList.remove('selected'));
+    document.getElementById(`opt-${qIndex}-${optIndex}`).classList.add('selected');
+}
+
+function allowDrop(ev) {
+    if (currentPhase !== 1) return;
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    if (currentPhase !== 1) { ev.preventDefault(); return; }
+    ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev, qIndex) {
+    if (currentPhase !== 1) return;
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    var draggedEl = document.getElementById(data);
+    
+    var dropZone = ev.target.closest('.drop-zone');
+    if (dropZone) {
+        dropZone.appendChild(draggedEl);
+        saveDnDState(qIndex);
+    }
+}
+
+function saveDnDState(qIndex) {
+    const qData = questionsData[qIndex];
+    userAnswers[qIndex] = {};
+    
+    qData.targets.forEach(t => {
+        const zone = document.getElementById(t.id);
+        const items = Array.from(zone.querySelectorAll('.draggable-item')).map(el => el.id);
+        userAnswers[qIndex][t.id] = items;
+    });
+}
+
+/* =========================================
+   PHASE TRANSITIONS
+========================================= */
+function submitTest() {
+    clearInterval(timerInterval);
+    currentPhase = 2; // Review Phase
+    phaseBadge.textContent = "Phase 2: Review Score";
+    phaseBadge.style.backgroundColor = "#d97706"; // amber
+    timerDisplay.innerHTML = "Test Complete";
+    
+    evaluateAnswers();
+    showSlide(1); // Go to first question
+    
+    alert("Phase 1 Complete! Review your score, then click 'Next' to move to Phase 3 for explanations.");
+    
+    // Automatically transition to Phase 3 after they click through review once, or just unlock it now.
+    // We will unlock dictionary and explanations immediately but keep badge for a moment, let's just make it Phase 3 immediately to give them tools.
+    setTimeout(() => {
+        startPhase3();
+    }, 3000);
+}
+
+function evaluateAnswers() {
+    let score = 0;
+    let totalQuestions = questionsData.length - 2; // exclude intro and essay
+
+    questionsData.forEach((q, index) => {
+        if (q.type === 'mcq') {
+            const selected = userAnswers[index];
+            if (selected === q.correctAnswer) {
+                score++;
+                document.getElementById(`opt-${index}-${selected}`).classList.add('correct-ans');
+            } else {
+                if (selected !== undefined) {
+                    document.getElementById(`opt-${index}-${selected}`).classList.add('wrong-ans');
+                }
+                // Show correct answer
+                document.getElementById(`opt-${index}-${q.correctAnswer}`).classList.add('correct-ans');
+            }
+        } 
+        else if (q.type === 'dnd') {
+            let isCompletelyCorrect = true;
+            q.targets.forEach(t => {
+                const userItems = userAnswers[index][t.id] || [];
+                // Grade individual items
+                userItems.forEach(itemId => {
+                    const el = document.getElementById(itemId);
+                    if (t.correctIds.includes(itemId)) {
+                        el.classList.add('correct-drag');
+                    } else {
+                        el.classList.add('wrong-drag');
+                        isCompletelyCorrect = false;
+                    }
+                });
+                
+                // Check if missing items
+                if (userItems.length !== t.correctIds.length) isCompletelyCorrect = false;
+            });
+            
+            // Highlight missing items still in bank
+            const bank = document.getElementById(`bank-${index}`);
+            q.targets.forEach(t => {
+                t.correctIds.forEach(correctId => {
+                    if (bank.querySelector(`#${correctId}`)) {
+                        isCompletelyCorrect = false;
+                        bank.querySelector(`#${correctId}`).classList.add('wrong-drag');
+                    }
+                });
+            });
+
+            if(isCompletelyCorrect) score++;
+        }
+        
+        // Unhide explanation
+        if (q.type !== 'intro' && q.type !== 'essay') {
+            document.getElementById(`exp-${index}`).classList.add('visible');
+        }
+    });
+    
+    timerDisplay.innerHTML = `Score: ${score} / ${totalQuestions}`;
+    timerDisplay.style.color = "#047857";
+}
+
+function startPhase3() {
+    if(currentPhase >= 3) return;
+    currentPhase = 3;
+    phaseBadge.textContent = "Phase 3: Deep Study";
+    phaseBadge.style.backgroundColor = "#059669"; // emerald
+    document.body.classList.add('phase-3'); // Unlocks dictionary hover CSS
+}
+
+function startPhase4() {
+    currentPhase = 4;
+    phaseBadge.textContent = "Phase 4: Essay";
+    phaseBadge.style.backgroundColor = "#4f46e5"; // indigo
+    timerDisplay.style.display = 'none';
+    showSlide(questionsData.length - 1);
+}
+
+/* =========================================
+   TIMER
+========================================= */
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        let m = Math.floor(timeRemaining / 60);
+        let s = timeRemaining % 60;
+        timerDisplay.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+        
+        if (timeRemaining <= 0) {
+            submitTest();
+        }
+    }, 1000);
+}
+
+/* =========================================
+   DICTIONARY LOGIC
+========================================= */
+function setupDictionary() {
+    const keywords = document.querySelectorAll('.keyword');
+    
+    keywords.forEach(kw => {
+        kw.addEventListener('mouseenter', (e) => {
+            if (currentPhase < 3) return; // Only active in Phase 3
+            
+            const term = e.target.getAttribute('data-term');
+            const data = glossary[term];
+            
+            if (data) {
+                document.getElementById('dict-w').textContent = term;
+                document.getElementById('dict-d').textContent = data.def;
+                document.getElementById('dict-v').textContent = data.vn;
+                document.getElementById('dict-vd').textContent = data.vn_def;
+                
+                dictTooltip.style.display = 'block';
+                
+                // Position tooltip
+                const rect = e.target.getBoundingClientRect();
+                let top = rect.bottom + 10;
+                let left = rect.left;
+                
+                // Keep on screen
+                if (top + dictTooltip.offsetHeight > window.innerHeight) {
+                    top = rect.top - dictTooltip.offsetHeight - 10;
+                }
+                if (left + dictTooltip.offsetWidth > window.innerWidth) {
+                    left = window.innerWidth - dictTooltip.offsetWidth - 20;
+                }
+                
+                dictTooltip.style.top = top + 'px';
+                dictTooltip.style.left = left + 'px';
+            }
+        });
+        
+        kw.addEventListener('mouseleave', () => {
+            dictTooltip.style.display = 'none';
+        });
+    });
+}
+
+/* =========================================
+   SPLIT PANE RESIZER
+========================================= */
+function setupResizer() {
+    const resizer = document.getElementById('resizer');
+    const leftPane = document.getElementById('left-pane');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        document.body.style.cursor = 'ew-resize';
+        // Prevent text selection while dragging
+        document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        const containerWidth = document.body.clientWidth;
+        const newWidth = (e.clientX / containerWidth) * 100;
+        
+        // Limits
+        if (newWidth > 20 && newWidth < 80) {
+            leftPane.style.width = newWidth + '%';
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+            document.body.style.userSelect = 'auto';
+        }
+    });
+}
+
+// Start app
+window.onload = initApp;
+
+</script>
+</body>
+</html>
