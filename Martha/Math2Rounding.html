@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Perk Math - Rounding</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Notebook Edutech Standard) --- */
+        :root {
+            --bg-paper: #fdfbf7;       /* Warm paper white */
+            --bg-panel: #ffffff;       /* Pure white for cards */
+            --primary: #2563eb;        /* Blue Ink */
+            --accent: #16a34a;         /* Green Ink */
+            --warning: #ea580c;        /* Orange Highlighter */
+            --danger: #dc2626;         /* Red Pen */
+            --cold: #0284c7;           /* Light Blue */
+            --text-main: #334155;      /* Dark slate text */
+            --text-dim: #64748b;       /* Secondary text */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: var(--text-main); }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.2rem; line-height: 1.6; color: var(--text-main); }
+
+        strong { color: var(--text-main); font-weight: 800; }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: stretch; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: #ffffff;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: var(--primary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 2px 2px 0px rgba(37, 99, 235, 0.3);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            /* Notebook Paper Effect */
+            background-image:
+                linear-gradient(90deg, transparent 60px, rgba(220, 38, 38, 0.2) 60px, rgba(220, 38, 38, 0.2) 62px, transparent 62px),
+                linear-gradient(rgba(37, 99, 235, 0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 32px;
+            background-attachment: local;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 2rem 2rem 80px; 
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+        }
+
+        /* Signposting System (Pedagogical Framework) */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            background: #ffffff;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.06);
+            animation: slideIn 0.5s ease;
+            font-family: 'Kalam', cursive;
+            font-size: 1.3rem;
+        }
+        .pedagogical-note p, .pedagogical-note li, .pedagogical-note h3 {
+            font-family: 'Kalam', cursive;
+        }
+        .pedagogical-badge {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+        }
+        .btn-action.success { background: var(--accent); }
+        .btn-action.warning { background: var(--warning); }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: var(--text-main);
+            border: 2px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Number Line SVG Styles */
+        .nl-line { stroke: var(--text-main); stroke-width: 4; stroke-linecap: round; }
+        .nl-tick { stroke: var(--text-main); stroke-width: 3; }
+        .nl-text { font-family: 'Outfit', sans-serif; font-size: 18px; fill: var(--text-main); font-weight: bold; text-anchor: middle; }
+        .nl-subtick { stroke: rgba(0,0,0,0.2); stroke-width: 2; }
+        .nl-midpoint { stroke: var(--danger); stroke-width: 3; stroke-dasharray: 4,4; }
+        .nl-dot { fill: var(--warning); stroke: #ffffff; stroke-width: 3; transition: cx 0.5s ease-out; }
+        .nl-jump { stroke: var(--accent); stroke-width: 4; fill: none; stroke-dasharray: 5,5; opacity: 0; transition: opacity 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 1024px) {
+            .slide-wrapper { padding-left: 60px; }
+        }
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+            .slide-wrapper { padding-left: 2rem; }
+            .viewport { background-image: none; background-color: var(--bg-paper); } 
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill" style="background: var(--warning); box-shadow: 2px 2px 0px rgba(234, 88, 12, 0.3);"><i class="fa-solid fa-arrows-left-right"></i> Number Lines</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 1rem;">Visual Rounding</span>
+        </div>
+        <div style="font-family: 'Kalam', cursive; font-weight: 700; color: var(--text-main); text-align: right;">
+            <div style="font-size: 1.2rem;">7 April 2026</div>
+            <div style="color: var(--text-dim); font-size: 1rem;">Student: Martha</div>
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    // Reusable SVG Generator for Number Lines
+    // Creates a number line between 'start' and 'end'
+    const createNumberLineSVG = (start, end, idPrefix, drawSubticks = true) => {
+        let subticks = '';
+        if (drawSubticks) {
+            let increment = (end - start) / 10;
+            for(let i=1; i<10; i++) {
+                let x = 10 + (i * 8);
+                let height = (i === 5) ? 15 : 10;
+                let color = (i === 5) ? 'var(--danger)' : 'rgba(0,0,0,0.2)';
+                let tickValue = start + (i * increment);
+                let fontSize = (i === 5) ? "16px" : "13px";
+                let fontWeight = (i === 5) ? "bold" : "normal";
+                let textColor = (i === 5) ? "var(--danger)" : "var(--text-dim)";
+                
+                subticks += `<line x1="${x}%" y1="50" x2="${x}%" y2="${50 - height}" stroke="${color}" stroke-width="2"/>`;
+                subticks += `<text x="${x}%" y="75" font-family="Outfit" font-size="${fontSize}" font-weight="${fontWeight}" fill="${textColor}" text-anchor="middle">${tickValue}</text>`;
+            }
+        }
+
+        return `
+            <svg viewBox="0 0 800 120" style="width: 100%; height: auto; margin: 1rem 0;">
+                <!-- Main Line -->
+                <line x1="5%" y1="50" x2="95%" y2="50" class="nl-line" />
+                
+                <!-- Subticks (1 through 9) -->
+                ${subticks}
+
+                <!-- Left Endpoint -->
+                <line x1="10%" y1="35" x2="10%" y2="65" class="nl-tick" />
+                <text x="10%" y="90" class="nl-text">${start}</text>
+                
+                <!-- Right Endpoint -->
+                <line x1="90%" y1="35" x2="90%" y2="65" class="nl-tick" />
+                <text x="90%" y="90" class="nl-text">${end}</text>
+
+                <!-- Interactive Elements (Hidden by default) -->
+                <path id="${idPrefix}-jump" class="nl-jump" d="" />
+                <circle id="${idPrefix}-dot" cx="50%" cy="50" r="12" class="nl-dot hidden" />
+                <text id="${idPrefix}-label" x="50%" y="25" class="nl-text hidden" style="fill: var(--warning); font-size: 22px;"></text>
+            </svg>
+        `;
+    };
+
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: The Hook
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-people-group delay-1" style="font-size: 5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Rounding with Friends</h1>
+                    <h2 class="delay-1" style="color: var(--text-dim);">Finding the closest neighbor.</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 3rem auto; text-align: left; transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objective</div>
+                        <ul style="margin-left: 1rem; display: grid; gap: 1rem; list-style-type: none; padding: 0; margin-top: 0.5rem;">
+                            <li style="font-size: 1.6rem; display: flex; align-items: flex-start; gap: 15px; color: var(--text-main); font-weight: bold;">
+                                <span style="color: var(--accent);"><i class="fa-solid fa-route"></i></span>
+                                <span>I can round numbers to the nearest 10 or 100 by drawing a visual number line.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 2: The "Pivot!" Pause (Consistency is key)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Before We Start...</h2>
+                    
+                    <div class="pedagogical-note note-theory delay-1" style="max-width: 800px; margin: 0 auto 2rem auto; transform: rotate(1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> The Big Rule Today</div>
+                        <h3 style="color: var(--danger); margin-bottom: 1rem; font-family: 'Kalam'; font-size: 2.2rem;">PIVOT! And Pause.</h3>
+                        <p style="font-size: 1.4rem; margin-bottom: 1rem;">Rounding can sometimes feel like guessing, but it is actually a <strong>visual map</strong>.</p>
+                        <p style="font-size: 1.4rem;">Whenever you feel stuck, remember our rule: <strong>Pause, breathe, and draw the line.</strong> If you can see it, you can solve it.</p>
+                    </div>
+
+                    <div class="text-center delay-2" style="margin-top: 3rem;">
+                        <button id="btn-ready" class="btn-action success" style="font-size: 1.4rem; padding: 1rem 2rem;">
+                            <i class="fa-solid fa-thumbs-up"></i> I'm ready to draw!
+                        </button>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnReady = container.querySelector('#btn-ready');
+                const handler = () => changeSlide(1);
+                btnReady.addEventListener('click', handler);
+                return () => btnReady.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 3: What is Rounding? (Monica's Organizing)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Monica's Need for Order</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 900px; margin: 0 auto 2rem auto; transform: rotate(-0.5deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.8rem;">What is Rounding?</h3>
+                        <p style="font-size: 1.4rem;">Rounding is finding a number's <strong>"Closest Clean Neighbor."</strong></p>
+                        <p style="font-size: 1.2rem; color: var(--text-dim); margin-top: 0.5rem;">Monica hates messy numbers like 27. She prefers clean "Tens" ending in zero, like 20 or 30.</p>
+                    </div>
+
+                    <div class="glass-card delay-2" style="max-width: 900px; margin: 0 auto; text-align: center;">
+                        <h3 style="color: var(--text-main); margin-bottom: 1rem;">The Number Line Map</h3>
+                        
+                        ${createNumberLineSVG(20, 30, 'intro', true)}
+                        
+                        <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                            <p style="font-size: 1.2rem; font-family: 'Kalam'; color: var(--text-main);">
+                                The "Tens" are the strong anchors at the ends. Any messy number in the middle just wants to go to whichever anchor is closest!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 4: Interactive: Helping Joey Share Sandwiches
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Joey Doesn't Share Food...</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <!-- Left: Story & Controls -->
+                        <div class="glass-card">
+                            <h3 style="font-size: 1.6rem; margin-bottom: 1rem; color: var(--text-main); line-height: 1.4;">
+                                Joey has <span style="color: var(--warning);">23 Meatball Subs</span>.
+                            </h3>
+                            <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">Monica asks roughly how many he has, to the nearest ten. Let's map it!</p>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <button id="btn-plot-23" class="btn-action"><i class="fa-solid fa-location-dot"></i> Step 1: Plot 23 on the line</button>
+                                <button id="btn-round-23" class="btn-action success hidden"><i class="fa-solid fa-person-running"></i> Step 2: Go to closest ten!</button>
+                            </div>
+                        </div>
+
+                        <!-- Right: Interactive Map -->
+                        <div class="glass-card" style="border-top: 4px solid var(--warning); padding: 1.5rem;">
+                            <h3 style="color: var(--warning); text-align: center;">The "20s" Neighborhood</h3>
+                            
+                            ${createNumberLineSVG(20, 30, 'joey', true)}
+                            
+                            <div id="joey-answer" class="hidden" style="text-align: center; margin-top: 1rem;">
+                                <p style="font-size: 1.5rem; font-family: 'Kalam'; color: var(--accent); font-weight: bold;">
+                                    23 is closer to 20!
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnPlot = container.querySelector('#btn-plot-23');
+                const btnRound = container.querySelector('#btn-round-23');
+                const dot = container.querySelector('#joey-dot');
+                const label = container.querySelector('#joey-label');
+                const jump = container.querySelector('#joey-jump');
+                const ans = container.querySelector('#joey-answer');
+
+                // 23 is 3 ticks in. Total is 10 ticks. Range is 10% to 90% (80% spread).
+                // 1 tick = 8%. 3 ticks = 24%. 10% + 24% = 34%.
+                
+                const handlePlot = () => {
+                    dot.classList.remove('hidden');
+                    label.classList.remove('hidden');
+                    dot.setAttribute('cx', '34%'); // Move to 23
+                    label.setAttribute('x', '34%');
+                    label.textContent = "23";
+                    
+                    btnPlot.classList.add('hidden');
+                    btnRound.classList.remove('hidden');
+                };
+
+                const handleRound = () => {
+                    // Draw arc back to 20 (10%)
+                    jump.setAttribute('d', 'M 340 45 Q 220 10 100 45'); // Approximation for SVG viewBox 800 width. 34% of 800 = 272. Let's use exact numbers.
+                    // 10% = 80. 34% = 272.
+                    jump.setAttribute('d', 'M 272 45 Q 176 10 80 45');
+                    jump.style.opacity = '1';
+                    
+                    ans.classList.remove('hidden');
+                    ans.style.animation = "slideIn 0.4s ease";
+                    btnRound.classList.add('hidden');
+                };
+
+                btnPlot.addEventListener('click', handlePlot);
+                btnRound.addEventListener('click', handleRound);
+
+                return () => {
+                    btnPlot.removeEventListener('click', handlePlot);
+                    btnRound.removeEventListener('click', handleRound);
+                };
+            }
+        },
+
+        // SLIDE 5: The "We Were On A Break" Rule
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">The Middle Conundrum</h2>
+
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <!-- Left: Visual -->
+                        <div class="glass-card text-center" style="border-top: 4px solid var(--danger);">
+                            <h3 style="color: var(--danger);">What about 25?</h3>
+                            ${createNumberLineSVG(20, 30, 'ross', true)}
+                            <p style="margin-top: 1rem; font-size: 1.2rem; color: var(--text-dim);">It is exactly in the middle! It isn't closer to either side!</p>
+                        </div>
+
+                        <!-- Right: The Rule -->
+                        <div>
+                            <div class="pedagogical-note note-write" style="margin-top: 0; transform: rotate(1deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                                <h3 style="color: var(--primary); font-size: 1.8rem;">The Ross Rule (High 5!)</h3>
+                                <p style="font-size: 1.4rem; margin-bottom: 1rem;">When a number ends in exactly a <strong>5</strong>, we need a tie-breaker rule.</p>
+                                <ul style="margin-left: 1.5rem; font-size: 1.3rem; line-height: 1.6;">
+                                    <li><strong>1, 2, 3, 4:</strong> Slide down to the lower ten.</li>
+                                    <li><strong style="color: var(--accent);">5, 6, 7, 8, 9:</strong> Climb up to the higher ten!</li>
+                                </ul>
+                            </div>
+                            <div style="background: rgba(220, 38, 38, 0.05); padding: 1rem; border-radius: 8px; margin-top: 1.5rem; text-align: center; border: 2px dashed var(--danger);">
+                                <p style="font-size: 1.5rem; font-family: 'Kalam'; font-weight: bold; color: var(--danger);">
+                                    "Five or more, let it soar!" 🚀
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                // Instantly plot 25
+                const dot = container.querySelector('#ross-dot');
+                const label = container.querySelector('#ross-label');
+                dot.classList.remove('hidden');
+                label.classList.remove('hidden');
+                dot.setAttribute('cx', '50%'); // 25 is exactly 50%
+                label.setAttribute('x', '50%');
+                label.textContent = "25";
+                return () => {};
+            }
+        },
+
+        // SLIDE 6: Problem 1 (Rachel's Coffee Cups)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Problem 1: Rachel's Cups</h2>
+                    
+                    <div class="glass-card delay-1" style="max-width: 800px; margin: 0 auto; text-align: center;">
+                        <h3 style="font-size: 1.6rem; margin-bottom: 1rem; color: var(--text-main); line-height: 1.4;">
+                            Rachel counted <span style="color: var(--warning);">47 coffee cups</span>.<br>Round this to the nearest 10.
+                        </h3>
+                        
+                        <div class="pedagogical-note note-task" style="text-align: left; margin: 1.5rem 0; padding: 1rem;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> In your notebook:</div>
+                            <ol style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 1.2rem; line-height: 1.8;">
+                                <li>Draw a quick number line.</li>
+                                <li>Put the lower ten (40) on the left, and higher ten (50) on the right.</li>
+                                <li>Plot 47. Is it closer to 40 or 50?</li>
+                            </ol>
+                        </div>
+
+                        ${createNumberLineSVG(40, 50, 'p1', true)}
+
+                        <button id="btn-p1" class="btn-action"><i class="fa-solid fa-eye"></i> Show the visual answer</button>
+
+                        <div id="ans-p1" class="hidden" style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border: 2px dashed var(--accent); border-radius: 8px;">
+                            <h3 style="color: var(--accent); margin: 0; font-size: 2rem;">47 rounds up to 50!</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.2rem; color: var(--text-main); margin-top: 0.5rem;">Because it ends in a 7, we let it soar to the higher ten.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-p1');
+                const ans = container.querySelector('#ans-p1');
+                const dot = container.querySelector('#p1-dot');
+                const label = container.querySelector('#p1-label');
+                const jump = container.querySelector('#p1-jump');
+
+                const handler = () => {
+                    // Plot 47. 10% to 90% range. 7/10 of 80% = 56%. 10% + 56% = 66%.
+                    dot.classList.remove('hidden');
+                    label.classList.remove('hidden');
+                    dot.setAttribute('cx', '66%');
+                    label.setAttribute('x', '66%');
+                    label.textContent = "47";
+                    
+                    // Arc to 50 (90%)
+                    // 66% of 800 = 528. 90% of 800 = 720.
+                    jump.setAttribute('d', 'M 528 45 Q 624 10 720 45');
+                    jump.style.opacity = '1';
+
+                    ans.classList.remove('hidden');
+                    ans.style.animation = "slideIn 0.4s ease";
+                    btn.classList.add('hidden');
+                };
+                btn.addEventListener('click', handler);
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 7: Problem 2 (Chandler's Tips)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Problem 2: Chandler's Tips</h2>
+                    
+                    <div class="glass-card delay-1" style="max-width: 800px; margin: 0 auto; text-align: center;">
+                        <h3 style="font-size: 1.6rem; margin-bottom: 1rem; color: var(--text-main); line-height: 1.4;">
+                            Chandler made <span style="color: var(--warning);">$82</span> in tips.<br>Round this to the nearest 10.
+                        </h3>
+                        
+                        <div class="pedagogical-note note-task" style="text-align: left; margin: 1.5rem 0; padding: 1rem;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> In your notebook:</div>
+                            <ol style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 1.2rem; line-height: 1.8;">
+                                <li>Draw a quick number line. What are the two neighbors?</li>
+                                <li>Plot 82. Which anchor is pulling it closer?</li>
+                            </ol>
+                        </div>
+
+                        ${createNumberLineSVG(80, 90, 'p2', true)}
+
+                        <button id="btn-p2" class="btn-action"><i class="fa-solid fa-eye"></i> Show the visual answer</button>
+
+                        <div id="ans-p2" class="hidden" style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(37, 99, 235, 0.1); border: 2px dashed var(--primary); border-radius: 8px;">
+                            <h3 style="color: var(--primary); margin: 0; font-size: 2rem;">82 rounds down to 80!</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.2rem; color: var(--text-main); margin-top: 0.5rem;">Because it ends in a 2, it slides down to the lower ten.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-p2');
+                const ans = container.querySelector('#ans-p2');
+                const dot = container.querySelector('#p2-dot');
+                const label = container.querySelector('#p2-label');
+                const jump = container.querySelector('#p2-jump');
+
+                const handler = () => {
+                    // Plot 82. 2/10 of 80 = 16. 10+16 = 26%.
+                    dot.classList.remove('hidden');
+                    label.classList.remove('hidden');
+                    dot.setAttribute('cx', '26%');
+                    label.setAttribute('x', '26%');
+                    label.textContent = "82";
+                    
+                    // Arc to 80 (10%)
+                    // 26% of 800 = 208. 10% of 800 = 80.
+                    jump.setAttribute('d', 'M 208 45 Q 144 10 80 45');
+                    jump.style.opacity = '1';
+
+                    ans.classList.remove('hidden');
+                    ans.style.animation = "slideIn 0.4s ease";
+                    btn.classList.add('hidden');
+                };
+                btn.addEventListener('click', handler);
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 8: Moving to 100s!
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Moving Up: Nearest 100</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: start;">
+                        
+                        <!-- Left: Explanation -->
+                        <div>
+                            <div class="pedagogical-note note-write" style="margin-top: 0; transform: rotate(-1deg);">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                                <h3 style="color: var(--primary); font-size: 1.8rem;">Same Rules, Bigger Map!</h3>
+                                <p style="font-size: 1.4rem; margin-bottom: 1rem;">When rounding to the nearest 100, our anchor points are the hundreds! (100, 200, 300...).</p>
+                                <p style="font-size: 1.3rem;">Instead of looking at the single units to decide, we look at the <strong>Tens column</strong>.</p>
+                            </div>
+                            
+                            <div class="glass-card" style="margin-top: 1rem; border-top: 4px solid var(--warning);">
+                                <p style="font-size: 1.3rem;"><strong>Example: 284</strong></p>
+                                <p style="font-size: 1.2rem; color: var(--text-dim); margin-top: 0.5rem;">The anchors are 200 and 300. The middle is 250. Is 284 past the halfway mark?</p>
+                            </div>
+                        </div>
+
+                        <!-- Right: Visual -->
+                        <div class="glass-card text-center" style="padding: 1.5rem;">
+                            <h3 style="color: var(--warning); margin-bottom: 1rem;">The 200s Neighborhood</h3>
+                            
+                            ${createNumberLineSVG(200, 300, 'h1', true)}
+                            
+                            <button id="btn-h1" class="btn-action warning" style="margin-top: 1rem;"><i class="fa-solid fa-play"></i> Plot 284</button>
+                            
+                            <div id="ans-h1" class="hidden" style="margin-top: 1rem;">
+                                <p style="font-size: 1.4rem; font-family: 'Kalam'; color: var(--text-main);">
+                                    Yes! 80 is way past 50. It climbs up to <strong style="color: var(--accent);">300</strong>!
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-h1');
+                const ans = container.querySelector('#ans-h1');
+                const dot = container.querySelector('#h1-dot');
+                const label = container.querySelector('#h1-label');
+                const jump = container.querySelector('#h1-jump');
+
+                const handler = () => {
+                    // Plot 284. 84/100 of 80 = 67.2. 10 + 67.2 = 77.2%
+                    dot.classList.remove('hidden');
+                    label.classList.remove('hidden');
+                    dot.setAttribute('cx', '77%');
+                    label.setAttribute('x', '77%');
+                    label.textContent = "284";
+                    
+                    // Arc to 300 (90%)
+                    // 77% of 800 = 616. 90% of 800 = 720.
+                    jump.setAttribute('d', 'M 616 45 Q 668 10 720 45');
+                    jump.style.opacity = '1';
+
+                    ans.classList.remove('hidden');
+                    ans.style.animation = "slideIn 0.4s ease";
+                    btn.classList.add('hidden');
+                };
+                btn.addEventListener('click', handler);
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 9: Problem 3 (Phoebe's Guitar)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 2rem;">Problem 3: Phoebe's Guitar</h2>
+                    
+                    <div class="glass-card delay-1" style="max-width: 800px; margin: 0 auto; text-align: center;">
+                        <h3 style="font-size: 1.6rem; margin-bottom: 1rem; color: var(--text-main); line-height: 1.4;">
+                            Phoebe saw a new guitar for <span style="color: var(--warning);">$149</span>.<br>Round this to the nearest 100.
+                        </h3>
+                        
+                        <div class="pedagogical-note note-task" style="text-align: left; margin: 1.5rem 0; padding: 1rem;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> In your notebook:</div>
+                            <ol style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 1.2rem; line-height: 1.8;">
+                                <li>Draw your line. Anchors are 100 and 200.</li>
+                                <li>Where is the middle? (150).</li>
+                                <li>Is 149 before or after the middle?</li>
+                            </ol>
+                        </div>
+
+                        ${createNumberLineSVG(100, 200, 'p3', true)}
+
+                        <button id="btn-p3" class="btn-action"><i class="fa-solid fa-eye"></i> Show the visual answer</button>
+
+                        <div id="ans-p3" class="hidden" style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(220, 38, 38, 0.05); border: 2px dashed var(--danger); border-radius: 8px;">
+                            <h3 style="color: var(--danger); margin: 0; font-size: 2rem;">149 rounds down to 100!</h3>
+                            <p style="font-family: 'Kalam'; font-size: 1.2rem; color: var(--text-main); margin-top: 0.5rem;">It is so close to the middle, but 49 is still less than 50. It slides back down.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-p3');
+                const ans = container.querySelector('#ans-p3');
+                const dot = container.querySelector('#p3-dot');
+                const label = container.querySelector('#p3-label');
+                const jump = container.querySelector('#p3-jump');
+
+                const handler = () => {
+                    // Plot 149. 49/100 of 80 = 39.2. 10 + 39.2 = 49.2%
+                    dot.classList.remove('hidden');
+                    label.classList.remove('hidden');
+                    dot.setAttribute('cx', '49.2%');
+                    label.setAttribute('x', '49.2%');
+                    label.textContent = "149";
+                    
+                    // Arc to 100 (10%)
+                    // 49.2% of 800 = 393.6. 10% of 800 = 80.
+                    jump.setAttribute('d', 'M 393 45 Q 236 10 80 45');
+                    jump.style.opacity = '1';
+
+                    ans.classList.remove('hidden');
+                    ans.style.animation = "slideIn 0.4s ease";
+                    btn.classList.add('hidden');
+                };
+                btn.addEventListener('click', handler);
+                return () => btn.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 10: Independent Practice
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 1rem;">Your Turn: The Coffee Cup Challenge</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 1000px; margin: 0 auto 1.5rem auto; padding: 1rem; text-align: center;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-book-open"></i> Independent Practice</div>
+                        <p style="font-size: 1.3rem; margin-top: 0.5rem;">In your notebook, write down each number. Then write what it rounds to. <br><strong style="color: var(--warning);">If you get stuck, draw a quick number line for that problem!</strong></p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; align-items: start; gap: 2rem;">
+                        
+                        <!-- Left: Nearest 10 -->
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary); text-align: center; margin-bottom: 1rem;"><i class="fa-solid fa-arrows-left-right"></i> Round to nearest 10</h3>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 1.4rem; font-family: 'Outfit';">
+                                <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px;"><strong>1.</strong> &nbsp;&nbsp; 32 &nbsp; <i class="fa-solid fa-arrow-right" style="color: var(--text-dim);"></i></div>
+                                <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px;"><strong>2.</strong> &nbsp;&nbsp; 68 &nbsp; <i class="fa-solid fa-arrow-right" style="color: var(--text-dim);"></i></div>
+                                <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px;"><strong>3.</strong> &nbsp;&nbsp; 85 &nbsp; <i class="fa-solid fa-arrow-right" style="color: var(--text-dim);"></i></div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Nearest 100 -->
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--accent); text-align: center; margin-bottom: 1rem;"><i class="fa-solid fa-building"></i> Round to nearest 100</h3>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 1.4rem; font-family: 'Outfit';">
+                                <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px;"><strong>4.</strong> &nbsp;&nbsp; 215 &nbsp; <i class="fa-solid fa-arrow-right" style="color: var(--text-dim);"></i></div>
+                                <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px;"><strong>5.</strong> &nbsp;&nbsp; 670 &nbsp; <i class="fa-solid fa-arrow-right" style="color: var(--text-dim);"></i></div>
+                                <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px;"><strong>6.</strong> &nbsp;&nbsp; 350 &nbsp; <i class="fa-solid fa-arrow-right" style="color: var(--text-dim);"></i></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 11: Homework Word Problems
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center" style="margin-bottom: 1rem;">Homework: The Friends Word Problems</h2>
+                    
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 1000px; margin: 0 auto 1.5rem auto; padding: 1rem; text-align: center;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-house"></i> Homework Task</div>
+                        <p style="font-size: 1.3rem; margin-top: 0.5rem;">Read each story below. In your notebook, write down the number and what it rounds to. <br><strong style="color: var(--warning);">Draw a number line if you need it!</strong></p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; align-items: start; gap: 1.5rem;">
+                        
+                        <!-- Problem 1 -->
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-pizza-slice"></i> Problem 1</h3>
+                            <p style="font-size: 1.3rem; line-height: 1.5; color: var(--text-main);">
+                                Joey ate <strong>18 slices</strong> of pizza this week. Roughly how many slices is that, rounded to the <strong>nearest 10</strong>?
+                            </p>
+                        </div>
+
+                        <!-- Problem 2 -->
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--warning);">
+                            <h3 style="color: var(--warning); margin-bottom: 0.5rem;"><i class="fa-solid fa-box-archive"></i> Problem 2</h3>
+                            <p style="font-size: 1.3rem; line-height: 1.5; color: var(--text-main);">
+                                Monica is organizing her recipe cards. She has <strong>73 cards</strong>. Round this to the <strong>nearest 10</strong> to help her buy the right sized box.
+                            </p>
+                        </div>
+
+                        <!-- Problem 3 -->
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--accent); margin-bottom: 0.5rem;"><i class="fa-solid fa-bone"></i> Problem 3</h3>
+                            <p style="font-size: 1.3rem; line-height: 1.5; color: var(--text-main);">
+                                Ross is cataloging dinosaur bones. He counted <strong>450 bones</strong> in the new exhibit. Round this to the <strong>nearest 100</strong>.
+                            </p>
+                        </div>
+
+                        <!-- Problem 4 -->
+                        <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--danger);">
+                            <h3 style="color: var(--danger); margin-bottom: 0.5rem;"><i class="fa-solid fa-bag-shopping"></i> Problem 4</h3>
+                            <p style="font-size: 1.3rem; line-height: 1.5; color: var(--text-main);">
+                                Rachel's shopping bill was <strong>$325</strong>. Round her total to the <strong>nearest 100</strong> so she can figure out roughly how much money she spent.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        },
+
+        // SLIDE 12: Summary & Final Notebook Check
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-star delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h2 class="delay-1" style="font-size: 2.5rem;">Lesson Complete!</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 700px; margin: 2rem auto; text-align: left; transform: rotate(1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> What We Mastered</div>
+                        <p style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>The Map:</strong> We learned that rounding is just finding the closest anchor on a number line.</p>
+                        <p style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>The Rule:</strong> "Five or more, let it soar!" (1, 2, 3, 4 round down. 5, 6, 7, 8, 9 round up).</p>
+                        <p><i class="fa-solid fa-check" style="color: var(--accent);"></i> <strong>The Pause:</strong> When stuck, we draw it out visually to make it easy.</p>
+                    </div>
+
+                    <div class="pedagogical-note note-task delay-3" style="max-width: 700px; margin: 2rem auto; text-align: left; background: #fffcf2; border: 2px dashed var(--warning); transform: rotate(-1deg);">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> Final Notebook Check</div>
+                        <h3 style="color: var(--warning); margin-bottom: 0.5rem; font-size: 1.8rem;">Ready to Review</h3>
+                        <p style="font-size: 1.4rem; margin-bottom: 1rem;">
+                            Bring your notebook up to the desk. Mr. Bowen will check your independent practice problems and your 4 homework word problems!
+                        </p>
+                    </div>
+                </div>
+            `,
+            script: () => { return () => {}; }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        container.innerHTML = slide.template();
+        
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    render();
+</script>
+
+</body>
+</html>
