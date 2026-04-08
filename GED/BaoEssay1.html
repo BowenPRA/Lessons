@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GED RLA Essay Feedback Report</title>
     
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
@@ -321,6 +323,7 @@
 </head>
 <body>
 
+<!-- Teacher's Note Tooltip -->
 <div id="vocab-tooltip" class="vocab-tooltip"></div>
 
 <div class="app-shell">
@@ -331,10 +334,12 @@
 
     <main class="split-layout">
         
+        <!-- LEFT PANE: ORIGINAL ESSAYS -->
         <section class="pane-left" id="left-pane" aria-label="Original Essay Reference"></section>
 
         <div class="resizer" id="dragMe" title="Drag to resize"></div>
 
+        <!-- RIGHT PANE: EDITS & FEEDBACK SLIDES -->
         <aside class="pane-right" id="right-pane" aria-label="Feedback Workspace">
             <div id="slides-container"></div>
         </aside>
@@ -562,13 +567,13 @@
         
         lessonData.forEach((slide, index) => {
             const article = document.createElement('article');
-            article.className = \`slide \${index === 0 ? 'active' : ''}\`;
-            article.id = \`slide-\${index}\`;
+            article.className = `slide ${index === 0 ? 'active' : ''}`;
+            article.id = `slide-${index}`;
             
-            article.innerHTML = \`
-                <h2 class="passage-title">\${slide.rightTitle}</h2>
-                \${slide.rightContent}
-            \`;
+            article.innerHTML = `
+                <h2 class="passage-title">${slide.rightTitle}</h2>
+                ${slide.rightContent}
+            `;
             container.appendChild(article);
         });
 
@@ -577,9 +582,9 @@
 
     function navigate(direction) {
         if (currentSlideIndex + direction >= 0 && currentSlideIndex + direction < lessonData.length) {
-            document.getElementById(\`slide-\${currentSlideIndex}\`).classList.remove('active');
+            document.getElementById(`slide-${currentSlideIndex}`).classList.remove('active');
             currentSlideIndex += direction;
-            document.getElementById(\`slide-\${currentSlideIndex}\`).classList.add('active');
+            document.getElementById(`slide-${currentSlideIndex}`).classList.add('active');
             
             document.getElementById('right-pane').scrollTop = 0;
             updateUI();
@@ -589,10 +594,10 @@
     function updateUI() {
         const slide = lessonData[currentSlideIndex];
 
-        document.getElementById('left-pane').innerHTML = \`
-            <h1 class="section-title">\${slide.leftTitle}</h1>
-            \${slide.leftContent}
-        \`;
+        document.getElementById('left-pane').innerHTML = `
+            <h1 class="section-title">${slide.leftTitle}</h1>
+            ${slide.leftContent}
+        `;
         document.getElementById('left-pane').scrollTop = 0;
 
         document.getElementById('btn-prev').disabled = currentSlideIndex === 0;
@@ -609,13 +614,13 @@
         const data = editDictionary[term];
         if(!data) return;
 
-        tooltip.innerHTML = \`
+        tooltip.innerHTML = `
             <div style="font-weight: 700; font-size: 1.15rem; color: var(--primary-navy); margin-bottom: 0.75rem; border-bottom: 1px solid #fde047; padding-bottom: 0.5rem;">
-                <i class="fa-solid fa-user-pen" style="color: #eab308; margin-right: 5px;"></i> \${data.title}
+                <i class="fa-solid fa-user-pen" style="color: #eab308; margin-right: 5px;"></i> ${data.title}
             </div>
-            <div style="margin-bottom: 0.85rem; color: var(--text-main); line-height: 1.5; font-weight: 600;">\${data.en}</div>
-            <div style="font-style: italic; color: #713f12; border-top: 1px dashed #fde047; padding-top: 0.85rem; font-size: 0.95rem;">\${data.vn}</div>
-        \`;
+            <div style="margin-bottom: 0.85rem; color: var(--text-main); line-height: 1.5; font-weight: 600;">${data.en}</div>
+            <div style="font-style: italic; color: #713f12; border-top: 1px dashed #fde047; padding-top: 0.85rem; font-size: 0.95rem;">${data.vn}</div>
+        `;
         
         tooltip.style.display = 'block';
         
@@ -669,11 +674,11 @@
         if (isColumn) {
             const containerHeight = layout.offsetHeight;
             const newHeight = (clientY / containerHeight) * 100;
-            if(newHeight > 20 && newHeight < 80) leftPane.style.flex = \`0 0 \${newHeight}%\`;
+            if(newHeight > 20 && newHeight < 80) leftPane.style.flex = `0 0 ${newHeight}%`;
         } else {
             const containerWidth = layout.offsetWidth;
             const newWidth = (clientX / containerWidth) * 100;
-            if(newWidth > 20 && newWidth < 80) leftPane.style.flex = \`0 0 \${newWidth}%\`;
+            if(newWidth > 20 && newWidth < 80) leftPane.style.flex = `0 0 ${newWidth}%`;
         }
     }
 
