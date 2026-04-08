@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED RLA Essay Feedback Report</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEMING (Slate & Navy Palette)
+           ========================================================================== */
+        :root {
+            /* Colors */
+            --bg-page: #f1f5f9;         /* Slate 100 */
+            --bg-panel: #ffffff; 
+            --primary-navy: #0f172a;    /* Slate 900 */
+            --primary-blue: #1e3a8a;    /* Blue 900 */
+            --primary-blue-hover: #1e40af;
+            --selected-blue: #e0e7ff;
+            --border-color: #cbd5e1;    /* Slate 300 */
+            
+            /* Text Colors */
+            --text-main: #334155;       /* Slate 700 */
+            --text-muted: #64748b;      /* Slate 500 */
+            --color-correct: #065f46;   /* Emerald 800 */
+            --color-incorrect: #991b1b; /* Red 800 */
+            
+            /* Layout Dimensions */
+            --header-h: 60px;
+            --footer-h: 70px;
+            
+            /* Typography */
+            --font-ui: 'Open Sans', Arial, sans-serif;            
+            --font-passage: 'Noto Serif', 'Times New Roman', Times, serif; 
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-ui);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT & GRID
+           ========================================================================== */
+        .app-shell { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+        }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            background: var(--primary-navy);
+            border-bottom: 3px solid var(--primary-blue);
+            z-index: 50;
+        }
+
+        .split-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--header-h) - var(--footer-h));
+            overflow: hidden;
+        }
+
+        .pane-left, .pane-right {
+            background: var(--bg-panel);
+            padding: 2.5rem;
+            overflow-y: auto;
+        }
+
+        .pane-left { flex: 0 0 45%; border-right: 1px solid var(--border-color); background: #f8fafc; }
+        .pane-right { flex: 1; position: relative; }
+
+        .resizer {
+            flex: 0 0 8px;
+            background: #e2e8f0;
+            cursor: col-resize;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .resizer:hover, .resizer:active { background: #cbd5e1; }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.05);
+            z-index: 50;
+        }
+
+        /* ==========================================================================
+           4. TYPOGRAPHY, LESSON STYLING & TOOLTIPS
+           ========================================================================== */
+        .header-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-navy);
+            font-weight: 700;
+        }
+        .section-title.primary { color: var(--primary-blue); }
+
+        .passage-title { 
+            font-family: var(--font-ui); 
+            font-size: 1.4rem; 
+            font-weight: 700;
+            margin: 1.5rem 0 0.5rem 0;
+            color: var(--primary-navy);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .paragraph { 
+            font-family: var(--font-passage);
+            font-size: 1.15rem; 
+            line-height: 2.1; 
+            color: var(--text-main); 
+            margin-bottom: 1.5rem;
+            text-align: justify;
+        }
+
+        .info-box {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-main);
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Red Pen Visual Diff Styles */
+        .deleted-text {
+            text-decoration: line-through;
+            color: var(--color-incorrect);
+            background-color: #fee2e2; /* Red 100 */
+            opacity: 0.85;
+            padding: 0.1rem 0.2rem;
+            border-radius: 3px;
+        }
+
+        .added-text {
+            color: var(--color-correct);
+            background-color: #d1fae5; /* Emerald 100 */
+            font-weight: 600;
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            border-bottom: 2px dashed var(--color-correct);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .added-text:hover {
+            background-color: #a7f3d0;
+            transform: translateY(-1px);
+        }
+
+        /* Teacher's Note Tooltip */
+        .vocab-tooltip {
+            position: fixed;
+            display: none;
+            background: #fffdf0; /* Subtle yellow note feel */
+            border: 1px solid #fde047;
+            border-left: 5px solid #eab308;
+            border-radius: 6px;
+            padding: 1.25rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 1000;
+            width: 380px;
+            font-family: var(--font-ui);
+            font-size: 1rem;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        /* GED Tip Card */
+        .ged-tip-card {
+            background: linear-gradient(135deg, var(--primary-navy) 0%, var(--primary-blue) 100%);
+            color: white;
+            padding: 1.75rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .ged-tip-card::after {
+            content: '\f0eb'; /* Lightbulb icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: -10px;
+            bottom: -20px;
+            font-size: 8rem;
+            opacity: 0.05;
+            color: white;
+        }
+
+        .rule-box {
+            background: #ffffff;
+            border-left: 4px solid var(--primary-blue);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* GED Score Table */
+        .score-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .score-header {
+            background: var(--primary-navy);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .score-row:last-child { border-bottom: none; }
+        .score-trait { font-weight: 600; color: var(--primary-navy); }
+        .badge {
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        .badge.excellent { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .badge.good { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+        .badge.average { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+        /* Buttons */
+        .btn-nav {
+            background: var(--primary-navy);
+            border: 1px solid var(--primary-navy);
+            padding: 0.7rem 2.5rem;
+            border-radius: 6px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.05rem;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary-blue); transform: translateY(-1px); }
+        .btn-nav:disabled {
+            background: var(--border-color);
+            color: var(--text-muted);
+            border-color: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { background: var(--primary-blue-hover); }
+
+        .nav-progress { font-weight: 700; color: var(--primary-navy); font-size: 1.1rem; }
+
+        .slide { display: none; animation: fadeIn 0.3s ease-out forwards; }
+        .slide.active { display: block; }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(5px);} to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 900px) {
+            .split-layout { flex-direction: column; }
+            .pane-left, .pane-right { flex: 1 1 50%; }
+            .resizer { height: 8px; width: 100%; cursor: row-resize; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="vocab-tooltip" class="vocab-tooltip"></div>
+
+<div class="app-shell">
+    
+    <header class="header">
+        <div class="header-title"><i class="fa-solid fa-pen-nib" style="margin-right: 10px;"></i> GED RLA Master Feedback Report</div>
+    </header>
+
+    <main class="split-layout">
+        
+        <section class="pane-left" id="left-pane" aria-label="Original Essay Reference"></section>
+
+        <div class="resizer" id="dragMe" title="Drag to resize"></div>
+
+        <aside class="pane-right" id="right-pane" aria-label="Feedback Workspace">
+            <div id="slides-container"></div>
+        </aside>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" onclick="navigate(-1)"><i class="fa-solid fa-chevron-left"></i> Previous</button>
+        <div class="nav-progress" id="nav-progress" aria-live="polite">Introduction</div>
+        <button class="btn-nav" id="btn-next" onclick="navigate(1)">Next <i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+
+</div>
+
+<script>
+    /* =========================================================================
+       1. DATA SCHEMAS & CONTENT
+       ========================================================================= */
+
+    const originalEssay1 = `
+        <div class="paragraph">The two passages discuss the effectiveness of game-based learning in education and workplace training. Passage 1 argues that game-based learning is just a fad and is not very effective. Passage 2 argues that it is a useful and growing training strategy. While both passages present reasonable ideas, Passage 2 offers the stronger argument because it includes clearer evidence and stronger reasoning.</div>
+        <div class="paragraph">One reason Passage 2 is stronger is that it provides research evidence supporting its claims. The passage states that studies show game-based learning improves higher-order skills such as decision-making and problem-solving. This evidence shows that game-based learning can help develop important skills needed in the workplace. In contrast, Passage 1 only claims that students perform worse in written assignments but it does not provide enough strong research to fully support this concern.</div>
+        <div class="paragraph">Another reason Passage 2 is more convincing is that it explains how game-based learning motivates learners. The passage explains that video games include challenges, rewards, and feedback that keep people engaged. This is important because motivated learners are more likely to succeed and complete training. Passage 1, however, mainly argues that gamification is just a trend without giving clear statistics or detailed evidence.</div>
+        <div class="paragraph">In conclusion, passage 2 presents stronger arguments because it includes specific evidence and clear reasoning. Passage 1 discusses the issue but does not provide enough strong support. Therefore, passage 2 is more convincing.</div>
+    `;
+
+    const originalEssay2 = `
+        <div class="paragraph">The two passages discuss parenting classes should be mandatory for new parents. Passage 1 argues that parenting education should be required because it would help parents gain important knowledge and improve outcomes for children and society. Passage 2 argues that mandatory classes would violate personal freedom and that parents already have many voluntary ways to learn. While both passages present reasonable ideas, Passage 1 offers the stronger argument because it includes clearer evidence and stronger reasoning.</div>
+        <div class="paragraph">One reason Passage 1 is stronger is that it provides concrete research-based evidence. The passage states that the Centers for Disease Control's "Safe To Sleep" campaign reduced deaths from Sudden Infant Death Syndrome by fifty percent since 1994. This evidence shows that educating parents can have a direct and measurable impact on child safety. In contrast, Passage 2 only claims that parents have many resources available, such as books and online information, but it does not provide strong research to support the effectiveness of these alternatives.</div>
+        <div class="paragraph">Another reason Passage 1 is more convincing is that it explains the broader consequences of uninformed parenting. The passage explains that a study by the Department of Education in England found that children with inconsistent or harsh discipline are more likely to struggle with attention, literacy, and behavior. This is important because it shows that parenting knowledge affects not only individual families but society as a whole. Passage 2, however, mainly argues that mandatory classes would interfere with personal freedom without giving clear statistics or detailed evidence to show that this interference causes harm.</div>
+        <div class="paragraph">In conclusion, Passage 1 presents the stronger argument because it includes specific evidence and clear reasoning. Passage 2 discusses the issue but does not provide enough strong support. Therefore, Passage 1 is more convincing.</div>
+    `;
+
+    const originalEssay3 = `
+        <div class="paragraph">The two passages discussed are that professional athletes overpaid. Passage 1 argues that no overpaid for professional athletes by Jennifer Fontaine, sports promoter. Passage 2 argues that yes overpaid for professional athletes by Roberto Hinojosa, high school math teacher. While both passages present reasonable ideas, passage 1 offers the stronger argument because it includes clearer evidence and stronger reasoning.</div>
+        <div class="paragraph">One reason passage 1 is stronger is that it uses the research to support. The passage states that $435 billion-per-year is big, according to a 2012 market research estimate of the entire sports industry. This evidence shows that they are the reason a fan pays $1,000 for a playoff ticket. In contrast, passage 2 only claims that average salaries with highest professional athlete salaries is bad compared to the fact that it does not provide clear research to support this concern.</div>
+        <div class="paragraph">Another reason passage 1 is more convincing is that using research in 2010 and 2011, the average professional athlete's annual salary was $1.9 million for football, $3.34 million for baseball, and $5.15 million for basketball. The passage explains that while some superstars do earn $30 million, $40 million, or even $50 million, those players are the best of the best, imbued with rare talents. This is important because amateurs playing catch in the backyard should not delude themselves into thinking such abilities come easily. However, passage 2 mainly argues that while many Americans are struggling to make ends meet and find good jobs, it is frustrating to read about yet another athlete holding out for a few million dollars more without giving clear statistics and detailed evidence.</div>
+        <div class="paragraph">In conclusion, passage 1 presents the stronger argument because it includes specific evidence and stronger reasoning. Passage 2 discusses the issue but does not provide enough strong support. Therefore, passage 1 is more convincing</div>
+    `;
+
+    // Dictionary for Grammar Rule Tooltips
+    const editDictionary = {
+        "so-what": {
+            title: "Level 4 Strategy: The 'So What?' Analysis",
+            en: "To get a top score, don't just state the evidence. Add a sentence explaining WHY this evidence destroys the opponent's argument. This proves critical thinking.",
+            vn: "Chiến lược Điểm Tối đa: Phân tích 'So What?'. Đừng chỉ nêu bằng chứng. Hãy thêm một câu giải thích TẠI SAO bằng chứng này đánh bại lập luận của đối thủ. Điều này chứng minh tư duy phản biện của bạn."
+        },
+        "transition-contrast": {
+            title: "Level 4 Vocabulary: Academic Transitions",
+            en: "Upgrade simple transitions. Instead of 'In contrast' or 'But', use stronger academic transitions like 'Conversely' or 'Consequently' to connect opposing ideas.",
+            vn: "Từ vựng Điểm Tối đa: Từ nối Học thuật. Nâng cấp các từ nối đơn giản. Thay vì dùng 'In contrast' hoặc 'But', hãy dùng 'Conversely' (Ngược lại) hoặc 'Consequently' (Do đó)."
+        },
+        "transition-add": {
+            title: "Level 4 Vocabulary: Adding Information",
+            en: "Instead of 'Another reason', elevate your writing with academic words like 'Furthermore' or 'Moreover'.",
+            vn: "Thay vì dùng 'Another reason', hãy nâng tầm bài viết bằng các từ học thuật như 'Furthermore' hoặc 'Moreover' (Hơn nữa)."
+        },
+        "comma-but": {
+            title: "Rule: Comma before FANBOYS",
+            en: "When connecting two independent clauses (complete sentences) with words like 'but', 'and', or 'so', always use a comma before the conjunction.",
+            vn: "Khi nối hai mệnh đề độc lập (câu hoàn chỉnh) bằng các từ như 'but', 'and', 'so', luôn dùng dấu phẩy trước liên từ."
+        },
+        "proper-noun": {
+            title: "Rule: Capitalizing Proper Nouns",
+            en: "Specific, titled documents in the prompt (like 'Passage 1') are Proper Nouns and must be capitalized.",
+            vn: "Các tài liệu có tiêu đề cụ thể trong đề bài (như 'Passage 1') là Danh từ riêng và phải viết hoa chữ cái đầu."
+        },
+        "whether": {
+            title: "Rule: Expressing Alternatives",
+            en: "Use 'whether' instead of stating a fact when introducing a topic that has two competing sides.",
+            vn: "Dùng 'whether' (liệu rằng) khi giới thiệu một chủ đề có hai quan điểm trái chiều."
+        },
+        "missing-verb": {
+            title: "Rule: Mandatory 'Be' Verb",
+            en: "'Athletes overpaid' is missing a state-of-being verb. It requires 'are' to function properly -> 'Athletes are overpaid'.",
+            vn: "Lỗi thiếu động từ 'tobe'. 'Athletes overpaid' bị thiếu động từ chỉ trạng thái. Cần thêm 'are' -> 'Athletes are overpaid'."
+        },
+        "appositive": {
+            title: "Rule: Appositive Phrase Commas",
+            en: "When identifying a noun (like the author's name and title) right next to it, enclose that phrase in commas.",
+            vn: "Dấu phẩy cho cụm đồng vị. Khi xác định một danh từ (như tên và chức danh tác giả) ngay cạnh nó, hãy đặt cụm từ đó trong dấu phẩy."
+        },
+        "paraphrase": {
+            title: "Rule: Summarize, Don't Copy",
+            en: "Copying long strings of text from the prompt destroys your sentence structure. Summarize their idea concisely in your own words.",
+            vn: "Tóm tắt, đừng chép y nguyên. Chép các đoạn dài từ đề bài sẽ phá hỏng cấu trúc câu của bạn. Hãy tóm tắt ý của họ thật ngắn gọn bằng từ ngữ của bạn."
+        },
+        "wordiness": {
+            title: "Rule: Concision (Avoid Wordiness)",
+            en: "Cut out bloated phrasing like 'compared to the fact that'. Simple, direct verbs are always stronger.",
+            vn: "Quy tắc: Viết súc tích. Cắt bỏ các cụm từ dài dòng như 'compared to the fact that'. Các động từ đơn giản, trực tiếp luôn mang lại sức nặng hơn."
+        }
+    };
+
+    const lessonData = [
+        {
+            navTitle: "Introduction",
+            leftTitle: "Message from your Examiner",
+            leftContent: `
+                <div class="info-box" style="border-left: 4px solid var(--primary-navy);">
+                    <p style="margin-bottom: 1rem; font-size: 1.2rem;"><strong>Hello!</strong> As your ESL Writing Coach and Lead GED Examiner, I've reviewed your latest essays.</p>
+                    <p style="margin-bottom: 1rem;">You have a great foundation. You already know how to organize a 4-paragraph GED essay perfectly. Now, it is time to push your score from a Level 2/3 up to a <strong>Level 4</strong>.</p>
+                    <p>To do this, I have applied a <strong>Red Pen Grade</strong> to your essays. You will see exactly what I crossed out, what I added, and the specific strategies required to get the highest score.</p>
+                </div>
+            `,
+            rightTitle: "How to use this Feedback Tool",
+            rightContent: `
+                <div class="ged-tip-card">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-graduation-cap"></i> The Path to Level 4</h3>
+                    <p style="line-height: 1.6; font-size: 1.1rem; opacity: 0.9;">Follow the instructions below to review your edits and level up your English writing skills.</p>
+                </div>
+                <div class="paragraph" style="font-family: var(--font-ui);">
+                    <ul style="list-style-type: none; margin-left: 0; line-height: 2.5;">
+                        <li><i class="fa-solid fa-code-compare" style="color: var(--primary-blue); width: 25px;"></i> <strong>Red Pen Diff:</strong> Deleted text is shown in <del class="deleted-text">red strikethrough</del>. New text is shown in <span class="added-text">green highlight</span>.</li>
+                        <li><i class="fa-solid fa-hand-pointer" style="color: var(--primary-blue); width: 25px;"></i> <strong>Interactive Edits:</strong> Click any <span class="added-text">green text</span> to reveal the Teacher's Note explaining the rule.</li>
+                        <li><i class="fa-solid fa-chart-line" style="color: var(--primary-blue); width: 25px;"></i> <strong>"So What?" Strategy:</strong> Look for paragraphs where I added a final sentence. This is the secret to scoring a perfect Trait 1 score.</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 3.5rem;">
+                    <button class="btn-primary" onclick="navigate(1)" style="font-size: 1.2rem; padding: 1rem 3rem;">Start Review <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i></button>
+                </div>
+            `
+        },
+        // --- ESSAY 1 ---
+        {
+            navTitle: "Essay 1: Edits",
+            leftTitle: "Essay 1: Original Version",
+            leftContent: originalEssay1,
+            rightTitle: "Essay 1: Master Grade Version",
+            rightContent: `
+                <div class="info-box" style="padding: 1.5rem; background: #f8fafc;">
+                    <p style="color: var(--primary-navy); font-weight: 700; font-size: 1.05rem;"><i class="fa-solid fa-circle-info" style="color: var(--primary-blue);"></i> Notice the addition of the "So What?" sentences at the end of the body paragraphs.</p>
+                </div>
+                
+                <div class="paragraph">The two passages discuss the effectiveness of game-based learning in education and workplace training. Passage 1 argues that game-based learning is just a fad and is not very effective. Passage 2 argues that it is a useful and growing training strategy. While both passages present reasonable ideas, Passage 2 offers the stronger argument because it includes clearer evidence and stronger reasoning.</div>
+                
+                <div class="paragraph">One reason Passage 2 is stronger is that it provides research evidence supporting its claims. The passage states that studies show game-based learning improves higher-order skills such as decision-making and problem-solving. This evidence shows that game-based learning can help develop important skills needed in the workplace. <del class="deleted-text">In contrast</del> <span class="added-text" onclick="showTooltip(event, 'transition-contrast')">Conversely</span>, Passage 1 only claims that students perform worse in written assignments<span class="added-text" onclick="showTooltip(event, 'comma-but')">, but</span> it does not provide enough strong research to fully support this concern. <span class="added-text" onclick="showTooltip(event, 'so-what')">Consequently, Passage 1 fails to provide scientifically grounded support, weakening its overall validity.</span></div>
+                
+                <div class="paragraph"><del class="deleted-text">Another reason</del> <span class="added-text" onclick="showTooltip(event, 'transition-add')">Furthermore,</span> Passage 2 is more convincing <del class="deleted-text">is that</del> <span class="added-text" onclick="showTooltip(event, 'wordiness')">because</span> it explains how game-based learning motivates learners. The passage explains that video games include challenges, rewards, and feedback that keep people engaged. This is important because motivated learners are more likely to succeed and complete training. Passage 1, however, mainly argues that gamification is just a trend without giving clear statistics or detailed evidence. <span class="added-text" onclick="showTooltip(event, 'so-what')">As a result, Passage 2 builds a much more persuasive case by linking the training method directly to proven human psychology.</span></div>
+                
+                <div class="paragraph">In conclusion, <del class="deleted-text">passage 2</del> <span class="added-text" onclick="showTooltip(event, 'proper-noun')">Passage 2</span> presents stronger arguments because it includes specific evidence and clear reasoning. Passage 1 discusses the issue but does not provide enough strong support. Therefore, <del class="deleted-text">passage 2</del> <span class="added-text" onclick="showTooltip(event, 'proper-noun')">Passage 2</span> is more convincing.</div>
+            `
+        },
+        // --- ESSAY 2 ---
+        {
+            navTitle: "Essay 2: Edits",
+            leftTitle: "Essay 2: Original Version",
+            leftContent: originalEssay2,
+            rightTitle: "Essay 2: Master Grade Version",
+            rightContent: `
+                <div class="ged-tip-card">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-pen-nib"></i> Examiner's Note</h3>
+                    <p style="line-height: 1.6; font-size: 1.05rem; opacity: 0.9;">Your original was very good. See how replacing simple words with Level 4 Academic Vocabulary elevates the entire essay.</p>
+                </div>
+
+                <div class="paragraph">The two passages discuss <span class="added-text" onclick="showTooltip(event, 'whether')">whether</span> parenting classes should be mandatory for new parents. Passage 1 argues that parenting education should be required because it would help parents gain important knowledge and improve outcomes for children and society. Passage 2 argues that mandatory classes would violate personal freedom and that parents already have many voluntary ways to learn. While both passages present reasonable ideas, Passage 1 offers the stronger argument because it includes clearer evidence and stronger reasoning.</div>
+                
+                <div class="paragraph">One reason Passage 1 is stronger is that it provides concrete research-based evidence. The passage states that the Centers for Disease Control's "Safe To Sleep" campaign reduced deaths from Sudden Infant Death Syndrome by fifty percent since 1994. This evidence shows that educating parents can have a direct and measurable impact on child safety. In contrast, Passage 2 only claims that parents have many resources available, such as books and online information, but it does not provide strong research to support the effectiveness of these alternatives. <span class="added-text" onclick="showTooltip(event, 'so-what')">Because Passage 1 relies on verifiable CDC data rather than assumptions, it earns the reader's trust.</span></div>
+                
+                <div class="paragraph"><del class="deleted-text">Another reason</del> <span class="added-text" onclick="showTooltip(event, 'transition-add')">Moreover,</span> Passage 1 is more convincing <del class="deleted-text">is that</del> <span class="added-text" onclick="showTooltip(event, 'wordiness')">because</span> it explains the broader consequences of uninformed parenting. The passage explains that a study by the Department of Education in England found that children with inconsistent or harsh discipline are more likely to struggle with attention, literacy, and behavior. This is important because it shows that parenting knowledge affects not only individual families but society as a whole. Passage 2, however, mainly argues that mandatory classes would interfere with personal freedom without giving clear statistics or detailed evidence to show that this interference causes harm. <span class="added-text" onclick="showTooltip(event, 'so-what')">By mapping out societal impacts with institutional research, Passage 1 creates an undeniable logical foundation.</span></div>
+                
+                <div class="paragraph">In conclusion, Passage 1 presents the stronger argument because it includes specific evidence and clear reasoning. Passage 2 discusses the issue but does not provide enough strong support. Therefore, Passage 1 is more convincing.</div>
+            `
+        },
+        // --- ESSAY 3 ---
+        {
+            navTitle: "Essay 3: Syntax Fixes",
+            leftTitle: "Essay 3: Original Version",
+            leftContent: originalEssay3,
+            rightTitle: "Essay 3: Deep Syntax Edits",
+            rightContent: `
+                <div class="info-box" style="padding: 1.5rem; background: #fffbeb; border-left-color: #eab308;">
+                    <p style="color: #ca8a04; font-weight: 700; font-size: 1.05rem;"><i class="fa-solid fa-triangle-exclamation"></i> Heavy Edits Required. Your sentences here became disorganized because you tried to copy too much from the prompt.</p>
+                </div>
+
+                <div class="paragraph"><del class="deleted-text">The two passages discussed are that</del> <span class="added-text" onclick="showTooltip(event, 'whether')">The two passages discuss whether</span> professional athletes <span class="added-text" onclick="showTooltip(event, 'missing-verb')">are</span> overpaid. <del class="deleted-text">Passage 1 argues that no overpaid for professional athletes by Jennifer Fontaine, sports promoter.</del> <span class="added-text" onclick="showTooltip(event, 'appositive')">Passage 1, by sports promoter Jennifer Fontaine, argues that they are not.</span> <del class="deleted-text">Passage 2 argues that yes overpaid for professional athletes by Roberto Hinojosa, high school math teacher.</del> <span class="added-text" onclick="showTooltip(event, 'appositive')">Passage 2, by math teacher Roberto Hinojosa, argues that they are overpaid.</span> While both passages present reasonable ideas, <del class="deleted-text">passage 1</del> <span class="added-text" onclick="showTooltip(event, 'proper-noun')">Passage 1</span> offers the stronger argument because it includes clearer evidence and stronger reasoning.</div>
+                
+                <div class="paragraph">One reason <del class="deleted-text">passage 1</del> <span class="added-text" onclick="showTooltip(event, 'proper-noun')">Passage 1</span> is stronger is that it uses <del class="deleted-text">the</del> research to support <span class="added-text" onclick="showTooltip(event, 'wordiness')">its claims</span>. The passage states that <del class="deleted-text">$435 billion-per-year is big</del> <span class="added-text" onclick="showTooltip(event, 'paraphrase')">the sports industry is massive</span>, according to a 2012 market research estimate <del class="deleted-text">of the entire sports industry</del> <span class="added-text" onclick="showTooltip(event, 'paraphrase')">of $435 billion</span>. This evidence shows that <del class="deleted-text">they are</del> <span class="added-text" onclick="showTooltip(event, 'paraphrase')">athletes are</span> the reason a fan pays $1,000 for a playoff ticket. In contrast, <del class="deleted-text">passage 2</del> <span class="added-text" onclick="showTooltip(event, 'proper-noun')">Passage 2</span> only claims that <del class="deleted-text">average salaries with highest professional athlete salaries is bad compared to the fact that</del> <span class="added-text" onclick="showTooltip(event, 'wordiness')">high average salaries are unjustified, but</span> it does not provide clear research to support this concern.</div>
+                
+                <div class="paragraph"><del class="deleted-text">Another reason passage 1</del> <span class="added-text" onclick="showTooltip(event, 'transition-add')">Furthermore, Passage 1</span> is more convincing <del class="deleted-text">is that using research</del> <span class="added-text" onclick="showTooltip(event, 'paraphrase')">because it uses verifiable data;</span> in 2010 and 2011, the average professional athlete's annual salary was $1.9 million for football, $3.34 million for baseball, and $5.15 million for basketball. The passage explains that while some superstars do earn $30 million... those players are the best of the best, imbued with rare talents. However, <del class="deleted-text">passage 2</del> <span class="added-text" onclick="showTooltip(event, 'proper-noun')">Passage 2</span> mainly argues that <del class="deleted-text">while many Americans are struggling to make ends meet and find good jobs, it is frustrating to read about yet another athlete holding out for a few million dollars more</del> <span class="added-text" onclick="showTooltip(event, 'paraphrase')">it is frustrating for working-class Americans to see athletes demand millions</span>, without giving clear statistics and detailed evidence.</div>
+                
+                <div class="paragraph">In conclusion, <del class="deleted-text">passage 1</del> <span class="added-text" onclick="showTooltip(event, 'proper-noun')">Passage 1</span> presents the stronger argument because it includes specific evidence and stronger reasoning.</div>
+            `
+        },
+        {
+            navTitle: "Final Scores",
+            leftTitle: "Your Writing Growth",
+            leftContent: `
+                <div class="paragraph" style="margin-top: 1rem;">
+                    Your ability to structure the essay is already scoring well. Your biggest hurdle was getting tangled in long sentences when trying to quote the authors.
+                </div>
+                <div class="rule-box" style="border-left-color: var(--primary-navy);">
+                    <strong style="font-size: 1.2rem; color: var(--primary-navy);">Final Examiner Verdict</strong>
+                    <p style="margin-top: 0.5rem; font-family: var(--font-ui);">"The student demonstrates a clear mastery of the required 5-paragraph structure and correctly identifies which passage possesses the stronger argument. By simplifying complex sentence structures (paraphrasing instead of direct copying) and utilizing the 'So What?' analysis strategy, this essay successfully transitions into the highest scoring bracket."</p>
+                </div>
+            `,
+            rightTitle: "Projected GED Rubric Scores",
+            rightContent: `
+                <div class="score-card">
+                    <div class="score-header"><i class="fa-solid fa-chart-bar" style="margin-right: 8px;"></i> Updated Master Grade Projection</div>
+                    <div class="score-row">
+                        <span class="score-trait">Trait 1: Analysis of Arguments & Evidence</span>
+                        <span class="badge excellent">Level 4 (Top Tier)</span>
+                    </div>
+                    <div class="score-row">
+                        <span class="score-trait">Trait 2: Development & Organization</span>
+                        <span class="badge excellent">Level 4 (Top Tier)</span>
+                    </div>
+                    <div class="score-row">
+                        <span class="score-trait">Trait 3: Clarity & Command of English</span>
+                        <span class="badge excellent">Level 4 (Top Tier)</span>
+                    </div>
+                </div>
+                <p style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 1.5rem; padding: 0 2rem;">By applying the <strong style="color: var(--primary-navy);">Red Pen Edits</strong>—using academic transitions, paraphrasing instead of copying, and adding the "So What?" sentences—your essay now meets the standards of a perfect score.</p>
+            `
+        }
+    ];
+
+    /* =========================================================================
+       2. STATE & RENDER LOGIC
+       ========================================================================= */
+    let currentSlideIndex = 0;
+
+    function init() {
+        const container = document.getElementById('slides-container');
+        
+        lessonData.forEach((slide, index) => {
+            const article = document.createElement('article');
+            article.className = \`slide \${index === 0 ? 'active' : ''}\`;
+            article.id = \`slide-\${index}\`;
+            
+            article.innerHTML = \`
+                <h2 class="passage-title">\${slide.rightTitle}</h2>
+                \${slide.rightContent}
+            \`;
+            container.appendChild(article);
+        });
+
+        updateUI();
+    }
+
+    function navigate(direction) {
+        if (currentSlideIndex + direction >= 0 && currentSlideIndex + direction < lessonData.length) {
+            document.getElementById(\`slide-\${currentSlideIndex}\`).classList.remove('active');
+            currentSlideIndex += direction;
+            document.getElementById(\`slide-\${currentSlideIndex}\`).classList.add('active');
+            
+            document.getElementById('right-pane').scrollTop = 0;
+            updateUI();
+        }
+    }
+
+    function updateUI() {
+        const slide = lessonData[currentSlideIndex];
+
+        document.getElementById('left-pane').innerHTML = \`
+            <h1 class="section-title">\${slide.leftTitle}</h1>
+            \${slide.leftContent}
+        \`;
+        document.getElementById('left-pane').scrollTop = 0;
+
+        document.getElementById('btn-prev').disabled = currentSlideIndex === 0;
+        document.getElementById('btn-next').disabled = currentSlideIndex === lessonData.length - 1;
+        document.getElementById('nav-progress').innerText = slide.navTitle;
+    }
+
+    /* =========================================================================
+       3. VOCABULARY TOOLTIP LOGIC
+       ========================================================================= */
+    function showTooltip(event, term) {
+        event.stopPropagation();
+        const tooltip = document.getElementById('vocab-tooltip');
+        const data = editDictionary[term];
+        if(!data) return;
+
+        tooltip.innerHTML = \`
+            <div style="font-weight: 700; font-size: 1.15rem; color: var(--primary-navy); margin-bottom: 0.75rem; border-bottom: 1px solid #fde047; padding-bottom: 0.5rem;">
+                <i class="fa-solid fa-user-pen" style="color: #eab308; margin-right: 5px;"></i> \${data.title}
+            </div>
+            <div style="margin-bottom: 0.85rem; color: var(--text-main); line-height: 1.5; font-weight: 600;">\${data.en}</div>
+            <div style="font-style: italic; color: #713f12; border-top: 1px dashed #fde047; padding-top: 0.85rem; font-size: 0.95rem;">\${data.vn}</div>
+        \`;
+        
+        tooltip.style.display = 'block';
+        
+        const rect = event.target.getBoundingClientRect();
+        tooltip.style.top = (rect.bottom + 12) + 'px';
+        
+        let tipLeft = rect.left - 20;
+        if (tipLeft + 380 > window.innerWidth) {
+            tipLeft = window.innerWidth - 400;
+        }
+        tooltip.style.left = Math.max(10, tipLeft) + 'px';
+    }
+
+    document.addEventListener('click', () => {
+        const tooltip = document.getElementById('vocab-tooltip');
+        if(tooltip) tooltip.style.display = 'none';
+    });
+
+    document.getElementById('right-pane').addEventListener('scroll', () => {
+        const tooltip = document.getElementById('vocab-tooltip');
+        if(tooltip) tooltip.style.display = 'none';
+    });
+
+    /* =========================================================================
+       4. UTILITIES (Responsive Split Pane Resizer)
+       ========================================================================= */
+    const resizer = document.getElementById('dragMe');
+    const leftPane = document.getElementById('left-pane');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', startResize);
+    resizer.addEventListener('touchstart', startResize, {passive: false});
+
+    function startResize(e) {
+        isResizing = true;
+        document.body.style.cursor = 'col-resize';
+    }
+
+    document.addEventListener('mousemove', doResize);
+    document.addEventListener('touchmove', doResize, {passive: false});
+
+    function doResize(e) {
+        if (!isResizing) return;
+        
+        const layout = document.querySelector('.split-layout');
+        const isColumn = window.getComputedStyle(layout).flexDirection === 'column';
+        
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        if (isColumn) {
+            const containerHeight = layout.offsetHeight;
+            const newHeight = (clientY / containerHeight) * 100;
+            if(newHeight > 20 && newHeight < 80) leftPane.style.flex = \`0 0 \${newHeight}%\`;
+        } else {
+            const containerWidth = layout.offsetWidth;
+            const newWidth = (clientX / containerWidth) * 100;
+            if(newWidth > 20 && newWidth < 80) leftPane.style.flex = \`0 0 \${newWidth}%\`;
+        }
+    }
+
+    function stopResize() {
+        if(isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+        }
+    }
+
+    document.addEventListener('mouseup', stopResize);
+    document.addEventListener('touchend', stopResize);
+
+    window.onload = init;
+</script>
+</body>
+</html>
