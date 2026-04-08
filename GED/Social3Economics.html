@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED Social Studies: The US Economy & Government</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEMING
+           ========================================================================== */
+        :root {
+            /* Colors */
+            --bg-page: #f4f5f7;        
+            --bg-panel: #ffffff; 
+            --primary-blue: #005A9C;    
+            --primary-blue-hover: #00447a;
+            --selected-blue: #e6f0fa;
+            --border-color: #cccccc;
+            
+            /* Text Colors */
+            --text-main: #333333;        
+            --text-muted: #666666;
+            --color-correct: #166534;
+            --color-incorrect: #991b1b;
+            
+            /* Layout Dimensions */
+            --header-h: 60px;
+            --footer-h: 70px;
+            
+            /* Typography */
+            --font-ui: 'Open Sans', Arial, sans-serif;            
+            --font-passage: 'Noto Serif', 'Times New Roman', Times, serif; 
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-ui);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT & GRID
+           ========================================================================== */
+        .app-shell { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+        }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            background: var(--primary-blue);
+            z-index: 50;
+        }
+
+        .split-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--header-h) - var(--footer-h));
+            overflow: hidden;
+        }
+
+        .pane-left, .pane-right {
+            background: var(--bg-panel);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .pane-left { flex: 0 0 50%; }
+        .pane-right { flex: 1; position: relative; }
+
+        .resizer {
+            flex: 0 0 8px;
+            background: #e0e0e0;
+            cursor: col-resize;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .resizer:hover, .resizer:active { background: #c0c0c0; }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            z-index: 50;
+        }
+
+        /* ==========================================================================
+           4. TYPOGRAPHY, LESSON STYLING & TOOLTIPS
+           ========================================================================== */
+        .header-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+        .section-title.primary { color: var(--primary-blue); }
+        .section-title.center { text-align: center; }
+
+        .passage-title { 
+            font-family: var(--font-ui); 
+            font-size: 1.4rem; 
+            font-weight: 700;
+            margin: 1.5rem 0 0.5rem 0;
+            color: var(--text-main);
+        }
+
+        .passage-meta { 
+            color: var(--text-muted); 
+            font-style: italic; 
+            font-size: 0.95rem; 
+            margin-bottom: 1.5rem; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 1rem;
+        }
+        
+        .paragraph { 
+            font-family: var(--font-passage);
+            font-size: 1.15rem; 
+            line-height: 1.8; 
+            color: var(--text-main); 
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--text-main);
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        table.grammar-chart {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: #ffffff;
+            font-size: 1.05rem;
+        }
+        table.grammar-chart th, table.grammar-chart td {
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            vertical-align: top;
+        }
+        table.grammar-chart th {
+            background: var(--selected-blue);
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+        table.grammar-chart td { font-family: var(--font-passage); }
+
+        .rule-box {
+            background: #ffffff;
+            border-left: 4px solid var(--primary-blue);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Vocabulary Tooltips */
+        .vocab-word {
+            font-weight: 700;
+            color: var(--primary-blue);
+            cursor: pointer;
+            border-bottom: 2px dotted var(--primary-blue);
+            transition: background 0.2s, color 0.2s;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        .vocab-word:hover {
+            background: var(--selected-blue);
+            color: var(--primary-blue-hover);
+        }
+        
+        .vocab-tooltip {
+            position: fixed;
+            display: none;
+            background: white;
+            border: 1px solid var(--primary-blue);
+            border-radius: 6px;
+            padding: 1rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            z-index: 1000;
+            width: 320px;
+            font-family: var(--font-ui);
+            font-size: 0.95rem;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           5. COMPONENTS (Buttons, Flags)
+           ========================================================================== */
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-primary:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            color: #666;
+        }
+
+        .btn-nav {
+            background: var(--primary-blue);
+            border: 1px solid var(--primary-blue-hover);
+            padding: 0.6rem 2rem;
+            border-radius: 4px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-nav:disabled {
+            background: #cccccc;
+            color: #666666;
+            border-color: #bbbbbb;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .flag-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e65100;
+            cursor: pointer;
+            user-select: none;
+        }
+        .flag-container input { cursor: pointer; transform: scale(1.2); }
+
+        .nav-progress { font-weight: 600; color: var(--text-main); font-size: 1.05rem; }
+
+        /* ==========================================================================
+           6. QUESTION UI (Inline Dropdowns & Drag-and-Drop)
+           ========================================================================== */
+        .question-slide { display: none; }
+        .question-slide.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .q-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .q-title {
+            font-family: var(--font-ui);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        /* Inline Dropdown Styling */
+        .inline-select {
+            font-family: var(--font-ui);
+            font-size: 1.1rem;
+            padding: 0.2rem 0.5rem;
+            border: 2px solid var(--primary-blue);
+            border-radius: 4px;
+            background: #ffffff;
+            color: var(--primary-blue);
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            margin: 0 0.25rem;
+            transition: all 0.2s;
+            max-width: 100%;
+        }
+        .inline-select:focus { box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.2); }
+        .inline-select:disabled { cursor: not-allowed; opacity: 1; }
+        .inline-select.correct-ans { background: #f0fdf4; border-color: var(--color-correct); color: var(--color-correct); }
+        .inline-select.wrong-ans { background: #fef2f2; border-color: var(--color-incorrect); color: var(--color-incorrect); }
+
+        /* Drag and Drop Container */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        /* Floating/Sticky Word Bank */
+        .options-bank {
+            position: sticky;
+            top: -2rem;
+            margin: -2rem -2rem 0 -2rem; 
+            padding: 1.5rem 2rem;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 2px solid var(--primary-blue);
+            box-shadow: 0 6px 10px -4px rgba(0,0,0,0.15);
+            min-height: 90px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .draggable-item {
+            background: #ffffff;
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: grab;
+            font-size: 0.95rem;
+            font-family: var(--font-ui);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            user-select: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .draggable-item:active { cursor: grabbing; }
+        .draggable-item.locked { cursor: not-allowed; opacity: 0.8; }
+        
+        /* Inline Dropzones for Passage */
+        .inline-dz {
+            display: inline-flex;
+            min-width: 100px;
+            height: 34px;
+            vertical-align: middle;
+            margin: 0 0.25rem;
+            padding: 0 0.5rem;
+            font-size: 0.95rem;
+            background: #f4f5f7;
+            border: 2px dashed #cccccc;
+            color: var(--text-muted);
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .inline-dz.dragover { background: var(--selected-blue); border-color: var(--primary-blue); }
+        .inline-dz.correct-ans { background: #f0fdf4; border-color: var(--color-correct); }
+        .inline-dz.wrong-ans { background: #fef2f2; border-color: var(--color-incorrect); }
+        
+        .inline-dz .draggable-item {
+            padding: 0; margin: 0; border: none; box-shadow: none; background: transparent;
+            color: var(--primary-blue); font-weight: 700; font-size: 1.1rem; cursor: grab;
+        }
+        .inline-dz.correct-ans .draggable-item { color: var(--color-correct); }
+        .inline-dz.wrong-ans .draggable-item { color: var(--color-incorrect); }
+        .inline-dz .draggable-item i { display: none; }
+        .inline-dz .draggable-item.locked { cursor: not-allowed; }
+
+        .passage-text {
+            font-family: var(--font-passage);
+            font-size: 1.15rem;
+            line-height: 2.2;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        /* ==========================================================================
+           7. PHASE-SPECIFIC STYLES & OVERRIDES
+           ========================================================================== */
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+        }
+        .summary-item:last-child { border-bottom: none; }
+
+        /* Review Screen / Final Summary */
+        .review-header {
+            text-align: center;
+            padding: 2rem;
+            background: var(--selected-blue);
+            border: 1px solid var(--primary-blue);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .review-score {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-top: 0.5rem;
+        }
+        .review-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: #ffffff;
+        }
+        .review-q-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .review-choice {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            background: #f9f9f9;
+            font-size: 1.1rem;
+        }
+        .review-choice.correct-ans { background-color: #f0fdf4; border-color: #bbf7d0; color: var(--color-correct); }
+        .review-choice.wrong-ans { background-color: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); }
+
+        .explanation-box {
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            line-height: 1.6;
+            border: 1px solid;
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: #334155;
+        }
+        .explanation-box.correct { background-color: #f0fdf4; border-color: #bbf7d0; color: var(--color-correct); }
+        .explanation-box.incorrect { background-color: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); }
+        .exp-en { margin-bottom: 0.8rem; }
+        .exp-vn { font-style: italic; font-family: var(--font-passage); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.8rem; }
+
+        /* ==========================================================================
+           8. UTILITIES & RESPONSIVE DESIGN
+           ========================================================================== */
+        @keyframes fadeIn { from {opacity: 0;} to { opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .split-layout { flex-direction: column; }
+            .pane-left, .pane-right { flex: 1 1 50%; }
+            .resizer { height: 8px; width: 100%; cursor: row-resize; }
+        }
+    </style>
+</head>
+<body class="phase-0">
+
+<!-- Vocabulary Tooltip Component -->
+<div id="vocab-tooltip" class="vocab-tooltip"></div>
+
+<div class="app-shell">
+    
+    <header class="header">
+        <div class="header-title">GED® Social Studies - The US Economy & Government</div>
+    </header>
+
+    <main class="split-layout">
+        
+        <!-- LEFT PANE: LESSON CONTENT -->
+        <section class="pane-left" id="left-pane" aria-label="Lesson Content">
+            
+            <article id="intro-overview" style="display: block;">
+                <h1 class="section-title primary">Activity Overview</h1>
+                <div class="info-box">
+                    <p style="margin-bottom: 1rem;">This interactive lesson focuses on the U.S. Economy, the Government's role, and Labor/Consumer Issues—topics highly tested on the GED Social Studies exam.</p>
+                    <p>Read the study guide in the left pane carefully before proceeding to the practice questions. You can click on the highlighted terms for definitions.</p>
+                </div>
+            </article>
+
+            <article id="reading-passage" style="display: none;">
+
+                <h1 class="section-title">The Economy and the U.S. Government</h1>
+                <div class="passage-meta">For Vietnamese ESL Students</div>
+
+                <div class="paragraph">
+                    <strong>The Role of Government</strong><br>
+                    Although the United States has primarily a free market economy, the U.S. government has important economic functions. The executive and legislative branches set the federal budget. The budget may have a <span class="vocab-word" onclick="showTooltip(event, 'surplus')">surplus</span> (revenues exceed expenditures) or a <span class="vocab-word" onclick="showTooltip(event, 'deficit')">deficit</span> (expenditures exceed revenues, requiring the government to borrow money). 
+                </div>
+
+                <div class="paragraph">
+                    The government promotes the general welfare by providing <span class="vocab-word" onclick="showTooltip(event, 'infrastructure')">infrastructure</span> (like the Interstate Highway System) that indirectly supports economic activity. It also redistributes wealth through taxes and social benefits.
+                </div>
+
+                <div class="rule-box">
+                    <strong style="color: var(--primary-blue); font-size: 1.2rem;">Protecting Workers and Consumers</strong>
+                    <ul style="list-style-type: disc; margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li style="margin-bottom: 0.5rem;"><span class="vocab-word" onclick="showTooltip(event, 'OSHA')">OSHA</span> (Occupational Safety and Health Administration): Protects workers from hazardous conditions on the job.</li>
+                        <li style="margin-bottom: 0.5rem;"><span class="vocab-word" onclick="showTooltip(event, 'FDA')">FDA</span> (Food and Drug Administration): Ensures food is safe, and drugs/cosmetics are effective and labeled properly.</li>
+                        <li><span class="vocab-word" onclick="showTooltip(event, 'FTC')">FTC</span> (Federal Trade Commission): Ensures that product claims in advertising are true and complete.</li>
+                    </ul>
+                </div>
+
+                <h2 class="passage-title" style="margin-top: 2rem;">Fiscal vs. Monetary Policy</h2>
+                <div class="paragraph" style="font-size: 1rem;">Both policies affect the amount of money circulating in the economy, but they are controlled by different entities.</div>
+
+                <table class="grammar-chart">
+                    <thead>
+                        <tr>
+                            <th>Policy Type (Loại chính sách)</th>
+                            <th>Who Controls It? (Cơ quan quản lý)</th>
+                            <th>How It Works (Cách hoạt động)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Fiscal Policy</strong><br>(Chính sách Tài khóa)</td>
+                            <td>The Government<br>(Executive & Legislative branches)</td>
+                            <td>Increases or decreases <strong>taxes and spending</strong> to influence the economy.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Monetary Policy</strong><br>(Chính sách Tiền tệ)</td>
+                            <td>The Federal Reserve "The Fed"<br>(The central banking system)</td>
+                            <td>Increases or decreases the <strong>supply of money</strong> and interest rates to stimulate or slow the economy.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 class="passage-title" style="margin-top: 2rem;">Labor and Consumer Issues</h2>
+                <div class="paragraph">
+                    <strong>Workers:</strong> As workers, we earn wages and benefits. A worker's <span class="vocab-word" onclick="showTooltip(event, 'total compensation')">total compensation</span> is the combined value of wages and benefits (like health insurance or vacation pay). In our modern economy, rapid changes often cause job losses, requiring workers to continually learn new skills. In some industries, labor unions use <span class="vocab-word" onclick="showTooltip(event, 'collective bargaining')">collective bargaining</span> to negotiate contracts for all members.
+                </div>
+
+                <div class="paragraph">
+                    <strong>Consumers:</strong> The free market offers amazing choices, but consumers must protect themselves. Although government agencies (like the FDA and FTC) help, consumers should remember the maxim: <em>"Let the buyer beware."</em> This means consumers must read labels carefully and understand credit terms to spend their money wisely.
+                </div>
+
+            </article>
+        </section>
+
+        <div class="resizer" id="dragMe" title="Drag to resize"></div>
+
+        <!-- RIGHT PANE: QUESTIONS & MODES -->
+        <aside class="pane-right" id="right-pane" aria-label="Interactive Workspace">
+            <div id="questions-container">
+                <!-- Question Slides injected dynamically here via JS -->
+            </div>
+        </aside>
+    </main>
+
+    <footer class="footer" id="main-footer">
+        <button class="btn-nav" id="btn-prev" onclick="navigate(-1)">Previous</button>
+        <div class="nav-progress" id="nav-progress" aria-live="polite">Start Practice</div>
+        <button class="btn-nav" id="btn-next" onclick="navigate(1)">Next</button>
+    </footer>
+
+</div>
+
+<script>
+    /* =========================================================================
+       1. DATA SCHEMAS & CONFIGURATION
+       ========================================================================= */
+
+    const questionsData = [
+        {
+            id: 'intro',
+            type: 'info',
+            title: "Phase 1: Practice Mode",
+            content: `
+                <div class="info-box" style="padding: 2.5rem; background: #f9f9f9;">
+                    <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><strong>Welcome to the Economy Practice.</strong></p>
+                    <p style="margin-bottom: 1.5rem;">This untimed practice contains three types of interactive questions designed for the GED Social Studies test:</p>
+                    
+                    <ul style="margin-left: 2rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.5rem;"><strong>Questions 1-12: Drop-Down Menus.</strong> Test your knowledge of core economic concepts, government agencies, and fact vs. opinion.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Question 13: Drag-and-Drop.</strong> Complete the passage regarding the Federal Reserve's monetary policy tools.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Question 14: Summary Passage.</strong> Review Labor and Consumer issues using inline dropdown menus.</li>
+                    </ul>
+                    
+                    <p style="margin-bottom: 1.5rem;">Your final score will be calculated at the end of the practice, combining your results from all sections.</p>
+                    
+                    <p style="font-weight: 600; color: var(--primary-blue); margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        Click "Begin Practice" to start.
+                    </p>
+                    <button class="btn-primary" onclick="startPhase1()" style="font-size: 1.1rem; padding: 1rem 2rem; margin-top: 1rem;">Begin Practice</button>
+                </div>
+            `
+        },
+        // Drop-Downs (1-12)
+        {
+            id: 'q1', type: 'dropdown',
+            title: "1. Understanding the Budget",
+            sentence: "When the U.S. government registers revenues that exceed its expenditures, it has a budget [DROP].",
+            options: ["deficit", "surplus", "recession"],
+            correct: "surplus",
+            expEn: "A \"surplus\" occurs when the government takes in more money (revenues) than it spends (expenditures).",
+            expVn: "Thặng dư (surplus) xảy ra khi chính phủ thu vào nhiều tiền (doanh thu) hơn là chi ra (chi tiêu)."
+        },
+        {
+            id: 'q2', type: 'dropdown',
+            title: "2. Understanding the Budget",
+            sentence: "When expenditures are greater than revenues, the government runs a revenue [DROP], requiring it to borrow money.",
+            options: ["deficit", "surplus", "dividend"],
+            correct: "deficit",
+            expEn: "A \"deficit\" means the government is spending more than it makes, so it must borrow money to cover expenses.",
+            expVn: "Thâm hụt (deficit) có nghĩa là chính phủ đang chi tiêu nhiều hơn mức thu được, do đó phải vay tiền để trang trải chi phí."
+        },
+        {
+            id: 'q3', type: 'dropdown',
+            title: "3. Government Agencies",
+            sentence: "The [DROP] is responsible for making sure that food products are safe and drugs are labeled properly.",
+            options: ["FTC", "OSHA", "FDA"],
+            correct: "FDA",
+            expEn: "The Food and Drug Administration (FDA) protects consumers from unsafe food and medicine.",
+            expVn: "Cục Quản lý Thực phẩm và Dược phẩm (FDA) bảo vệ người tiêu dùng khỏi thực phẩm và thuốc không an toàn."
+        },
+        {
+            id: 'q4', type: 'dropdown',
+            title: "4. Government Agencies",
+            sentence: "If a company makes false claims in a television commercial, the [DROP] can investigate the advertising.",
+            options: ["FTC", "FDA", "OSHA"],
+            correct: "FTC",
+            expEn: "The Federal Trade Commission (FTC) ensures product claims in advertising and on packages are true.",
+            expVn: "Ủy ban Thương mại Liên bang (FTC) đảm bảo các tuyên bố về sản phẩm trong quảng cáo và trên bao bì là đúng sự thật."
+        },
+        {
+            id: 'q5', type: 'dropdown',
+            title: "5. Protecting Workers",
+            sentence: "Workers in hazardous manufacturing industries are specifically protected on the job by regulations enforced by [DROP].",
+            options: ["the Federal Reserve", "OSHA", "the FTC"],
+            correct: "OSHA",
+            expEn: "The Occupational Safety and Health Administration (OSHA) protects workers on the job.",
+            expVn: "Cơ quan Quản lý An toàn và Sức khỏe Nghề nghiệp (OSHA) bảo vệ người lao động tại nơi làm việc."
+        },
+        {
+            id: 'q6', type: 'dropdown',
+            title: "6. Fact vs. Opinion",
+            sentence: "Many conservatives believe the U.S. budget should be balanced. Which of the following is a fact? [DROP]",
+            options: [
+                "The government should not borrow money.", 
+                "A balanced budget means revenues equal expenditures.", 
+                "A balanced budget is the best indicator of a healthy economy."
+            ],
+            correct: "A balanced budget means revenues equal expenditures.",
+            expEn: "A fact can be proven objectively. Mathematically, a balanced budget means revenue equals spending. The other statements are opinions (expressing beliefs or what 'should' happen).",
+            expVn: "Sự thật (fact) có thể được chứng minh. Về mặt toán học, ngân sách cân bằng có nghĩa là doanh thu bằng chi tiêu. Các câu khác là ý kiến (opinion) thể hiện niềm tin hoặc điều 'nên' làm."
+        },
+        {
+            id: 'q7', type: 'dropdown',
+            title: "7. Infrastructure",
+            sentence: "The federal government provides [DROP] that indirectly supports economic activity, such as the Interstate Highway System.",
+            options: ["monetary policy", "infrastructure", "collective bargaining"],
+            correct: "infrastructure",
+            expEn: "Infrastructure refers to physical systems (like roads, bridges, and the air traffic control system) that support the economy.",
+            expVn: "Cơ sở hạ tầng (infrastructure) đề cập đến các hệ thống vật chất (như đường sá, cây cầu) hỗ trợ nền kinh tế hoạt động."
+        },
+        {
+            id: 'q8', type: 'dropdown',
+            title: "8. Fiscal vs. Monetary Policy",
+            sentence: "While the executive and legislative branches control fiscal policy, the [DROP] controls monetary policy by adjusting the money supply.",
+            options: ["Federal Reserve (the Fed)", "U.S. Mint", "FDIC"],
+            correct: "Federal Reserve (the Fed)",
+            expEn: "The Federal Reserve acts as the central bank and manages the total amount of money available for lending (monetary policy).",
+            expVn: "Cục Dự trữ Liên bang (Fed) đóng vai trò là ngân hàng trung ương và quản lý tổng lượng tiền có sẵn để cho vay (chính sách tiền tệ)."
+        },
+        {
+            id: 'q9', type: 'dropdown',
+            title: "9. Labor Compensation",
+            sentence: "A worker's [DROP] is the combined value of their hourly wages or salary plus any benefits like health insurance.",
+            options: ["collective bargaining", "total compensation", "unemployment rate"],
+            correct: "total compensation",
+            expEn: "Total compensation looks at the full package a worker receives, not just their direct paycheck.",
+            expVn: "Tổng thù lao (total compensation) xem xét toàn bộ gói phúc lợi mà người lao động nhận được, không chỉ là tiền lương trực tiếp."
+        },
+        {
+            id: 'q10', type: 'dropdown',
+            title: "10. Labor Unions",
+            sentence: "Labor unions negotiate contracts for wages and working conditions on behalf of all members through a process called [DROP].",
+            options: ["collective bargaining", "infrastructure building", "monetary policy"],
+            correct: "collective bargaining",
+            expEn: "Collective bargaining is the process where a union negotiates as a group with management.",
+            expVn: "Thương lượng tập thể (collective bargaining) là quá trình công đoàn đại diện cho một nhóm để đàm phán với ban quản lý."
+        },
+        {
+            id: 'q11', type: 'dropdown',
+            title: "11. Consumer Issues",
+            sentence: "Because the free market offers many choices and risks, a wise consumer always remembers the maxim, '[DROP]'.",
+            options: ["Strike while the iron is hot", "Let the buyer beware", "All for one and one for all"],
+            correct: "Let the buyer beware",
+            expEn: "This maxim warns that consumers must protect themselves by reading labels, comparing prices, and understanding contracts.",
+            expVn: "Câu châm ngôn này cảnh báo người tiêu dùng (Let the buyer beware) phải tự bảo vệ mình bằng cách đọc nhãn mác và hiểu rõ hợp đồng."
+        },
+        {
+            id: 'q12', type: 'dropdown',
+            title: "12. Economic Control",
+            sentence: "The main similarity between fiscal and monetary policy is that both [DROP].",
+            options: ["involve lowering taxes", "are tools of state governments", "affect the amount of money circulating in the economy"],
+            correct: "affect the amount of money circulating in the economy",
+            expEn: "Though controlled by different parts of the government, both policies aim to speed up or slow down the overall economy by affecting money circulation.",
+            expVn: "Mặc dù được kiểm soát bởi các bộ phận khác nhau, cả hai chính sách đều nhằm mục đích tăng tốc hoặc làm chậm nền kinh tế bằng cách tác động đến lượng tiền lưu thông."
+        },
+        // Practice 13: Drag and Drop Passage
+        {
+            id: 'q13',
+            type: 'dnd-passage',
+            title: "13. Drag and Drop: The Fed's Monetary Policy Options",
+            bank: ["Sell", "Buy back", "Raise", "Lower", "Raise", "Lower"],
+            passage: "<strong>Controlling the Money Supply</strong><br><br>Monetary policy affects the amount of money in circulation. When there is rapid economic growth and a risk of inflation, the Federal Reserve (the \"Fed\") slows it down by tightening the money supply. To take money <em>out</em> of circulation, the Fed can [Blank 1] government securities, [Blank 2] the discount rate charged to banks, and [Blank 3] the reserve requirement.<br><br>When the economy is sluggish, the Fed increases the money supply to stimulate borrowing and spending. To put money <em>into</em> circulation, the Fed can [Blank 4] government securities from investors, [Blank 5] the discount rate, and [Blank 6] the reserve requirement.",
+            blanks: ["Blank 1", "Blank 2", "Blank 3", "Blank 4", "Blank 5", "Blank 6"],
+            correctAnswers: {
+                "Blank 1": "Sell",
+                "Blank 2": "Raise",
+                "Blank 3": "Raise",
+                "Blank 4": "Buy back",
+                "Blank 5": "Lower",
+                "Blank 6": "Lower"
+            },
+            expEn: "<strong>To tighten money:</strong> The Fed <strong>Sells</strong> bonds (taking cash from investors), <strong>Raises</strong> interest rates (making borrowing harder), and <strong>Raises</strong> reserve requirements (forcing banks to hold more cash).<br><br><strong>To stimulate the economy:</strong> The Fed <strong>Buys back</strong> bonds (giving cash to investors), <strong>Lowers</strong> interest rates, and <strong>Lowers</strong> reserve requirements (allowing banks to lend more).",
+            expVn: "<strong>Để thắt chặt tiền tệ:</strong> Fed <strong>Bán (Sell)</strong> trái phiếu, <strong>Tăng (Raise)</strong> lãi suất và <strong>Tăng (Raise)</strong> dự trữ bắt buộc.<br><br><strong>Để kích thích kinh tế:</strong> Fed <strong>Mua lại (Buy back)</strong> trái phiếu, <strong>Giảm (Lower)</strong> lãi suất và <strong>Giảm (Lower)</strong> dự trữ bắt buộc để các ngân hàng có thể cho vay nhiều hơn."
+        },
+        // Practice 14: General Dropdown Passage
+        {
+            id: 'q14',
+            type: 'dropdown-passage',
+            title: "14. Summary: Labor and Consumer Issues",
+            passage: "<strong>Adapting to the Free Market</strong><br><br>In the U.S. economy, a worker's [DROP1] includes both their hourly wages and additional benefits like health insurance. Because international markets and technology change rapidly, modern workers must anticipate these changes and continually seek to learn new [DROP2] so they do not lose their jobs. <br><br>As consumers, we have an amazing array of choices in our [DROP3] economy. While agencies like the FDA ensure products are safe, consumers are still responsible for reading instructions and evaluating credit terms carefully, keeping in mind the rule: '[DROP4]'.",
+            dropdowns: {
+                "DROP1": { options: ["collective bargaining", "total compensation", "fiscal policy"], correct: "total compensation" },
+                "DROP2": { options: ["skills", "unemployment benefits", "tariffs"], correct: "skills" },
+                "DROP3": { options: ["communist", "free market", "monetary"], correct: "free market" },
+                "DROP4": { options: ["All for one", "Let the buyer beware", "Strike while the iron is hot"], correct: "Let the buyer beware" }
+            },
+            expEn: "<strong>1. total compensation:</strong> The combined value of pay and benefits.<br><strong>2. skills:</strong> Workers must retrain to stay relevant.<br><strong>3. free market:</strong> An economy driven by consumer choice and business competition.<br><strong>4. Let the buyer beware:</strong> The concept that buyers must be responsible for making smart purchasing decisions.",
+            expVn: "<strong>1. total compensation:</strong> Tổng giá trị lương và phúc lợi.<br><strong>2. skills:</strong> Người lao động phải đào tạo lại kỹ năng để không bị tụt hậu.<br><strong>3. free market:</strong> Nền kinh tế thị trường tự do được thúc đẩy bởi sự lựa chọn của người tiêu dùng.<br><strong>4. Let the buyer beware:</strong> Khái niệm người mua phải tự chịu trách nhiệm khi đưa ra quyết định mua hàng thông minh."
+        }
+    ];
+
+    /* =========================================================================
+       2. VOCABULARY DICTIONARY (For Tooltips)
+       ========================================================================= */
+    const vocabDictionary = {
+        "surplus": { 
+            en: "Extra money; earning more than you spend.", 
+            vn: "Thặng dư (Thu nhiều hơn chi)." 
+        },
+        "deficit": { 
+            en: "Shortage of money; spending more than you earn.", 
+            vn: "Thâm hụt (Chi nhiều hơn thu)." 
+        },
+        "infrastructure": { 
+            en: "Basic public systems like roads, bridges, and power grids.", 
+            vn: "Cơ sở hạ tầng (Đường sá, cầu cống...)." 
+        },
+        "OSHA": { 
+            en: "Agency that keeps workers safe from job hazards.", 
+            vn: "Cơ quan bảo vệ an toàn lao động." 
+        },
+        "FDA": { 
+            en: "Agency that makes sure food and medicine are safe.", 
+            vn: "Cơ quan an toàn thực phẩm và dược phẩm." 
+        },
+        "FTC": { 
+            en: "Agency that stops false advertising and protects buyers.", 
+            vn: "Cơ quan bảo vệ người tiêu dùng khỏi quảng cáo sai sự thật." 
+        },
+        "total compensation": { 
+            en: "A worker's full pay, including wages and all benefits.", 
+            vn: "Tổng thu nhập (Lương + Phúc lợi)." 
+        },
+        "collective bargaining": { 
+            en: "When a union negotiates group contracts for workers.", 
+            vn: "Thương lượng tập thể (Công đoàn đàm phán cho nhóm)." 
+        }
+    };
+
+    /* =========================================================================
+       3. STATE MANAGEMENT
+       ========================================================================= */
+    const state = {
+        phase: 0, 
+        currentQuestionIndex: 0,
+        userAnswers: {},     
+        flagged: new Set(),
+        evaluated: new Set() // Tracks which questions have been locked/checked
+    };
+
+    /* =========================================================================
+       4. INITIALIZATION & TEMPLATE RENDERING
+       ========================================================================= */
+    function init() {
+        const container = document.getElementById('questions-container');
+        
+        questionsData.forEach((q, index) => {
+            const slide = document.createElement('article');
+            slide.className = `question-slide ${index === 0 ? 'active' : ''}`;
+            slide.id = `slide-${index}`;
+            
+            let html = '';
+            
+            if (q.type === 'info') {
+                html += `<div class="q-title section-title center">${q.title}</div>`;
+                html += q.content;
+            } 
+            else if (q.type === 'dropdown') {
+                let selectHtml = `<select class="inline-select" id="select-${q.id}" onchange="handleDropdownSelection('${q.id}', this)">`;
+                selectHtml += `<option value="" disabled selected>Choose...</option>`;
+                q.options.forEach(opt => {
+                    selectHtml += `<option value="${opt}">${opt}</option>`;
+                });
+                selectHtml += `</select>`;
+
+                let sentenceHtml = q.sentence.replace('[DROP]', selectHtml);
+
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)">
+                            Flag for Review
+                        </label>
+                    </div>
+                    <div class="info-box" style="margin-top: 1rem; font-size: 1.25rem; padding: 3rem 2rem;">
+                        ${sentenceHtml}
+                    </div>
+                    <!-- Immediate Feedback Container -->
+                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                `;
+            }
+            else if (q.type === 'dnd-passage') {
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)">
+                            Flag for Review
+                        </label>
+                    </div>
+                    <div class="dnd-container">
+                        <!-- Sticky Word Bank -->
+                        <div class="options-bank" id="bank-${q.id}" ondragover="allowDrop(event)" ondrop="drop(event, 'bank-${q.id}')">
+                `;
+                q.bank.forEach((item, idx) => {
+                    html += `<div class="draggable-item" draggable="true" id="item-${q.id}-${idx}" ondragstart="drag(event)" data-val="${item}">
+                                <i class="fa-solid fa-grip-vertical" style="color:#aaa;"></i> ${item}
+                             </div>`;
+                });
+                html += `</div>`; // Close bank
+
+                let passageHtml = q.passage;
+                q.blanks.forEach(blankId => {
+                    const dzHtml = `<span class="inline-dz dropzone" id="${q.id}-${blankId.replace(' ', '')}" ondragover="allowDrop(event)" ondrop="drop(event, '${q.id}-${blankId.replace(' ', '')}')">Drop Here</span>`;
+                    passageHtml = passageHtml.replace(`[${blankId}]`, dzHtml);
+                });
+
+                html += `
+                        <div class="info-box passage-text">
+                            ${passageHtml}
+                        </div>
+                    </div>
+                    
+                    <div style="text-align:center; margin-top: 2rem;">
+                        <button id="btn-check-${q.id}" class="btn-primary" style="font-size: 1.2rem; padding: 0.75rem 2rem;" onclick="evaluateDnd('${q.id}')" disabled>
+                            Check Answers
+                        </button>
+                    </div>
+                    <!-- Immediate Feedback Container -->
+                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                `;
+            }
+            else if (q.type === 'dropdown-passage') {
+                let passageHtml = q.passage;
+                Object.keys(q.dropdowns).forEach(dropId => {
+                    let selectHtml = `<select class="inline-select" id="${q.id}-${dropId}" onchange="handleDropdownPassageSelection('${q.id}')">`;
+                    selectHtml += `<option value="" disabled selected>Choose...</option>`;
+                    q.dropdowns[dropId].options.forEach(opt => {
+                        selectHtml += `<option value="${opt}">${opt}</option>`;
+                    });
+                    selectHtml += `</select>`;
+                    passageHtml = passageHtml.replace(`[${dropId}]`, selectHtml);
+                });
+
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)">
+                            Flag for Review
+                        </label>
+                    </div>
+                    <div class="info-box passage-text" style="background: #fff; border: 1px solid var(--border-color);">
+                        ${passageHtml}
+                    </div>
+                    <div style="text-align:center; margin-top: 2rem;">
+                        <button id="btn-check-${q.id}" class="btn-primary" style="font-size: 1.2rem; padding: 0.75rem 2rem;" onclick="evaluateDropdownPassage('${q.id}')" disabled>
+                            Check Answers
+                        </button>
+                    </div>
+                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                `;
+            }
+            
+            slide.innerHTML = html;
+            container.appendChild(slide);
+        });
+
+        // Generate Submit Gate Slide
+        const submitSlide = document.createElement('article');
+        submitSlide.className = `question-slide`;
+        submitSlide.id = `slide-${questionsData.length}`;
+        submitSlide.innerHTML = `
+            <div class="q-title section-title center">Practice Complete</div>
+            <div class="info-box" style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Completion Status</h3>
+                <div id="submit-summary-list"></div>
+            </div>
+            <div style="text-align: center;">
+                <button id="btn-final-submit" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="startPhase2()" disabled>
+                    Finish Practice & View Total Score
+                </button>
+            </div>
+        `;
+        container.appendChild(submitSlide);
+        updateNavigationUI();
+    }
+
+    /* =========================================================================
+       5. VOCABULARY TOOLTIP LOGIC
+       ========================================================================= */
+    function showTooltip(event, term) {
+        event.stopPropagation();
+        const tooltip = document.getElementById('vocab-tooltip');
+        const data = vocabDictionary[term];
+        if(!data) return;
+
+        // Build Tooltip Content
+        tooltip.innerHTML = `
+            <div style="font-weight: 700; font-size: 1.1rem; color: var(--primary-blue); margin-bottom: 0.5rem; text-transform: capitalize;">${term}</div>
+            <div style="margin-bottom: 0.75rem; color: var(--text-main);">${data.en}</div>
+            <div style="font-style: italic; color: var(--text-muted); border-top: 1px solid #eee; padding-top: 0.5rem;">${data.vn}</div>
+        `;
+        
+        tooltip.style.display = 'block';
+        
+        // Positioning Tooltip
+        const rect = event.target.getBoundingClientRect();
+        
+        // Calculate Top Offset (Below the word)
+        tooltip.style.top = (rect.bottom + 5) + 'px';
+        
+        // Calculate Left Offset (Prevent overflow on the right side)
+        let tipLeft = rect.left;
+        if (tipLeft + 320 > window.innerWidth) {
+            tipLeft = window.innerWidth - 340; // 320px width + 20px padding
+        }
+        tooltip.style.left = Math.max(10, tipLeft) + 'px'; // Ensure it doesn't clip left side
+    }
+
+    // Hide tooltip when clicking anywhere else
+    document.addEventListener('click', () => {
+        const tooltip = document.getElementById('vocab-tooltip');
+        if(tooltip) tooltip.style.display = 'none';
+    });
+
+    // Hide tooltip on scrolling the left pane
+    document.getElementById('left-pane').addEventListener('scroll', () => {
+        const tooltip = document.getElementById('vocab-tooltip');
+        if(tooltip) tooltip.style.display = 'none';
+    });
+
+    /* =========================================================================
+       6. PHASE TRANSITION LOGIC
+       ========================================================================= */
+    function startPhase1() {
+        state.phase = 1;
+        document.body.className = 'phase-1';
+        
+        document.getElementById('intro-overview').style.display = 'none';
+        document.getElementById('reading-passage').style.display = 'block';
+        
+        navigate(1); 
+    }
+
+    function startPhase2() {
+        state.phase = 2;
+        document.body.className = 'phase-2';
+        document.getElementById('main-footer').style.display = 'none';
+        renderReviewMode();
+    }
+
+    /* =========================================================================
+       7. PHASE 1 PRACTICE LOGIC (Immediate Feedback)
+       ========================================================================= */
+    function navigate(direction) {
+        if(state.phase !== 0 && state.phase !== 1) return;
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.remove('active');
+        state.currentQuestionIndex += direction;
+        
+        if (state.phase === 1 && state.currentQuestionIndex === 0) {
+            state.currentQuestionIndex = 1;
+        }
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.add('active');
+        document.getElementById('right-pane').scrollTop = 0;
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function updateNavigationUI() {
+        if (state.phase === 0) {
+            document.getElementById('btn-prev').disabled = true;
+            document.getElementById('btn-next').style.display = 'none';
+            return;
+        }
+
+        const totalQs = questionsData.filter(q => q.type !== 'info').length; 
+        const isSubmitGate = (state.currentQuestionIndex === questionsData.length);
+
+        document.getElementById('btn-prev').disabled = (state.currentQuestionIndex === 1);
+        document.getElementById('btn-next').style.display = 'block';
+        document.getElementById('btn-next').disabled = isSubmitGate;
+        
+        const progressContainer = document.getElementById('nav-progress');
+        if (isSubmitGate) {
+            progressContainer.innerHTML = `Review & Submit`;
+        } else {
+            const currentQ = questionsData[state.currentQuestionIndex];
+            progressContainer.innerHTML = currentQ.type === 'info' ? currentQ.title : `Question ${state.currentQuestionIndex} of ${totalQs}`;
+        }
+    }
+
+    function toggleFlag(qId, isChecked) {
+        if (isChecked) state.flagged.add(qId);
+        else state.flagged.delete(qId);
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+    }
+
+    // Immediate Feedback for Dropdown
+    function handleDropdownSelection(qId, selectElement) {
+        if (state.evaluated.has(qId)) return; // Prevent multiple evaluations
+        
+        state.evaluated.add(qId);
+        const q = questionsData.find(x => x.id === qId);
+        state.userAnswers[qId] = selectElement.value;
+        
+        // Lock the selection
+        selectElement.disabled = true;
+        
+        const isCorrect = selectElement.value === q.correct;
+        selectElement.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+        
+        // Reveal Explanation
+        const fb = document.getElementById(`feedback-${qId}`);
+        const expClass = isCorrect ? 'correct' : 'incorrect';
+        const expTitle = isCorrect ? 'Correct!' : `Incorrect. The correct answer is "${q.correct}".`;
+        
+        fb.className = `explanation-box ${expClass}`;
+        fb.innerHTML = `
+            <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+            <div class="exp-en">${q.expEn}</div>
+            <div class="exp-vn">${q.expVn}</div>
+        `;
+        fb.style.display = 'block';
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    // Evaluates state of DnD to toggle the "Check Answers" button
+    function checkDnDPassageState(qId) {
+        if (state.evaluated.has(qId)) return;
+        
+        const qConfig = questionsData.find(q => q.id === qId);
+        let ansObj = {};
+        let filledCount = 0;
+
+        qConfig.blanks.forEach(blankId => {
+            const safeId = blankId.replace(' ', '');
+            const dropzoneEl = document.getElementById(`${qId}-${safeId}`);
+            const val = dropzoneEl.firstElementChild?.dataset.val;
+            if (val) {
+                ansObj[blankId] = val;
+                filledCount++;
+            }
+        });
+
+        state.userAnswers[qId] = ansObj;
+
+        // Enable check button only when all blanks are filled
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) {
+            checkBtn.disabled = (filledCount !== qConfig.blanks.length);
+        }
+    }
+
+    // Immediate Feedback for DnD
+    function evaluateDnd(qId) {
+        if (state.evaluated.has(qId)) return;
+        state.evaluated.add(qId);
+        
+        const q = questionsData.find(x => x.id === qId);
+        
+        // Hide Check Button
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) checkBtn.style.display = 'none';
+        
+        let allCorrect = true;
+        
+        // Evaluate and style each blank
+        q.blanks.forEach(blankId => {
+            const safeId = blankId.replace(' ', '');
+            const dz = document.getElementById(`${qId}-${safeId}`);
+            const userVal = state.userAnswers[qId]?.[blankId];
+            const isCorrect = userVal === q.correctAnswers[blankId];
+            
+            if(!isCorrect) allCorrect = false;
+            
+            dz.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+            
+            // Lock draggable items inside dropzones
+            if (dz.firstElementChild) {
+                dz.firstElementChild.draggable = false;
+                dz.firstElementChild.classList.add('locked');
+            }
+        });
+        
+        // Lock remaining items in the word bank
+        document.querySelectorAll(`#bank-${qId} .draggable-item`).forEach(el => {
+            el.draggable = false;
+            el.classList.add('locked');
+        });
+        
+        // Reveal Explanation
+        const fb = document.getElementById(`feedback-${qId}`);
+        const expClass = allCorrect ? 'correct' : 'incorrect';
+        const expTitle = allCorrect ? 'Perfect!' : 'Review the correct answers below:';
+        
+        fb.className = `explanation-box ${expClass}`;
+        fb.innerHTML = `
+            <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+            <div class="exp-en">${q.expEn}</div>
+            <div class="exp-vn">${q.expVn}</div>
+        `;
+        fb.style.display = 'block';
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    // Evaluates state of Dropdown Passage to toggle the "Check Answers" button
+    function handleDropdownPassageSelection(qId) {
+        if (state.evaluated.has(qId)) return;
+        
+        const qConfig = questionsData.find(q => q.id === qId);
+        let ansObj = {};
+        let filledCount = 0;
+        const totalDropdowns = Object.keys(qConfig.dropdowns).length;
+
+        Object.keys(qConfig.dropdowns).forEach(dropId => {
+            const selectEl = document.getElementById(`${qId}-${dropId}`);
+            if (selectEl && selectEl.value) {
+                ansObj[dropId] = selectEl.value;
+                filledCount++;
+            }
+        });
+
+        state.userAnswers[qId] = ansObj;
+
+        // Enable check button only when all dropdowns are filled
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) {
+            checkBtn.disabled = (filledCount !== totalDropdowns);
+        }
+    }
+
+    // Immediate Feedback for Dropdown Passage
+    function evaluateDropdownPassage(qId) {
+        if (state.evaluated.has(qId)) return;
+        state.evaluated.add(qId);
+        
+        const q = questionsData.find(x => x.id === qId);
+        
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) checkBtn.style.display = 'none';
+        
+        let allCorrect = true;
+        
+        Object.keys(q.dropdowns).forEach(dropId => {
+            const select = document.getElementById(`${qId}-${dropId}`);
+            const userVal = state.userAnswers[qId]?.[dropId];
+            const correctVal = q.dropdowns[dropId].correct;
+            const isCorrect = userVal === correctVal;
+            
+            if(!isCorrect) allCorrect = false;
+            
+            // Lock selection
+            select.disabled = true;
+            if (isCorrect) {
+                select.classList.add('correct-ans');
+            } else {
+                select.classList.add('wrong-ans');
+                // Show the correct answer inline if they got it wrong
+                if(!select.nextElementSibling || select.nextElementSibling.className !== 'correction-span') {
+                    const correctSpan = document.createElement('span');
+                    correctSpan.className = 'correction-span';
+                    correctSpan.innerHTML = ` <i class="fa-solid fa-arrow-right"></i> ${correctVal}`;
+                    correctSpan.style.color = 'var(--color-correct)';
+                    correctSpan.style.fontWeight = 'bold';
+                    correctSpan.style.fontSize = '1rem';
+                    correctSpan.style.marginRight = '0.5rem';
+                    select.parentNode.insertBefore(correctSpan, select.nextSibling);
+                }
+            }
+        });
+        
+        // Reveal Explanation
+        const fb = document.getElementById(`feedback-${qId}`);
+        const expClass = allCorrect ? 'correct' : 'incorrect';
+        const expTitle = allCorrect ? 'Perfect!' : 'Review the correct answers below:';
+        
+        fb.className = `explanation-box ${expClass}`;
+        fb.innerHTML = `
+            <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+            <div class="exp-en">${q.expEn}</div>
+            <div class="exp-vn">${q.expVn}</div>
+        `;
+        fb.style.display = 'block';
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    // Final "Submit Gate" logic tracking if they EVALUATED everything
+    function updateSubmitSlide() {
+        const container = document.getElementById('submit-summary-list');
+        let completedCount = 0;
+        let html = '';
+        const qList = questionsData.filter(q => q.type !== 'info');
+        
+        qList.forEach((q, idx) => {
+            // Check if it's evaluated, not just answered
+            const isCompleted = state.evaluated.has(q.id);
+            if (isCompleted) completedCount++;
+            
+            const isFlagged = state.flagged.has(q.id);
+            const flagHtml = isFlagged ? '<i class="fa-solid fa-flag" style="color:#d97706; margin-left:8px;" title="Flagged"></i>' : '';
+            
+            html += `
+                <div class="summary-item">
+                    <span>Question ${idx + 1} ${flagHtml}</span>
+                    <span style="font-weight:bold; color: ${isCompleted ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                        ${isCompleted ? 'Checked' : 'Unanswered'}
+                    </span>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        const btn = document.getElementById('btn-final-submit');
+        
+        if (completedCount === qList.length) {
+            btn.disabled = false;
+            btn.innerText = "Finish Practice & View Total Score";
+            btn.style.background = "var(--color-correct)"; 
+        } else {
+            btn.disabled = true;
+            btn.innerText = `Check all ${qList.length} questions to finish (${completedCount}/${qList.length})`;
+            btn.style.background = "var(--primary-blue)";
+        }
+    }
+
+    /* =========================================================================
+       8. PHASE 2 SCORING & FINAL SUMMARY
+       ========================================================================= */
+    function checkAnswerCorrectness(qId, qData) {
+        if (qData.type === 'dropdown') {
+            return state.userAnswers[qId] === qData.correct;
+        } else if (qData.type === 'dnd-passage') {
+            const ans = state.userAnswers[qId];
+            if(!ans) return false;
+            let allBlanksCorrect = true;
+            qData.blanks.forEach(blankId => {
+                if (ans[blankId] !== qData.correctAnswers[blankId]) {
+                    allBlanksCorrect = false;
+                }
+            });
+            return allBlanksCorrect;
+        } else if (qData.type === 'dropdown-passage') {
+            const ans = state.userAnswers[qId];
+            if(!ans) return false;
+            let allBlanksCorrect = true;
+            Object.keys(qData.dropdowns).forEach(dropId => {
+                if (ans[dropId] !== qData.dropdowns[dropId].correct) {
+                    allBlanksCorrect = false;
+                }
+            });
+            return allBlanksCorrect;
+        }
+        return false;
+    }
+
+    function renderReviewMode() {
+        const container = document.getElementById('questions-container');
+        let html = '';
+        let score = 0;
+        let totalPossibleScore = 0;
+
+        const qList = questionsData.filter(q => q.type !== 'info');
+
+        const qHtmlBlocks = [];
+
+        // Calculate scores and build a clean summary list (explanations hidden since they read them inline)
+        qList.forEach((q, idx) => {
+            let isCorrect = false;
+            
+            if(q.type === 'dropdown') {
+                totalPossibleScore++;
+                isCorrect = checkAnswerCorrectness(q.id, q);
+                if(isCorrect) score++;
+            } else if (q.type === 'dnd-passage') {
+                totalPossibleScore += q.blanks.length;
+                const ans = state.userAnswers[q.id] || {};
+                let claimScore = 0;
+                q.blanks.forEach(b => { if(ans[b] === q.correctAnswers[b]) claimScore++; });
+                score += claimScore;
+                isCorrect = (claimScore === q.blanks.length); 
+            } else if (q.type === 'dropdown-passage') {
+                const dropKeys = Object.keys(q.dropdowns);
+                totalPossibleScore += dropKeys.length;
+                const ans = state.userAnswers[q.id] || {};
+                let claimScore = 0;
+                dropKeys.forEach(dropId => { 
+                    if(ans[dropId] === q.dropdowns[dropId].correct) claimScore++; 
+                });
+                score += claimScore;
+                isCorrect = (claimScore === dropKeys.length); 
+            }
+
+            let qBlock = `<div class="review-item">
+                <div class="review-q-title">${idx + 1}. ${q.title}</div>`;
+
+            if (q.type === 'dropdown') {
+                const userAns = state.userAnswers[q.id];
+                let displayAns = userAns ? userAns : "No Answer";
+                
+                let sentenceContext = q.sentence.replace('[DROP]', `<span style="text-decoration: underline; font-weight: bold; color: ${isCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">${displayAns}</span>`);
+                
+                qBlock += `
+                    <div style="font-style: italic; margin-bottom: 1rem; color: #555;">"${sentenceContext}"</div>
+                    <div class="review-choice ${isCorrect ? 'correct-ans' : 'wrong-ans'}">
+                        Your Answer: <strong>${displayAns}</strong>
+                    </div>
+                    ${!isCorrect ? `<div class="review-choice correct-ans">Correct Answer: <strong>${q.correct}</strong></div>` : ''}
+                </div>`;
+            } 
+            else if (q.type === 'dnd-passage') {
+                const ans = state.userAnswers[q.id] || {};
+                qBlock += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">`;
+                
+                q.blanks.forEach(blankId => {
+                    const userVal = ans[blankId] || 'None';
+                    const correctVal = q.correctAnswers[blankId];
+                    const isBlankCorrect = userVal === correctVal;
+
+                    qBlock += `
+                        <div style="padding: 0.75rem; background: #f8fafc; border-radius:4px; border-left: 4px solid ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                            <strong>${blankId}</strong><br>
+                            Your Answer: <span style="font-weight: 600; color: ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">${userVal}</span><br>
+                            ${!isBlankCorrect ? `<span style="color: var(--color-correct); font-weight:bold;">Correct: ${correctVal}</span>` : `<span style="color: var(--color-correct); font-size: 0.85rem;"><i class="fa-solid fa-check"></i> Correct</span>`}
+                        </div>
+                    `;
+                });
+                qBlock += `</div></div>`;
+            }
+            else if (q.type === 'dropdown-passage') {
+                const ans = state.userAnswers[q.id] || {};
+                qBlock += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">`;
+                
+                Object.keys(q.dropdowns).forEach((dropId, i) => {
+                    const userVal = ans[dropId] || 'None';
+                    const correctVal = q.dropdowns[dropId].correct;
+                    const isBlankCorrect = userVal === correctVal;
+
+                    qBlock += `
+                        <div style="padding: 0.75rem; background: #f8fafc; border-radius:4px; border-left: 4px solid ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                            <strong>Blank ${i + 1}</strong><br>
+                            Your Answer: <span style="font-weight: 600; color: ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">${userVal}</span><br>
+                            ${!isBlankCorrect ? `<span style="color: var(--color-correct); font-weight:bold;">Correct: ${correctVal}</span>` : `<span style="color: var(--color-correct); font-size: 0.85rem;"><i class="fa-solid fa-check"></i> Correct</span>`}
+                        </div>
+                    `;
+                });
+                qBlock += `</div></div>`;
+            }
+
+            qHtmlBlocks.push(qBlock);
+        });
+
+        html += `
+            <div class="review-header">
+                <div style="font-size: 1.2rem; font-weight:600; color:var(--text-main);">Practice Complete</div>
+                <div class="review-score">Final Score: ${score} / ${totalPossibleScore}</div>
+            </div>
+            <h3 style="margin-bottom: 1.5rem; color: var(--text-main);">Summary:</h3>
+        `;
+        html += qHtmlBlocks.join('');
+        html += `
+            <div style="text-align:center; margin-top: 2rem; margin-bottom: 4rem;">
+                <p style="color: var(--text-muted); font-style: italic; font-size: 1.1rem;">You have completed the Social Studies practice activity. Great job!</p>
+            </div>
+        `;
+
+        container.innerHTML = html;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    /* =========================================================================
+       9. DRAG AND DROP ENGINE
+       ========================================================================= */
+    let draggedItem = null;
+
+    function drag(ev) {
+        if(state.phase !== 1) return;
+        draggedItem = ev.target.closest('.draggable-item');
+        // Prevent drag if locked
+        if(!draggedItem || draggedItem.draggable === false) return;
+
+        ev.dataTransfer.setData("text", draggedItem.id);
+        ev.dataTransfer.effectAllowed = "move";
+        setTimeout(() => draggedItem.style.opacity = "0.5", 0);
+    }
+
+    function allowDrop(ev) {
+        if(state.phase !== 1) return;
+        const dropzone = ev.target.closest('.dropzone');
+        // Prevent drop if evaluated
+        const qId = dropzone ? dropzone.id.split('-')[0] : null;
+        if(qId && state.evaluated.has(qId)) return;
+        
+        ev.preventDefault();
+        if(dropzone) dropzone.classList.add('dragover');
+    }
+
+    document.addEventListener('dragleave', (ev) => {
+        const dropzone = ev.target.closest('.dropzone');
+        if(dropzone) dropzone.classList.remove('dragover');
+    });
+
+    document.addEventListener('dragend', (ev) => {
+        if(draggedItem) draggedItem.style.opacity = "1";
+        document.querySelectorAll('.dropzone').forEach(el => el.classList.remove('dragover'));
+    });
+
+    function drop(ev, targetId) {
+        if(state.phase !== 1) return;
+        
+        const qId = targetId.split('-')[0];
+        // Prevent drop if already evaluated/locked
+        if (state.evaluated.has(qId)) return;
+        
+        ev.preventDefault();
+        const data = ev.dataTransfer.getData("text");
+        const draggedEl = document.getElementById(data);
+        if(!draggedEl) return;
+
+        const dropTarget = document.getElementById(targetId);
+        
+        if (dropTarget.classList.contains('dropzone')) {
+            dropTarget.classList.remove('dragover');
+            
+            // Send existing item back to bank safely
+            if (dropTarget.children.length > 0) {
+                const existingItem = dropTarget.children[0];
+                document.getElementById(`bank-${qId}`).appendChild(existingItem);
+            }
+            
+            dropTarget.innerHTML = '';
+            dropTarget.appendChild(draggedEl);
+            checkDnDPassageState(qId);
+            
+        } 
+        else if (dropTarget.classList.contains('options-bank')) {
+            dropTarget.appendChild(draggedEl);
+            const parentQId = targetId.split('-')[1];
+            checkDnDPassageState(parentQId);
+        }
+    }
+
+    /* =========================================================================
+       10. UTILITIES (Responsive Split Pane Resizer)
+       ========================================================================= */
+    const resizer = document.getElementById('dragMe');
+    const leftPane = document.getElementById('left-pane');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', startResize);
+    resizer.addEventListener('touchstart', startResize, {passive: false});
+
+    function startResize(e) {
+        isResizing = true;
+        document.body.style.cursor = 'col-resize';
+    }
+
+    document.addEventListener('mousemove', doResize);
+    document.addEventListener('touchmove', doResize, {passive: false});
+
+    function doResize(e) {
+        if (!isResizing) return;
+        
+        const layout = document.querySelector('.split-layout');
+        const isColumn = window.getComputedStyle(layout).flexDirection === 'column';
+        
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        if (isColumn) {
+            const containerHeight = layout.offsetHeight;
+            const newHeight = (clientY / containerHeight) * 100;
+            if(newHeight > 20 && newHeight < 80) {
+                leftPane.style.flex = `0 0 ${newHeight}%`;
+            }
+        } else {
+            const containerWidth = layout.offsetWidth;
+            const newWidth = (clientX / containerWidth) * 100;
+            if(newWidth > 20 && newWidth < 80) {
+                leftPane.style.flex = `0 0 ${newWidth}%`;
+            }
+        }
+    }
+
+    function stopResize() {
+        if(isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+        }
+    }
+
+    document.addEventListener('mouseup', stopResize);
+    document.addEventListener('touchend', stopResize);
+
+    window.onload = init;
+</script>
+</body>
+</html>
