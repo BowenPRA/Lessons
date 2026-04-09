@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Solutions - Year 9</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for rendering math equations easily -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Secondary Background */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Success/Acid Green */
+            --warning: #f59e0b;        /* Hazard Orange */
+            --danger: #ef4444;         /* Heat Red */
+            --cold: #0ea5e9;           /* Cold Blue */
+            --text-light: #f1f5f9;     /* Main Text */
+            --text-dim: #94a3b8;       /* Subtitles */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.15rem; line-height: 1.6; color: var(--text-dim); }
+
+        strong { color: var(--text-light); }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; align-items: start; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .mark-badge {
+            background: var(--accent);
+            color: var(--bg-deep);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            white-space: nowrap;
+            font-family: 'Outfit', sans-serif;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        /* Questions and Reveal Buttons */
+        .question-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-reveal:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .answer-content {
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1.2rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .answer-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        .math-text { font-size: 1.3rem; color: white; margin: 0.5rem 0; }
+        
+        table.math-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: rgba(0,0,0,0.2);
+        }
+        table.math-table th, table.math-table td {
+            border: 1px solid var(--text-dim);
+            padding: 10px;
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        table.math-table th { background: rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-check-double"></i> Peer Grading</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">Assessment Solutions</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; color: var(--primary);">
+            Year 9 Science & Math
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    window.revealAnswer = function(btn) {
+        btn.nextElementSibling.style.display = 'block';
+        btn.style.display = 'none';
+        if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    const state = { currentSlide: 0, slides: [], cleanupFn: null };
+
+    state.slides = [
+        // SLIDE 1: Instructions
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-users delay-1" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Time to Mark!</h1>
+                    <h2 class="delay-1" style="color: var(--accent);">Year 9 Science & Math Assessment</h2>
+                    
+                    <div class="glass-card delay-2" style="max-width: 750px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--warning);">
+                        <h3 style="color: var(--warning);"><i class="fa-solid fa-exchange-alt"></i> Instructions</h3>
+                        <ol style="margin-left: 2rem; margin-top: 1rem; color: white; line-height: 2;">
+                            <li>Please <strong>trade papers</strong> with the person in front or behind you.</li>
+                            <li>Take out a <strong>Pen or Colored Pencil</strong>. (No normal grey pencils!)</li>
+                            <li>Go to the front page. Look for the word <strong style="text-decoration: line-through; color: var(--danger);">Marker</strong>.</li>
+                            <li><strong>Write your name</strong> as the Grader.</li>
+                            <li><strong>Write a comment:</strong> Write 1 thing they did well, and 1 thing to work on.</li>
+                            <li>Be fair and careful when awarding points! Follow the step-by-step logic.</li>
+                        </ol>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: PDF Embed
+        {
+            template: () => `
+                <div class="anim-enter text-center" style="display: flex; flex-direction: column; height: 100%;">
+                    <h2 class="delay-1" style="margin-bottom: 0.5rem;">Assessment Reference</h2>
+                    <p class="delay-1" style="color: var(--text-dim); margin-bottom: 1rem;">Original Assessment PDF</p>
+                    
+                    <div class="glass-card delay-2" style="flex: 1; min-height: 60vh; padding: 0.5rem; border-top: 4px solid var(--primary);">
+                        <iframe src="Y9ReviewApr8.pdf" width="100%" height="100%" style="border: none; border-radius: 8px; min-height: 58vh;" title="Assessment Review PDF">
+                            <p>Your browser does not support iframes. <a href="Y9ReviewApr8.pdf" style="color: var(--accent);">Download the PDF</a>.</p>
+                        </iframe>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: Sec 1 (a, b)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 1: Resistance and Materials (1/2)</h2>
+                    
+                    <div class="question-box delay-1">
+                        <div class="question-text"><strong>Question 1(a):</strong> Define the term resistance in the context of electrical circuits. (1 mark)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">Resistance is a measure of how much a material <strong>slows down or opposes</strong> the flow of electric current. (Think of it like friction for electricity!)</p>
+                            <span class="mark-badge">1 mark</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2">
+                        <div class="question-text"><strong>Question 1(b):</strong> A student notices that their phone charger gets warm after being plugged in for a while. Using the particle theory, explain why the wires inside the charger get warm when a current flows through them. (3 marks)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">Explanation steps:</p>
+                            <ul style="color: white; line-height: 1.8; margin-left: 1.5rem; margin-bottom: 0.5rem;">
+                                <li><strong>Step 1:</strong> Current is the flow of tiny particles called <strong>electrons</strong>.</li>
+                                <li><strong>Step 2:</strong> As these electrons move, they frequently <strong>collide (crash)</strong> into the metal atoms inside the wire.</li>
+                                <li><strong>Step 3:</strong> These collisions transfer energy, causing the metal atoms to vibrate more, which creates <strong>heat (thermal energy)</strong>.</li>
+                            </ul>
+                            <span class="mark-badge">3 marks (1 point for each correct step)</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: Sec 1 (c, d, e, f)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 1: Resistance and Materials (2/2)</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>Question 1(c):</strong> Classify Copper, Glass, Gold, and Plastic as either a Conductor or an Insulator. (2 marks)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">Copper = <strong>Conductor</strong></p>
+                                <p style="color: white;">Glass = <strong>Insulator</strong></p>
+                                <p style="color: white;">Gold = <strong>Conductor</strong></p>
+                                <p style="color: white;">Plastic = <strong>Insulator</strong></p>
+                                <span class="mark-badge">2 marks (0.5 marks each)</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>Question 1(d):</strong> State one reason why electrical wires are coated in plastic or rubber. (1 mark)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">Plastic and rubber are <strong>insulators</strong>, so they prevent the electricity from escaping the wire, protecting us from electric shocks or short circuits.</p>
+                                <span class="mark-badge">1 mark</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>Question 1(e):</strong> Draw the standard circuit symbol for a resistor. (1 mark)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">It must be an empty, horizontal rectangle. (No squiggly lines!).</p>
+                                <svg width="120" height="40" viewBox="0 0 120 40" style="margin: 10px 0;">
+                                    <line x1="0" y1="20" x2="30" y2="20" stroke="white" stroke-width="2"/>
+                                    <rect x="30" y="10" width="60" height="20" stroke="white" fill="none" stroke-width="2"/>
+                                    <line x1="90" y1="20" x2="120" y2="20" stroke="white" stroke-width="2"/>
+                                </svg>
+                                <br><span class="mark-badge">1 mark</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-3">
+                            <div class="question-text"><strong>Question 1(f):</strong> State two reasons why resistors are deliberately added to electrical circuits. (2 marks)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">Any two of the following correct ideas:</p>
+                                <ul style="color: white; margin-left: 1.5rem; margin-bottom: 0.5rem;">
+                                    <li>To <strong>reduce or control</strong> the flow of current.</li>
+                                    <li>To <strong>protect</strong> delicate components (like an LED bulb) from breaking due to too much electricity.</li>
+                                    <li>To divide the voltage across a circuit.</li>
+                                </ul>
+                                <span class="mark-badge">2 marks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: Sec 2 (a, b, c)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 2: Ohm's Law (1/2)</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>Question 2(a):</strong> Write down the mathematical equation that links Voltage (V), Current (I), and Resistance (R). (1 mark)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">\\( V = I \\times R \\)</p>
+                                <p style="color: white; font-size: 0.9rem;">(Also accept \\( I = \\frac{V}{R} \\) or \\( R = \\frac{V}{I} \\))</p>
+                                <span class="mark-badge">1 mark</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>Question 2(b):</strong> Complete the table regarding the components of Ohm's Law. (2 marks)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">Scientific Unit for Current = <strong>Amps (A)</strong></p>
+                                <p style="color: white;">Symbol in Equation for Resistance = <strong>R</strong></p>
+                                <span class="mark-badge">2 marks (1 per correct box)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-3">
+                        <div class="question-text"><strong>Question 2(c):</strong> A resistor in a circuit has a voltage of 12 V across it, and a current of 3 A flowing through it. Calculate the resistance. Show your working and give the correct unit. (3 marks)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p class="math-text">Step 1: Write the formula: \\( R = \\frac{V}{I} \\)</p>
+                            <p class="math-text">Step 2: Put the numbers in: \\( R = \\frac{12}{3} \\)</p>
+                            <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Step 3: Answer: 4 \\( \\Omega \\) (or 4 Ohms)</p>
+                            <span class="mark-badge">3 marks (1 for the setup, 1 for the number 4, 1 for the correct unit Ω)</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: Sec 2 (d, e, f)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 2: Resistor Codes (2/2)</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>Question 2(d):</strong> What do the first two bands (Band 1 and Band 2) on a 4-band resistor represent? (1 mark)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">They represent the first two <strong>digits (or numbers)</strong> of the resistance value.</p>
+                                <span class="mark-badge">1 mark</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>Question 2(e):</strong> What does the third band (Band 3) represent? (1 mark)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">It represents the <strong>multiplier</strong> (or how many zeros to add to the end of the first two digits).</p>
+                                <span class="mark-badge">1 mark</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2" style="max-width: 700px; margin: 0 auto;">
+                        <div class="question-text"><strong>Question 2(f):</strong> A student is looking at a resistor with the bands: Yellow (4), Violet (7), Orange (add 3 zeros). Determine the total resistance. (2 marks)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p class="math-text">Step 1: Put the first two digits together: <strong>47</strong></p>
+                            <p class="math-text">Step 2: Add 3 zeros to the end: <strong>000</strong></p>
+                            <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: 47,000 \\( \\Omega \\)</p>
+                            <p style="color: white; font-size: 0.9rem;">(Also accept 47k\\( \\Omega \\))</p>
+                            <span class="mark-badge">2 marks (Give 1 partial mark if they accidentally multiplied 4x7)</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: Sec 3 (a, b)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 3: Circuit Diagrams (1/2)</h2>
+                    
+                    <div class="question-box delay-1">
+                        <div class="question-text"><strong>Question 3(a):</strong> Sketch the correct scientific symbol for a Lamp (Bulb), Ammeter, and Cell. (3 marks)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <div class="grid-3 text-center">
+                                <div>
+                                    <p style="color: white; margin-bottom: 10px;"><strong>Lamp (Bulb)</strong></p>
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <line x1="0" y1="30" x2="15" y2="30" stroke="white" stroke-width="2"/>
+                                        <circle cx="30" cy="30" r="15" stroke="white" stroke-width="2" fill="none"/>
+                                        <path d="M19.4 19.4 l21.2 21.2 M19.4 40.6 l21.2 -21.2" stroke="white" stroke-width="2"/>
+                                        <line x1="45" y1="30" x2="60" y2="30" stroke="white" stroke-width="2"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p style="color: white; margin-bottom: 10px;"><strong>Ammeter</strong></p>
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <line x1="0" y1="30" x2="15" y2="30" stroke="white" stroke-width="2"/>
+                                        <circle cx="30" cy="30" r="15" stroke="white" stroke-width="2" fill="none"/>
+                                        <text x="30" y="36" fill="white" font-size="18" font-family="sans-serif" text-anchor="middle">A</text>
+                                        <line x1="45" y1="30" x2="60" y2="30" stroke="white" stroke-width="2"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p style="color: white; margin-bottom: 10px;"><strong>Cell</strong></p>
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <line x1="0" y1="30" x2="25" y2="30" stroke="white" stroke-width="2"/>
+                                        <line x1="25" y1="15" x2="25" y2="45" stroke="white" stroke-width="2"/>
+                                        <line x1="35" y1="22" x2="35" y2="38" stroke="white" stroke-width="5"/>
+                                        <line x1="35" y1="30" x2="60" y2="30" stroke="white" stroke-width="2"/>
+                                    </svg>
+                                    <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 5px;">Must have one noticeably longer, thinner line.</p>
+                                </div>
+                            </div>
+                            <span class="mark-badge">3 marks (1 for each correct drawing)</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2">
+                        <div class="question-text"><strong>Question 3(b):</strong> State two "golden rules" that you must follow when drawing the wires in a scientific circuit diagram. (2 marks)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">Any two of the following rules:</p>
+                            <ul style="color: white; margin-left: 1.5rem; margin-bottom: 0.5rem;">
+                                <li>Always use <strong>straight lines</strong> drawn with a ruler.</li>
+                                <li>Make all corners exactly <strong>90 degrees</strong> (right angles).</li>
+                                <li>Make sure there are <strong>no gaps</strong> between the wires and the components.</li>
+                            </ul>
+                            <span class="mark-badge">2 marks</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: Sec 3 (c, d)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 3: Circuit Diagrams (2/2)</h2>
+                    
+                    <div class="question-box delay-1">
+                        <div class="question-text"><strong>Question 3(c):</strong> Draw a circuit diagram containing: a battery, a buzzer, and an open switch. (2 marks)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <div style="text-align: center;">
+                                <svg width="240" height="140" viewBox="0 0 240 140" style="margin-bottom: 10px;">
+                                    <!-- Wires -->
+                                    <line x1="40" y1="30" x2="200" y2="30" stroke="white" stroke-width="2"/>
+                                    <line x1="40" y1="30" x2="40" y2="110" stroke="white" stroke-width="2"/>
+                                    <line x1="200" y1="30" x2="200" y2="110" stroke="white" stroke-width="2"/>
+                                    <line x1="40" y1="110" x2="100" y2="110" stroke="white" stroke-width="2"/>
+                                    <line x1="140" y1="110" x2="200" y2="110" stroke="white" stroke-width="2"/>
+                                    
+                                    <!-- Battery top (2 cells = battery) -->
+                                    <rect x="90" y="20" width="60" height="20" fill="#1e293b" stroke="none"/>
+                                    <line x1="100" y1="15" x2="100" y2="45" stroke="white" stroke-width="2"/>
+                                    <line x1="110" y1="22" x2="110" y2="38" stroke="white" stroke-width="5"/>
+                                    <line x1="110" y1="30" x2="120" y2="30" stroke="white" stroke-dasharray="2,2"/>
+                                    <line x1="120" y1="15" x2="120" y2="45" stroke="white" stroke-width="2"/>
+                                    <line x1="130" y1="22" x2="130" y2="38" stroke="white" stroke-width="5"/>
+
+                                    <!-- Buzzer Left -->
+                                    <rect x="30" y="60" width="20" height="20" fill="#1e293b" stroke="none"/>
+                                    <rect x="20" y="70" width="40" height="15" stroke="white" fill="none" stroke-width="2"/>
+                                    <path d="M 25 70 C 25 45, 55 45, 55 70" stroke="white" fill="none" stroke-width="2"/>
+
+                                    <!-- Switch Bottom -->
+                                    <circle cx="100" cy="110" r="3" fill="white"/>
+                                    <circle cx="140" cy="110" r="3" fill="white"/>
+                                    <line x1="100" y1="110" x2="135" y2="90" stroke="white" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <span class="mark-badge">2 marks (1 for a complete series loop with straight lines, 1 for the correct symbols)</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2">
+                        <div class="question-text"><strong>Question 3(d):</strong> Draw a new circuit diagram showing: A battery, Two resistors connected in parallel with each other, An ammeter placed to measure the total current. (3 marks)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <div style="text-align: center;">
+                                <svg width="250" height="150" viewBox="0 0 250 150" style="margin-bottom: 10px;">
+                                    <!-- Main loop -->
+                                    <line x1="50" y1="20" x2="200" y2="20" stroke="white" stroke-width="2"/>
+                                    <line x1="50" y1="20" x2="50" y2="130" stroke="white" stroke-width="2"/>
+                                    <line x1="200" y1="20" x2="200" y2="130" stroke="white" stroke-width="2"/>
+                                    <line x1="50" y1="130" x2="200" y2="130" stroke="white" stroke-width="2"/>
+                                    
+                                    <!-- Parallel branch -->
+                                    <line x1="50" y1="75" x2="200" y2="75" stroke="white" stroke-width="2"/>
+
+                                    <!-- Battery Top (2 cells) -->
+                                    <rect x="100" y="10" width="50" height="20" fill="var(--bg-panel)"/>
+                                    <line x1="105" y1="10" x2="105" y2="30" stroke="white" stroke-width="2"/>
+                                    <line x1="115" y1="15" x2="115" y2="25" stroke="white" stroke-width="4"/>
+                                    <line x1="115" y1="20" x2="125" y2="20" stroke="white" stroke-dasharray="2,2"/>
+                                    <line x1="125" y1="10" x2="125" y2="30" stroke="white" stroke-width="2"/>
+                                    <line x1="135" y1="15" x2="135" y2="25" stroke="white" stroke-width="4"/>
+
+                                    <!-- Ammeter Main Line -->
+                                    <rect x="40" y="40" width="20" height="20" fill="var(--bg-panel)"/>
+                                    <circle cx="50" cy="50" r="10" stroke="white" stroke-width="2" fill="none"/>
+                                    <text x="50" y="55" fill="white" font-size="12" font-family="sans-serif" text-anchor="middle">A</text>
+
+                                    <!-- Resistor 1 (Branch 1) -->
+                                    <rect x="105" y="65" width="40" height="20" fill="var(--bg-panel)"/>
+                                    <rect x="105" y="65" width="40" height="20" stroke="white" fill="none" stroke-width="2"/>
+
+                                    <!-- Resistor 2 (Branch 2 bottom) -->
+                                    <rect x="105" y="120" width="40" height="20" fill="var(--bg-panel)"/>
+                                    <rect x="105" y="120" width="40" height="20" stroke="white" fill="none" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <span class="mark-badge">3 marks (1 for parallel setup, 1 for correct symbols, 1 for Ammeter on the main line)</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 9: Sec 4 (a, b, c)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 4: Scientific Formula Rearrangement (1/2)</h2>
+                    
+                    <div class="question-box delay-1">
+                        <div class="question-text"><strong>Question 4(a):</strong> Ohm's Law: \\( V = IR \\). Rearrange to make \\( I \\) the subject. (1 mark)</div>
+                        <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                            <p class="math-text">Step 1: To leave \\( I \\) by itself, we need to do the opposite of multiplying by \\( R \\). We divide both sides by \\( R \\).</p>
+                            <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( I = \\frac{V}{R} \\)</p>
+                            <span class="mark-badge" style="background: var(--primary);">1 mark</span>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>Question 4(b):</strong> Density: \\( \\rho = \\frac{m}{V} \\). Rearrange to make \\( V \\) the subject. (2 marks)</div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p class="math-text">Step 1: Multiply both sides by \\( V \\) to bring it up from the bottom denominator.</p>
+                                <p class="math-text" style="padding-left: 20px;">\\( \\rho \\times V = m \\)</p>
+                                <p class="math-text">Step 2: Divide both sides by \\( \\rho \\) to leave \\( V \\) alone.</p>
+                                <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( V = \\frac{m}{\\rho} \\)</p>
+                                <span class="mark-badge" style="background: var(--primary);">2 marks</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-3">
+                            <div class="question-text"><strong>Question 4(c):</strong> Acceleration: \\( v = u + at \\). Rearrange to make \\( a \\) the subject. (2 marks)</div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p class="math-text">Step 1: Subtract \\( u \\) from both sides to begin isolating the \\( a \\) term.</p>
+                                <p class="math-text" style="padding-left: 20px;">\\( v - u = at \\)</p>
+                                <p class="math-text">Step 2: Divide both sides by \\( t \\) to leave \\( a \\) alone.</p>
+                                <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( a = \\frac{v - u}{t} \\)</p>
+                                <span class="mark-badge" style="background: var(--primary);">2 marks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 10: Sec 4 (d, e)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 4: Scientific Formula Rearrangement (2/2)</h2>
+                    
+                    <div class="question-box delay-1">
+                        <div class="question-text"><strong>Question 4(d):</strong> Kinetic Energy: \\( E = \\frac{1}{2} m v^2 \\). Rearrange to make \\( m \\) the subject. (2 marks)</div>
+                        <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                            <p class="math-text">Step 1: Get rid of the fraction by multiplying both sides by 2.</p>
+                            <p class="math-text" style="padding-left: 20px;">\\( 2E = m v^2 \\)</p>
+                            <p class="math-text">Step 2: Divide both sides by \\( v^2 \\) to leave \\( m \\) alone.</p>
+                            <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( m = \\frac{2E}{v^2} \\)</p>
+                            <span class="mark-badge" style="background: var(--primary);">2 marks (1 mark for multiplying by 2, 1 mark for the final answer)</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2">
+                        <div class="question-text"><strong>Question 4(e):</strong> Pendulum Period: \\( T = 2\\pi \\sqrt{\\frac{L}{g}} \\). Rearrange to make \\( L \\) the subject. (3 marks)</div>
+                        <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                            <p class="math-text">Step 1: Divide both sides by \\( 2\\pi \\) to isolate the square root part.</p>
+                            <p class="math-text" style="padding-left: 20px;">\\( \\frac{T}{2\\pi} = \\sqrt{\\frac{L}{g}} \\)</p>
+                            <p class="math-text">Step 2: Square both sides to remove the square root.</p>
+                            <p class="math-text" style="padding-left: 20px;">\\( (\\frac{T}{2\\pi})^2 = \\frac{L}{g} \\)</p>
+                            <p class="math-text">Step 3: Multiply both sides by \\( g \\) to leave \\( L \\) alone.</p>
+                            <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( L = g(\\frac{T}{2\\pi})^2 \\) <span style="font-size: 1.2rem; color: white;">or</span> \\( L = \\frac{g T^2}{4\\pi^2} \\)</p>
+                            <span class="mark-badge" style="background: var(--primary);">3 marks (1 mark for each correct step shown above)</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 11: Sec 5 (a, b)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 5: Probability (1/2)</h2>
+                    
+                    <div class="question-box delay-1">
+                        <div class="question-text"><strong>Question 5(a):</strong> A student has a biased six-sided die. The probabilities of rolling 1 through 5 are given as: 0.15, 0.2, 0.1, 0.25, and 0.05. Calculate the probability of rolling a 6. (2 marks)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p class="math-text">Step 1: Remember the rule—all probabilities of an event must add up to exactly 1.</p>
+                            <p class="math-text">Step 2: Sum the given numbers: \\( 0.15 + 0.2 + 0.1 + 0.25 + 0.05 = 0.75 \\)</p>
+                            <p class="math-text">Step 3: Subtract from 1: \\( 1 - 0.75 \\)</p>
+                            <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: 0.25</p>
+                            <span class="mark-badge">2 marks</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2">
+                        <div class="question-text"><strong>Question 5(b):</strong> If the student rolls this biased die 300 times, how many times should they expect to roll an even number (2, 4, or 6)? (3 marks)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p class="math-text">Step 1: Find the total probability for an even number.</p>
+                            <p class="math-text" style="padding-left: 20px;">\\( P(Even) = P(2) + P(4) + P(6) \\)</p>
+                            <p class="math-text" style="padding-left: 20px;">\\( P(Even) = 0.2 + 0.25 + 0.25 = 0.7 \\)</p>
+                            <p class="math-text">Step 2: Use the expectation formula: Expected Outcomes = Probability \\( \\times \\) Number of Trials</p>
+                            <p class="math-text" style="padding-left: 20px;">Expected = \\( 0.7 \\times 300 \\)</p>
+                            <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: 210 times</p>
+                            <span class="mark-badge">3 marks (1 for finding the total probability of 0.7, 1 for the multiplication step, 1 for the final answer)</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 12: Sec 5 (c, d)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 5: Probability (2/2)</h2>
+                    
+                    <div class="question-box delay-1" style="max-width: 800px; margin: 0 auto; margin-bottom: 1.5rem;">
+                        <div class="question-text"><strong>Question 5(c):</strong> The student plays a new game using a fair coin and a fair 4-sided spinner (labelled A, B, C, D). Complete the sample space diagram below to show all possible outcomes. (2 marks)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p class="math-text">Check that the student filled in all the missing boxes correctly:</p>
+                            <table class="math-table">
+                                <tr>
+                                    <th></th><th>A</th><th>B</th><th>C</th><th>D</th>
+                                </tr>
+                                <tr>
+                                    <th>Heads (H)</th><td>(H, A)</td><td style="color:var(--accent); font-weight:bold;">(H, B)</td><td>(H, C)</td><td style="color:var(--accent); font-weight:bold;">(H, D)</td>
+                                </tr>
+                                <tr>
+                                    <th>Tails (T)</th><td style="color:var(--accent); font-weight:bold;">(T, A)</td><td>(T, B)</td><td style="color:var(--accent); font-weight:bold;">(T, C)</td><td style="color:var(--accent); font-weight:bold;">(T, D)</td>
+                                </tr>
+                            </table>
+                            <span class="mark-badge">2 marks (Give full marks if all empty boxes are correctly filled)</span>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2" style="max-width: 800px; margin: 0 auto;">
+                        <div class="question-text"><strong>Question 5(d):</strong> To win a prize, a player must get Tails on the coin and a vowel (A, E, I, O, U) on the spinner. What is the theoretical probability of winning a prize? Write your answer as a fraction in its simplest form. (3 marks)</div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p class="math-text">Step 1: Find the winning outcomes. The only combination that is Tails AND a Vowel is <strong>(T, A)</strong>. That is 1 winning outcome.</p>
+                            <p class="math-text">Step 2: Find total possible outcomes. If you count the boxes in the table, there are 8 possible outcomes.</p>
+                            <p class="math-text">Step 3: Build the fraction. Theoretical Probability = \\( \\frac{\\text{Winning Outcomes}}{\\text{Total Outcomes}} \\)</p>
+                            <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( \\frac{1}{8} \\)</p>
+                            <span class="mark-badge">3 marks (1 for finding 1 winner, 1 for finding 8 total outcomes, 1 for the final fraction)</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 13: End Marking
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-handshake-angle delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">All Done!</h1>
+                    
+                    <div class="glass-card delay-2" style="max-width: 650px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--accent);">
+                        <ol style="margin-left: 1rem; color: white; font-size: 1.3rem; line-height: 2.2;">
+                            <li><strong style="color: var(--danger);">Do NOT</strong> tally up the total score. The person who took the assessment can do that later.</li>
+                            <li>Check that you wrote your name under "Marker" on the front page.</li>
+                            <li>Check that you wrote your <strong style="color: var(--warning);">two comments</strong> (1 good thing, 1 thing to work on).</li>
+                            <li>Return the paper to its owner! Then continue to the Bonus Section.</li>
+                        </ol>
+                    </div>
+                    
+                    <h2 class="delay-3" style="color: var(--text-dim);">Thank you for grading fairly!</h2>
+                </div>
+            `
+        },
+
+        // SLIDE 14: Bonus Formulas (1/2)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Bonus Section: Advanced Rearranging (1/2)</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>Bonus Question 1: Temperature Conversion</strong><br>The formula to convert Celsius to Fahrenheit is \\( F = \\frac{9}{5}C + 32 \\). Rearrange to make \\( C \\) the subject.</div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p class="math-text">Step 1: Subtract 32 from both sides.</p>
+                                <p class="math-text" style="padding-left: 20px;">\\( F - 32 = \\frac{9}{5}C \\)</p>
+                                <p class="math-text">Step 2: Multiply by 5 to remove the fraction denominator.</p>
+                                <p class="math-text" style="padding-left: 20px;">\\( 5(F - 32) = 9C \\)</p>
+                                <p class="math-text">Step 3: Divide by 9.</p>
+                                <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( C = \\frac{5(F - 32)}{9} \\)</p>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>Bonus Question 2: Electrical Power</strong><br>The formula for electrical power is \\( P = \\frac{V^2}{R} \\). Rearrange to make \\( R \\) the subject.</div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p class="math-text">Step 1: Multiply both sides by \\( R \\) to move it out of the denominator.</p>
+                                <p class="math-text" style="padding-left: 20px;">\\( P \\times R = V^2 \\)</p>
+                                <p class="math-text">Step 2: Divide both sides by \\( P \\) to leave \\( R \\) alone.</p>
+                                <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( R = \\frac{V^2}{P} \\)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 15: Bonus Formulas (2/2)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Bonus Section: Advanced Rearranging (2/2)</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>Bonus Question 3: Elastic Potential Energy</strong><br>The formula for energy in a stretched spring is \\( E = \\frac{1}{2} k e^2 \\). Rearrange to make the extension \\( e \\) the subject.</div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p class="math-text">Step 1: Multiply by 2 to remove the fraction.</p>
+                                <p class="math-text" style="padding-left: 20px;">\\( 2E = k e^2 \\)</p>
+                                <p class="math-text">Step 2: Divide by \\( k \\).</p>
+                                <p class="math-text" style="padding-left: 20px;">\\( \\frac{2E}{k} = e^2 \\)</p>
+                                <p class="math-text">Step 3: Square root both sides to remove the squared power.</p>
+                                <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( e = \\sqrt{\\frac{2E}{k}} \\)</p>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>Bonus Question 4: Gravitational Force</strong><br>Newton's Law of Gravitation is \\( F = \\frac{GMm}{r^2} \\). Rearrange to make the distance \\( r \\) the subject.</div>
+                            <button class="btn-reveal" style="background: var(--primary);" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content" style="border-left-color: var(--primary); background: rgba(139, 92, 246, 0.1);">
+                                <p class="math-text">Step 1: Multiply both sides by \\( r^2 \\) to remove the fraction.</p>
+                                <p class="math-text" style="padding-left: 20px;">\\( F \\times r^2 = GMm \\)</p>
+                                <p class="math-text">Step 2: Divide by \\( F \\).</p>
+                                <p class="math-text" style="padding-left: 20px;">\\( r^2 = \\frac{GMm}{F} \\)</p>
+                                <p class="math-text">Step 3: Square root both sides.</p>
+                                <p class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem;">Answer: \\( r = \\sqrt{\\frac{GMm}{F}} \\)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        if (state.cleanupFn) { state.cleanupFn(); state.cleanupFn = null; }
+        container.innerHTML = slide.template();
+        if (window.MathJax) MathJax.typesetPromise();
+        if (slide.script) state.cleanupFn = slide.script(container);
+        
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    render();
+</script>
+
+</body>
+</html>
