@@ -1,0 +1,1223 @@
+Here is the complete, high-fidelity interactive HTML lesson based on the provided GED Earth and Space Science materials. It includes the bilingual study guide, SVG diagrams, interactive vocabulary, and all 12 practice questions formatted with immediate feedback.
+
+Save the code below as an `.html` file and open it in any modern browser.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED Science: Earth Structure & Resources</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEMING
+           ========================================================================== */
+        :root {
+            --bg-page: #f4f5f7;        
+            --bg-panel: #ffffff; 
+            --primary-blue: #005A9C;    
+            --primary-blue-hover: #00447a;
+            --selected-blue: #e6f0fa;
+            --border-color: #cccccc;
+            
+            --text-main: #333333;        
+            --text-muted: #666666;
+            --color-correct: #166534;
+            --color-incorrect: #991b1b;
+            
+            --header-h: 60px;
+            --footer-h: 70px;
+            
+            --font-ui: 'Open Sans', Arial, sans-serif;            
+            --font-passage: 'Noto Serif', 'Times New Roman', Times, serif; 
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-ui);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT & GRID
+           ========================================================================== */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            background: var(--primary-blue);
+            z-index: 50;
+        }
+
+        .split-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--header-h) - var(--footer-h));
+            overflow: hidden;
+        }
+
+        .pane-left, .pane-right { background: var(--bg-panel); padding: 2rem; overflow-y: auto; }
+        .pane-left { flex: 0 0 50%; }
+        .pane-right { flex: 1; position: relative; }
+
+        .resizer {
+            flex: 0 0 8px;
+            background: #e0e0e0;
+            cursor: col-resize;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .resizer:hover, .resizer:active { background: #c0c0c0; }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            z-index: 50;
+        }
+
+        /* ==========================================================================
+           4. TYPOGRAPHY, LESSON STYLING & TOOLTIPS
+           ========================================================================== */
+        .header-title { font-weight: 700; font-size: 1.2rem; color: #ffffff; letter-spacing: 0.5px; }
+        .section-title { font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--text-main); }
+        .section-title.primary { color: var(--primary-blue); }
+        .section-title.center { text-align: center; }
+
+        .passage-title { 
+            font-family: var(--font-ui); font-size: 1.4rem; font-weight: 700;
+            margin: 1.5rem 0 0.5rem 0; color: var(--text-main);
+        }
+
+        .passage-meta { 
+            color: var(--text-muted); font-style: italic; font-size: 0.95rem; 
+            margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;
+        }
+        
+        .paragraph { 
+            font-family: var(--font-passage); font-size: 1.15rem; 
+            line-height: 1.8; color: var(--text-main); margin-bottom: 1.5rem;
+        }
+
+        .info-box {
+            font-size: 1.15rem; line-height: 1.8; color: var(--text-main);
+            background: #f8fafc; padding: 2rem; border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        table.grammar-chart { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: #ffffff; font-size: 1.05rem; }
+        table.grammar-chart th, table.grammar-chart td { border: 1px solid var(--border-color); padding: 0.75rem 1rem; text-align: left; vertical-align: top; }
+        table.grammar-chart th { background: var(--selected-blue); color: var(--primary-blue); font-weight: 700; }
+        table.grammar-chart td { font-family: var(--font-passage); }
+
+        .rule-box {
+            background: #ffffff; border-left: 4px solid #f59e0b; padding: 1.25rem 1.5rem;
+            margin: 2rem 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 0 8px 8px 0;
+        }
+
+        /* SVG Diagrams container */
+        .svg-container { text-align: center; margin: 2rem 0; }
+        .svg-container svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+        .svg-caption { font-size: 0.95rem; color: var(--text-muted); font-style: italic; margin-top: 0.5rem; }
+
+        /* Vocabulary Tooltips */
+        .vocab-word {
+            font-weight: 700; color: var(--primary-blue); cursor: pointer;
+            border-bottom: 2px dotted var(--primary-blue); transition: background 0.2s, color 0.2s;
+            padding: 0 2px; border-radius: 2px;
+        }
+        .vocab-word:hover { background: var(--selected-blue); color: var(--primary-blue-hover); }
+        
+        .vocab-tooltip {
+            position: fixed; display: none; background: white; border: 1px solid var(--primary-blue);
+            border-radius: 6px; padding: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            z-index: 1000; width: 320px; font-family: var(--font-ui); font-size: 0.95rem;
+            color: var(--text-main); line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           5. COMPONENTS (Buttons, Flags)
+           ========================================================================== */
+        .btn-primary {
+            background: var(--primary-blue); color: white; border: none; padding: 0.75rem 1.5rem;
+            border-radius: 4px; font-family: var(--font-ui); font-weight: 600; font-size: 1rem;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-primary:disabled { background: #cccccc; cursor: not-allowed; color: #666; }
+
+        .btn-nav {
+            background: var(--primary-blue); border: 1px solid var(--primary-blue-hover);
+            padding: 0.6rem 2rem; border-radius: 4px; font-family: var(--font-ui);
+            font-weight: 600; color: #ffffff; cursor: pointer; transition: all 0.2s; font-size: 1rem;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-nav:disabled { background: #cccccc; color: #666666; border-color: #bbbbbb; opacity: 0.7; cursor: not-allowed; }
+
+        .flag-container {
+            display: flex; align-items: center; gap: 0.5rem; background: #fff3e0;
+            border: 1px solid #ffcc80; padding: 0.5rem 0.75rem; border-radius: 4px;
+            font-size: 0.9rem; font-weight: 600; color: #e65100; cursor: pointer; user-select: none;
+        }
+        .flag-container input { cursor: pointer; transform: scale(1.2); }
+
+        .nav-progress { font-weight: 600; color: var(--text-main); font-size: 1.05rem; }
+
+        /* ==========================================================================
+           6. QUESTION UI 
+           ========================================================================== */
+        .question-slide { display: none; }
+        .question-slide.active { display: block; animation: fadeIn 0.3s ease-out forwards; }
+
+        .q-header-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem; }
+        .q-title { font-family: var(--font-ui); font-size: 1.15rem; font-weight: 600; color: var(--text-main); line-height: 1.5; flex: 1; }
+
+        /* Inline Dropdown Styling */
+        .inline-select {
+            font-family: var(--font-ui); font-size: 1.1rem; padding: 0.2rem 0.5rem;
+            border: 2px solid var(--primary-blue); border-radius: 4px; background: #ffffff;
+            color: var(--primary-blue); font-weight: 700; cursor: pointer; outline: none;
+            margin: 0 0.25rem; transition: all 0.2s; max-width: 100%;
+        }
+        .inline-select:focus { box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.2); }
+        .inline-select:disabled { cursor: not-allowed; opacity: 1; }
+        .inline-select.correct-ans { background: #f0fdf4; border-color: var(--color-correct); color: var(--color-correct); }
+        .inline-select.wrong-ans { background: #fef2f2; border-color: var(--color-incorrect); color: var(--color-incorrect); }
+
+        /* Drag and Drop Container */
+        .dnd-container { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 1rem; position: relative; }
+        .options-bank {
+            position: sticky; top: -2rem; margin: -2rem -2rem 0 -2rem; padding: 1.5rem 2rem;
+            z-index: 100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px);
+            border-bottom: 2px solid var(--primary-blue); box-shadow: 0 6px 10px -4px rgba(0,0,0,0.15);
+            min-height: 90px; display: flex; flex-wrap: wrap; gap: 0.5rem;
+        }
+        
+        .draggable-item {
+            background: #ffffff; border: 1px solid var(--text-muted); color: var(--text-main);
+            padding: 0.5rem 1rem; border-radius: 4px; cursor: grab; font-size: 0.95rem;
+            font-family: var(--font-ui); display: flex; align-items: center; gap: 0.5rem;
+            user-select: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .draggable-item:active { cursor: grabbing; }
+        .draggable-item.locked { cursor: not-allowed; opacity: 0.8; }
+        
+        .inline-dz {
+            display: inline-flex; min-width: 120px; height: 34px; vertical-align: middle;
+            margin: 0 0.25rem; padding: 0 0.5rem; font-size: 0.95rem; background: #f4f5f7;
+            border: 2px dashed #cccccc; color: var(--text-muted); align-items: center;
+            justify-content: center; transition: all 0.2s; border-radius: 4px; overflow: hidden;
+        }
+        .inline-dz.dragover { background: var(--selected-blue); border-color: var(--primary-blue); }
+        .inline-dz.correct-ans { background: #f0fdf4; border-color: var(--color-correct); }
+        .inline-dz.wrong-ans { background: #fef2f2; border-color: var(--color-incorrect); }
+        
+        .inline-dz .draggable-item {
+            padding: 0; margin: 0; border: none; box-shadow: none; background: transparent;
+            color: var(--primary-blue); font-weight: 700; font-size: 1.1rem; cursor: grab;
+        }
+        .inline-dz.correct-ans .draggable-item { color: var(--color-correct); }
+        .inline-dz.wrong-ans .draggable-item { color: var(--color-incorrect); }
+        .inline-dz .draggable-item i { display: none; }
+        .inline-dz .draggable-item.locked { cursor: not-allowed; }
+
+        .passage-text { font-family: var(--font-passage); font-size: 1.15rem; line-height: 2.2; padding: 1.5rem; margin-top: 1rem; }
+
+        /* ==========================================================================
+           7. PHASE-SPECIFIC STYLES & OVERRIDES
+           ========================================================================== */
+        .summary-item { display: flex; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #eee; font-size: 1.1rem; }
+        .summary-item:last-child { border-bottom: none; }
+
+        .review-header { text-align: center; padding: 2rem; background: var(--selected-blue); border: 1px solid var(--primary-blue); border-radius: 8px; margin-bottom: 2rem; }
+        .review-score { font-size: 2.5rem; font-weight: 700; color: var(--primary-blue); margin-top: 0.5rem; }
+        .review-item { border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; background: #ffffff; }
+        .review-q-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; }
+        .review-choice { padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 4px; border: 1px solid #eee; background: #f9f9f9; font-size: 1.1rem; }
+        .review-choice.correct-ans { background-color: #f0fdf4; border-color: #bbf7d0; color: var(--color-correct); }
+        .review-choice.wrong-ans { background-color: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); }
+
+        .explanation-box { padding: 1.25rem; margin-top: 1.5rem; border-radius: 4px; font-size: 1rem; line-height: 1.6; border: 1px solid; background-color: #f8fafc; border-color: #cbd5e1; color: #334155; }
+        .explanation-box.correct { background-color: #f0fdf4; border-color: #bbf7d0; color: var(--color-correct); }
+        .explanation-box.incorrect { background-color: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); }
+        .exp-en { margin-bottom: 0.8rem; }
+        .exp-vn { font-style: italic; font-family: var(--font-passage); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.8rem; color: #555; }
+
+        /* Graph specific styles */
+        .chart-grid line { stroke: #e2e8f0; stroke-width: 1; }
+        .chart-axis line, .chart-axis path { stroke: #64748b; stroke-width: 2; }
+        .chart-axis text { font-family: var(--font-ui); font-size: 12px; fill: #475569; }
+        .chart-line { fill: none; stroke: var(--primary-blue); stroke-width: 3; }
+        
+        @keyframes fadeIn { from {opacity: 0;} to { opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .split-layout { flex-direction: column; }
+            .pane-left, .pane-right { flex: 1 1 50%; }
+            .resizer { height: 8px; width: 100%; cursor: row-resize; }
+        }
+    </style>
+</head>
+<body class="phase-0">
+
+<div id="vocab-tooltip" class="vocab-tooltip"></div>
+
+<div class="app-shell">
+    
+    <header class="header">
+        <div class="header-title">GED® Science - Earth & Space Science</div>
+    </header>
+
+    <main class="split-layout">
+        
+        <section class="pane-left" id="left-pane" aria-label="Lesson Content">
+            
+            <article id="intro-overview" style="display: block;">
+                <h1 class="section-title primary">Activity Overview</h1>
+                <div class="info-box">
+                    <p style="margin-bottom: 1rem;">This interactive lesson focuses on the <strong>Structure of Earth</strong> and <strong>Earth's Resources</strong>—core topics tested on the GED Science exam.</p>
+                    <p>Read the study guide carefully before proceeding to the practice questions. You can click on the highlighted terms for bilingual definitions.</p>
+                </div>
+            </article>
+
+            <article id="reading-passage" style="display: none;">
+                <h1 class="section-title">Lesson 1: Structure of Earth</h1>
+                <div class="passage-meta">Bilingual Guide for ESL Students</div>
+
+                <div class="svg-container">
+                    <svg viewBox="0 0 250 250" width="100%" style="max-width: 300px; border-radius: 8px; background:#fff; padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <path d="M10,240 L10,10 A230,230 0 0,1 240,240 Z" fill="#e2e8f0" stroke="#334155" stroke-width="6" title="Crust (5-64 km)"/>
+                        <path d="M10,240 L10,30 A210,210 0 0,1 220,240 Z" fill="#94a3b8" title="Mantle (2,900 km)"/>
+                        <path d="M10,240 L10,120 A120,120 0 0,1 130,240 Z" fill="#64748b" title="Outer Core (2,253 km)"/>
+                        <path d="M10,240 L10,180 A60,60 0 0,1 70,240 Z" fill="#ffffff" title="Inner Core (1,287 km)"/>
+                        
+                        <text x="170" y="80" font-family="Arial" font-size="12" fill="#333" font-weight="bold">Crust</text>
+                        <text x="120" y="140" font-family="Arial" font-size="12" fill="#fff" font-weight="bold">Mantle</text>
+                        <text x="45" y="190" font-family="Arial" font-size="11" fill="#fff" font-weight="bold">Outer Core</text>
+                        <text x="15" y="225" font-family="Arial" font-size="10" fill="#333" font-weight="bold">Inner</text>
+                    </svg>
+                    <div class="svg-caption">Figure 1: Earth's Layers (Crust, Mantle, Outer Core, Inner Core)</div>
+                </div>
+
+                <div class="paragraph">
+                    [cite_start]Earth is almost spherical and composed of three main layers: the crust, the mantle, and the core[cite: 12, 13]. The solid outer layer, the crust, is made of rock. [cite_start]Below it is the molten mantle consisting of silica and metals[cite: 14, 16, 17]. [cite_start]The core is characterized by extreme heat and pressure and has two parts: the outer core (liquid iron) and the inner core (solid iron)[cite: 18, 19].
+                </div>
+
+                <h2 class="passage-title">Plate Tectonics (Kiến tạo mảng)</h2>
+                <div class="paragraph">
+                    [cite_start]According to the theory of plate tectonics, Earth's crust is made up of <span class="vocab-word" onclick="showTooltip(event, 'Tectonic Plates')">Tectonic Plates</span> that fit together like a crude jigsaw puzzle[cite: 25]. [cite_start]These plates move up to 15 centimeters a year[cite: 26]. [cite_start]Their movement explains seafloor spreading, mountain formation, and how the continents drift[cite: 24]. 
+                </div>
+
+                <table class="grammar-chart">
+                    <thead>
+                        <tr>
+                            <th>Margin Type (Loại ranh giới)</th>
+                            <th>Movement (Sự di chuyển)</th>
+                            <th>Result (Kết quả)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Constructive</strong></td>
+                            <td>Moving apart (Tách xa nhau)</td>
+                            [cite_start]<td>New crust forms (e.g., Mid-Atlantic Ridge)[cite: 32, 33, 34].</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Destructive</strong></td>
+                            <td>Colliding (Va chạm)</td>
+                            [cite_start]<td>Crust is destroyed via <span class="vocab-word" onclick="showTooltip(event, 'Subduction')">Subduction</span> or crumpled into mountains[cite: 35, 36, 37].</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Transform</strong></td>
+                            <td>Sliding past (Trượt qua)</td>
+                            [cite_start]<td>No crust created or destroyed; causes earthquakes (e.g., San Andreas fault)[cite: 38, 39].</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="rule-box">
+                    <strong style="color: #d97706; font-size: 1.2rem;"><i class="fa-solid fa-lightbulb"></i> GED® TEST TIP</strong>
+                    <p style="margin-top: 0.5rem;">When you read a multiple-choice question, try to answer it <em>before</em> you read the choices. [cite_start]If one of the choices is similar to your answer, it is probably correct[cite: 30, 31].</p>
+                </div>
+
+                <hr style="border: 0; height: 1px; background: var(--border-color); margin: 2rem 0;">
+
+                <h1 class="section-title">Lesson 2: Earth's Resources</h1>
+
+                <div class="paragraph">
+                    [cite_start]A resource is anything humans need to survive[cite: 86]. [cite_start]Resources are either renewable (endless supply) or nonrenewable (limited supply)[cite: 83, 84]. 
+                </div>
+
+                <div class="paragraph">
+                    <span class="vocab-word" onclick="showTooltip(event, 'Nonrenewable Resources')">Nonrenewable Resources</span> take millions of years to form naturally. [cite_start]When used up, they cannot be replaced[cite: 93, 94]. [cite_start]Examples include soil, minerals, and <span class="vocab-word" onclick="showTooltip(event, 'Fossil Fuels')">Fossil Fuels</span> like coal, oil, and natural gas[cite: 94, 95, 97].
+                </div>
+
+                <div class="paragraph">
+                    <span class="vocab-word" onclick="showTooltip(event, 'Renewable Resources')">Renewable Resources</span> cycle through the environment or exist in unlimited supply. [cite_start]Examples include solar energy, water, wind, and <span class="vocab-word" onclick="showTooltip(event, 'Geothermal')">Geothermal</span> power from Earth's crust[cite: 98, 99].
+                </div>
+
+                <div class="paragraph">
+                    [cite_start]<strong>Conservation:</strong> Humans harm resources through overconsumption and pollution[cite: 101]. [cite_start]Conservation limits overuse through recycling, building efficient engines, and developing renewable technologies[cite: 106, 107, 108].
+                </div>
+
+            </article>
+        </section>
+
+        <div class="resizer" id="dragMe" title="Drag to resize"></div>
+
+        <aside class="pane-right" id="right-pane" aria-label="Interactive Workspace">
+            <div id="questions-container"></div>
+        </aside>
+    </main>
+
+    <footer class="footer" id="main-footer">
+        <button class="btn-nav" id="btn-prev" onclick="navigate(-1)">Previous</button>
+        <div class="nav-progress" id="nav-progress" aria-live="polite">Start Practice</div>
+        <button class="btn-nav" id="btn-next" onclick="navigate(1)">Next</button>
+    </footer>
+
+</div>
+
+<script>
+    /* =========================================================================
+       1. DATA SCHEMAS & CONFIGURATION
+       ========================================================================= */
+
+    // Reusable graph HTML for Questions 7-9
+    const petroleumGraphHtml = `
+        <div style="background: #fff; padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 1.5rem; text-align: center;">
+            <h4 style="font-size: 1rem; margin-bottom: 1rem;">World Petroleum Consumption, 2003–2011<br>(Quadrillion Btus)</h4>
+            <svg viewBox="0 0 400 250" width="100%" style="max-width: 400px; height: auto;">
+                <g class="chart-grid">
+                    <line x1="40" y1="20" x2="380" y2="20" /> <line x1="40" y1="60" x2="380" y2="60" /> <line x1="40" y1="100" x2="380" y2="100" /> <line x1="40" y1="140" x2="380" y2="140" /> <line x1="40" y1="180" x2="380" y2="180" /> <line x1="40" y1="220" x2="380" y2="220" /> </g>
+                <g class="chart-axis">
+                    <text x="35" y="24" text-anchor="end">180</text>
+                    <text x="35" y="64" text-anchor="end">175</text>
+                    <text x="35" y="104" text-anchor="end">170</text>
+                    <text x="35" y="144" text-anchor="end">165</text>
+                    <text x="35" y="184" text-anchor="end">160</text>
+                    <text x="35" y="224" text-anchor="end">155</text>
+                    <text x="15" y="120" transform="rotate(-90 15,120)" text-anchor="middle" font-weight="bold">Btus</text>
+                    
+                    <text x="60" y="240" text-anchor="middle">2003</text>
+                    <text x="140" y="240" text-anchor="middle">2005</text>
+                    <text x="220" y="240" text-anchor="middle">2007</text>
+                    <text x="300" y="240" text-anchor="middle">2009</text>
+                    <text x="380" y="240" text-anchor="middle">2011</text>
+                </g>
+                <path class="chart-line" d="M60,164 L140,92 L220,68 L300,100 L380,44" />
+            </svg>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem; text-align: left;">*Btus are British thermal units, a measure of energy</div>
+        </div>
+    `;
+
+    const questionsData = [
+        {
+            id: 'intro',
+            type: 'info',
+            title: "Phase 1: Practice Mode",
+            content: `
+                <div class="info-box" style="padding: 2.5rem; background: #f9f9f9;">
+                    <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><strong>Welcome to the Earth & Space Science Practice.</strong></p>
+                    <p style="margin-bottom: 1.5rem;">This untimed practice contains interactive questions designed for the GED exam:</p>
+                    <ul style="margin-left: 2rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.5rem;"><strong>Questions 1-11: Drop-Down Menus.</strong> Test your knowledge of Earth's layers, plate tectonics, and graph reading.</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Question 12: Drag-and-Drop Passage.</strong> Sort energy sources into Renewable vs. Nonrenewable categories.</li>
+                    </ul>
+                    <p style="margin-bottom: 1.5rem;">Read the study guide carefully. You will receive immediate feedback after answering each question.</p>
+                    <button class="btn-primary" onclick="startPhase1()" style="font-size: 1.1rem; padding: 1rem 2rem; margin-top: 1rem;">Begin Practice</button>
+                </div>
+            `
+        },
+        {
+            id: 'q1', type: 'dropdown',
+            title: "1. Plate Tectonics",
+            sentence: "The theory of plate tectonics explains [DROP].",
+            options: [
+                "changes in Earth's crust", 
+                "changes in Earth's mantle", 
+                "changes in the composition of Earth's layers", 
+                "why there is extreme heat and pressure in Earth's core"
+            ],
+            correct: "changes in Earth's crust",
+            expEn: "The theory of plate tectonics explains phenomena of Earth's crust: seafloor spreading, the formation of landforms, and the movement of continents.",
+            expVn: "Thuyết kiến tạo mảng giải thích các hiện tượng xảy ra trên lớp vỏ Trái Đất như sự lan rộng đáy biển và chuyển động của các lục địa."
+        },
+        {
+            id: 'q2', type: 'dropdown-passage',
+            title: "2. Earth's Core Properties",
+            passage: "One similarity between Earth's inner and outer cores is that both [DROP1]. However, the two are different because the inner core [DROP2] while the outer core [DROP3].",
+            dropdowns: {
+                "DROP1": { options: ["consist primarily of iron", "consist primarily of granite", "consist primarily of silica"], correct: "consist primarily of iron" },
+                "DROP2": { options: ["is mostly gaseous", "is mostly liquid", "is mostly solid"], correct: "is mostly solid" },
+                "DROP3": { options: ["is mostly gaseous", "is mostly liquid", "is mostly solid"], correct: "is mostly liquid" }
+            },
+            expEn: "The core has two layers. The inner core is mostly solid iron, and the outer core is mostly liquid iron. Both consist primarily of iron.",
+            expVn: "Lõi trong là sắt rắn, và lõi ngoài là sắt lỏng. Cả hai đều cấu tạo chủ yếu từ sắt (iron)."
+        },
+        {
+            id: 'q3', type: 'dropdown',
+            title: "3. Tectonic Margins",
+            sentence: "At the Japan Trench, the oceanic Pacific plate is forced beneath the continental Eurasian plate. The Japan Trench is an example of [DROP].",
+            options: ["a tectonic plate", "a mid-ocean ridge", "a constructive margin", "a destructive margin"],
+            correct: "a destructive margin",
+            expEn: "When a continental plate collides with an oceanic plate and is forced under it (destroying crust), it forms a destructive margin.",
+            expVn: "Khi mảng đại dương bị ép xuống dưới mảng lục địa (phá hủy lớp vỏ), đó là ranh giới phá hủy (destructive margin)."
+        },
+        {
+            id: 'q4', type: 'dropdown',
+            title: "4. Continental Drift Evidence",
+            sentence: "Which of the following provides evidence that the present-day continents were once one large continent (Pangaea) that broke apart? [DROP]",
+            options: [
+                "Australia is a large, continent-sized island.", 
+                "Eurasia is the largest land mass on Earth today.", 
+                "The west coast of Africa seems to fit into the east coast of the Americas."
+            ],
+            correct: "The west coast of Africa seems to fit into the east coast of the Americas.",
+            expEn: "The theory states plates fit together like a 'jigsaw puzzle'. The physical fit of the continents' coastlines supports the Pangaea theory.",
+            expVn: "Hình dạng các bờ biển (châu Phi và châu Mỹ) khớp với nhau như những mảnh ghép, chứng minh chúng từng dính liền."
+        },
+        {
+            id: 'q5', type: 'dropdown',
+            title: "5. Seafloor Spreading",
+            sentence: "Which of the following is implied by the fact that seafloor spreading at the Mid-Atlantic Ridge is causing the Atlantic Ocean to widen? [DROP]",
+            options: [
+                "The Mid-Atlantic Ridge is thousands of miles long.", 
+                "The continents of North America and Europe are moving apart.", 
+                "The continents of North America and Europe are growing larger."
+            ],
+            correct: "The continents of North America and Europe are moving apart.",
+            expEn: "If the ocean floor between North America and Europe is widening (spreading), the continents resting on those plates must be moving further apart.",
+            expVn: "Nếu đáy đại dương nằm giữa hai lục địa ngày càng rộng ra, điều đó có nghĩa là các lục địa đó đang di chuyển xa nhau."
+        },
+        {
+            id: 'q6', type: 'dropdown',
+            title: "6. Theory vs. Fact",
+            sentence: "Which of the following is a theory rather than a fact? [DROP]",
+            options: [
+                "The San Andreas fault is the boundary between the North American and Pacific plates.", 
+                "A single large landmass called Pangaea existed about 250 million years ago.", 
+                "Earthquakes often occur along tectonic plate boundaries."
+            ],
+            correct: "A single large landmass called Pangaea existed about 250 million years ago.",
+            expEn: "The existence of Pangaea millions of years ago is a scientific theory (an explanation supported by evidence), whereas observing fault lines or earthquakes happening today are verifiable facts.",
+            expVn: "Sự tồn tại của siêu lục địa Pangaea cách đây hàng triệu năm là một giả thuyết khoa học (theory), trong khi các nứt gãy và động đất hiện tại là sự thật (fact)."
+        },
+        {
+            id: 'q7', type: 'dropdown',
+            title: "7. Graph Reading",
+            sentence: petroleumGraphHtml + "Approximately how many quadrillion Btus of petroleum were consumed in 2011? [DROP]",
+            options: ["160", "170", "174", "177"],
+            correct: "177",
+            expEn: "Looking at the X-axis for 2011, the data line stops roughly halfway between 175 and 180 on the Y-axis. 177 is the most accurate estimate.",
+            expVn: "Nhìn vào trục X năm 2011, đường đồ thị nằm giữa 175 và 180 trên trục Y. 177 là ước tính chính xác nhất."
+        },
+        {
+            id: 'q8', type: 'dropdown',
+            title: "8. Graph Range",
+            sentence: petroleumGraphHtml + "Between its low point in 2003 and its high point in 2011, the approximate range of the data regarding world petroleum consumption was [DROP] quadrillion Btus.",
+            options: ["10", "14", "176"],
+            correct: "14",
+            expEn: "Range = High - Low. High point (2011) is approx 176-177. Low point (2003) is approx 162. 176 - 162 = 14.",
+            expVn: "Khoảng biến thiên (Range) = Mức cao nhất - Mức thấp nhất. 176 - 162 = khoảng 14."
+        },
+        {
+            id: 'q9', type: 'dropdown',
+            title: "9. Graph Summary",
+            sentence: petroleumGraphHtml + "Which of the following sentences best summarizes the information in the graph? [DROP]",
+            options: [
+                "World petroleum consumption increased by about 14 quadrillion Btus between 2003 and 2011.", 
+                "World petroleum consumption fell by about 4 quadrillion Btus between 2005 and 2009.", 
+                "World petroleum consumption increased by roughly 50 percent between 2003 and 2007."
+            ],
+            correct: "World petroleum consumption increased by about 14 quadrillion Btus between 2003 and 2011.",
+            expEn: "The graph shows an overall upward trend from roughly 162 in 2003 to 176 in 2011, an increase of about 14 Btus.",
+            expVn: "Đồ thị cho thấy xu hướng tăng tổng thể từ khoảng 162 (năm 2003) lên 176 (năm 2011), tăng khoảng 14 Btus."
+        },
+        {
+            id: 'q10', type: 'dropdown',
+            title: "10. Conservation Proverbs",
+            sentence: "Which of the following proverbs best expresses the views of a conservationist? [DROP]",
+            options: ["All that glitters is not gold.", "Every cloud has a silver lining.", "Waste not, want not."],
+            correct: "Waste not, want not.",
+            expEn: "Conservation is about preserving resources and avoiding overuse/waste. 'Waste not, want not' directly supports reducing waste so you won't lack resources later.",
+            expVn: "Bảo tồn là tránh lãng phí. Câu 'Waste not, want not' (Không lãng phí thì không thiếu thốn) thể hiện đúng quan điểm này."
+        },
+        {
+            id: 'q11', type: 'dropdown',
+            title: "11. Water Conservation",
+            sentence: "The overall demand for water is rising, but the rate of consumption per person has dropped. Which of the following is a likely reason for this drop? [DROP]",
+            options: [
+                "Vast new supplies of water have been found.", 
+                "Developed nations have started using water more efficiently than they did in the past.", 
+                "Developed nations are sharing water resources with each other."
+            ],
+            correct: "Developed nations have started using water more efficiently than they did in the past.",
+            expEn: "A drop in the consumption rate per person indicates better efficiency (e.g., conservation technologies) rather than finding new supplies.",
+            expVn: "Sự sụt giảm mức tiêu thụ trên mỗi người cho thấy hiệu quả sử dụng đã được cải thiện (công nghệ bảo tồn) chứ không phải do tìm thấy nguồn nước mới."
+        },
+        {
+            id: 'q12',
+            type: 'dnd-passage',
+            title: "12. Drag and Drop: Classifying Earth's Resources",
+            bank: ["Coal", "Solar Energy", "Natural Gas", "Wind Power", "Geothermal"],
+            passage: "<strong>Renewable vs. Nonrenewable Resources</strong><br><br>Resources are classified based on how quickly they naturally replenish. Nonrenewable resources take millions of years to form. When they are used up, there is no replacement. Two common examples of nonrenewable fossil fuels are [Blank 1] and [Blank 2].<br><br>In contrast, renewable resources will not run out because they have an unlimited supply or they naturally cycle through the environment quickly. Clean alternative energies include [Blank 3], which utilizes heat from the Earth's crust, [Blank 4] collected from the sun's rays, and [Blank 5] harnessed from moving air.",
+            blanks: ["Blank 1", "Blank 2", "Blank 3", "Blank 4", "Blank 5"],
+            correctAnswers: {
+                "Blank 1": "Coal",
+                "Blank 2": "Natural Gas", 
+                "Blank 3": "Geothermal",
+                "Blank 4": "Solar Energy",
+                "Blank 5": "Wind Power"
+            },
+            expEn: "Fossil fuels (Coal and Natural Gas) are nonrenewable. Geothermal comes from Earth's heat, Solar comes from the sun, and Wind power comes from air—all renewable.",
+            expVn: "Than (Coal) và khí tự nhiên (Natural Gas) là tài nguyên không tái tạo. Địa nhiệt (Geothermal), năng lượng Mặt trời (Solar), và Gió (Wind) là tái tạo."
+        }
+    ];
+
+    /* =========================================================================
+       2. VOCABULARY DICTIONARY (For Tooltips)
+       ========================================================================= */
+    const vocabDictionary = {
+        "Tectonic Plates": { 
+            en: "Large slabs of Earth's solid crust that move over the molten mantle.", 
+            vn: "Mảng kiến tạo (Các tảng đá lớn tạo nên lớp vỏ Trái Đất)." 
+        },
+        "Subduction": { 
+            en: "A geological process where one plate moves under another and is forced into the mantle.", 
+            vn: "Sự hút chìm (Một mảng chui xuống dưới mảng khác)." 
+        },
+        "Renewable Resources": { 
+            en: "Resources that can be replenished naturally over a short period of time.", 
+            vn: "Tài nguyên tái tạo (Có thể tự phục hồi nhanh chóng)." 
+        },
+        "Nonrenewable Resources": { 
+            en: "Resources that exist in a limited supply and take millions of years to form.", 
+            vn: "Tài nguyên không tái tạo (Có giới hạn, mất hàng triệu năm để hình thành)." 
+        },
+        "Fossil Fuels": { 
+            en: "Natural fuels formed in the past from the remains of living organisms (coal, oil, gas).", 
+            vn: "Nhiên liệu hóa thạch (Than, dầu, khí đốt)." 
+        },
+        "Geothermal": { 
+            en: "Energy derived from the heat in the interior of the earth.", 
+            vn: "Địa nhiệt (Năng lượng từ nhiệt bên trong Trái Đất)." 
+        }
+    };
+
+    /* =========================================================================
+       3. STATE MANAGEMENT
+       ========================================================================= */
+    const state = {
+        phase: 0, 
+        currentQuestionIndex: 0,
+        userAnswers: {},     
+        flagged: new Set(),
+        evaluated: new Set() 
+    };
+
+    /* =========================================================================
+       4. INITIALIZATION & TEMPLATE RENDERING
+       ========================================================================= */
+    function init() {
+        const container = document.getElementById('questions-container');
+        
+        questionsData.forEach((q, index) => {
+            const slide = document.createElement('article');
+            slide.className = `question-slide ${index === 0 ? 'active' : ''}`;
+            slide.id = `slide-${index}`;
+            
+            let html = '';
+            
+            if (q.type === 'info') {
+                html += `<div class="q-title section-title center">${q.title}</div>${q.content}`;
+            } 
+            else if (q.type === 'dropdown') {
+                let selectHtml = `<select class="inline-select" id="select-${q.id}" onchange="handleDropdownSelection('${q.id}', this)">`;
+                selectHtml += `<option value="" disabled selected>Choose...</option>`;
+                q.options.forEach(opt => {
+                    selectHtml += `<option value="${opt}">${opt}</option>`;
+                });
+                selectHtml += `</select>`;
+
+                let sentenceHtml = q.sentence.replace('[DROP]', selectHtml);
+
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)">
+                            Flag for Review
+                        </label>
+                    </div>
+                    <div class="info-box" style="margin-top: 1rem; font-size: 1.15rem;">
+                        ${sentenceHtml}
+                    </div>
+                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                `;
+            }
+            else if (q.type === 'dropdown-passage') {
+                let passageHtml = q.passage;
+                Object.keys(q.dropdowns).forEach(dropId => {
+                    let selectHtml = `<select class="inline-select" id="${q.id}-${dropId}" onchange="handleDropdownPassageSelection('${q.id}')">`;
+                    selectHtml += `<option value="" disabled selected>Choose...</option>`;
+                    q.dropdowns[dropId].options.forEach(opt => { selectHtml += `<option value="${opt}">${opt}</option>`; });
+                    selectHtml += `</select>`;
+                    passageHtml = passageHtml.replace(`[${dropId}]`, selectHtml);
+                });
+
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)"> Flag
+                        </label>
+                    </div>
+                    <div class="info-box passage-text" style="background: #fff; border: 1px solid var(--border-color);">
+                        ${passageHtml}
+                    </div>
+                    <div style="text-align:center; margin-top: 2rem;">
+                        <button id="btn-check-${q.id}" class="btn-primary" style="font-size: 1.2rem; padding: 0.75rem 2rem;" onclick="evaluateDropdownPassage('${q.id}')" disabled>
+                            Check Answers
+                        </button>
+                    </div>
+                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                `;
+            }
+            else if (q.type === 'dnd-passage') {
+                html += `
+                    <div class="q-header-flex">
+                        <div class="q-title">${q.title}</div>
+                        <label class="flag-container"><input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)"> Flag</label>
+                    </div>
+                    <div class="dnd-container">
+                        <div class="options-bank" id="bank-${q.id}" ondragover="allowDrop(event)" ondrop="drop(event, 'bank-${q.id}')">
+                `;
+                q.bank.forEach((item, idx) => {
+                    html += `<div class="draggable-item" draggable="true" id="item-${q.id}-${idx}" ondragstart="drag(event)" data-val="${item}">
+                                <i class="fa-solid fa-grip-vertical" style="color:#aaa;"></i> ${item}
+                             </div>`;
+                });
+                html += `</div>`; 
+
+                let passageHtml = q.passage;
+                q.blanks.forEach(blankId => {
+                    const dzHtml = `<span class="inline-dz dropzone" id="${q.id}-${blankId.replace(' ', '')}" ondragover="allowDrop(event)" ondrop="drop(event, '${q.id}-${blankId.replace(' ', '')}')">Drop Here</span>`;
+                    passageHtml = passageHtml.replace(`[${blankId}]`, dzHtml);
+                });
+
+                html += `
+                        <div class="info-box passage-text">
+                            ${passageHtml}
+                        </div>
+                    </div>
+                    <div style="text-align:center; margin-top: 2rem;">
+                        <button id="btn-check-${q.id}" class="btn-primary" style="font-size: 1.2rem; padding: 0.75rem 2rem;" onclick="evaluateDnd('${q.id}')" disabled>
+                            Check Answers
+                        </button>
+                    </div>
+                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                `;
+            }
+            
+            slide.innerHTML = html;
+            container.appendChild(slide);
+        });
+
+        const submitSlide = document.createElement('article');
+        submitSlide.className = `question-slide`;
+        submitSlide.id = `slide-${questionsData.length}`;
+        submitSlide.innerHTML = `
+            <div class="q-title section-title center">Practice Complete</div>
+            <div class="info-box" style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Completion Status</h3>
+                <div id="submit-summary-list"></div>
+            </div>
+            <div style="text-align: center;">
+                <button id="btn-final-submit" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="startPhase2()" disabled>
+                    Finish Practice & View Total Score
+                </button>
+            </div>
+        `;
+        container.appendChild(submitSlide);
+        updateNavigationUI();
+    }
+
+    /* =========================================================================
+       5. VOCABULARY TOOLTIP LOGIC
+       ========================================================================= */
+    function showTooltip(event, term) {
+        event.stopPropagation();
+        const tooltip = document.getElementById('vocab-tooltip');
+        const data = vocabDictionary[term];
+        if(!data) return;
+
+        tooltip.innerHTML = `
+            <div style="font-weight: 700; font-size: 1.1rem; color: var(--primary-blue); margin-bottom: 0.5rem;">${term}</div>
+            <div style="margin-bottom: 0.75rem; color: var(--text-main);">${data.en}</div>
+            <div style="font-style: italic; color: var(--text-muted); border-top: 1px solid #eee; padding-top: 0.5rem;">${data.vn}</div>
+        `;
+        tooltip.style.display = 'block';
+        
+        const rect = event.target.getBoundingClientRect();
+        tooltip.style.top = (rect.bottom + 5) + 'px';
+        let tipLeft = rect.left;
+        if (tipLeft + 320 > window.innerWidth) tipLeft = window.innerWidth - 340; 
+        tooltip.style.left = Math.max(10, tipLeft) + 'px'; 
+    }
+
+    document.addEventListener('click', () => {
+        const tooltip = document.getElementById('vocab-tooltip');
+        if(tooltip) tooltip.style.display = 'none';
+    });
+
+    document.getElementById('left-pane').addEventListener('scroll', () => {
+        const tooltip = document.getElementById('vocab-tooltip');
+        if(tooltip) tooltip.style.display = 'none';
+    });
+
+    /* =========================================================================
+       6. PHASE TRANSITION LOGIC
+       ========================================================================= */
+    function startPhase1() {
+        state.phase = 1;
+        document.body.className = 'phase-1';
+        document.getElementById('intro-overview').style.display = 'none';
+        document.getElementById('reading-passage').style.display = 'block';
+        navigate(1); 
+    }
+
+    function startPhase2() {
+        state.phase = 2;
+        document.body.className = 'phase-2';
+        document.getElementById('main-footer').style.display = 'none';
+        renderReviewMode();
+    }
+
+    /* =========================================================================
+       7. PHASE 1 PRACTICE LOGIC (Immediate Feedback)
+       ========================================================================= */
+    function navigate(direction) {
+        if(state.phase !== 0 && state.phase !== 1) return;
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.remove('active');
+        state.currentQuestionIndex += direction;
+        
+        if (state.phase === 1 && state.currentQuestionIndex === 0) state.currentQuestionIndex = 1;
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.add('active');
+        document.getElementById('right-pane').scrollTop = 0;
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function updateNavigationUI() {
+        if (state.phase === 0) {
+            document.getElementById('btn-prev').disabled = true;
+            document.getElementById('btn-next').style.display = 'none';
+            return;
+        }
+        const totalQs = questionsData.filter(q => q.type !== 'info').length; 
+        const isSubmitGate = (state.currentQuestionIndex === questionsData.length);
+
+        document.getElementById('btn-prev').disabled = (state.currentQuestionIndex === 1);
+        document.getElementById('btn-next').style.display = 'block';
+        document.getElementById('btn-next').disabled = isSubmitGate;
+        
+        const progressContainer = document.getElementById('nav-progress');
+        if (isSubmitGate) {
+            progressContainer.innerHTML = `Review & Submit`;
+        } else {
+            const currentQ = questionsData[state.currentQuestionIndex];
+            progressContainer.innerHTML = currentQ.type === 'info' ? currentQ.title : `Question ${state.currentQuestionIndex} of ${totalQs}`;
+        }
+    }
+
+    function toggleFlag(qId, isChecked) {
+        if (isChecked) state.flagged.add(qId);
+        else state.flagged.delete(qId);
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+    }
+
+    function handleDropdownSelection(qId, selectElement) {
+        if (state.evaluated.has(qId)) return;
+        state.evaluated.add(qId);
+        const q = questionsData.find(x => x.id === qId);
+        state.userAnswers[qId] = selectElement.value;
+        selectElement.disabled = true;
+        
+        const isCorrect = selectElement.value === q.correct;
+        selectElement.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+        
+        const fb = document.getElementById(`feedback-${qId}`);
+        const expClass = isCorrect ? 'correct' : 'incorrect';
+        const expTitle = isCorrect ? 'Correct!' : `Incorrect. The correct answer is "${q.correct}".`;
+        
+        fb.className = `explanation-box ${expClass}`;
+        fb.innerHTML = `
+            <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+            <div class="exp-en">${q.expEn}</div>
+            <div class="exp-vn">${q.expVn}</div>
+        `;
+        fb.style.display = 'block';
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function checkDnDPassageState(qId) {
+        if (state.evaluated.has(qId)) return;
+        const qConfig = questionsData.find(q => q.id === qId);
+        let ansObj = {}; let filledCount = 0;
+
+        qConfig.blanks.forEach(blankId => {
+            const dropzoneEl = document.getElementById(`${qId}-${blankId.replace(' ', '')}`);
+            const val = dropzoneEl.firstElementChild?.dataset.val;
+            if (val) { ansObj[blankId] = val; filledCount++; }
+        });
+        state.userAnswers[qId] = ansObj;
+
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) checkBtn.disabled = (filledCount !== qConfig.blanks.length);
+    }
+
+    function evaluateDnd(qId) {
+        if (state.evaluated.has(qId)) return;
+        state.evaluated.add(qId);
+        const q = questionsData.find(x => x.id === qId);
+        
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) checkBtn.style.display = 'none';
+        
+        let allCorrect = true;
+        q.blanks.forEach(blankId => {
+            const dz = document.getElementById(`${qId}-${blankId.replace(' ', '')}`);
+            const userVal = state.userAnswers[qId]?.[blankId];
+            const isCorrect = userVal === q.correctAnswers[blankId];
+            if(!isCorrect) allCorrect = false;
+            dz.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+            if (dz.firstElementChild) {
+                dz.firstElementChild.draggable = false; dz.firstElementChild.classList.add('locked');
+            }
+        });
+        
+        document.querySelectorAll(`#bank-${qId} .draggable-item`).forEach(el => { el.draggable = false; el.classList.add('locked'); });
+        
+        const fb = document.getElementById(`feedback-${qId}`);
+        fb.className = `explanation-box ${allCorrect ? 'correct' : 'incorrect'}`;
+        fb.innerHTML = `
+            <div style="font-weight:bold; margin-bottom: 0.5rem;">${allCorrect ? 'Perfect!' : 'Review the correct answers below:'}</div>
+            <div class="exp-en">${q.expEn}</div>
+            <div class="exp-vn">${q.expVn}</div>
+        `;
+        fb.style.display = 'block';
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function handleDropdownPassageSelection(qId) {
+        if (state.evaluated.has(qId)) return;
+        const qConfig = questionsData.find(q => q.id === qId);
+        let ansObj = {}; let filledCount = 0;
+        Object.keys(qConfig.dropdowns).forEach(dropId => {
+            const selectEl = document.getElementById(`${qId}-${dropId}`);
+            if (selectEl && selectEl.value) { ansObj[dropId] = selectEl.value; filledCount++; }
+        });
+        state.userAnswers[qId] = ansObj;
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) checkBtn.disabled = (filledCount !== Object.keys(qConfig.dropdowns).length);
+    }
+
+    function evaluateDropdownPassage(qId) {
+        if (state.evaluated.has(qId)) return;
+        state.evaluated.add(qId);
+        const q = questionsData.find(x => x.id === qId);
+        
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) checkBtn.style.display = 'none';
+        
+        let allCorrect = true;
+        Object.keys(q.dropdowns).forEach(dropId => {
+            const select = document.getElementById(`${qId}-${dropId}`);
+            const userVal = state.userAnswers[qId]?.[dropId];
+            const correctVal = q.dropdowns[dropId].correct;
+            const isCorrect = userVal === correctVal;
+            if(!isCorrect) allCorrect = false;
+            
+            select.disabled = true;
+            if (isCorrect) { select.classList.add('correct-ans'); } 
+            else {
+                select.classList.add('wrong-ans');
+                if(!select.nextElementSibling || select.nextElementSibling.className !== 'correction-span') {
+                    const correctSpan = document.createElement('span');
+                    correctSpan.className = 'correction-span';
+                    correctSpan.innerHTML = ` <i class="fa-solid fa-arrow-right"></i> ${correctVal}`;
+                    correctSpan.style.color = 'var(--color-correct)'; correctSpan.style.fontWeight = 'bold';
+                    correctSpan.style.marginLeft = '0.5rem';
+                    select.parentNode.insertBefore(correctSpan, select.nextSibling);
+                }
+            }
+        });
+        
+        const fb = document.getElementById(`feedback-${qId}`);
+        fb.className = `explanation-box ${allCorrect ? 'correct' : 'incorrect'}`;
+        fb.innerHTML = `
+            <div style="font-weight:bold; margin-bottom: 0.5rem;">${allCorrect ? 'Perfect!' : 'Review the correct answers below:'}</div>
+            <div class="exp-en">${q.expEn}</div>
+            <div class="exp-vn">${q.expVn}</div>
+        `;
+        fb.style.display = 'block';
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function updateSubmitSlide() {
+        const container = document.getElementById('submit-summary-list');
+        let completedCount = 0; let html = '';
+        const qList = questionsData.filter(q => q.type !== 'info');
+        
+        qList.forEach((q, idx) => {
+            const isCompleted = state.evaluated.has(q.id);
+            if (isCompleted) completedCount++;
+            const isFlagged = state.flagged.has(q.id);
+            const flagHtml = isFlagged ? '<i class="fa-solid fa-flag" style="color:#d97706; margin-left:8px;" title="Flagged"></i>' : '';
+            
+            html += `
+                <div class="summary-item">
+                    <span>Question ${idx + 1} ${flagHtml}</span>
+                    <span style="font-weight:bold; color: ${isCompleted ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                        ${isCompleted ? 'Checked' : 'Unanswered'}
+                    </span>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        const btn = document.getElementById('btn-final-submit');
+        
+        if (completedCount === qList.length) {
+            btn.disabled = false; btn.innerText = "Finish Practice & View Total Score"; btn.style.background = "var(--color-correct)"; 
+        } else {
+            btn.disabled = true; btn.innerText = `Check all ${qList.length} questions to finish (${completedCount}/${qList.length})`; btn.style.background = "var(--primary-blue)";
+        }
+    }
+
+    /* =========================================================================
+       8. PHASE 2 SCORING & FINAL SUMMARY
+       ========================================================================= */
+    function checkAnswerCorrectness(qId, qData) {
+        if (qData.type === 'dropdown') return state.userAnswers[qId] === qData.correct;
+        else if (qData.type === 'dnd-passage') {
+            const ans = state.userAnswers[qId]; if(!ans) return false;
+            let allBlanksCorrect = true;
+            qData.blanks.forEach(b => { if (ans[b] !== qData.correctAnswers[b]) allBlanksCorrect = false; });
+            return allBlanksCorrect;
+        } else if (qData.type === 'dropdown-passage') {
+            const ans = state.userAnswers[qId]; if(!ans) return false;
+            let allBlanksCorrect = true;
+            Object.keys(qData.dropdowns).forEach(d => { if (ans[d] !== qData.dropdowns[d].correct) allBlanksCorrect = false; });
+            return allBlanksCorrect;
+        }
+        return false;
+    }
+
+    function renderReviewMode() {
+        const container = document.getElementById('questions-container');
+        let html = ''; let score = 0; let totalPossibleScore = 0;
+        const qList = questionsData.filter(q => q.type !== 'info');
+        const qHtmlBlocks = [];
+
+        qList.forEach((q, idx) => {
+            let isCorrect = false;
+            if(q.type === 'dropdown') {
+                totalPossibleScore++; isCorrect = checkAnswerCorrectness(q.id, q); if(isCorrect) score++;
+            } else if (q.type === 'dnd-passage') {
+                totalPossibleScore += q.blanks.length;
+                const ans = state.userAnswers[q.id] || {}; let claimScore = 0;
+                q.blanks.forEach(b => { if(ans[b] === q.correctAnswers[b]) claimScore++; });
+                score += claimScore; isCorrect = (claimScore === q.blanks.length); 
+            } else if (q.type === 'dropdown-passage') {
+                const dropKeys = Object.keys(q.dropdowns);
+                totalPossibleScore += dropKeys.length;
+                const ans = state.userAnswers[q.id] || {}; let claimScore = 0;
+                dropKeys.forEach(d => { if(ans[d] === q.dropdowns[d].correct) claimScore++; });
+                score += claimScore; isCorrect = (claimScore === dropKeys.length); 
+            }
+
+            let qBlock = `<div class="review-item"><div class="review-q-title">${idx + 1}. ${q.title}</div>`;
+
+            if (q.type === 'dropdown') {
+                const displayAns = state.userAnswers[q.id] || "No Answer";
+                let sentenceContext = q.sentence.replace(petroleumGraphHtml, ''); // remove graph from summary text
+                sentenceContext = sentenceContext.replace('[DROP]', `<span style="text-decoration: underline; font-weight: bold; color: ${isCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">${displayAns}</span>`);
+                qBlock += `
+                    <div style="font-style: italic; margin-bottom: 1rem; color: #555;">"${sentenceContext}"</div>
+                    <div class="review-choice ${isCorrect ? 'correct-ans' : 'wrong-ans'}">Your Answer: <strong>${displayAns}</strong></div>
+                    ${!isCorrect ? `<div class="review-choice correct-ans">Correct Answer: <strong>${q.correct}</strong></div>` : ''}
+                </div>`;
+            } 
+            else if (q.type === 'dnd-passage') {
+                const ans = state.userAnswers[q.id] || {};
+                qBlock += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">`;
+                q.blanks.forEach(blankId => {
+                    const isBlankCorrect = (ans[blankId] || 'None') === q.correctAnswers[blankId];
+                    qBlock += `
+                        <div style="padding: 0.75rem; background: #f8fafc; border-radius:4px; border-left: 4px solid ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                            <strong>${blankId}</strong><br>Your Answer: <span style="font-weight: 600; color: ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">${ans[blankId] || 'None'}</span><br>
+                            ${!isBlankCorrect ? `<span style="color: var(--color-correct); font-weight:bold;">Correct: ${q.correctAnswers[blankId]}</span>` : `<span style="color: var(--color-correct); font-size: 0.85rem;"><i class="fa-solid fa-check"></i> Correct</span>`}
+                        </div>`;
+                });
+                qBlock += `</div></div>`;
+            }
+            else if (q.type === 'dropdown-passage') {
+                const ans = state.userAnswers[q.id] || {};
+                qBlock += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">`;
+                Object.keys(q.dropdowns).forEach((dropId, i) => {
+                    const isBlankCorrect = (ans[dropId] || 'None') === q.dropdowns[dropId].correct;
+                    qBlock += `
+                        <div style="padding: 0.75rem; background: #f8fafc; border-radius:4px; border-left: 4px solid ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                            <strong>Blank ${i + 1}</strong><br>Your Answer: <span style="font-weight: 600; color: ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">${ans[dropId] || 'None'}</span><br>
+                            ${!isBlankCorrect ? `<span style="color: var(--color-correct); font-weight:bold;">Correct: ${q.dropdowns[dropId].correct}</span>` : `<span style="color: var(--color-correct); font-size: 0.85rem;"><i class="fa-solid fa-check"></i> Correct</span>`}
+                        </div>`;
+                });
+                qBlock += `</div></div>`;
+            }
+            qHtmlBlocks.push(qBlock);
+        });
+
+        html += `
+            <div class="review-header">
+                <div style="font-size: 1.2rem; font-weight:600; color:var(--text-main);">Practice Complete</div>
+                <div class="review-score">Final Score: ${score} / ${totalPossibleScore}</div>
+            </div>
+            <h3 style="margin-bottom: 1.5rem; color: var(--text-main);">Summary:</h3>
+            ${qHtmlBlocks.join('')}
+            <div style="text-align:center; margin-top: 2rem; margin-bottom: 4rem;">
+                <p style="color: var(--text-muted); font-style: italic; font-size: 1.1rem;">You have completed the Science practice activity. Great job!</p>
+            </div>
+        `;
+
+        container.innerHTML = html;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    /* =========================================================================
+       9. DRAG AND DROP ENGINE
+       ========================================================================= */
+    let draggedItem = null;
+
+    function drag(ev) {
+        if(state.phase !== 1) return;
+        draggedItem = ev.target.closest('.draggable-item');
+        if(!draggedItem || draggedItem.draggable === false) return;
+        ev.dataTransfer.setData("text", draggedItem.id);
+        ev.dataTransfer.effectAllowed = "move";
+        setTimeout(() => draggedItem.style.opacity = "0.5", 0);
+    }
+
+    function allowDrop(ev) {
+        if(state.phase !== 1) return;
+        const dropzone = ev.target.closest('.dropzone');
+        const qId = dropzone ? dropzone.id.split('-')[0] : null;
+        if(qId && state.evaluated.has(qId)) return;
+        ev.preventDefault();
+        if(dropzone) dropzone.classList.add('dragover');
+    }
+
+    document.addEventListener('dragleave', (ev) => {
+        const dropzone = ev.target.closest('.dropzone');
+        if(dropzone) dropzone.classList.remove('dragover');
+    });
+
+    document.addEventListener('dragend', (ev) => {
+        if(draggedItem) draggedItem.style.opacity = "1";
+        document.querySelectorAll('.dropzone').forEach(el => el.classList.remove('dragover'));
+    });
+
+    function drop(ev, targetId) {
+        if(state.phase !== 1) return;
+        const qId = targetId.split('-')[0];
+        if (state.evaluated.has(qId)) return;
+        
+        ev.preventDefault();
+        const data = ev.dataTransfer.getData("text");
+        const draggedEl = document.getElementById(data);
+        if(!draggedEl) return;
+
+        const dropTarget = document.getElementById(targetId);
+        if (dropTarget.classList.contains('dropzone')) {
+            dropTarget.classList.remove('dragover');
+            if (dropTarget.children.length > 0) document.getElementById(`bank-${qId}`).appendChild(dropTarget.children[0]);
+            dropTarget.innerHTML = ''; dropTarget.appendChild(draggedEl);
+            checkDnDPassageState(qId);
+        } 
+        else if (dropTarget.classList.contains('options-bank')) {
+            dropTarget.appendChild(draggedEl);
+            checkDnDPassageState(targetId.split('-')[1]);
+        }
+    }
+
+    /* =========================================================================
+       10. UTILITIES (Responsive Split Pane Resizer)
+       ========================================================================= */
+    const resizer = document.getElementById('dragMe');
+    const leftPane = document.getElementById('left-pane');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', () => { isResizing = true; document.body.style.cursor = 'col-resize'; });
+    resizer.addEventListener('touchstart', () => { isResizing = true; }, {passive: false});
+
+    function doResize(e) {
+        if (!isResizing) return;
+        const layout = document.querySelector('.split-layout');
+        const isColumn = window.getComputedStyle(layout).flexDirection === 'column';
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        if (isColumn) {
+            const newHeight = (clientY / layout.offsetHeight) * 100;
+            if(newHeight > 20 && newHeight < 80) leftPane.style.flex = `0 0 ${newHeight}%`;
+        } else {
+            const newWidth = (clientX / layout.offsetWidth) * 100;
+            if(newWidth > 20 && newWidth < 80) leftPane.style.flex = `0 0 ${newWidth}%`;
+        }
+    }
+
+    document.addEventListener('mousemove', doResize);
+    document.addEventListener('touchmove', doResize, {passive: false});
+
+    function stopResize() { if(isResizing) { isResizing = false; document.body.style.cursor = 'default'; } }
+    document.addEventListener('mouseup', stopResize);
+    document.addEventListener('touchend', stopResize);
+
+    window.onload = init;
+</script>
+</body>
+</html>
