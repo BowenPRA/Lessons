@@ -158,7 +158,12 @@
         .exp-vn { font-style: italic; font-family: var(--font-passage); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.8rem; }
 
         @keyframes fadeIn { from {opacity: 0;} to { opacity: 1; } }
-        @media (max-width: 900px) { .split-layout { flex-direction: column; } .pane-left, .pane-right { flex: 1 1 50%; } .resizer { height: 8px; width: 100%; cursor: row-resize; } }
+        
+        @media (max-width: 900px) { 
+            .split-layout { flex-direction: column; } 
+            .pane-left, .pane-right { flex: 1; min-height: 50%; } 
+            .resizer { height: 8px; width: 100%; cursor: row-resize; flex: 0 0 8px; } 
+        }
     </style>
 </head>
 <body class="phase-0">
@@ -244,14 +249,17 @@
 
         <aside class="pane-right" id="right-pane" aria-label="Interactive Workspace">
             <div id="questions-container">
+                <div style="padding: 2rem; text-align: center; font-size: 1.2rem; color: #666;">
+                    Loading interactive lesson...<br><span style="font-size: 0.9rem;">(If this message persists, please ensure Javascript is enabled).</span>
                 </div>
+            </div>
         </aside>
     </main>
 
     <footer class="footer" id="main-footer">
-        <button class="btn-nav" id="btn-prev" onclick="navigate(-1)">Previous</button>
-        <div class="nav-progress" id="nav-progress" aria-live="polite">Start Practice</div>
-        <button class="btn-nav" id="btn-next" onclick="navigate(1)">Next</button>
+        <button class="btn-nav" id="btn-prev" onclick="navigate(-1)" style="display: none;">Previous</button>
+        <div class="nav-progress" id="nav-progress" aria-live="polite">Loading...</div>
+        <button class="btn-nav" id="btn-next" onclick="navigate(1)" style="display: none;">Next</button>
     </footer>
 
 </div>
@@ -261,7 +269,6 @@
        1. DATA SCHEMAS, SVG GENERATORS & CONFIGURATION
        ========================================================================= */
 
-    // Generate accurate, responsive SVGs for the practice questions
     const svgs = {
         electoral: `
             <div class="svg-container">
@@ -422,7 +429,7 @@
                         <li><strong>Calculations:</strong> Remember to use your knowledge of Mean and Median. You may use a physical or on-screen calculator if needed.</li>
                         <li><strong>Format:</strong> All questions use drop-down menus embedded inside the text.</li>
                     </ul>
-                    <p style="font-weight: 600; color: var(--primary-blue); border-top: 1px solid var(--border-color); padding-top: 1.5rem;">Click "Begin Practice" or the "Next" button below to start.</p>
+                    <p style="font-weight: 600; color: var(--primary-blue); border-top: 1px solid var(--border-color); padding-top: 1.5rem;">Click "Begin Practice" to start.</p>
                     <button class="btn-primary" onclick="startPhase1()" style="font-size: 1.1rem; padding: 1rem 2rem; margin-top: 1rem;">Begin Practice</button>
                 </div>
             `
@@ -453,7 +460,7 @@
         {
             id: 'q2', type: 'dropdown-passage',
             title: "2. Analyzing Line Graphs",
-            passage: svgs.electoral + "The information in the graph supports the conclusion that in the presidential elections from 1992 to 2012, [DROP1].",
+            passage: `${svgs.electoral} The information in the graph supports the conclusion that in the presidential elections from 1992 to 2012, [DROP1].`,
             dropdowns: {
                 "DROP1": { 
                     options: [
@@ -470,7 +477,7 @@
         {
             id: 'q3', type: 'dropdown-passage',
             title: "3. & 4. Urban vs. Rural Comparisons",
-            passage: svgs.urbanized + "According to the bar graph, there were approximately as many Americans living in <span class=\"vocab-word\" onclick=\"showTooltip(event, 'Rural')\">rural</span> locations as there were in <span class=\"vocab-word\" onclick=\"showTooltip(event, 'Urban')\">urban</span> settings in the year [DROP1]. <br><br>Furthermore, the <span class=\"vocab-word\" onclick=\"showTooltip(event, 'Range')\">range</span> (difference between the highest and lowest points) of the urban population was approximately [DROP2] larger than the range of the rural population between 1860 and 1930.",
+            passage: `${svgs.urbanized} According to the bar graph, there were approximately as many Americans living in <span class='vocab-word' onclick=\"showTooltip(event, 'Rural')\">rural</span> locations as there were in <span class='vocab-word' onclick=\"showTooltip(event, 'Urban')\">urban</span> settings in the year [DROP1]. <br><br>Furthermore, the <span class='vocab-word' onclick=\"showTooltip(event, 'Range')\">range</span> (difference between the highest and lowest points) of the urban population was approximately [DROP2] larger than the range of the rural population between 1860 and 1930.`,
             dropdowns: {
                 "DROP1": { options: ["1860", "1900", "1920", "1930"], correct: "1920" },
                 "DROP2": { options: ["10 million", "23 million", "34 million", "43 million"], correct: "34 million" }
@@ -481,7 +488,7 @@
         {
             id: 'q4', type: 'dropdown-passage',
             title: "5. & 6. Interpreting Historical Data",
-            passage: svgs.unemployment + "According to the graph, the onset of World War II contributed to a change where the <span class=\"vocab-word\" onclick=\"showTooltip(event, 'Unemployment Rate')\">unemployment rate</span> [DROP1]. <br><br>Additionally, the most significant and uninterrupted spike in the U.S. unemployment rate occurred immediately after [DROP2].",
+            passage: `${svgs.unemployment} According to the graph, the onset of World War II contributed to a change where the <span class='vocab-word' onclick=\"showTooltip(event, 'Unemployment Rate')\">unemployment rate</span> [DROP1]. <br><br>Additionally, the most significant and uninterrupted spike in the U.S. unemployment rate occurred immediately after [DROP2].`,
             dropdowns: {
                 "DROP1": { 
                     options: ["stabilized and remained stable", "declined consistently until shortly before the war's end", "increased gradually"], 
@@ -520,7 +527,7 @@
         {
             id: 'q6', type: 'dropdown-passage',
             title: "8. Reading Map Clusters",
-            passage: svgs.plague + "Which of the following conclusions is supported by this map? [DROP1]",
+            passage: `${svgs.plague} Which of the following conclusions is supported by this map? [DROP1]`,
             dropdowns: {
                 "DROP1": { 
                     options: [
@@ -618,73 +625,86 @@
        4. INITIALIZATION & TEMPLATE RENDERING
        ========================================================================= */
     function init() {
-        const container = document.getElementById('questions-container');
-        if (!container) return; // Safety check
-        
-        questionsData.forEach((q, index) => {
-            const slide = document.createElement('article');
-            slide.className = `question-slide ${index === 0 ? 'active' : ''}`;
-            slide.id = `slide-${index}`;
+        try {
+            const container = document.getElementById('questions-container');
+            if (!container) return; // Safety check
             
-            let html = '';
+            // Clear the loading message
+            container.innerHTML = '';
             
-            if (q.type === 'info') {
-                html += q.content;
-            } 
-            else if (q.type === 'dropdown-passage') {
-                let passageHtml = q.passage;
-                Object.keys(q.dropdowns).forEach(dropId => {
-                    let selectHtml = `<select class="inline-select" id="${q.id}-${dropId}" onchange="handleDropdownPassageSelection('${q.id}')">`;
-                    selectHtml += `<option value="" disabled selected>Choose...</option>`;
-                    q.dropdowns[dropId].options.forEach(opt => {
-                        selectHtml += `<option value="${opt}">${opt}</option>`;
+            questionsData.forEach((q, index) => {
+                const slide = document.createElement('article');
+                slide.className = `question-slide ${index === 0 ? 'active' : ''}`;
+                slide.id = `slide-${index}`;
+                
+                let html = '';
+                
+                if (q.type === 'info') {
+                    html += q.content;
+                } 
+                else if (q.type === 'dropdown-passage') {
+                    let passageHtml = q.passage;
+                    Object.keys(q.dropdowns).forEach(dropId => {
+                        let selectHtml = `<select class="inline-select" id="${q.id}-${dropId}" onchange="handleDropdownPassageSelection('${q.id}')">`;
+                        selectHtml += `<option value="" disabled selected>Choose...</option>`;
+                        q.dropdowns[dropId].options.forEach(opt => {
+                            selectHtml += `<option value="${opt}">${opt}</option>`;
+                        });
+                        selectHtml += `</select>`;
+                        passageHtml = passageHtml.replace(`[${dropId}]`, selectHtml);
                     });
-                    selectHtml += `</select>`;
-                    passageHtml = passageHtml.replace(`[${dropId}]`, selectHtml);
-                });
 
-                html += `
-                    <div class="q-header">
-                        <div class="q-title">${q.title}</div>
-                        <label class="flag-container">
-                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)"> Flag
-                        </label>
-                    </div>
-                    <div class="info-box" style="background: #fff; border: 1px solid var(--border-color);">
-                        ${passageHtml}
-                    </div>
-                    <div style="text-align:center; margin-top: 2rem;">
-                        <button id="btn-check-${q.id}" class="btn-primary" style="font-size: 1.2rem; padding: 0.75rem 2rem;" onclick="evaluateDropdownPassage('${q.id}')" disabled>
-                            Check Answers
-                        </button>
-                    </div>
-                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
-                `;
-            }
+                    html += `
+                        <div class="q-header">
+                            <div class="q-title">${q.title}</div>
+                            <label class="flag-container">
+                                <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)"> Flag
+                            </label>
+                        </div>
+                        <div class="info-box" style="background: #fff; border: 1px solid var(--border-color);">
+                            ${passageHtml}
+                        </div>
+                        <div style="text-align:center; margin-top: 2rem;">
+                            <button id="btn-check-${q.id}" class="btn-primary" style="font-size: 1.2rem; padding: 0.75rem 2rem;" onclick="evaluateDropdownPassage('${q.id}')" disabled>
+                                Check Answers
+                            </button>
+                        </div>
+                        <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                    `;
+                }
+                
+                slide.innerHTML = html;
+                container.appendChild(slide);
+            });
+
+            // Generate Submit Gate Slide
+            const submitSlide = document.createElement('article');
+            submitSlide.className = `question-slide`;
+            submitSlide.id = `slide-${questionsData.length}`;
+            submitSlide.innerHTML = `
+                <div class="q-title section-title center" style="width: 100%; float: none;">Practice Complete</div>
+                <div class="info-box" style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Completion Status</h3>
+                    <div id="submit-summary-list"></div>
+                </div>
+                <div style="text-align: center;">
+                    <button id="btn-final-submit" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="startPhase2()" disabled>
+                        Finish Practice & View Total Score
+                    </button>
+                </div>
+            `;
+            container.appendChild(submitSlide);
             
-            slide.innerHTML = html;
-            container.appendChild(slide);
-        });
-
-        // Generate Submit Gate Slide
-        const submitSlide = document.createElement('article');
-        submitSlide.className = `question-slide`;
-        submitSlide.id = `slide-${questionsData.length}`;
-        submitSlide.innerHTML = `
-            <div class="q-title section-title center" style="width: 100%; float: none;">Practice Complete</div>
-            <div class="info-box" style="margin-bottom: 2rem;">
-                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Completion Status</h3>
-                <div id="submit-summary-list"></div>
-            </div>
-            <div style="text-align: center;">
-                <button id="btn-final-submit" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="startPhase2()" disabled>
-                    Finish Practice & View Total Score
-                </button>
-            </div>
-        `;
-        container.appendChild(submitSlide);
-        
-        updateNavigationUI();
+            updateNavigationUI();
+        } catch (error) {
+            // Fallback if parsing fails
+            document.getElementById('questions-container').innerHTML = `
+                <div style="padding: 2rem; color: #991b1b;">
+                    <h3>Error Loading Lesson</h3>
+                    <p>There was a problem loading the interactive content: ${error.message}</p>
+                </div>
+            `;
+        }
     }
 
     /* =========================================================================
@@ -759,18 +779,12 @@
        7. FORTIFIED NAVIGATION & IMMEDIATE FEEDBACK
        ========================================================================= */
     function navigate(direction) {
-        // Handle clicking "Next" from the start screen securely
-        if (state.phase === 0) {
-            if (direction === 1) startPhase1();
-            return;
-        }
-
         // Must be in Phase 1 to use normal navigation
         if (state.phase !== 1) return;
 
         const maxIndex = questionsData.length;
 
-        // Hide current slide
+        // Hide current slide securely
         const currentSlide = document.getElementById(`slide-${state.currentQuestionIndex}`);
         if (currentSlide) currentSlide.classList.remove('active');
         
@@ -797,16 +811,18 @@
         const btnPrev = document.getElementById('btn-prev');
         const btnNext = document.getElementById('btn-next');
         const progressContainer = document.getElementById('nav-progress');
-        
-        // Always ensure buttons are visible to prevent blank screens
-        if (btnNext) btnNext.style.display = 'block';
 
+        // Start screen logic: Force user to use the big "Begin Practice" button
         if (state.phase === 0) {
-            if (btnPrev) btnPrev.disabled = true;
-            if (btnNext) btnNext.disabled = false;
+            if (btnPrev) btnPrev.style.display = 'none';
+            if (btnNext) btnNext.style.display = 'none'; 
             if (progressContainer) progressContainer.innerHTML = "Introduction";
             return;
         }
+
+        // Active practice logic
+        if (btnPrev) btnPrev.style.display = 'block';
+        if (btnNext) btnNext.style.display = 'block';
 
         const totalQs = questionsData.filter(q => q.type !== 'info').length; 
         const isSubmitGate = (state.currentQuestionIndex === questionsData.length);
@@ -1050,8 +1066,12 @@
     document.addEventListener('mouseup', stopResize);
     document.addEventListener('touchend', stopResize);
 
-    // Initialize the module on load
-    window.onload = init;
+    /* Guaranteed Initialization on DOM Load */
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 </script>
 </body>
 </html>
