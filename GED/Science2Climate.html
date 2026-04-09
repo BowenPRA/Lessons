@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GED Science: Weather, Climate & Space</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEMING
+           ========================================================================== */
+        :root {
+            --bg-page: #f4f5f7;        
+            --bg-panel: #ffffff; 
+            --primary-blue: #005A9C;    
+            --primary-blue-hover: #00447a;
+            --selected-blue: #e6f0fa;
+            --border-color: #cccccc;
+            
+            --text-main: #333333;        
+            --text-muted: #666666;
+            --color-correct: #166534;
+            --color-incorrect: #991b1b;
+            
+            --header-h: 60px;
+            --footer-h: 70px;
+            
+            --font-ui: 'Open Sans', Arial, sans-serif;            
+            --font-passage: 'Noto Serif', 'Times New Roman', Times, serif; 
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE STYLES
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: var(--font-ui);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT & GRID
+           ========================================================================== */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            background: var(--primary-blue);
+            z-index: 50;
+        }
+
+        .split-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--header-h) - var(--footer-h));
+            overflow: hidden;
+        }
+
+        .pane-left, .pane-right { background: var(--bg-panel); padding: 2rem; overflow-y: auto; }
+        .pane-left { flex: 0 0 50%; }
+        .pane-right { flex: 1; position: relative; }
+
+        .resizer {
+            flex: 0 0 8px;
+            background: #e0e0e0;
+            cursor: col-resize;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .resizer:hover, .resizer:active { background: #c0c0c0; }
+
+        .footer {
+            height: var(--footer-h);
+            background: #ffffff;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            z-index: 50;
+        }
+
+        /* ==========================================================================
+           4. TYPOGRAPHY & LESSON STYLING
+           ========================================================================== */
+        .header-title { font-weight: 700; font-size: 1.2rem; color: #ffffff; letter-spacing: 0.5px; }
+        .section-title { font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--text-main); }
+        .section-title.primary { color: var(--primary-blue); }
+        .section-title.center { text-align: center; }
+
+        .passage-title { 
+            font-family: var(--font-ui); font-size: 1.4rem; font-weight: 700;
+            margin: 1.5rem 0 0.5rem 0; color: var(--text-main);
+        }
+
+        .passage-meta { 
+            color: var(--text-muted); font-style: italic; font-size: 0.95rem; 
+            margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;
+        }
+        
+        .paragraph { 
+            font-family: var(--font-passage); font-size: 1.15rem; 
+            line-height: 1.8; color: var(--text-main); margin-bottom: 1.5rem;
+        }
+
+        .info-box {
+            font-size: 1.15rem; line-height: 1.8; color: var(--text-main);
+            background: #f8fafc; padding: 2rem; border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        table.data-chart { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: #ffffff; font-size: 0.95rem; }
+        table.data-chart th, table.data-chart td { border: 1px solid var(--border-color); padding: 0.75rem 0.5rem; text-align: left; vertical-align: top; }
+        table.data-chart th { background: var(--selected-blue); color: var(--primary-blue); font-weight: 700; font-family: var(--font-ui); }
+        table.data-chart td { font-family: var(--font-ui); }
+
+        .rule-box {
+            background: #ffffff; border-left: 4px solid #f59e0b; padding: 1.25rem 1.5rem;
+            margin: 2rem 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 0 8px 8px 0;
+        }
+
+        /* SVG Diagrams container */
+        .svg-container { text-align: center; margin: 2rem 0; background: #fff; padding: 1.5rem; border: 1px solid var(--border-color); border-radius: 8px;}
+        .svg-container svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+        .svg-caption { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; margin-bottom: 1rem; }
+
+        /* Vocabulary Tooltips */
+        .vocab-word {
+            font-weight: 700; color: var(--primary-blue); cursor: pointer;
+            border-bottom: 2px dotted var(--primary-blue); transition: background 0.2s, color 0.2s;
+            padding: 0 2px; border-radius: 2px;
+        }
+        .vocab-word:hover { background: var(--selected-blue); color: var(--primary-blue-hover); }
+        
+        .vocab-tooltip {
+            position: fixed; display: none; background: white; border: 1px solid var(--primary-blue);
+            border-radius: 6px; padding: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            z-index: 1000; width: 320px; font-family: var(--font-ui); font-size: 0.95rem;
+            color: var(--text-main); line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           5. BUTTONS & UI
+           ========================================================================== */
+        .btn-primary {
+            background: var(--primary-blue); color: white; border: none; padding: 0.75rem 1.5rem;
+            border-radius: 4px; font-family: var(--font-ui); font-weight: 600; font-size: 1rem;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-primary:disabled { background: #cccccc; cursor: not-allowed; color: #666; }
+
+        .btn-nav {
+            background: var(--primary-blue); border: 1px solid var(--primary-blue-hover);
+            padding: 0.6rem 2rem; border-radius: 4px; font-family: var(--font-ui);
+            font-weight: 600; color: #ffffff; cursor: pointer; transition: all 0.2s; font-size: 1rem;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary-blue-hover); }
+        .btn-nav:disabled { background: #cccccc; color: #666666; border-color: #bbbbbb; opacity: 0.7; cursor: not-allowed; }
+
+        .nav-progress { font-weight: 600; color: var(--text-main); font-size: 1.05rem; }
+
+        /* ==========================================================================
+           6. QUESTION UI 
+           ========================================================================== */
+        .question-slide { display: none; }
+        .question-slide.active { display: block; animation: fadeIn 0.3s ease-out forwards; }
+
+        .q-title { font-family: var(--font-ui); font-size: 1.15rem; font-weight: 600; color: var(--text-main); line-height: 1.5; margin-bottom: 1rem;}
+
+        .inline-select {
+            font-family: var(--font-ui); font-size: 1.1rem; padding: 0.2rem 0.5rem;
+            border: 2px solid var(--primary-blue); border-radius: 4px; background: #ffffff;
+            color: var(--primary-blue); font-weight: 700; cursor: pointer; outline: none;
+            margin: 0 0.25rem; transition: all 0.2s; max-width: 100%;
+        }
+        .inline-select:focus { box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.2); }
+        .inline-select:disabled { cursor: not-allowed; opacity: 1; }
+        .inline-select.correct-ans { background: #f0fdf4; border-color: var(--color-correct); color: var(--color-correct); }
+        .inline-select.wrong-ans { background: #fef2f2; border-color: var(--color-incorrect); color: var(--color-incorrect); }
+
+        .dnd-container { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 1rem; position: relative; }
+        .options-bank {
+            position: sticky; top: -2rem; margin: -2rem -2rem 0 -2rem; padding: 1.5rem 2rem;
+            z-index: 100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px);
+            border-bottom: 2px solid var(--primary-blue); box-shadow: 0 6px 10px -4px rgba(0,0,0,0.15);
+            min-height: 90px; display: flex; flex-wrap: wrap; gap: 0.5rem;
+        }
+        .draggable-item {
+            background: #ffffff; border: 1px solid var(--text-muted); color: var(--text-main);
+            padding: 0.5rem 1rem; border-radius: 4px; cursor: grab; font-size: 0.95rem;
+            font-family: var(--font-ui); display: flex; align-items: center; gap: 0.5rem;
+            user-select: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .draggable-item:active { cursor: grabbing; }
+        .draggable-item.locked { cursor: not-allowed; opacity: 0.8; }
+        
+        .inline-dz {
+            display: inline-flex; min-width: 120px; height: 34px; vertical-align: middle;
+            margin: 0 0.25rem; padding: 0 0.5rem; font-size: 0.95rem; background: #f4f5f7;
+            border: 2px dashed #cccccc; color: var(--text-muted); align-items: center;
+            justify-content: center; transition: all 0.2s; border-radius: 4px; overflow: hidden;
+        }
+        .inline-dz.dragover { background: var(--selected-blue); border-color: var(--primary-blue); }
+        .inline-dz.correct-ans { background: #f0fdf4; border-color: var(--color-correct); }
+        .inline-dz.wrong-ans { background: #fef2f2; border-color: var(--color-incorrect); }
+        .inline-dz .draggable-item {
+            padding: 0; margin: 0; border: none; box-shadow: none; background: transparent;
+            color: var(--primary-blue); font-weight: 700; font-size: 1.1rem; cursor: grab;
+        }
+        .inline-dz.correct-ans .draggable-item { color: var(--color-correct); }
+        .inline-dz.wrong-ans .draggable-item { color: var(--color-incorrect); }
+        .inline-dz .draggable-item i { display: none; }
+        .inline-dz .draggable-item.locked { cursor: not-allowed; }
+
+        .passage-text { font-family: var(--font-passage); font-size: 1.15rem; line-height: 2.2; padding: 1.5rem; margin-top: 1rem; }
+
+        /* ==========================================================================
+           7. PHASE-SPECIFIC STYLES & OVERRIDES
+           ========================================================================== */
+        .summary-item { display: flex; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #eee; font-size: 1.1rem; }
+        .summary-item:last-child { border-bottom: none; }
+
+        .review-header { text-align: center; padding: 2rem; background: var(--selected-blue); border: 1px solid var(--primary-blue); border-radius: 8px; margin-bottom: 2rem; }
+        .review-score { font-size: 2.5rem; font-weight: 700; color: var(--primary-blue); margin-top: 0.5rem; }
+        .review-item { border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; background: #ffffff; }
+        .review-q-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; }
+        .review-choice { padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 4px; border: 1px solid #eee; background: #f9f9f9; font-size: 1.1rem; }
+        .review-choice.correct-ans { background-color: #f0fdf4; border-color: #bbf7d0; color: var(--color-correct); }
+        .review-choice.wrong-ans { background-color: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); }
+
+        .explanation-box { padding: 1.25rem; margin-top: 1.5rem; border-radius: 4px; font-size: 1rem; line-height: 1.6; border: 1px solid; background-color: #f8fafc; border-color: #cbd5e1; color: #334155; }
+        .explanation-box.correct { background-color: #f0fdf4; border-color: #bbf7d0; color: var(--color-correct); }
+        .explanation-box.incorrect { background-color: #fef2f2; border-color: #fecaca; color: var(--color-incorrect); }
+        .exp-en { margin-bottom: 0.8rem; }
+        .exp-vn { font-style: italic; font-family: var(--font-passage); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.8rem; color: #555; }
+
+        @keyframes fadeIn { from {opacity: 0;} to { opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .split-layout { flex-direction: column; }
+            .pane-left, .pane-right { flex: 1 1 50%; }
+            .resizer { height: 8px; width: 100%; cursor: row-resize; }
+        }
+    </style>
+</head>
+<body class="phase-0">
+
+<div id="vocab-tooltip" class="vocab-tooltip"></div>
+
+<div class="app-shell">
+    
+    <header class="header">
+        <div class="header-title">GED Science - Weather, Climate & Space</div>
+    </header>
+
+    <main class="split-layout">
+        
+        <section class="pane-left" id="left-pane" aria-label="Lesson Content">
+            
+            <article id="intro-overview" style="display: block;">
+                <h1 class="section-title primary">Activity Overview</h1>
+                <div class="info-box">
+                    <p style="margin-bottom: 1rem;">This interactive lesson focuses on <span style="font-weight: bold;">Weather and Climate</span> and <span style="font-weight: bold;">Earth in the Solar System</span>, core topics tested on the GED Science exam.</p>
+                    <p>Read the study guide carefully before proceeding to the practice questions. You can click on the highlighted terms for bilingual definitions.</p>
+                </div>
+            </article>
+
+            <article id="reading-passage" style="display: none;">
+                <h1 class="section-title">Lesson 3: Weather and Climate</h1>
+                <div class="passage-meta">Bilingual Guide for ESL Students</div>
+
+                <div class="paragraph">
+                    Weather is the day-to-day change in atmospheric conditions at a particular place. Climate is the average long-term weather conditions in a region. All weather and climate ultimately arise from the uneven heating of the Earth by the sun's rays [cite: 186-187, 207-208].
+                </div>
+
+                <div class="svg-container">
+                    <div class="svg-caption">Figure 1: Global Wind Patterns</div>
+                    <svg viewBox="0 0 300 300" width="100%" style="max-width: 300px;">
+                        <circle cx="150" cy="150" r="130" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+                        
+                        <line x1="20" y1="150" x2="280" y2="150" stroke="#334155" stroke-width="2"/>
+                        <text x="150" y="145" text-anchor="middle" font-family="Arial" font-size="12" fill="#333" font-weight="bold">Equator</text>
+                        <text x="5" y="154" font-family="Arial" font-size="12" fill="#333" font-weight="bold">W</text>
+                        <text x="285" y="154" font-family="Arial" font-size="12" fill="#333" font-weight="bold">E</text>
+
+                        <path d="M 32 85 Q 150 110 268 85" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,5"/>
+                        <text x="15" y="90" font-family="Arial" font-size="10" fill="#666">30°N</text>
+                        
+                        <path d="M 65 40 Q 150 70 235 40" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,5"/>
+                        <text x="40" y="45" font-family="Arial" font-size="10" fill="#666">60°N</text>
+
+                        <path d="M 32 215 Q 150 190 268 215" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,5"/>
+                        <text x="15" y="220" font-family="Arial" font-size="10" fill="#666">30°S</text>
+
+                        <path d="M 65 260 Q 150 230 235 260" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,5"/>
+                        <text x="40" y="265" font-family="Arial" font-size="10" fill="#666">60°S</text>
+
+                        <text x="150" y="125" text-anchor="middle" font-family="Arial" font-size="11" fill="#0284c7">N.E. trade winds ↙</text>
+                        <text x="150" y="180" text-anchor="middle" font-family="Arial" font-size="11" fill="#0284c7">S.E. trade winds ↖</text>
+                        
+                        <text x="150" y="70" text-anchor="middle" font-family="Arial" font-size="11" fill="#ea580c">Westerlies ↗</text>
+                        <text x="150" y="240" text-anchor="middle" font-family="Arial" font-size="11" fill="#ea580c">Westerlies ↘</text>
+                        
+                        <text x="150" y="30" text-anchor="middle" font-family="Arial" font-size="10" fill="#333">Polar easterlies ↙</text>
+                        <text x="150" y="280" text-anchor="middle" font-family="Arial" font-size="10" fill="#333">Polar easterlies ↖</text>
+                        
+                        <text x="150" y="12" text-anchor="middle" font-family="Arial" font-size="12" fill="#333" font-weight="bold">N</text>
+                        <text x="150" y="295" text-anchor="middle" font-family="Arial" font-size="12" fill="#333" font-weight="bold">S</text>
+                    </svg>
+                </div>
+
+                <div class="paragraph">
+                    This uneven heating causes global wind circulation patterns and worldwide ocean currents. Warm air at the equator rises and moves toward the poles, while cold air at the poles sinks and moves toward the equator. Ocean currents also help transfer heat from the equatorial regions to the poles [cite: 209-211, 214-216].
+                </div>
+
+                <div class="paragraph">
+                    Daily weather is caused by the movement of <span class="vocab-word" onclick="showTooltip(event, 'Air Masses')">Air Masses</span>. The boundary between two air masses is called a <span class="vocab-word" onclick="showTooltip(event, 'Front')">Front</span>. <span class="vocab-word" onclick="showTooltip(event, 'Meteorologists')">Meteorologists</span> study weather patterns and use satellites to predict storms and issue warnings [cite: 217-219, 223-227].
+                </div>
+
+                <table class="data-chart">
+                    <thead>
+                        <tr><th colspan="3">Layers of the Atmosphere [cite: 256-258]</th></tr>
+                        <tr>
+                            <th>Layer</th>
+                            <th>Altitude</th>
+                            <th>Temperature</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Troposphere</td>
+                            <td>0 to 6 miles</td>
+                            <td>Average 59°F</td>
+                        </tr>
+                        <tr>
+                            <td>Stratosphere</td>
+                            <td>6 to 31 miles</td>
+                            <td>-76°F to 32°F</td>
+                        </tr>
+                        <tr>
+                            <td>Mesosphere & ionosphere</td>
+                            <td>31 to 50 miles</td>
+                            <td>32°F to -212°F</td>
+                        </tr>
+                        <tr>
+                            <td>Thermosphere</td>
+                            <td>50 to 435 miles</td>
+                            <td>Up to thousands of degrees</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="border: 0; height: 1px; background: var(--border-color); margin: 2rem 0;">
+
+                <h1 class="section-title">Lesson 4: Earth in the Solar System</h1>
+
+                <div class="paragraph">
+                    The solar system consists of the sun, the planets, their moons, asteroids, and comets. The sun contains more than 99 percent of the mass in the solar system [cite: 269-274].
+                </div>
+
+                <div class="paragraph">
+                    There are eight planets. <span class="vocab-word" onclick="showTooltip(event, 'Inner Planets')">Inner Planets</span> (Mercury, Venus, Earth, Mars) are small and rocky. <span class="vocab-word" onclick="showTooltip(event, 'Outer Planets')">Outer Planets</span> (Jupiter, Saturn, Uranus, Neptune) are gas giants located far from the sun [cite: 275-278]. 
+                </div>
+
+                <table class="data-chart" style="font-size: 0.85rem;">
+                    <thead>
+                        <tr><th colspan="6">The Planets of Our Solar System [cite: 282-284]</th></tr>
+                        <tr>
+                            <th>Planet</th>
+                            <th>Distance from sun</th>
+                            <th>Diameter</th>
+                            <th>Moons</th>
+                            <th>Rotation (day)</th>
+                            <th>Revolution (year)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Mercury</td><td>36 million mi</td><td>3,030 mi</td><td>None</td><td>59 E-days</td><td>88 E-days</td></tr>
+                        <tr><td>Venus</td><td>67 million mi</td><td>7,500 mi</td><td>None</td><td>243 E-days</td><td>225 E-days</td></tr>
+                        <tr><td>Earth</td><td>93 million mi</td><td>7,923 mi</td><td>1</td><td>23 hr 56 min</td><td>365 days 5 hr</td></tr>
+                        <tr><td>Mars</td><td>142 million mi</td><td>4,210 mi</td><td>2</td><td>24 hr 37 min</td><td>687 E-days</td></tr>
+                        <tr><td>Jupiter</td><td>484 million mi</td><td>88,700 mi</td><td>50</td><td>9 hr 51 min</td><td>11.86 E-years</td></tr>
+                        <tr><td>Saturn</td><td>0.9 billion mi</td><td>75,000 mi</td><td>53</td><td>10 hr 14 min</td><td>29.46 E-years</td></tr>
+                        <tr><td>Uranus</td><td>1.8 billion mi</td><td>31,600 mi</td><td>27</td><td>17 hr 12 min</td><td>84 E-years</td></tr>
+                        <tr><td>Neptune</td><td>2.8 billion mi</td><td>30,200 mi</td><td>13</td><td>16 hr 7 min</td><td>164.8 E-years</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="rule-box">
+                    <strong style="color: #d97706; font-size: 1.2rem;"><i class="fa-solid fa-lightbulb"></i> GED TEST TIP</strong>
+                    <p style="margin-top: 0.5rem;">Some Science Test questions are based on detailed charts similar to the one above. Read the question carefully and select <span style="font-style: italic;">only</span> the specific information needed to answer the question [cite: 279-281].</p>
+                </div>
+
+            </article>
+        </section>
+
+        <div class="resizer" id="dragMe" title="Drag to resize"></div>
+
+        <aside class="pane-right" id="right-pane" aria-label="Interactive Workspace">
+            <div id="questions-container"></div>
+        </aside>
+    </main>
+
+    <footer class="footer" id="main-footer">
+        <button class="btn-nav" id="btn-prev" onclick="navigate(-1)">Previous</button>
+        <div class="nav-progress" id="nav-progress" aria-live="polite">Start Practice</div>
+        <button class="btn-nav" id="btn-next" onclick="navigate(1)">Next</button>
+    </footer>
+
+</div>
+
+<script>
+    /* =========================================================================
+       1. DATA SCHEMAS & CONFIGURATION
+       ========================================================================= */
+
+    const questionsData = [
+        {
+            id: 'intro',
+            type: 'info',
+            title: "Phase 1: Practice Mode",
+            content: `
+                <div class="info-box" style="padding: 2.5rem; background: #f9f9f9;">
+                    <p style="margin-bottom: 1.5rem; font-size: 1.25rem;"><span style="font-weight: bold;">Welcome to the Weather & Solar System Practice.</span></p>
+                    <p style="margin-bottom: 1.5rem;">This module contains interactive questions based on your readings:</p>
+                    <ul style="margin-left: 2rem; margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.5rem;"><span style="font-weight: bold;">Questions 1-5 (Weather & Climate):</span> Analyze global winds, temperatures, and atmospheric charts.</li>
+                        <li style="margin-bottom: 0.5rem;"><span style="font-weight: bold;">Questions 6-12 (Solar System):</span> Interpret planetary data and charts to draw conclusions about our solar system.</li>
+                    </ul>
+                    <button class="btn-primary" onclick="startPhase1()" style="font-size: 1.1rem; padding: 1rem 2rem; margin-top: 1rem;">Begin Practice</button>
+                </div>
+            `
+        },
+        {
+            id: 'q1', type: 'dropdown',
+            title: "1. Global Winds",
+            sentence: "The diagram of global wind patterns suggests that weather systems (Westerlies) between 30°N and 60°N generally move in which direction? [DROP]",
+            options: [
+                "northeast to southwest", 
+                "northwest to southeast", 
+                "southeast to northwest", 
+                "southwest to northeast"
+            ],
+            correct: "southwest to northeast",
+            expEn: "Look at the 'Westerlies' arrow in the Northern Hemisphere (between 30°N and 60°N). The arrow points up and to the right, which is Southwest moving toward Northeast [cite: 191-206].",
+            expVn: "Nhìn vào mũi tên 'Westerlies' ở Bắc Bán Cầu (giữa 30°N và 60°N). Mũi tên hướng lên và sang phải, tức là từ Tây Nam (Southwest) sang Đông Bắc (Northeast)."
+        },
+        {
+            id: 'q2', type: 'dropdown',
+            title: "2. Wind Patterns Comparison",
+            sentence: "Based on the diagram, how do the prevailing winds in the Northern Hemisphere compare to the prevailing winds in the Southern Hemisphere? [DROP]",
+            options: [
+                "The winds in the Northern Hemisphere blow faster.", 
+                "The winds in the Northern Hemisphere are a mirror image of those in the Southern Hemisphere.", 
+                "The Northern winds blow east and the Southern winds blow west."
+            ],
+            correct: "The winds in the Northern Hemisphere are a mirror image of those in the Southern Hemisphere.",
+            expEn: "If you fold the diagram at the Equator, the directional arrows of the Northern and Southern hemispheres mirror each other [cite: 191-206].",
+            expVn: "Nếu bạn gấp biểu đồ tại đường Xích đạo, các mũi tên hướng gió của Bắc và Nam Bán Cầu phản chiếu lẫn nhau (mirror image)."
+        },
+        {
+            id: 'q3', type: 'dropdown',
+            title: "3. Hurricane Tracking",
+            sentence: "Hurricanes cover massive areas and their paths can be predicted with a great deal of accuracy. Which technology best accounts for accurate hurricane tracking? [DROP]",
+            options: [
+                "anemometers, which measure wind speed", 
+                "thermometers, which measure air temperature", 
+                "satellites, which transmit cloud photos and weather data"
+            ],
+            correct: "satellites, which transmit cloud photos and weather data",
+            expEn: "Meteorologists use satellites and radar to collect broad weather data, which is essential for tracking large, slow-moving storm systems like hurricanes across the ocean [cite: 223-229].",
+            expVn: "Các nhà khí tượng học sử dụng vệ tinh (satellites) để thu thập dữ liệu và hình ảnh đám mây trên diện rộng nhằm theo dõi bão."
+        },
+        {
+            id: 'q4', type: 'dropdown',
+            title: "4. Global Heating",
+            sentence: "Which of the following help even out the unbalanced heating of Earth as a whole? [DROP]",
+            options: [
+                "precipitation associated with fronts", 
+                "local air masses", 
+                "global wind and ocean current patterns"
+            ],
+            correct: "global wind and ocean current patterns",
+            expEn: "Global wind circulation and ocean currents help transfer heat from the hot equatorial regions toward the colder poles, evening out the Earth's temperature [cite: 209-211, 214-216].",
+            expVn: "Gió toàn cầu và các dòng hải lưu (ocean currents) giúp truyền nhiệt từ vùng xích đạo nóng bức về phía các cực lạnh giá."
+        },
+        {
+            id: 'q5', type: 'dropdown',
+            title: "5. Atmospheric Temperatures",
+            sentence: "Based on the Layers of the Atmosphere chart, which of the following statements is supported by the evidence? [DROP]",
+            options: [
+                "The higher you go in the atmosphere, the colder it gets.", 
+                "The highest temperatures in the atmosphere are in the thermosphere.", 
+                "The highest layer of the atmosphere is the stratosphere."
+            ],
+            correct: "The highest temperatures in the atmosphere are in the thermosphere.",
+            expEn: "The chart clearly shows the Thermosphere has temperatures 'Up to thousands of degrees', making it the hottest layer. It does NOT steadily get colder as you go up [cite: 256-263].",
+            expVn: "Biểu đồ cho thấy Tầng nhiệt (Thermosphere) có nhiệt độ 'Lên tới hàng ngàn độ', là tầng nóng nhất."
+        },
+        {
+            id: 'q6', type: 'dropdown-passage',
+            title: "6. Human Activity in the Atmosphere",
+            passage: "If you were to draw a stick-figure inhabitant to represent where most human activity takes place, you would place it in the [DROP1] because this layer extends from [DROP2], which is closest to the Earth's surface.",
+            dropdowns: {
+                "DROP1": { options: ["Troposphere", "Stratosphere", "Thermosphere"], correct: "Troposphere" },
+                "DROP2": { options: ["0 to 6 miles", "6 to 31 miles", "50 to 435 miles"], correct: "0 to 6 miles" }
+            },
+            expEn: "Humans live on the ground. According to the chart, the layer starting at 0 miles (the surface) is the Troposphere [cite: 256-258, 264].",
+            expVn: "Con người sống trên mặt đất. Theo biểu đồ, tầng bắt đầu từ 0 dặm (bề mặt) là Tầng đối lưu (Troposphere)."
+        },
+        {
+            id: 'q7', type: 'dropdown',
+            title: "7. Planetary Orbit",
+            sentence: "According to the Planets chart, which of the planets takes the shortest time to revolve, or complete its orbit, around the sun? [DROP]",
+            options: ["Mars", "Saturn", "Neptune", "Mercury"],
+            correct: "Mercury",
+            expEn: "Looking at the 'Revolution period (year)' column, Mercury completes its orbit in just 88 Earth days, the shortest time of any planet listed [cite: 282-284, 293-298].",
+            expVn: "Nhìn vào cột 'Chu kỳ quay (năm)', Sao Thủy (Mercury) hoàn thành quỹ đạo của nó chỉ trong 88 ngày Trái Đất, thời gian ngắn nhất."
+        },
+        {
+            id: 'q8', type: 'dropdown',
+            title: "8. Planetary Similarities",
+            sentence: "According to the chart, which of the following planets is most similar in diameter to Earth? [DROP]",
+            options: ["Mercury", "Venus", "Jupiter", "Neptune"],
+            correct: "Venus",
+            expEn: "Earth's diameter is 7,923 miles. Venus has a diameter of 7,500 miles, making it the closest in size to Earth among the choices [cite: 282-284, 299-303].",
+            expVn: "Đường kính Trái Đất là 7.923 dặm. Sao Kim (Venus) có đường kính 7.500 dặm, là hành tinh có kích thước gần giống Trái Đất nhất."
+        },
+        {
+            id: 'q9', type: 'dropdown',
+            title: "9. Discovering Uranus",
+            sentence: "Uranus had actually been observed at least 20 times prior to 1781, but each time it was misidentified as a star. Which of the following is an unstated assumption that could help account for this? [DROP]",
+            options: [
+                "Uranus takes 84 Earth years to revolve around the sun.", 
+                "The length of a day on Uranus is about 17 hours.", 
+                "Uranus was not clearly visible with the telescopes generally in use at the time."
+            ],
+            correct: "Uranus was not clearly visible with the telescopes generally in use at the time.",
+            expEn: "Because early astronomers mistook it for a star, we must assume their telescopes were not powerful enough to resolve it as a planetary disk [cite: 304-313].",
+            expVn: "Bởi vì các nhà thiên văn học thời kỳ đầu nhầm nó với một ngôi sao, chúng ta phải giả định rằng kính viễn vọng của họ không đủ mạnh để nhìn rõ hình dạng hành tinh của nó."
+        },
+        {
+            id: 'q10', type: 'dropdown',
+            title: "10. Counting Moons",
+            sentence: "According to the chart provided, which of the following planets has the most moons? [DROP]",
+            options: ["Jupiter", "Saturn", "Uranus", "Neptune"],
+            correct: "Saturn",
+            expEn: "Checking the 'Number of moons' column, Saturn is listed with 53 moons, while Jupiter is listed with 50 [cite: 282-284, 314-318].",
+            expVn: "Kiểm tra cột 'Số lượng mặt trăng', Sao Thổ (Saturn) được liệt kê có 53 mặt trăng, cao nhất trong bảng."
+        },
+        {
+            id: 'q11', type: 'dropdown',
+            title: "11. Space Exploration",
+            sentence: "It costs ten times more to send a crewed mission to Mars than a robotic one. Which of the following values is most likely to provide the motivation to send humans despite the cost? [DROP]",
+            options: [
+                "a desire for economic development", 
+                "a desire to demonstrate the superiority of computers over humans", 
+                "faith in human judgment and decision-making skills"
+            ],
+            correct: "faith in human judgment and decision-making skills",
+            expEn: "Sending humans relies on the belief that a human's ability to reason, judge, and adapt on the spot is more valuable than a pre-programmed robot's data collection [cite: 319-324].",
+            expVn: "Việc cử con người đi dựa trên niềm tin rằng khả năng phán đoán (judgment) và đưa ra quyết định của con người có giá trị hơn robot."
+        },
+        {
+            id: 'q12', type: 'dropdown',
+            title: "12. Structural Similarities",
+            sentence: "The structure of the solar system, with the massive sun at the center and many objects revolving around it, is most similar to the structure of which of the following? [DROP]",
+            options: [
+                "a DNA molecule, with its twisted spiral shape", 
+                "an atom, with a dense nucleus and electrons orbiting the nucleus", 
+                "the planet Earth, with its layers of crust, mantle, and core"
+            ],
+            correct: "an atom, with a dense nucleus and electrons orbiting the nucleus",
+            expEn: "The solar system (central sun with orbiting planets) physically resembles the Bohr model of an atom (central nucleus with orbiting electrons) [cite: 325-329].",
+            expVn: "Hệ mặt trời (Mặt trời ở trung tâm cùng các hành tinh quay quanh) có cấu trúc tương tự như một nguyên tử (hạt nhân ở trung tâm cùng các electron quay quanh)."
+        }
+    ];
+
+    /* =========================================================================
+       2. VOCABULARY DICTIONARY (For Tooltips)
+       ========================================================================= */
+    const vocabDictionary = {
+        "Air Masses": { 
+            en: "Large bodies of air with similar temperature, humidity, and pressure.", 
+            vn: "Khối khí (Vùng không khí lớn có cùng nhiệt độ và độ ẩm)." 
+        },
+        "Front": { 
+            en: "The boundary where two different air masses meet.", 
+            vn: "Ranh giới khí hậu / Frông (Nơi hai khối khí gặp nhau)." 
+        },
+        "Meteorologists": { 
+            en: "Scientists who study and predict the weather.", 
+            vn: "Nhà khí tượng học (Nhà khoa học dự báo thời tiết)." 
+        },
+        "Inner Planets": { 
+            en: "The four rocky planets closest to the sun: Mercury, Venus, Earth, and Mars.", 
+            vn: "Hành tinh vòng trong (Bốn hành tinh đá gần Mặt trời nhất)." 
+        },
+        "Outer Planets": { 
+            en: "The four giant gas planets furthest from the sun: Jupiter, Saturn, Uranus, and Neptune.", 
+            vn: "Hành tinh vòng ngoài (Bốn hành tinh khí khổng lồ)." 
+        }
+    };
+
+    /* =========================================================================
+       3. STATE MANAGEMENT
+       ========================================================================= */
+    const state = {
+        phase: 0, 
+        currentQuestionIndex: 0,
+        userAnswers: {},     
+        flagged: new Set(),
+        evaluated: new Set() 
+    };
+
+    /* =========================================================================
+       4. INITIALIZATION & TEMPLATE RENDERING
+       ========================================================================= */
+    function init() {
+        const container = document.getElementById('questions-container');
+        
+        questionsData.forEach((q, index) => {
+            const slide = document.createElement('article');
+            slide.className = `question-slide ${index === 0 ? 'active' : ''}`;
+            slide.id = `slide-${index}`;
+            
+            let html = '';
+            
+            if (q.type === 'info') {
+                html += `<div class="q-title section-title center">${q.title}</div>${q.content}`;
+            } 
+            else if (q.type === 'dropdown') {
+                let selectHtml = `<select class="inline-select" id="select-${q.id}" onchange="handleDropdownSelection('${q.id}', this)">`;
+                selectHtml += `<option value="" disabled selected>Choose...</option>`;
+                q.options.forEach(opt => {
+                    selectHtml += `<option value="${opt}">${opt}</option>`;
+                });
+                selectHtml += `</select>`;
+
+                let sentenceHtml = q.sentence.replace('[DROP]', selectHtml);
+
+                html += `
+                    <div class="q-title">
+                        ${q.title}
+                        <label class="flag-container" style="float: right;">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)"> Flag
+                        </label>
+                    </div>
+                    <div class="info-box" style="margin-top: 1rem; font-size: 1.15rem;">
+                        ${sentenceHtml}
+                    </div>
+                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                `;
+            }
+            else if (q.type === 'dropdown-passage') {
+                let passageHtml = q.passage;
+                Object.keys(q.dropdowns).forEach(dropId => {
+                    let selectHtml = `<select class="inline-select" id="${q.id}-${dropId}" onchange="handleDropdownPassageSelection('${q.id}')">`;
+                    selectHtml += `<option value="" disabled selected>Choose...</option>`;
+                    q.dropdowns[dropId].options.forEach(opt => { selectHtml += `<option value="${opt}">${opt}</option>`; });
+                    selectHtml += `</select>`;
+                    passageHtml = passageHtml.replace(`[${dropId}]`, selectHtml);
+                });
+
+                html += `
+                    <div class="q-title">
+                        ${q.title}
+                        <label class="flag-container" style="float: right;">
+                            <input type="checkbox" onchange="toggleFlag('${q.id}', this.checked)"> Flag
+                        </label>
+                    </div>
+                    <div class="info-box passage-text" style="background: #fff; border: 1px solid var(--border-color);">
+                        ${passageHtml}
+                    </div>
+                    <div style="text-align:center; margin-top: 2rem;">
+                        <button id="btn-check-${q.id}" class="btn-primary" style="font-size: 1.2rem; padding: 0.75rem 2rem;" onclick="evaluateDropdownPassage('${q.id}')" disabled>
+                            Check Answers
+                        </button>
+                    </div>
+                    <div id="feedback-${q.id}" style="display:none; margin-top: 1.5rem;"></div>
+                `;
+            }
+            
+            slide.innerHTML = html;
+            container.appendChild(slide);
+        });
+
+        const submitSlide = document.createElement('article');
+        submitSlide.className = `question-slide`;
+        submitSlide.id = `slide-${questionsData.length}`;
+        submitSlide.innerHTML = `
+            <div class="q-title section-title center">Practice Complete</div>
+            <div class="info-box" style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Completion Status</h3>
+                <div id="submit-summary-list"></div>
+            </div>
+            <div style="text-align: center;">
+                <button id="btn-final-submit" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="startPhase2()" disabled>
+                    Finish Practice & View Total Score
+                </button>
+            </div>
+        `;
+        container.appendChild(submitSlide);
+        updateNavigationUI();
+    }
+
+    /* =========================================================================
+       5. VOCABULARY TOOLTIP LOGIC
+       ========================================================================= */
+    function showTooltip(event, term) {
+        event.stopPropagation();
+        const tooltip = document.getElementById('vocab-tooltip');
+        const data = vocabDictionary[term];
+        if(!data) return;
+
+        tooltip.innerHTML = `
+            <div style="font-weight: 700; font-size: 1.1rem; color: var(--primary-blue); margin-bottom: 0.5rem;">${term}</div>
+            <div style="margin-bottom: 0.75rem; color: var(--text-main);">${data.en}</div>
+            <div style="font-style: italic; color: var(--text-muted); border-top: 1px solid #eee; padding-top: 0.5rem;">${data.vn}</div>
+        `;
+        tooltip.style.display = 'block';
+        
+        const rect = event.target.getBoundingClientRect();
+        tooltip.style.top = (rect.bottom + 5) + 'px';
+        let tipLeft = rect.left;
+        if (tipLeft + 320 > window.innerWidth) tipLeft = window.innerWidth - 340; 
+        tooltip.style.left = Math.max(10, tipLeft) + 'px'; 
+    }
+
+    document.addEventListener('click', () => {
+        const tooltip = document.getElementById('vocab-tooltip');
+        if(tooltip) tooltip.style.display = 'none';
+    });
+
+    document.getElementById('left-pane').addEventListener('scroll', () => {
+        const tooltip = document.getElementById('vocab-tooltip');
+        if(tooltip) tooltip.style.display = 'none';
+    });
+
+    /* =========================================================================
+       6. PHASE TRANSITION LOGIC
+       ========================================================================= */
+    function startPhase1() {
+        state.phase = 1;
+        document.body.className = 'phase-1';
+        document.getElementById('intro-overview').style.display = 'none';
+        document.getElementById('reading-passage').style.display = 'block';
+        navigate(1); 
+    }
+
+    function startPhase2() {
+        state.phase = 2;
+        document.body.className = 'phase-2';
+        document.getElementById('main-footer').style.display = 'none';
+        renderReviewMode();
+    }
+
+    /* =========================================================================
+       7. PHASE 1 PRACTICE LOGIC (Immediate Feedback)
+       ========================================================================= */
+    function navigate(direction) {
+        if(state.phase !== 0 && state.phase !== 1) return;
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.remove('active');
+        state.currentQuestionIndex += direction;
+        
+        if (state.phase === 1 && state.currentQuestionIndex === 0) state.currentQuestionIndex = 1;
+
+        document.getElementById(`slide-${state.currentQuestionIndex}`).classList.add('active');
+        document.getElementById('right-pane').scrollTop = 0;
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function updateNavigationUI() {
+        if (state.phase === 0) {
+            document.getElementById('btn-prev').disabled = true;
+            document.getElementById('btn-next').style.display = 'none';
+            return;
+        }
+        const totalQs = questionsData.filter(q => q.type !== 'info').length; 
+        const isSubmitGate = (state.currentQuestionIndex === questionsData.length);
+
+        document.getElementById('btn-prev').disabled = (state.currentQuestionIndex === 1);
+        document.getElementById('btn-next').style.display = 'block';
+        document.getElementById('btn-next').disabled = isSubmitGate;
+        
+        const progressContainer = document.getElementById('nav-progress');
+        if (isSubmitGate) {
+            progressContainer.innerHTML = `Review & Submit`;
+        } else {
+            const currentQ = questionsData[state.currentQuestionIndex];
+            progressContainer.innerHTML = currentQ.type === 'info' ? currentQ.title : `Question ${state.currentQuestionIndex} of ${totalQs}`;
+        }
+    }
+
+    function toggleFlag(qId, isChecked) {
+        if (isChecked) state.flagged.add(qId);
+        else state.flagged.delete(qId);
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+    }
+
+    function handleDropdownSelection(qId, selectElement) {
+        if (state.evaluated.has(qId)) return;
+        state.evaluated.add(qId);
+        const q = questionsData.find(x => x.id === qId);
+        state.userAnswers[qId] = selectElement.value;
+        selectElement.disabled = true;
+        
+        const isCorrect = selectElement.value === q.correct;
+        selectElement.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+        
+        const fb = document.getElementById(`feedback-${qId}`);
+        const expClass = isCorrect ? 'correct' : 'incorrect';
+        const expTitle = isCorrect ? 'Correct!' : `Incorrect. The correct answer is "${q.correct}".`;
+        
+        fb.className = `explanation-box ${expClass}`;
+        fb.innerHTML = `
+            <div style="font-weight:bold; margin-bottom: 0.5rem;">${expTitle}</div>
+            <div class="exp-en">${q.expEn}</div>
+            <div class="exp-vn">${q.expVn}</div>
+        `;
+        fb.style.display = 'block';
+        
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function handleDropdownPassageSelection(qId) {
+        if (state.evaluated.has(qId)) return;
+        const qConfig = questionsData.find(q => q.id === qId);
+        let ansObj = {}; let filledCount = 0;
+        Object.keys(qConfig.dropdowns).forEach(dropId => {
+            const selectEl = document.getElementById(`${qId}-${dropId}`);
+            if (selectEl && selectEl.value) { ansObj[dropId] = selectEl.value; filledCount++; }
+        });
+        state.userAnswers[qId] = ansObj;
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) checkBtn.disabled = (filledCount !== Object.keys(qConfig.dropdowns).length);
+    }
+
+    function evaluateDropdownPassage(qId) {
+        if (state.evaluated.has(qId)) return;
+        state.evaluated.add(qId);
+        const q = questionsData.find(x => x.id === qId);
+        
+        const checkBtn = document.getElementById(`btn-check-${qId}`);
+        if (checkBtn) checkBtn.style.display = 'none';
+        
+        let allCorrect = true;
+        Object.keys(q.dropdowns).forEach(dropId => {
+            const select = document.getElementById(`${qId}-${dropId}`);
+            const userVal = state.userAnswers[qId]?.[dropId];
+            const correctVal = q.dropdowns[dropId].correct;
+            const isCorrect = userVal === correctVal;
+            if(!isCorrect) allCorrect = false;
+            
+            select.disabled = true;
+            if (isCorrect) { select.classList.add('correct-ans'); } 
+            else {
+                select.classList.add('wrong-ans');
+                if(!select.nextElementSibling || select.nextElementSibling.className !== 'correction-span') {
+                    const correctSpan = document.createElement('span');
+                    correctSpan.className = 'correction-span';
+                    correctSpan.innerHTML = ` <i class="fa-solid fa-arrow-right"></i> ${correctVal}`;
+                    correctSpan.style.color = 'var(--color-correct)'; correctSpan.style.fontWeight = 'bold';
+                    correctSpan.style.marginLeft = '0.5rem';
+                    select.parentNode.insertBefore(correctSpan, select.nextSibling);
+                }
+            }
+        });
+        
+        const fb = document.getElementById(`feedback-${qId}`);
+        fb.className = `explanation-box ${allCorrect ? 'correct' : 'incorrect'}`;
+        fb.innerHTML = `
+            <div style="font-weight:bold; margin-bottom: 0.5rem;">${allCorrect ? 'Perfect!' : 'Review the correct answers below:'}</div>
+            <div class="exp-en">${q.expEn}</div>
+            <div class="exp-vn">${q.expVn}</div>
+        `;
+        fb.style.display = 'block';
+        if (state.currentQuestionIndex === questionsData.length) updateSubmitSlide();
+        updateNavigationUI();
+    }
+
+    function updateSubmitSlide() {
+        const container = document.getElementById('submit-summary-list');
+        let completedCount = 0; let html = '';
+        const qList = questionsData.filter(q => q.type !== 'info');
+        
+        qList.forEach((q, idx) => {
+            const isCompleted = state.evaluated.has(q.id);
+            if (isCompleted) completedCount++;
+            const isFlagged = state.flagged.has(q.id);
+            const flagHtml = isFlagged ? '<i class="fa-solid fa-flag" style="color:#d97706; margin-left:8px;" title="Flagged"></i>' : '';
+            
+            html += `
+                <div class="summary-item">
+                    <span>Question ${idx + 1} ${flagHtml}</span>
+                    <span style="font-weight:bold; color: ${isCompleted ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                        ${isCompleted ? 'Checked' : 'Unanswered'}
+                    </span>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        const btn = document.getElementById('btn-final-submit');
+        
+        if (completedCount === qList.length) {
+            btn.disabled = false; btn.innerText = "Finish Practice & View Total Score"; btn.style.background = "var(--color-correct)"; 
+        } else {
+            btn.disabled = true; btn.innerText = `Check all ${qList.length} questions to finish (${completedCount} of ${qList.length})`; btn.style.background = "var(--primary-blue)";
+        }
+    }
+
+    /* =========================================================================
+       8. PHASE 2 SCORING & FINAL SUMMARY
+       ========================================================================= */
+    function checkAnswerCorrectness(qId, qData) {
+        if (qData.type === 'dropdown') return state.userAnswers[qId] === qData.correct;
+        else if (qData.type === 'dropdown-passage') {
+            const ans = state.userAnswers[qId]; if(!ans) return false;
+            let allBlanksCorrect = true;
+            Object.keys(qData.dropdowns).forEach(d => { if (ans[d] !== qData.dropdowns[d].correct) allBlanksCorrect = false; });
+            return allBlanksCorrect;
+        }
+        return false;
+    }
+
+    function renderReviewMode() {
+        const container = document.getElementById('questions-container');
+        let html = ''; let score = 0; let totalPossibleScore = 0;
+        const qList = questionsData.filter(q => q.type !== 'info');
+        const qHtmlBlocks = [];
+
+        qList.forEach((q, idx) => {
+            let isCorrect = false;
+            if(q.type === 'dropdown') {
+                totalPossibleScore++; isCorrect = checkAnswerCorrectness(q.id, q); if(isCorrect) score++;
+            } else if (q.type === 'dropdown-passage') {
+                const dropKeys = Object.keys(q.dropdowns);
+                totalPossibleScore += dropKeys.length;
+                const ans = state.userAnswers[q.id] || {}; let claimScore = 0;
+                dropKeys.forEach(d => { if(ans[d] === q.dropdowns[d].correct) claimScore++; });
+                score += claimScore; isCorrect = (claimScore === dropKeys.length); 
+            }
+
+            let qBlock = `<div class="review-item"><div class="review-q-title">${idx + 1}. ${q.title}</div>`;
+
+            if (q.type === 'dropdown') {
+                const displayAns = state.userAnswers[q.id] || "No Answer";
+                let sentenceContext = q.sentence.replace('[DROP]', `<span style="text-decoration: underline; font-weight: bold; color: ${isCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">${displayAns}</span>`);
+                qBlock += `
+                    <div style="font-style: italic; margin-bottom: 1rem; color: #555;">"${sentenceContext}"</div>
+                    <div class="review-choice ${isCorrect ? 'correct-ans' : 'wrong-ans'}">Your Answer: <span style="font-weight: bold;">${displayAns}</span></div>
+                    ${!isCorrect ? `<div class="review-choice correct-ans">Correct Answer: <span style="font-weight: bold;">${q.correct}</span></div>` : ''}
+                </div>`;
+            } 
+            else if (q.type === 'dropdown-passage') {
+                const ans = state.userAnswers[q.id] || {};
+                qBlock += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">`;
+                Object.keys(q.dropdowns).forEach((dropId, i) => {
+                    const isBlankCorrect = (ans[dropId] || 'None') === q.dropdowns[dropId].correct;
+                    qBlock += `
+                        <div style="padding: 0.75rem; background: #f8fafc; border-radius:4px; border-left: 4px solid ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">
+                            <span style="font-weight: bold;">Blank ${i + 1}</span><br>Your Answer: <span style="font-weight: 600; color: ${isBlankCorrect ? 'var(--color-correct)' : 'var(--color-incorrect)'}">${ans[dropId] || 'None'}</span><br>
+                            ${!isBlankCorrect ? `<span style="color: var(--color-correct); font-weight:bold;">Correct: ${q.dropdowns[dropId].correct}</span>` : `<span style="color: var(--color-correct); font-size: 0.85rem;"><i class="fa-solid fa-check"></i> Correct</span>`}
+                        </div>`;
+                });
+                qBlock += `</div></div>`;
+            }
+            qHtmlBlocks.push(qBlock);
+        });
+
+        html += `
+            <div class="review-header">
+                <div style="font-size: 1.2rem; font-weight:600; color:var(--text-main);">Practice Complete</div>
+                <div class="review-score">Final Score: ${score} / ${totalPossibleScore}</div>
+            </div>
+            <h3 style="margin-bottom: 1.5rem; color: var(--text-main);">Summary:</h3>
+            ${qHtmlBlocks.join('')}
+            <div style="text-align:center; margin-top: 2rem; margin-bottom: 4rem;">
+                <p style="color: var(--text-muted); font-style: italic; font-size: 1.1rem;">You have completed the Science practice activity. Great job!</p>
+            </div>
+        `;
+
+        container.innerHTML = html;
+        document.getElementById('right-pane').scrollTop = 0;
+    }
+
+    /* =========================================================================
+       9. UTILITIES (Responsive Split Pane Resizer)
+       ========================================================================= */
+    const resizer = document.getElementById('dragMe');
+    const leftPane = document.getElementById('left-pane');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', () => { isResizing = true; document.body.style.cursor = 'col-resize'; });
+    resizer.addEventListener('touchstart', () => { isResizing = true; }, {passive: false});
+
+    function doResize(e) {
+        if (!isResizing) return;
+        const layout = document.querySelector('.split-layout');
+        const isColumn = window.getComputedStyle(layout).flexDirection === 'column';
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        if (isColumn) {
+            const newHeight = (clientY / layout.offsetHeight) * 100;
+            if(newHeight > 20 && newHeight < 80) leftPane.style.flex = `0 0 ${newHeight}%`;
+        } else {
+            const newWidth = (clientX / layout.offsetWidth) * 100;
+            if(newWidth > 20 && newWidth < 80) leftPane.style.flex = `0 0 ${newWidth}%`;
+        }
+    }
+
+    document.addEventListener('mousemove', doResize);
+    document.addEventListener('touchmove', doResize, {passive: false});
+
+    function stopResize() { if(isResizing) { isResizing = false; document.body.style.cursor = 'default'; } }
+    document.addEventListener('mouseup', stopResize);
+    document.addEventListener('touchend', stopResize);
+
+    window.onload = init;
+</script>
+</body>
+</html>
