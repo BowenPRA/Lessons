@@ -422,7 +422,7 @@
                         <li><strong>Calculations:</strong> Remember to use your knowledge of Mean and Median. You may use a physical or on-screen calculator if needed.</li>
                         <li><strong>Format:</strong> All questions use drop-down menus embedded inside the text.</li>
                     </ul>
-                    <p style="font-weight: 600; color: var(--primary-blue); border-top: 1px solid var(--border-color); padding-top: 1.5rem;">Click "Next" or "Begin Practice" to start the first problem.</p>
+                    <p style="font-weight: 600; color: var(--primary-blue); border-top: 1px solid var(--border-color); padding-top: 1.5rem;">Click "Begin Practice" or the "Next" button below to start.</p>
                     <button class="btn-primary" onclick="startPhase1()" style="font-size: 1.1rem; padding: 1rem 2rem; margin-top: 1rem;">Begin Practice</button>
                 </div>
             `
@@ -470,7 +470,7 @@
         {
             id: 'q3', type: 'dropdown-passage',
             title: "3. & 4. Urban vs. Rural Comparisons",
-            passage: svgs.urbanized + "According to the bar graph, there were approximately as many Americans living in <span class="vocab-word" onclick="showTooltip(event, 'Rural')">rural</span> locations as there were in <span class="vocab-word" onclick="showTooltip(event, 'Urban')">urban</span> settings in the year [DROP1]. <br><br>Furthermore, the <span class="vocab-word" onclick="showTooltip(event, 'Range')">range</span> (difference between the highest and lowest points) of the urban population was approximately [DROP2] larger than the range of the rural population between 1860 and 1930.",
+            passage: svgs.urbanized + "According to the bar graph, there were approximately as many Americans living in <span class=\"vocab-word\" onclick=\"showTooltip(event, 'Rural')\">rural</span> locations as there were in <span class=\"vocab-word\" onclick=\"showTooltip(event, 'Urban')\">urban</span> settings in the year [DROP1]. <br><br>Furthermore, the <span class=\"vocab-word\" onclick=\"showTooltip(event, 'Range')\">range</span> (difference between the highest and lowest points) of the urban population was approximately [DROP2] larger than the range of the rural population between 1860 and 1930.",
             dropdowns: {
                 "DROP1": { options: ["1860", "1900", "1920", "1930"], correct: "1920" },
                 "DROP2": { options: ["10 million", "23 million", "34 million", "43 million"], correct: "34 million" }
@@ -481,7 +481,7 @@
         {
             id: 'q4', type: 'dropdown-passage',
             title: "5. & 6. Interpreting Historical Data",
-            passage: svgs.unemployment + "According to the graph, the onset of World War II contributed to a change where the <span class="vocab-word" onclick="showTooltip(event, 'Unemployment Rate')">unemployment rate</span> [DROP1]. <br><br>Additionally, the most significant and uninterrupted spike in the U.S. unemployment rate occurred immediately after [DROP2].",
+            passage: svgs.unemployment + "According to the graph, the onset of World War II contributed to a change where the <span class=\"vocab-word\" onclick=\"showTooltip(event, 'Unemployment Rate')\">unemployment rate</span> [DROP1]. <br><br>Additionally, the most significant and uninterrupted spike in the U.S. unemployment rate occurred immediately after [DROP2].",
             dropdowns: {
                 "DROP1": { 
                     options: ["stabilized and remained stable", "declined consistently until shortly before the war's end", "increased gradually"], 
@@ -619,6 +619,7 @@
        ========================================================================= */
     function init() {
         const container = document.getElementById('questions-container');
+        if (!container) return; // Safety check
         
         questionsData.forEach((q, index) => {
             const slide = document.createElement('article');
@@ -682,6 +683,7 @@
             </div>
         `;
         container.appendChild(submitSlide);
+        
         updateNavigationUI();
     }
 
@@ -724,11 +726,26 @@
        6. PHASE TRANSITION LOGIC
        ========================================================================= */
     function startPhase1() {
+        if (state.phase === 1) return; // Prevent double execution
         state.phase = 1;
+        
         document.body.className = 'phase-1';
         document.getElementById('intro-overview').style.display = 'none';
         document.getElementById('reading-passage').style.display = 'block';
-        navigate(1); 
+        
+        // Securely switch from Slide 0 to Slide 1
+        const introSlide = document.getElementById('slide-0');
+        if (introSlide) introSlide.classList.remove('active');
+        
+        state.currentQuestionIndex = 1;
+        
+        const firstQuestionSlide = document.getElementById('slide-1');
+        if (firstQuestionSlide) firstQuestionSlide.classList.add('active');
+        
+        const rightPane = document.getElementById('right-pane');
+        if (rightPane) rightPane.scrollTop = 0;
+        
+        updateNavigationUI();
     }
 
     function startPhase2() {
@@ -739,78 +756,71 @@
     }
 
     /* =========================================================================
-       7. PHASE 1 PRACTICE LOGIC (Fortified Navigation & Immediate Feedback)
+       7. FORTIFIED NAVIGATION & IMMEDIATE FEEDBACK
        ========================================================================= */
     function navigate(direction) {
-        // Prevent action if not in standard view modes
-        if(state.phase !== 0 && state.phase !== 1) return;
-
-        // Securely hide current slide
-        const currentSlide = document.getElementById('slide-' + state.currentQuestionIndex);
-        if (currentSlide) {
-            currentSlide.classList.remove('active');
+        // Handle clicking "Next" from the start screen securely
+        if (state.phase === 0) {
+            if (direction === 1) startPhase1();
+            return;
         }
 
-        // Calculate new index
+        // Must be in Phase 1 to use normal navigation
+        if (state.phase !== 1) return;
+
+        const maxIndex = questionsData.length;
+
+        // Hide current slide
+        const currentSlide = document.getElementById(`slide-${state.currentQuestionIndex}`);
+        if (currentSlide) currentSlide.classList.remove('active');
+        
+        // Update index
         state.currentQuestionIndex += direction;
         
-        // --- RIGOROUS BOUNDARY CHECKS ---
-        const maxIndex = questionsData.length; // The submit summary screen is located here
-        
-        // Don't let users go backwards past the intro (0)
-        if (state.currentQuestionIndex < 0) {
-            state.currentQuestionIndex = 0;
-        }
-        
-        // If they are in Phase 1 (Practicing), don't let them go backwards into the intro slide
-        if (state.phase === 1 && state.currentQuestionIndex < 1) {
-            state.currentQuestionIndex = 1;
-        }
-        
-        // Don't let users go forwards past the final submit screen
-        if (state.currentQuestionIndex > maxIndex) {
-            state.currentQuestionIndex = maxIndex;
-        }
+        // Strict boundary checks
+        if (state.currentQuestionIndex < 1) state.currentQuestionIndex = 1;
+        if (state.currentQuestionIndex > maxIndex) state.currentQuestionIndex = maxIndex;
 
-        // Securely show the new slide
-        const nextSlide = document.getElementById('slide-' + state.currentQuestionIndex);
-        if (nextSlide) {
-            nextSlide.classList.add('active');
-        }
+        // Show next slide
+        const nextSlide = document.getElementById(`slide-${state.currentQuestionIndex}`);
+        if (nextSlide) nextSlide.classList.add('active');
         
-        // Reset scrollbar
+        // Scroll to top
         const rightPane = document.getElementById('right-pane');
         if (rightPane) rightPane.scrollTop = 0;
         
-        // Update summary if they hit the end, and always update buttons
         if (state.currentQuestionIndex === maxIndex) updateSubmitSlide();
         updateNavigationUI();
     }
 
     function updateNavigationUI() {
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const progressContainer = document.getElementById('nav-progress');
+        
+        // Always ensure buttons are visible to prevent blank screens
+        if (btnNext) btnNext.style.display = 'block';
+
         if (state.phase === 0) {
-            document.getElementById('btn-prev').disabled = true;
-            document.getElementById('btn-next').style.display = 'none';
+            if (btnPrev) btnPrev.disabled = true;
+            if (btnNext) btnNext.disabled = false;
+            if (progressContainer) progressContainer.innerHTML = "Introduction";
             return;
         }
 
         const totalQs = questionsData.filter(q => q.type !== 'info').length; 
         const isSubmitGate = (state.currentQuestionIndex === questionsData.length);
 
-        // Can't go back past Question 1 once in Phase 1
-        document.getElementById('btn-prev').disabled = (state.currentQuestionIndex === 1);
+        if (btnPrev) btnPrev.disabled = (state.currentQuestionIndex === 1);
+        if (btnNext) btnNext.disabled = isSubmitGate;
         
-        document.getElementById('btn-next').style.display = 'block';
-        
-        // Can't go "Next" past the submit gate
-        document.getElementById('btn-next').disabled = isSubmitGate;
-        
-        const progressContainer = document.getElementById('nav-progress');
-        if (isSubmitGate) {
-            progressContainer.innerHTML = `Review & Submit`;
-        } else {
-            const currentQ = questionsData[state.currentQuestionIndex];
-            progressContainer.innerHTML = currentQ.type === 'info' ? currentQ.title : `Question ${state.currentQuestionIndex} of ${totalQs}`;
+        if (progressContainer) {
+            if (isSubmitGate) {
+                progressContainer.innerHTML = `Review & Submit`;
+            } else {
+                const currentQ = questionsData[state.currentQuestionIndex];
+                progressContainer.innerHTML = currentQ && currentQ.type === 'info' ? currentQ.title : `Question ${state.currentQuestionIndex} of ${totalQs}`;
+            }
         }
     }
 
@@ -1040,6 +1050,7 @@
     document.addEventListener('mouseup', stopResize);
     document.addEventListener('touchend', stopResize);
 
+    // Initialize the module on load
     window.onload = init;
 </script>
 </body>
