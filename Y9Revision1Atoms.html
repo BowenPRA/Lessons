@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 9 Progression Review - Chemistry</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Bible Standard) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Secondary Background */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Success/Acid Green */
+            --warning: #f59e0b;        /* Hazard Orange */
+            --danger: #ef4444;         /* Heat Red */
+            --cold: #0ea5e9;           /* Cold Blue */
+            --text-light: #f1f5f9;     /* Main Text */
+            --text-dim: #94a3b8;       /* Subtitles */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.15rem; line-height: 1.6; color: var(--text-dim); }
+
+        strong { color: var(--text-light); }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Signposting System */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            animation: slideIn 0.5s ease;
+        }
+        .pedagogical-badge {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { background: rgba(139, 92, 246, 0.1); border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { background: rgba(16, 185, 129, 0.1); border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Reveal Card */
+        .reveal-card {
+            background: var(--bg-panel);
+            border: 2px dashed var(--primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .reveal-card:hover { background: rgba(139, 92, 246, 0.1); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .reveal-card.revealed { border-style: solid; background: rgba(16, 185, 129, 0.1); border-color: var(--accent); cursor: default; }
+        .reveal-card.revealed .pre-reveal { display: none; }
+        .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
+
+        /* Quiz Component */
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-option:hover { background: rgba(255, 255, 255, 0.1); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--accent); }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        /* SVG Element Cell Styles */
+        .element-cell { fill: var(--bg-panel); stroke: rgba(255,255,255,0.2); stroke-width: 2; transition: all 0.3s ease; cursor: pointer; }
+        .element-cell:hover { fill: var(--primary); stroke: var(--text-light); }
+        .element-text { font-family: 'Outfit', sans-serif; fill: var(--text-light); pointer-events: none; }
+        .element-symbol { font-size: 26px; font-weight: 800; }
+        .element-number { font-size: 12px; fill: var(--text-dim); }
+        
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-atom"></i> Year 9 Science</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">Progression Review</span>
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = { currentSlide: 0, slides: [], cleanupFn: null };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Title & Objectives (Engage)
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-microscope delay-1" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Year 9 Chemistry Review</h1>
+                    <h2 class="delay-1" style="color: var(--accent);">Progression Checkpoint Prep</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Review Objectives</div>
+                        <ul style="margin-left: 1rem; display: grid; gap: 1rem; list-style-type: none; padding: 0; margin-top: 0.5rem;">
+                            <li style="font-size: 1.1rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>⚛️</span><span style="color: white; font-weight: 500;">Review Atomic Structure, Elements, and Molecules.</span>
+                            </li>
+                            <li style="font-size: 1.1rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>📊</span><span style="color: white; font-weight: 500;">Decode the Periodic Table (Groups, Periods, Isotopes).</span>
+                            </li>
+                            <li style="font-size: 1.1rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>⚡</span><span style="color: white; font-weight: 500;">Understand Ions, Noble Gases, and Ionic & Covalent Bonding.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: Definitions Recap
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Year 8 Recap: The Basics</h2>
+                    
+                    <div class="grid-3 delay-1" style="align-items: stretch; max-width: 1100px; margin: 2rem auto;">
+                        <div class="glass-card" style="border-top: 4px solid var(--danger);">
+                            <h3 style="color: var(--danger);"><i class="fa-solid fa-circle-dot"></i> Atom</h3>
+                            <p style="color: white; font-weight: bold; margin-bottom: 1rem;">The smallest building block of matter.</p>
+                            <p style="font-size: 1rem;">Cannot be broken down further by normal chemical means.</p>
+                        </div>
+
+                        <div class="glass-card" style="border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary);"><i class="fa-solid fa-cubes"></i> Element</h3>
+                            <p style="color: white; font-weight: bold; margin-bottom: 1rem;">A substance made of only ONE type of atom.</p>
+                            <p style="font-size: 1rem;">Found on the Periodic Table (e.g., Gold, Oxygen).</p>
+                        </div>
+
+                        <div class="glass-card" style="border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--accent);"><i class="fa-solid fa-diagram-project"></i> Molecule</h3>
+                            <p style="color: white; font-weight: bold; margin-bottom: 1rem;">Two or more atoms chemically bonded together.</p>
+                            <p style="font-size: 1rem;">Can be same elements (O₂) or different elements (H₂O).</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: Subatomic Particles
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Inside the Atom</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <p style="color: white; font-size: 1.1rem; margin-bottom: 1rem;">An atom consists of a dense central <strong>Nucleus</strong> surrounded by <strong>Electron Shells</strong>.</p>
+                        
+                        <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px;">
+                            <ul style="list-style-type: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+                                <li><strong style="color: var(--danger); font-size: 1.2rem;">Proton (p⁺):</strong> Found in the Nucleus. Has a <strong>Positive (+1)</strong> charge. Mass = 1.</li>
+                                <li><strong style="color: var(--text-dim); font-size: 1.2rem;">Neutron (n⁰):</strong> Found in the Nucleus. Has <strong>No Charge (0)</strong>. Mass = 1.</li>
+                                <li><strong style="color: var(--cold); font-size: 1.2rem;">Electron (e⁻):</strong> Orbits in Shells. Has a <strong>Negative (-1)</strong> charge. Mass = Almost 0.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: Decoding the Periodic Table
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Decoding the Periodic Table</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">How do we read an element's card?</p>
+
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto;">
+                        <div style="display: flex; gap: 2rem; justify-content: center;">
+                            <svg width="120" height="150" viewBox="0 0 120 150">
+                                <rect width="120" height="150" rx="10" fill="#1e293b" stroke="#8b5cf6" stroke-width="3"/>
+                                <text x="10" y="30" font-family="Outfit" font-size="18" fill="#94a3b8">6</text>
+                                <text x="60" y="85" font-family="Outfit" font-size="50" font-weight="bold" fill="#f1f5f9" text-anchor="middle">C</text>
+                                <text x="60" y="115" font-family="Outfit" font-size="16" fill="#f1f5f9" text-anchor="middle">Carbon</text>
+                                <text x="60" y="135" font-family="Outfit" font-size="14" fill="#10b981" text-anchor="middle">12.011</text>
+                            </svg>
+
+                            <svg width="120" height="150" viewBox="0 0 120 150">
+                                <rect width="120" height="150" rx="10" fill="#1e293b" stroke="#0ea5e9" stroke-width="3"/>
+                                <text x="10" y="30" font-family="Outfit" font-size="18" fill="#94a3b8">8</text>
+                                <text x="60" y="85" font-family="Outfit" font-size="50" font-weight="bold" fill="#f1f5f9" text-anchor="middle">O</text>
+                                <text x="60" y="115" font-family="Outfit" font-size="16" fill="#f1f5f9" text-anchor="middle">Oxygen</text>
+                                <text x="60" y="135" font-family="Outfit" font-size="14" fill="#10b981" text-anchor="middle">15.999</text>
+                            </svg>
+                        </div>
+
+                        <div class="glass-card">
+                            <h3 style="color: var(--primary);">Atomic Number (Top)</h3>
+                            <p style="margin-bottom: 1rem; color: white;">The number of <strong>Protons</strong>. This defines the element! (If it has 6 protons, it is ALWAYS Carbon).</p>
+                            
+                            <h3 style="color: var(--accent);">Atomic Weight / Mass (Bottom)</h3>
+                            <p style="color: white;">The total number of <strong>Protons + Neutrons</strong> in the nucleus.</p>
+                            <p style="font-size: 0.9rem; margin-top: 0.5rem;"><em>(Electrons are too light to count toward the mass!)</em></p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: Isotopes
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Wait, why are atomic weights decimals?</h2>
+
+                    <div class="pedagogical-note note-theory delay-1" style="max-width: 800px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-triangle-exclamation"></i> Isotopes</div>
+                        <p style="font-size: 1.15rem; color: white; margin-bottom: 1rem;">Not all atoms of the same element weigh the same amount!</p>
+                        <p style="font-size: 1.1rem;">An <strong>Isotope</strong> is an atom of an element that has the <strong>same number of protons</strong>, but a <strong>different number of neutrons</strong>.</p>
+                    </div>
+
+                    <div class="glass-card text-center delay-2" style="max-width: 800px; margin: 0 auto;">
+                        <h3 style="color: var(--primary); margin-bottom: 1rem;">Example: Carbon</h3>
+                        <div style="display: flex; justify-content: space-around; color: white; gap: 1rem;">
+                            <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px; flex: 1;">
+                                <h4 style="font-size: 1.2rem; color: var(--accent); margin-bottom: 0.5rem;">Carbon-12</h4>
+                                <p>6 Protons</p>
+                                <p>6 Neutrons</p>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px; flex: 1; border: 1px dashed var(--warning);">
+                                <h4 style="font-size: 1.2rem; color: var(--warning); margin-bottom: 0.5rem;">Carbon-14 (Isotope)</h4>
+                                <p>6 Protons</p>
+                                <p><strong style="color: var(--warning);">8 Neutrons</strong></p>
+                            </div>
+                        </div>
+                        <p style="margin-top: 1.5rem; font-size: 0.95rem;">The atomic weight on the table (12.011) is just the <em>average</em> weight of all carbon isotopes found in nature.</p>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: The First 12 Elements
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>The First 12 Elements</h2>
+                    <p class="delay-1" style="margin-bottom: 2rem;">Arranged by increasing Atomic Number in their <strong>realistic positions</strong>.</p>
+                    
+                    <div class="delay-2" style="display: flex; justify-content: center; width: 100%; overflow-x: auto; padding-bottom: 1rem;">
+                        <svg width="100%" height="auto" viewBox="0 0 830 340" style="max-width: 830px; min-width: 650px;">
+                            <!-- Group Definitions -->
+                            <defs>
+                                <g id="cell">
+                                    <rect width="80" height="90" rx="8" class="element-cell" />
+                                </g>
+                            </defs>
+
+                            <!-- Row 1 -->
+                            <g transform="translate(30, 20)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">1</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">H</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Hydrogen</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">1.008</text>
+                            </g>
+
+                            <g transform="translate(720, 20)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">2</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">He</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Helium</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">4.002</text>
+                            </g>
+
+                            <!-- Row 2 -->
+                            <g transform="translate(30, 120)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">3</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">Li</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Lithium</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">6.94</text>
+                            </g>
+
+                            <g transform="translate(120, 120)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">4</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">Be</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Beryllium</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">9.012</text>
+                            </g>
+
+                            <!-- Gap for Transition Metals -->
+
+                            <g transform="translate(270, 120)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">5</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">B</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Boron</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">10.81</text>
+                            </g>
+
+                            <g transform="translate(360, 120)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">6</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">C</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Carbon</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">12.011</text>
+                            </g>
+
+                            <g transform="translate(450, 120)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">7</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">N</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Nitrogen</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">14.007</text>
+                            </g>
+
+                            <g transform="translate(540, 120)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">8</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">O</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Oxygen</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">15.999</text>
+                            </g>
+
+                            <g transform="translate(630, 120)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">9</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">F</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Fluorine</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">18.998</text>
+                            </g>
+
+                            <g transform="translate(720, 120)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">10</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">Ne</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Neon</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">20.180</text>
+                            </g>
+
+                            <!-- Row 3 (Partial) -->
+                            <g transform="translate(30, 220)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">11</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">Na</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Sodium</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">22.990</text>
+                            </g>
+
+                            <g transform="translate(120, 220)">
+                                <use href="#cell" />
+                                <text x="8" y="22" class="element-text element-number">12</text>
+                                <text x="40" y="52" class="element-text element-symbol" text-anchor="middle">Mg</text>
+                                <text x="40" y="68" class="element-text" style="font-size: 10px; fill: var(--text-dim);" text-anchor="middle">Magnesium</text>
+                                <text x="40" y="82" class="element-text" style="font-size: 11px; fill: var(--accent);" text-anchor="middle">24.305</text>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: Groups and Periods (NEW)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Navigating the Table: Groups & Periods</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 2rem auto;">
+                        <div class="glass-card" style="border-top: 4px solid var(--primary); height: 100%;">
+                            <h3 style="color: var(--primary);"><i class="fa-solid fa-arrows-up-down"></i> Groups (Columns)</h3>
+                            <p style="color: white; margin-bottom: 1rem; font-size: 1.1rem;">Vertical columns are called <strong>Groups</strong>.</p>
+                            <ul style="color: var(--text-light); margin-left: 1.5rem;">
+                                <li>Elements in the same group have the <strong>same number of outer electrons</strong>.</li>
+                                <li>Because of this, they react in very similar ways!</li>
+                            </ul>
+                        </div>
+
+                        <div class="glass-card" style="border-top: 4px solid var(--accent); height: 100%;">
+                            <h3 style="color: var(--accent);"><i class="fa-solid fa-left-right"></i> Periods (Rows)</h3>
+                            <p style="color: white; margin-bottom: 1rem; font-size: 1.1rem;">Horizontal rows are called <strong>Periods</strong>.</p>
+                            <ul style="color: var(--text-light); margin-left: 1.5rem;">
+                                <li>Elements in the same period have the <strong>same number of electron shells</strong>.</li>
+                                <li>As you go across, you add one proton and one electron at a time.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: Electron Shells
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Electron Shells: The "2, 8, 8" Rule</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; align-items: stretch;">
+                        <div class="glass-card" style="border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary);">Filling the Shells</h3>
+                            <p style="color: white; margin-bottom: 1rem;">Electrons orbit the nucleus in specific shells. They fill from the inside out:</p>
+                            <ul style="color: white; margin-left: 1.5rem; margin-bottom: 1rem;">
+                                <li><strong>Shell 1:</strong> Holds max <strong>2</strong> electrons.</li>
+                                <li><strong>Shell 2:</strong> Holds max <strong>8</strong> electrons.</li>
+                                <li><strong>Shell 3:</strong> Holds max <strong>8</strong> electrons (for the first 20 elements).</li>
+                            </ul>
+                        </div>
+
+                        <div class="pedagogical-note note-write" style="margin: 0; display: flex; flex-direction: column; justify-content: center;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-star"></i> The Golden Rule of Chemistry</div>
+                            <p style="color: white; font-size: 1.2rem; line-height: 1.6; margin-top: 1rem;">
+                                Atoms are lazy. They want to be stable.<br><br>
+                                An atom is most stable when its <strong>outermost electron shell is completely full</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 9: Formation of Ions
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">What happens to get a full shell?</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 800px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bolt"></i> Definition: Ion</div>
+                        <p style="font-size: 1.2rem; color: white;">An <strong>Ion</strong> is an atom that has <strong>gained or lost electrons</strong> to achieve a full outer shell, giving it an electrical charge.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto;">
+                        <div class="glass-card" style="border-top: 4px solid var(--accent); text-align: center;">
+                            <h3 style="color: var(--accent);">Losing Electrons</h3>
+                            <i class="fa-solid fa-arrow-up-right-dots" style="font-size: 3rem; color: var(--accent); margin: 1rem 0;"></i>
+                            <p style="color: white; font-size: 1.1rem; margin-bottom: 1rem;">If an atom <strong>loses</strong> negative electrons, it becomes a <strong>Positive Ion</strong> (Cation).</p>
+                            <p style="font-size: 0.9rem;"><em>Example: Sodium (Na) has 1 outer electron. It loses it to become Na⁺.</em></p>
+                        </div>
+
+                        <div class="glass-card" style="border-top: 4px solid var(--danger); text-align: center;">
+                            <h3 style="color: var(--danger);">Gaining Electrons</h3>
+                            <i class="fa-solid fa-arrow-right-to-bracket" style="font-size: 3rem; color: var(--danger); margin: 1rem 0;"></i>
+                            <p style="color: white; font-size: 1.1rem; margin-bottom: 1rem;">If an atom <strong>gains</strong> negative electrons, it becomes a <strong>Negative Ion</strong> (Anion).</p>
+                            <p style="font-size: 0.9rem;"><em>Example: Chlorine (Cl) has 7 outer electrons. It gains 1 to become Cl⁻.</em></p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 10: Noble Gases (NEW)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">The Exception: Noble Gases</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">If atoms bond to get full shells, what about the atoms that are already full?</p>
+
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 800px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-crown"></i> Group 0 / 8: The Noble Gases</div>
+                        <p style="font-size: 1.15rem; color: white;">The elements in the far-right column (like Helium and Neon) already have <strong>completely full outer electron shells</strong> naturally.</p>
+                    </div>
+
+                    <div class="glass-card text-center delay-3" style="max-width: 800px; margin: 0 auto; border-top: 4px solid var(--cold);">
+                        <i class="fa-solid fa-shield-halved" style="font-size: 3rem; color: var(--cold); margin-bottom: 1rem;"></i>
+                        <h3 style="color: var(--cold); margin-bottom: 1rem;">Unreactive & Stable</h3>
+                        <p style="color: white; font-size: 1.1rem; margin-bottom: 1rem;">Because their shells are perfectly full, they are incredibly stable or <strong>inert</strong>.</p>
+                        <p style="color: var(--text-dim); font-size: 1rem;">They do not need to gain, lose, or share electrons. Therefore, <strong>Noble Gases do not form chemical bonds</strong> under normal conditions!</p>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 11: Why do Atoms Bond? (Transition to Bonding)
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Chemical Bonding</h2>
+                    <p class="delay-1" style="margin-bottom: 2rem;">If atoms aren't Noble Gases, they don't have full shells! They must team up to get them.</p>
+
+                    <div class="reveal-card delay-2" id="bond-reveal" role="button" tabindex="0" style="max-width: 800px; margin: 0 auto;">
+                        <div class="pre-reveal">
+                            <i class="fa-solid fa-handshake-angle" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary);"></i>
+                            <h3 style="color: white;">How do atoms get full shells?</h3>
+                            <p style="font-size: 0.95rem; color: var(--text-dim);">(Click to reveal the two main strategies)</p>
+                        </div>
+                        <div class="reveal-content text-left">
+                            <div class="grid-2">
+                                <div style="background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--danger); padding: 1.5rem; border-radius: 8px;">
+                                    <h4 style="color: var(--danger); font-size: 1.2rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-gift"></i> Strategy 1: Give & Take</h4>
+                                    <p style="color: white; font-size: 1rem;">One atom completely gives its electrons away to another atom. <strong>(Ionic Bonding)</strong></p>
+                                </div>
+                                <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--accent); padding: 1.5rem; border-radius: 8px;">
+                                    <h4 style="color: var(--accent); font-size: 1.2rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-people-arrows"></i> Strategy 2: Sharing</h4>
+                                    <p style="color: white; font-size: 1rem;">Two atoms overlap their shells and share their electrons. <strong>(Covalent Bonding)</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const revealCard = container.querySelector('#bond-reveal');
+                const handler = () => { revealCard.classList.add('revealed'); };
+                revealCard.addEventListener('click', handler);
+                return () => revealCard.removeEventListener('click', handler);
+            }
+        },
+
+        // SLIDE 12: Ionic Bonding
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Ionic Bonding</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">The ultimate "Give and Take" relationship.</p>
+
+                    <div class="pedagogical-note note-write delay-2" style="max-width: 850px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <p style="font-size: 1.15rem; color: white;"><strong>Ionic Bonding</strong> is the strong electrical attraction between positive and negative ions.</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 1rem; color: var(--text-light);">
+                            <li>It happens between a <strong>Metal</strong> and a <strong>Non-Metal</strong>.</li>
+                            <li>The Metal completely <em>transfers</em> its outer electrons to the Non-Metal.</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card text-center delay-3" style="max-width: 850px; margin: 0 auto; border-top: 4px solid var(--warning);">
+                        <h3 style="color: var(--warning); margin-bottom: 1rem;">Example: Salt (NaCl)</h3>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 2rem; color: white;">
+                            <div>
+                                <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 0.5rem auto;">Na⁺</div>
+                                <p>Sodium (Metal)</p>
+                                <p style="font-size: 0.8rem; color: var(--text-dim);">Lost an electron</p>
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <i class="fa-solid fa-magnet" style="font-size: 2rem; color: var(--warning);"></i>
+                                <p style="font-size: 0.85rem; margin-top: 0.5rem; font-weight: bold; color: var(--warning);">Opposites Attract!</p>
+                            </div>
+                            
+                            <div>
+                                <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--danger); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 0.5rem auto;">Cl⁻</div>
+                                <p>Chlorine (Non-Metal)</p>
+                                <p style="font-size: 0.8rem; color: var(--text-dim);">Gained an electron</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 13: Covalent Bonding
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Covalent Bonding</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">When giving up isn't an option, atoms must share.</p>
+
+                    <div class="pedagogical-note note-write delay-2" style="max-width: 850px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <p style="font-size: 1.15rem; color: white;"><strong>Covalent Bonding</strong> occurs when atoms <strong>share</strong> pairs of electrons to achieve a full outer shell.</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 1rem; color: var(--text-light);">
+                            <li>It happens between <strong>Non-Metals</strong> only.</li>
+                            <li>"Co" means together, "Valent" means outer shell. They literally overlap their outer shells!</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card text-center delay-3" style="max-width: 850px; margin: 0 auto; border-top: 4px solid var(--cold);">
+                        <h3 style="color: var(--cold); margin-bottom: 1rem;">Example: Water (H₂O)</h3>
+                        <div style="display: flex; align-items: center; justify-content: center; color: white;">
+                            <div style="position: relative; width: 250px; height: 120px;">
+                                <!-- Overlapping circles simulation -->
+                                <div style="position: absolute; left: 0; top: 20px; width: 80px; height: 80px; border: 3px dashed var(--cold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; background: rgba(14, 165, 233, 0.2);">H</div>
+                                
+                                <div style="position: absolute; left: 60px; top: 0; width: 120px; height: 120px; border: 3px dashed var(--danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 2rem; background: rgba(239, 68, 68, 0.2);">O</div>
+                                
+                                <div style="position: absolute; right: 0; top: 20px; width: 80px; height: 80px; border: 3px dashed var(--cold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; background: rgba(14, 165, 233, 0.2);">H</div>
+                                
+                                <!-- Shared electrons -->
+                                <div style="position: absolute; left: 65px; top: 50px; font-size: 1.5rem; color: white; text-shadow: 0 0 5px white;">••</div>
+                                <div style="position: absolute; right: 65px; top: 50px; font-size: 1.5rem; color: white; text-shadow: 0 0 5px white;">••</div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 1rem; font-size: 0.95rem; color: var(--text-dim);">The Hydrogen and Oxygen atoms overlap their outer shells and <em>share</em> the electrons in the middle.</p>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 14: Checkpoint Quiz (Evaluate)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Progression Checkpoint</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">Test your knowledge before the exam. Click the correct answer.</p>
+
+                    <div class="glass-card delay-2" style="max-width: 850px; margin: 0 auto; max-height: 500px; overflow-y: auto;">
+                        <h3 style="margin-bottom: 1rem; color: white; font-size: 1.2rem;">1. An isotope has the same number of protons but a different number of:</h3>
+                        <div class="quiz-group">
+                            <div class="quiz-option" data-correct="false"><i class="fa-regular fa-circle"></i> Electrons</div>
+                            <div class="quiz-option" data-correct="true"><i class="fa-regular fa-circle"></i> Neutrons</div>
+                        </div>
+
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: white; font-size: 1.2rem;">2. When an atom LOSES an electron, it becomes:</h3>
+                        <div class="quiz-group">
+                            <div class="quiz-option" data-correct="true"><i class="fa-regular fa-circle"></i> A positive ion</div>
+                            <div class="quiz-option" data-correct="false"><i class="fa-regular fa-circle"></i> A negative ion</div>
+                        </div>
+
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: white; font-size: 1.2rem;">3. Why do Noble Gases (like Neon) generally NOT react?</h3>
+                        <div class="quiz-group">
+                            <div class="quiz-option" data-correct="false"><i class="fa-regular fa-circle"></i> They have too many protons</div>
+                            <div class="quiz-option" data-correct="true"><i class="fa-regular fa-circle"></i> Their outer electron shells are already full</div>
+                        </div>
+                        
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: white; font-size: 1.2rem;">4. A bond between two Non-Metals where electrons are SHARED is called:</h3>
+                        <div class="quiz-group">
+                            <div class="quiz-option" data-correct="false"><i class="fa-regular fa-circle"></i> Ionic Bonding</div>
+                            <div class="quiz-option" data-correct="true"><i class="fa-regular fa-circle"></i> Covalent Bonding</div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const options = container.querySelectorAll('.quiz-option');
+                const handlers = [];
+
+                options.forEach(opt => {
+                    const handler = function() {
+                        // Scope only to the specific question group so answering one doesn't clear the others
+                        const siblings = this.parentElement.querySelectorAll('.quiz-option');
+                        siblings.forEach(s => {
+                            s.classList.remove('correct', 'incorrect');
+                            s.querySelector('i').className = 'fa-regular fa-circle';
+                        });
+
+                        if (this.getAttribute('data-correct') === 'true') {
+                            this.classList.add('correct');
+                            this.querySelector('i').className = 'fa-solid fa-check-circle';
+                        } else {
+                            this.classList.add('incorrect');
+                            this.querySelector('i').className = 'fa-solid fa-xmark-circle';
+                        }
+                    };
+                    handlers.push({ element: opt, fn: handler });
+                    opt.addEventListener('click', handler);
+                });
+
+                return () => {
+                    handlers.forEach(h => h.element.removeEventListener('click', h.fn));
+                };
+            }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        container.innerHTML = slide.template();
+        
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        const progressPercentage = ((state.currentSlide + 1) / state.slides.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercentage + "%";
+        
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
