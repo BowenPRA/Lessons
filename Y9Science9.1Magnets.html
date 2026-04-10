@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9.1 Magnetism - Year 8 Science</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (BOWEN ENGINE) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Cards */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --primary-glow: rgba(139, 92, 246, 0.5);
+            --accent: #10b981;         /* Acid Green (Success) */
+            --warning: #f59e0b;        /* Hazard Orange (Tasks) */
+            --danger: #ef4444;         /* Heat Red (Danger/Wrong) */
+            --text-light: #f8fafc;     
+            --text-dim: #94a3b8;       
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            font-size: 18px; 
+            /* Premium Grid Background */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 35%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1), transparent 35%),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 20;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px var(--primary-glow);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: hidden; /* Viewport hidden, slide-wrapper scrolls */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-wrapper {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Anchors content to the top to prevent cut-offs */
+            padding: 4rem 4rem; /* Adequate padding for top spacing */
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            overflow-y: auto; /* Allows full scrolling within the wrapper */
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 20;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; letter-spacing: -0.5px; }
+        h1 { font-size: 4rem; margin-bottom: 1rem; text-shadow: 0 0 30px var(--primary-glow); }
+        h2 { font-size: 2.8rem; margin-bottom: 1.5rem; color: #c4b5fd; }
+        h3 { font-size: 1.8rem; margin-bottom: 1rem; color: white; }
+        p, li { line-height: 1.6; margin-bottom: 1rem; }
+        ul { margin-left: 2rem; margin-bottom: 1rem; }
+        strong { font-weight: 800; color: white; }
+
+        /* --- COMPONENTS --- */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+
+        /* Buttons */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        .btn:active { transform: scale(0.95); }
+        
+        .btn-nav {
+            width: 56px; height: 56px;
+            background: rgba(30, 41, 59, 0.8);
+            color: var(--text-light);
+            font-size: 1.4rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-action:hover { background: linear-gradient(135deg, #7c3aed, #5b21b6); transform: translateY(-2px); box-shadow: 0 12px 25px rgba(139, 92, 246, 0.4); }
+
+        /* Progress Bar */
+        .progress-container { flex: 1; margin: 0 3rem; height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), #a78bfa); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--primary-glow); }
+
+        /* --- SIGNPOSTING (PEDAGOGICAL NOTES) --- */
+        .pedagogical-note {
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid;
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .pedagogical-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 1.5px;
+        }
+
+        .note-write { border-left-color: #3b82f6; background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-write .pedagogical-badge { color: #60a5fa; }
+
+        .note-task { border-left-color: var(--warning); background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-task .pedagogical-badge { color: #fbbf24; }
+
+        .note-theory { border-left-color: var(--primary); background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-theory .pedagogical-badge { color: #a78bfa; }
+
+        .note-success { border-left-color: var(--accent); background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-success .pedagogical-badge { color: #34d399; }
+
+        /* --- INTERACTIVE TOOLS --- */
+        
+        /* Reveal Card */
+        .reveal-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .reveal-card:hover { border-color: var(--primary); box-shadow: 0 15px 40px rgba(139, 92, 246, 0.2); transform: translateY(-5px); }
+        .reveal-card .reveal-content { display: none; margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; }
+        .reveal-card.revealed .reveal-content { display: block; animation: slideDown 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .reveal-card.revealed .pre-reveal { opacity: 0.5; transform: scale(0.95); transition: all 0.4s ease; }
+
+        /* Summative Quiz */
+        .quiz-option {
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.1);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); transform: translateX(5px); }
+        .quiz-option.correct { border-color: var(--accent); background: rgba(16, 185, 129, 0.15); box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+        .quiz-option.incorrect { border-color: var(--danger); background: rgba(239, 68, 68, 0.15); }
+
+        /* SVG Canvas */
+        .canvas-container {
+            width: 100%;
+            height: 450px;
+            background: radial-gradient(circle at center, #0f172a, #020617);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        /* Video Embed */
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        /* Annotations/Labels */
+        .magnet-label {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.95);
+            padding: 0.6rem 1.2rem;
+            border: 2px solid white;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.4s, transform 0.4s;
+            transform: translateY(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+        .labels-visible .magnet-label {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+        .delay-1 { animation-delay: 0.15s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .delay-3 { animation-delay: 0.45s; }
+
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+
+    </style>
+</head>
+<body>
+
+<!-- GLOBAL SVG DEFS FOR HIGH-END GRAPHICS -->
+<svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+    <defs>
+        <!-- Metallic Gradients for Magnets -->
+        <linearGradient id="metal-red" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#fca5a5" />
+            <stop offset="15%" stop-color="#ef4444" />
+            <stop offset="50%" stop-color="#b91c1c" />
+            <stop offset="85%" stop-color="#991b1b" />
+            <stop offset="100%" stop-color="#450a0a" />
+        </linearGradient>
+        <linearGradient id="metal-blue" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#93c5fd" />
+            <stop offset="15%" stop-color="#3b82f6" />
+            <stop offset="50%" stop-color="#1d4ed8" />
+            <stop offset="85%" stop-color="#1e3a8a" />
+            <stop offset="100%" stop-color="#0f172a" />
+        </linearGradient>
+        <linearGradient id="metal-grey" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#e5e7eb" />
+            <stop offset="20%" stop-color="#9ca3af" />
+            <stop offset="80%" stop-color="#4b5563" />
+            <stop offset="100%" stop-color="#1f2937" />
+        </linearGradient>
+        
+        <!-- Glow Filter for Fields -->
+        <filter id="field-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+        <filter id="strong-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="8" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+
+        <!-- Arrowheads for Field Lines -->
+        <marker id="arrow-white" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="rgba(255,255,255,0.7)" />
+        </marker>
+        <marker id="arrow-accent" markerWidth="10" markerHeight="8" refX="5" refY="4" orient="auto">
+            <polygon points="0 0, 10 4, 0 8" fill="#10b981" />
+        </marker>
+    </defs>
+</svg>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 8 Science</div>
+            <span style="font-weight: 700; color: #cbd5e1; font-size: 1.2rem; letter-spacing: 0.5px;">9.1 Magnetism</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            10 April 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slides injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    // --- THE BOWEN ENGINE ---
+
+    const Engine = {
+        currentSlide: 0,
+        cleanupFn: null,
+        slides: [],
+        
+        init(slides) {
+            this.slides = slides;
+            document.getElementById('btn-prev').addEventListener('click', () => this.navigate(-1));
+            document.getElementById('btn-next').addEventListener('click', () => this.navigate(1));
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') this.navigate(1);
+                if (e.key === 'ArrowLeft') this.navigate(-1);
+            });
+            
+            this.render();
+        },
+
+        navigate(dir) {
+            const next = this.currentSlide + dir;
+            if (next >= 0 && next < this.slides.length) {
+                this.currentSlide = next;
+                this.render();
+            }
+        },
+
+        render() {
+            // Execute cleanup of previous slide
+            if (this.cleanupFn && typeof this.cleanupFn === 'function') {
+                this.cleanupFn();
+                this.cleanupFn = null;
+            }
+
+            const container = document.getElementById('slide-container');
+            const slide = this.slides[this.currentSlide];
+            
+            // Inject Template
+            container.innerHTML = slide.template();
+            
+            // Execute Script and store cleanup
+            if (slide.script) {
+                this.cleanupFn = slide.script(container);
+            }
+
+            // Update UI
+            document.getElementById('progress-bar').style.width = `${((this.currentSlide + 1) / this.slides.length) * 100}%`;
+            document.getElementById('btn-prev').disabled = this.currentSlide === 0;
+            document.getElementById('btn-next').disabled = this.currentSlide === this.slides.length - 1;
+            
+            // Scroll wrapper to top smoothly when rendering a new slide
+            document.querySelector('.slide-wrapper').scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Re-run MathJax if present
+            if (window.MathJax) {
+                MathJax.typesetPromise([container]);
+            }
+        }
+    };
+
+    // --- LESSON CONTENT ---
+
+    const lessonSlides = [
+        // Slide 1: Objective
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <div style="position: relative; display: inline-block; margin-bottom: 2rem;">
+                        <svg viewBox="0 0 200 200" width="180" height="180" style="filter: drop-shadow(0 0 30px var(--primary-glow));">
+                            <!-- Beautiful Horseshoe Magnet SVG -->
+                            <path d="M 40 160 L 40 100 A 60 60 0 0 1 160 100 L 160 160" fill="none" stroke="url(#metal-grey)" stroke-width="45" stroke-linecap="butt"/>
+                            <line x1="40" y1="120" x2="40" y2="160" stroke="url(#metal-blue)" stroke-width="45" stroke-linecap="round"/>
+                            <line x1="160" y1="120" x2="160" y2="160" stroke="url(#metal-red)" stroke-width="45" stroke-linecap="round"/>
+                            <text x="40" y="150" fill="white" font-size="20" font-weight="bold" font-family="Outfit" text-anchor="middle">S</text>
+                            <text x="160" y="150" fill="white" font-size="20" font-weight="bold" font-family="Outfit" text-anchor="middle">N</text>
+                            <!-- Energy arcs -->
+                            <path d="M 40 180 C 40 220, 160 220, 160 180" fill="none" stroke="#10b981" stroke-width="4" stroke-dasharray="10 10" filter="url(#strong-glow)">
+                                <animate attributeName="stroke-dashoffset" from="40" to="0" dur="1s" repeatCount="indefinite" />
+                            </path>
+                        </svg>
+                    </div>
+                    <h1>Magnetism</h1>
+                    
+                    <div class="pedagogical-note note-success delay-1" style="max-width: 800px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objective</div>
+                        <p style="font-size: 1.8rem; font-weight: 600;">We will learn what magnets are and how they work.</p>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 2: The Hook (Everyday uses)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Where do we see magnets?</h2>
+                    
+                    <div class="pedagogical-note note-task">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-users"></i> Discussion Task</div>
+                        <p style="font-size: 1.3rem;">With your partner, write down all the times you see magnets used in everyday life. Come up with as long a list as you can!</p>
+                    </div>
+
+                    <div class="text-center delay-1" style="margin-top: 3rem;">
+                        <button id="btn-common" class="btn btn-action"><i class="fa-solid fa-eye"></i> Reveal Common Uses</button>
+                        
+                        <div id="list-common" class="glass-card hidden" style="margin-top: 2rem; border-color: var(--primary);">
+                            <h3 style="color: var(--primary);"><i class="fa-solid fa-house"></i> Around the House</h3>
+                            <ul style="font-size: 1.4rem; text-align: left; max-width: 450px; margin: 1.5rem auto;">
+                                <li>Fridge magnets holding paper</li>
+                                <li>Bag clasps and wallets</li>
+                                <li>Compasses for navigation</li>
+                                <li>Cabinet doors (keep them shut)</li>
+                            </ul>
+                            
+                            <button id="btn-rare" class="btn btn-action" style="margin-top: 2rem; background: linear-gradient(135deg, var(--warning), #d97706);"><i class="fa-solid fa-microchip"></i> Reveal Hidden Uses</button>
+                        </div>
+
+                        <div id="list-rare" class="glass-card hidden" style="margin-top: 2rem; border-color: var(--warning);">
+                            <h3 style="color: var(--warning);"><i class="fa-solid fa-satellite-dish"></i> Hidden Technology</h3>
+                            <ul style="font-size: 1.4rem; text-align: left; max-width: 450px; margin: 1.5rem auto;">
+                                <li>Computer Hard Drives (storage)</li>
+                                <li>Headphones & Speakers (creating sound)</li>
+                                <li>Electric Motors (cars, fans)</li>
+                                <li>MRI Machines in Hospitals</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnCommon = container.querySelector('#btn-common');
+                const listCommon = container.querySelector('#list-common');
+                const btnRare = container.querySelector('#btn-rare');
+                const listRare = container.querySelector('#list-rare');
+
+                const showCommon = () => {
+                    listCommon.classList.remove('hidden');
+                    listCommon.classList.add('anim-enter');
+                    btnCommon.style.display = 'none';
+                    // Optional scroll adjust when new content reveals
+                    setTimeout(() => document.querySelector('.slide-wrapper').scrollTo({ top: document.querySelector('.slide-wrapper').scrollHeight, behavior: 'smooth' }), 50);
+                };
+
+                const showRare = () => {
+                    listRare.classList.remove('hidden');
+                    listRare.classList.add('anim-enter');
+                    btnRare.style.display = 'none';
+                    setTimeout(() => document.querySelector('.slide-wrapper').scrollTo({ top: document.querySelector('.slide-wrapper').scrollHeight, behavior: 'smooth' }), 50);
+                };
+
+                btnCommon.addEventListener('click', showCommon);
+                btnRare.addEventListener('click', showRare);
+
+                return () => {
+                    btnCommon.removeEventListener('click', showCommon);
+                    btnRare.removeEventListener('click', showRare);
+                };
+            }
+        },
+
+        // Slide 3: Definition and Materials
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>What is a Magnet?</h2>
+                    
+                    <div class="pedagogical-note note-write">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <p style="font-size: 1.8rem;"><strong>Magnet:</strong> Anything that attracts a magnetic material (a metal).</p>
+                    </div>
+
+                    <div class="glass-card delay-1" style="margin-top: 3rem; position: relative; overflow: hidden;">
+                        <!-- Background decoration -->
+                        <i class="fa-solid fa-cubes" style="position: absolute; right: -20px; top: -20px; font-size: 15rem; color: rgba(255,255,255,0.03);"></i>
+                        
+                        <h3 style="color: var(--accent);">Magnetic Materials</h3>
+                        <p style="font-size: 1.3rem;">Not all metals are magnetic! A gold ring or an aluminum soda can will <strong>not</strong> stick to a magnet. Only specific metals interact with magnetic fields.</p>
+                        
+                        <div class="pedagogical-note note-write delay-2" style="margin-top: 2rem; border-left-color: var(--accent); background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(30, 41, 59, 0.8));">
+                            <div class="pedagogical-badge" style="color: var(--accent);"><i class="fa-solid fa-list-check"></i> Copy This List</div>
+                            <p style="margin-bottom: 1rem; font-size: 1.2rem;">There are four main magnetic metals:</p>
+                            <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem 2rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); font-size: 1.4rem; font-weight: 800;">1. Iron</div>
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem 2rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); font-size: 1.4rem; font-weight: 800;">2. Steel <span style="font-size: 0.9rem; font-weight: 400; opacity: 0.7;">(made from Iron)</span></div>
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem 2rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); font-size: 1.4rem; font-weight: 800;">3. Nickel</div>
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem 2rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); font-size: 1.4rem; font-weight: 800;">4. Cobalt</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 4: How do they pull? (Investigation/Theory)
+        {
+            template: () => `
+                <div class="grid-2 anim-enter">
+                    <div>
+                        <h2>How do magnets pull?</h2>
+                        
+                        <div class="pedagogical-note note-task">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-brain"></i> Think & Write</div>
+                            <p style="font-size: 1.3rem;">What is physically happening when a magnet pulls a piece of iron? Why does it stick?</p>
+                            <p style="font-size: 1.1rem; color: var(--warning); margin-top: 1rem; font-weight: 700;">Write down your best guess.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="delay-1">
+                        <div class="reveal-card" id="pull-reveal" tabindex="0">
+                            <div class="pre-reveal">
+                                <svg viewBox="0 0 100 100" width="80" height="80" style="margin-bottom: 1rem; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));">
+                                    <circle cx="50" cy="50" r="40" fill="none" stroke="var(--text-dim)" stroke-width="4" stroke-dasharray="8 8">
+                                        <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="10s" repeatCount="indefinite"/>
+                                    </circle>
+                                    <text x="50" y="65" font-size="40" font-family="Outfit" fill="var(--text-dim)" text-anchor="middle">?</text>
+                                </svg>
+                                <h3 style="font-size: 1.8rem;">Click to reveal the atomic truth</h3>
+                            </div>
+                            <div class="reveal-content">
+                                <i class="fa-solid fa-atom" style="font-size: 4rem; color: var(--accent); margin-bottom: 1.5rem; filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.5));"></i>
+                                <h3 style="color: var(--accent); font-size: 2rem;">It's all about moving electrons!</h3>
+                                <p style="text-align: left; font-size: 1.3rem;">
+                                    Inside atoms, tiny particles called <strong>electrons</strong> spin around. 
+                                </p>
+                                <p style="text-align: left; font-size: 1.3rem;">
+                                    In most objects, they spin in random directions and cancel each other out. But in a magnet, billions of electrons are <strong>spinning in the exact same direction</strong>.
+                                </p>
+                                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1rem; border-radius: 8px; margin-top: 1.5rem;">
+                                    <p style="text-align: left; font-size: 1.2rem; color: var(--accent); font-weight: 700; margin: 0;">
+                                        This synchronized movement creates an invisible force field that reaches out and pulls specific metals!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const card = container.querySelector('#pull-reveal');
+                const toggleCard = () => {
+                    card.classList.toggle('revealed');
+                    setTimeout(() => document.querySelector('.slide-wrapper').scrollTo({ top: document.querySelector('.slide-wrapper').scrollHeight, behavior: 'smooth' }), 50);
+                };
+                
+                card.addEventListener('click', toggleCard);
+                card.addEventListener('keypress', (e) => { if(e.key === 'Enter') toggleCard(); });
+
+                return () => {
+                    card.removeEventListener('click', toggleCard);
+                };
+            }
+        },
+
+        // Slide 5: The Magnetic Field (Premium Canvas Simulation)
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>The Magnetic Field</h2>
+                    
+                    <div class="pedagogical-note note-theory text-left delay-1" style="max-width: 900px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-wave-square"></i> Definition</div>
+                        <p style="font-size: 1.4rem;">A <strong>magnetic field</strong> is the invisible area around a magnet where its force can be felt.</p>
+                    </div>
+
+                    <div class="canvas-container delay-2">
+                        <!-- High Fidelity SVG Simulation -->
+                        <svg width="100%" height="100%" viewBox="0 0 1000 450" id="field-svg">
+                            <!-- Background grid -->
+                            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                            </pattern>
+                            <rect width="100%" height="100%" fill="url(#grid)" />
+                            
+                            <!-- Magnet Base with 3D Gradients -->
+                            <g filter="drop-shadow(0 15px 25px rgba(0,0,0,0.8))">
+                                <rect x="380" y="190" width="120" height="70" fill="url(#metal-blue)" rx="8" />
+                                <rect x="500" y="190" width="120" height="70" fill="url(#metal-red)" rx="8" />
+                                <!-- Highlights -->
+                                <rect x="380" y="192" width="240" height="4" fill="rgba(255,255,255,0.3)" rx="2" />
+                                <rect x="380" y="254" width="240" height="4" fill="rgba(0,0,0,0.4)" rx="2" />
+                                
+                                <text x="440" y="238" fill="white" font-size="32" font-family="Outfit" font-weight="bold" text-anchor="middle" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.5))">S</text>
+                                <text x="560" y="238" fill="white" font-size="32" font-family="Outfit" font-weight="bold" text-anchor="middle" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.5))">N</text>
+                            </g>
+                            
+                            <!-- Field Paths and Particles injected via JS -->
+                            <g id="path-group"></g>
+                            <g id="particle-group"></g>
+                        </svg>
+                    </div>
+                    <p class="delay-3" style="margin-top: 1rem; color: var(--text-dim); font-size: 1.1rem; letter-spacing: 1px;"><i class="fa-solid fa-bolt"></i> Visualization: Glowing particles trace the invisible force flowing N → S.</p>
+                </div>
+            `,
+            script: (container) => {
+                const pathGroup = container.querySelector('#path-group');
+                const particleGroup = container.querySelector('#particle-group');
+                let animationId;
+                
+                // Define perfect symmetrical bezier curves for magnetic field lines (from N (560) to S (440))
+                const pathsData = [
+                    // Top loops
+                    'M 560 190 C 660 50,  340 50,  440 190',
+                    'M 580 190 C 760 -20, 240 -20, 420 190',
+                    'M 600 225 C 850 -100, 150 -100, 400 225',
+                    'M 620 225 C 1000 -150, 0 -150, 380 225',
+                    // Bottom loops
+                    'M 560 260 C 660 400, 340 400, 440 260',
+                    'M 580 260 C 760 470, 240 470, 420 260',
+                    'M 600 225 C 850 550, 150 550, 400 225',
+                    'M 620 225 C 1000 600, 0 600, 380 225'
+                ];
+
+                const pathElements = [];
+                let particles = [];
+
+                // Render Paths
+                pathsData.forEach(d => {
+                    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    p.setAttribute('d', d);
+                    p.setAttribute('fill', 'none');
+                    p.setAttribute('stroke', 'rgba(139, 92, 246, 0.2)'); // subtle purple path
+                    p.setAttribute('stroke-width', '2');
+                    pathGroup.appendChild(p);
+                    pathElements.push(p);
+                });
+
+                // Generate Particles along paths
+                pathElements.forEach((path, index) => {
+                    const len = path.getTotalLength();
+                    // more particles for longer outer paths
+                    const numParticles = 8 + (index % 4) * 4; 
+                    
+                    for (let i = 0; i < numParticles; i++) {
+                        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        circle.setAttribute('r', '3.5');
+                        circle.setAttribute('fill', '#10b981'); // Accent green
+                        circle.setAttribute('filter', 'url(#field-glow)');
+                        particleGroup.appendChild(circle);
+                        
+                        particles.push({
+                            el: circle,
+                            path: path,
+                            len: len,
+                            offset: (len / numParticles) * i,
+                            speed: 1.5 + (4 - (index%4)) * 0.3 // Inner loops slightly faster
+                        });
+                    }
+                });
+
+                const animate = () => {
+                    particles.forEach(p => {
+                        p.offset += p.speed;
+                        if (p.offset > p.len) p.offset = 0; // Wrap around
+                        
+                        // getPointAtLength calculates the exact x,y on the bezier curve
+                        const pt = p.path.getPointAtLength(p.offset);
+                        p.el.setAttribute('cx', pt.x);
+                        p.el.setAttribute('cy', pt.y);
+                    });
+                    animationId = requestAnimationFrame(animate);
+                };
+
+                animate();
+
+                // Mandatory Cleanup
+                return () => {
+                    cancelAnimationFrame(animationId);
+                };
+            }
+        },
+
+        // Slide 6: Magnetic Field Lines (Rules & Video)
+        {
+            template: () => `
+                <div class="grid-2 anim-enter">
+                    <div>
+                        <h2>Magnetic Field Lines</h2>
+                        
+                        <div class="pedagogical-note note-write">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write The Rules</div>
+                            <p style="font-size: 1.2rem;">We draw lines to show the invisible field. The rules are:</p>
+                            <ol style="margin-left: 2rem; font-size: 1.2rem;">
+                                <li>Lines always go from <strong style="color: #fca5a5;">North</strong> to <strong style="color: #93c5fd;">South</strong>.</li>
+                                <li>Lines <strong>never</strong> cross each other.</li>
+                                <li>Where lines are <strong>closest together</strong>, the magnetic force is the strongest.</li>
+                            </ol>
+                        </div>
+
+                        <!-- Highly polished static SVG -->
+                        <svg viewBox="0 0 500 300" style="width: 100%; max-width: 400px; margin: 2rem auto; display: block; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));">
+                            <!-- Field Lines -->
+                            <g fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" marker-mid="url(#arrow-white)">
+                                <!-- Top lines -->
+                                <path d="M 330 110 C 330 20,  170 20,  170 110" />
+                                <path d="M 350 110 C 350 -30, 150 -30, 150 110" opacity="0.6"/>
+                                <!-- Bottom lines -->
+                                <path d="M 330 190 C 330 280, 170 280, 170 190" />
+                                <path d="M 350 190 C 350 330, 150 330, 150 190" opacity="0.6"/>
+                            </g>
+
+                            <!-- Magnet -->
+                            <g filter="drop-shadow(0 5px 10px rgba(0,0,0,0.5))">
+                                <rect x="100" y="110" width="150" height="80" fill="url(#metal-blue)" rx="6"/>
+                                <rect x="250" y="110" width="150" height="80" fill="url(#metal-red)" rx="6"/>
+                                <rect x="100" y="112" width="300" height="4" fill="rgba(255,255,255,0.2)" rx="2"/>
+                                <text x="175" y="160" fill="white" font-weight="bold" font-family="Outfit" font-size="36">S</text>
+                                <text x="325" y="160" fill="white" font-weight="bold" font-family="Outfit" font-size="36">N</text>
+                            </g>
+                        </svg>
+                    </div>
+                    
+                    <div class="delay-1">
+                        <div class="glass-card" style="padding: 1.5rem;">
+                            <!-- Required Video Embed -->
+                            <h3 style="margin-bottom: 1.5rem; text-align:center;"><i class="fa-solid fa-film"></i> Seeing the Field</h3>
+                            <div class="video-wrapper">
+                                <iframe src="https://www.youtube.com/embed/JTwNjNDGCO0?autoplay=0&mute=0" title="Magnetic Fields" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                            <p style="text-align: center; font-size: 1rem; color: var(--text-dim); margin-top: 1.5rem;">Iron filings arrange themselves perfectly along the invisible field lines.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 7: Types of Magnets & Labeling
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Types of Magnets</h2>
+                    <p style="font-size: 1.4rem; margin-bottom: 3rem; color: var(--text-dim);">Magnets come in different shapes. Let's identify their poles.</p>
+                    
+                    <div class="grid-2" style="align-items: stretch; margin-bottom: 2rem;">
+                        <div class="glass-card delay-1" style="position: relative; padding-bottom: 4rem;">
+                            <h3 style="color: #cbd5e1;">Bar Magnet</h3>
+                            <svg viewBox="0 0 400 200" style="width: 100%; margin-top: 2rem; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5));">
+                                <rect x="50" y="60" width="150" height="80" fill="url(#metal-blue)" rx="8"/>
+                                <rect x="200" y="60" width="150" height="80" fill="url(#metal-red)" rx="8"/>
+                                <rect x="50" y="62" width="300" height="5" fill="rgba(255,255,255,0.3)" rx="2"/>
+                                <rect x="50" y="133" width="300" height="5" fill="rgba(0,0,0,0.3)" rx="2"/>
+                            </svg>
+                            <div id="lbl-bar-s" class="magnet-label" style="top: 200px; left: 20%;">South Pole</div>
+                            <div id="lbl-bar-n" class="magnet-label" style="top: 200px; right: 20%;">North Pole</div>
+                        </div>
+
+                        <div class="glass-card delay-2" style="position: relative; padding-bottom: 4rem;">
+                            <h3 style="color: #cbd5e1;">Horseshoe Magnet</h3>
+                            <svg viewBox="0 0 300 300" style="width: 60%; margin: 1rem auto; display: block; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5));">
+                                <!-- Base grey body -->
+                                <path d="M 60 220 L 60 140 A 90 90 0 0 1 240 140 L 240 220" fill="none" stroke="url(#metal-grey)" stroke-width="60" stroke-linecap="butt"/>
+                                <!-- Colored Tips -->
+                                <line x1="60" y1="170" x2="60" y2="220" stroke="url(#metal-blue)" stroke-width="60" stroke-linecap="round"/>
+                                <line x1="240" y1="170" x2="240" y2="220" stroke="url(#metal-red)" stroke-width="60" stroke-linecap="round"/>
+                                <!-- Highlights for 3D effect -->
+                                <path d="M 35 220 L 35 140 A 115 115 0 0 1 265 140 L 265 220" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="6"/>
+                                <path d="M 85 220 L 85 140 A 65 65 0 0 1 215 140 L 215 220" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="6"/>
+                            </svg>
+                            <div id="lbl-horse-s" class="magnet-label" style="top: 260px; left: 15%;">South Pole</div>
+                            <div id="lbl-horse-n" class="magnet-label" style="top: 260px; right: 15%;">North Pole</div>
+                        </div>
+                    </div>
+
+                    <div id="label-container" class="delay-3" style="transition: all 0.3s;">
+                        <button id="btn-label" class="btn btn-action"><i class="fa-solid fa-tags"></i> Reveal the Poles</button>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-label');
+                const btnContainer = container.querySelector('#label-container');
+                const wrappers = container.querySelectorAll('.glass-card');
+                
+                const showLabels = () => {
+                    wrappers.forEach(w => w.classList.add('labels-visible'));
+                    btnContainer.style.opacity = '0';
+                    setTimeout(() => btnContainer.style.display = 'none', 300);
+                };
+
+                btn.addEventListener('click', showLabels);
+                return () => btn.removeEventListener('click', showLabels);
+            }
+        },
+
+        // Slide 8: What are Poles?
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Magnetic Poles</h2>
+                    
+                    <div class="glass-card" style="border-left: 6px solid var(--primary); padding: 3rem;">
+                        <div class="grid-2">
+                            <div>
+                                <h3 style="color: #c4b5fd; font-size: 2.2rem;">The Ends of the Magnet</h3>
+                                <p style="font-size: 1.5rem;">Every magnet has two ends, called <strong>Poles</strong>.</p>
+                                <p style="font-size: 1.5rem;">We call them the <strong>North Pole</strong> (N) and the <strong>South Pole</strong> (S).</p>
+                                
+                                <div class="pedagogical-note note-theory" style="margin-top: 3rem;">
+                                    <div class="pedagogical-badge"><i class="fa-solid fa-exclamation-triangle"></i> Key Concept</div>
+                                    <p style="font-size: 1.3rem;">The magnetic field is <strong>strongest at the poles</strong>. This is why paperclips will always clump up at the ends of a bar magnet, rather than sticking to the middle.</p>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <svg viewBox="0 0 200 200" width="250" height="250" style="filter: drop-shadow(0 0 20px var(--primary-glow));">
+                                    <!-- Concentrated force visual -->
+                                    <circle cx="50" cy="100" r="45" fill="rgba(59, 130, 246, 0.2)" />
+                                    <circle cx="50" cy="100" r="30" fill="rgba(59, 130, 246, 0.4)" />
+                                    <circle cx="150" cy="100" r="45" fill="rgba(239, 68, 68, 0.2)" />
+                                    <circle cx="150" cy="100" r="30" fill="rgba(239, 68, 68, 0.4)" />
+                                    
+                                    <rect x="50" y="80" width="50" height="40" fill="url(#metal-blue)" />
+                                    <rect x="100" y="80" width="50" height="40" fill="url(#metal-red)" />
+                                    <text x="75" y="106" fill="white" font-weight="bold" font-family="Outfit" text-anchor="middle">S</text>
+                                    <text x="125" y="106" fill="white" font-weight="bold" font-family="Outfit" text-anchor="middle">N</text>
+                                </svg>
+                                <p style="margin-top: 1rem; font-style: italic; color: var(--text-dim);">Force is concentrated at the extremes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 9: Interacting Poles
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>How Poles Interact</h2>
+                    
+                    <div class="pedagogical-note note-write text-left" style="max-width: 900px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> English Note</div>
+                        <p style="font-size: 1.3rem;">In Science, the word <strong>"Like"</strong> means <strong>"Same"</strong>.</p>
+                        <ul style="margin-bottom: 0; font-size: 1.3rem;">
+                            <li><strong style="color: #fca5a5;">Like Poles REPEL</strong> (Push away from each other).</li>
+                            <li><strong style="color: #6ee7b7;">Opposite Poles ATTRACT</strong> (Pull towards each other).</li>
+                        </ul>
+                    </div>
+
+                    <div class="grid-2 delay-1" style="align-items: stretch;">
+                        <!-- Repulsion Card -->
+                        <div class="glass-card" style="border-color: rgba(239, 68, 68, 0.5); box-shadow: 0 10px 30px rgba(239, 68, 68, 0.15);">
+                            <h3 style="color: #fca5a5; font-size: 2rem;">Repulsion (Push)</h3>
+                            
+                            <!-- Animated Repulsion SVG -->
+                            <svg viewBox="0 0 400 150" style="width: 100%; height: 120px; margin: 1.5rem 0;">
+                                <!-- Magnets -->
+                                <rect x="20" y="55" width="120" height="40" fill="url(#metal-red)" rx="4"/>
+                                <text x="110" y="82" fill="white" font-weight="bold" font-size="24" font-family="Outfit" text-anchor="middle">N</text>
+                                
+                                <rect x="260" y="55" width="120" height="40" fill="url(#metal-red)" rx="4"/>
+                                <text x="290" y="82" fill="white" font-weight="bold" font-size="24" font-family="Outfit" text-anchor="middle">N</text>
+                                
+                                <!-- Repelling Field Lines -->
+                                <g fill="none" stroke="#fca5a5" stroke-width="3" stroke-dasharray="10 5" filter="url(#field-glow)">
+                                    <!-- Left side pushing up/down -->
+                                    <path d="M 140 75 C 190 75, 180 10, 150 -10">
+                                        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="0.8s" repeatCount="indefinite"/>
+                                    </path>
+                                    <path d="M 140 75 C 190 75, 180 140, 150 160">
+                                        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="0.8s" repeatCount="indefinite"/>
+                                    </path>
+                                    <!-- Right side pushing up/down -->
+                                    <path d="M 260 75 C 210 75, 220 10, 250 -10">
+                                        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="0.8s" repeatCount="indefinite"/>
+                                    </path>
+                                    <path d="M 260 75 C 210 75, 220 140, 250 160">
+                                        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="0.8s" repeatCount="indefinite"/>
+                                    </path>
+                                </g>
+                                <!-- Clash line -->
+                                <line x1="200" y1="10" x2="200" y2="140" stroke="rgba(239,68,68,0.3)" stroke-width="4" stroke-dasharray="10 10" />
+                            </svg>
+                            <p style="font-size: 1.1rem; color: var(--text-dim);"><strong>Example:</strong> Maglev Trains use magnetic repulsion to float above the tracks, eliminating friction!</p>
+                        </div>
+
+                        <!-- Attraction Card -->
+                        <div class="glass-card" style="border-color: rgba(16, 185, 129, 0.5); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);">
+                            <h3 style="color: #6ee7b7; font-size: 2rem;">Attraction (Pull)</h3>
+                            
+                            <!-- Animated Attraction SVG -->
+                            <svg viewBox="0 0 400 150" style="width: 100%; height: 120px; margin: 1.5rem 0;">
+                                <!-- Magnets -->
+                                <rect x="20" y="55" width="120" height="40" fill="url(#metal-blue)" rx="4"/>
+                                <text x="110" y="82" fill="white" font-weight="bold" font-size="24" font-family="Outfit" text-anchor="middle">S</text>
+                                
+                                <rect x="260" y="55" width="120" height="40" fill="url(#metal-red)" rx="4"/>
+                                <text x="290" y="82" fill="white" font-weight="bold" font-size="24" font-family="Outfit" text-anchor="middle">N</text>
+                                
+                                <!-- Attracting Field Lines -->
+                                <g fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="10 5" filter="url(#field-glow)">
+                                    <!-- Straight across -->
+                                    <line x1="260" y1="75" x2="140" y2="75">
+                                        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="0.6s" repeatCount="indefinite"/>
+                                    </line>
+                                    <!-- Top curve -->
+                                    <path d="M 260 65 C 230 40, 170 40, 140 65">
+                                        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="0.6s" repeatCount="indefinite"/>
+                                    </path>
+                                    <!-- Bottom curve -->
+                                    <path d="M 260 85 C 230 110, 170 110, 140 85">
+                                        <animate attributeName="stroke-dashoffset" from="15" to="0" dur="0.6s" repeatCount="indefinite"/>
+                                    </path>
+                                </g>
+                            </svg>
+                            <p style="font-size: 1.1rem; color: var(--text-dim);"><strong>Example:</strong> Giant electromagnets on cranes are used to pick up and move heavy scrap metal.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 10: Assessment (Summative Quiz)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <div class="pedagogical-note note-success text-center">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-check-double"></i> Lesson Assessment</div>
+                        <h2>Check Your Understanding</h2>
+                    </div>
+
+                    <div class="glass-card delay-1" style="max-width: 800px; margin: 2rem auto; padding: 3rem;">
+                        <h3 style="margin-bottom: 2rem; font-size: 1.8rem; text-align: center;">Which of the following materials will NOT stick to a magnet?</h3>
+                        
+                        <div id="quiz-container">
+                            <div class="quiz-option" role="button" data-correct="false">
+                                <span style="background: rgba(255,255,255,0.1); width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">A</span>
+                                Iron nail
+                            </div>
+                            <div class="quiz-option" role="button" data-correct="true">
+                                <span style="background: rgba(255,255,255,0.1); width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">B</span>
+                                Aluminum soda can
+                            </div>
+                            <div class="quiz-option" role="button" data-correct="false">
+                                <span style="background: rgba(255,255,255,0.1); width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">C</span>
+                                Steel paperclip
+                            </div>
+                            <div class="quiz-option" role="button" data-correct="false">
+                                <span style="background: rgba(255,255,255,0.1); width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">D</span>
+                                Cobalt ring
+                            </div>
+                        </div>
+
+                        <div id="quiz-feedback" style="margin-top: 2rem; font-size: 1.5rem; font-weight: bold; text-align: center; height: 30px;"></div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const options = container.querySelectorAll('.quiz-option');
+                const feedback = container.querySelector('#quiz-feedback');
+
+                const handleQuiz = (e) => {
+                    options.forEach(opt => {
+                        opt.classList.remove('correct', 'incorrect');
+                    });
+
+                    const selected = e.currentTarget;
+                    const isCorrect = selected.getAttribute('data-correct') === 'true';
+
+                    if (isCorrect) {
+                        selected.classList.add('correct');
+                        feedback.innerHTML = '<span style="color: var(--accent);"><i class="fa-solid fa-check-circle"></i> Correct! Aluminum is not a magnetic metal.</span>';
+                    } else {
+                        selected.classList.add('incorrect');
+                        feedback.innerHTML = '<span style="color: var(--danger);"><i class="fa-solid fa-times-circle"></i> Incorrect. Try again!</span>';
+                    }
+                };
+
+                options.forEach(opt => opt.addEventListener('click', handleQuiz));
+
+                return () => {
+                    options.forEach(opt => opt.removeEventListener('click', handleQuiz));
+                };
+            }
+        },
+
+        // Slide 11: The Compass
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>The Compass</h2>
+                    
+                    <div class="grid-2" style="align-items: center;">
+                        <div>
+                            <div class="pedagogical-note note-write">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-compass"></i> What is a compass?</div>
+                                <p style="font-size: 1.4rem;">A <strong>compass</strong> is a tool containing a tiny, lightweight magnet balanced on a pin so it can spin freely.</p>
+                            </div>
+                            <div class="pedagogical-note note-theory delay-1" style="margin-top: 2rem;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-magnet"></i> Why does it move?</div>
+                                <p style="font-size: 1.4rem;">Because the needle is a magnet itself, it will always be pulled and <strong>point towards other magnets</strong> or strong magnetic fields.</p>
+                            </div>
+                        </div>
+                        <div class="text-center delay-2">
+                            <div class="glass-card" style="display: inline-block; padding: 3rem;">
+                                <svg viewBox="0 0 200 200" width="220" height="220" style="filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5));">
+                                    <!-- Compass Body -->
+                                    <circle cx="100" cy="100" r="95" fill="rgba(30, 41, 59, 0.9)" stroke="url(#metal-grey)" stroke-width="8"/>
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="6 6"/>
+                                    
+                                    <!-- Markings -->
+                                    <text x="100" y="35" fill="#fca5a5" font-weight="bold" font-family="Outfit" font-size="18" text-anchor="middle">N</text>
+                                    <text x="100" y="175" fill="white" font-weight="bold" font-family="Outfit" font-size="18" text-anchor="middle">S</text>
+                                    <text x="30" y="106" fill="white" font-weight="bold" font-family="Outfit" font-size="18" text-anchor="middle">W</text>
+                                    <text x="170" y="106" fill="white" font-weight="bold" font-family="Outfit" font-size="18" text-anchor="middle">E</text>
+                                    
+                                    <!-- Animated Needle -->
+                                    <g>
+                                        <!-- Red North pointing tip -->
+                                        <polygon points="100,45 110,100 90,100" fill="url(#metal-red)"/>
+                                        <!-- Blue/Grey South pointing tip -->
+                                        <polygon points="100,155 110,100 90,100" fill="url(#metal-grey)"/>
+                                        <circle cx="100" cy="100" r="8" fill="#cbd5e1" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.5))"/>
+                                        <circle cx="100" cy="100" r="4" fill="#1e293b"/>
+                                        <animateTransform attributeName="transform" type="rotate" values="-10 100 100; 15 100 100; -5 100 100; -10 100 100" dur="5s" repeatCount="indefinite"/>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 12: Earth is a magnet
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>The Biggest Magnet</h2>
+                    <p style="font-size: 1.5rem; margin-bottom: 2rem; color: var(--text-dim);">Where do we usually see compasses talked about the most?</p>
+                    
+                    <div class="glass-card" style="max-width: 950px; margin: 0 auto; padding: 3rem;">
+                        
+                        <div id="btn-container-1">
+                            <button id="btn-reveal-nav" class="btn btn-action delay-1"><i class="fa-solid fa-map-location-dot"></i> Reveal Answer</button>
+                        </div>
+
+                        <div id="nav-reveal" class="hidden" style="font-size: 1.6rem; margin-bottom: 3rem; line-height: 1.6;">
+                            Compasses are primarily used for <strong>navigating maps</strong>. No matter where you stand on the planet, the red compass needle will always turn to point towards <strong>North</strong>.
+                            
+                            <div id="btn-container-2" style="margin-top: 2rem;">
+                                <button id="btn-reveal-earth" class="btn btn-action" style="background: linear-gradient(135deg, var(--warning), #d97706);"><i class="fa-solid fa-earth-americas"></i> What does this mean?</button>
+                            </div>
+                        </div>
+                        
+                        <div id="earth-reveal" class="hidden" style="text-align: left; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 3rem;">
+                            <div class="grid-2" style="align-items: center;">
+                                <div>
+                                    <h3 style="color: var(--accent); font-size: 2.2rem; margin-bottom: 1.5rem;">The Earth is a Giant Magnet!</h3>
+                                    <p style="font-size: 1.3rem;">Deep inside the Earth is a core of molten iron and nickel. Because the Earth spins, it acts exactly like a massive bar magnet.</p>
+                                    <p style="font-size: 1.3rem; margin-top: 1rem;">When you hold a compass, its tiny magnetic needle is actually interacting with the <strong>Earth's magnetic field</strong>, lining itself up perfectly with the planet's magnetic poles!</p>
+                                </div>
+                                <div class="text-center">
+                                    <svg viewBox="0 0 200 200" width="220" height="220" style="filter: drop-shadow(0 10px 30px rgba(16, 185, 129, 0.2));">
+                                        <!-- Earth Background -->
+                                        <circle cx="100" cy="100" r="65" fill="#0ea5e9"/>
+                                        <!-- Continents -->
+                                        <path d="M 65 70 Q 80 50 100 80 T 130 90 Q 150 120 120 140 T 70 120 Z" fill="#10b981" opacity="0.9"/>
+                                        <path d="M 140 50 Q 150 40 160 60 T 150 70 Z" fill="#10b981" opacity="0.9"/>
+                                        
+                                        <!-- Magnetic field lines around Earth -->
+                                        <g fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-dasharray="5 5">
+                                            <path d="M 100 25 C 190 25, 190 175, 100 175"/>
+                                            <path d="M 100 10 C 230 10, 230 190, 100 190"/>
+                                            <path d="M 100 25 C 10 25, 10 175, 100 175"/>
+                                            <path d="M 100 10 C -30 10, -30 190, 100 190"/>
+                                        </g>
+                                        
+                                        <!-- Bar magnet inside Earth -->
+                                        <g transform="rotate(11 100 100)" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.6))">
+                                            <rect x="88" y="45" width="24" height="55" fill="url(#metal-red)"/>
+                                            <rect x="88" y="100" width="24" height="55" fill="url(#metal-blue)"/>
+                                            <text x="100" y="65" fill="white" font-size="14" font-weight="bold" font-family="Outfit" text-anchor="middle">S</text>
+                                            <text x="100" y="145" fill="white" font-size="14" font-weight="bold" font-family="Outfit" text-anchor="middle">N</text>
+                                        </g>
+                                        
+                                        <!-- Little geographic north label -->
+                                        <text x="100" y="18" fill="var(--text-dim)" font-size="10" font-family="Plus Jakarta Sans" text-anchor="middle">Geographic North</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnNav = container.querySelector('#btn-reveal-nav');
+                const btnContainer1 = container.querySelector('#btn-container-1');
+                const navReveal = container.querySelector('#nav-reveal');
+                
+                const btnEarth = container.querySelector('#btn-reveal-earth');
+                const btnContainer2 = container.querySelector('#btn-container-2');
+                const earthReveal = container.querySelector('#earth-reveal');
+                
+                const showNav = () => {
+                    navReveal.classList.remove('hidden');
+                    navReveal.classList.add('anim-enter');
+                    btnContainer1.style.display = 'none';
+                    setTimeout(() => {
+                        document.querySelector('.slide-wrapper').scrollTo({ top: document.querySelector('.slide-wrapper').scrollHeight, behavior: 'smooth' });
+                    }, 50);
+                };
+
+                const showEarth = () => {
+                    earthReveal.classList.remove('hidden');
+                    earthReveal.classList.add('anim-enter');
+                    btnContainer2.style.display = 'none';
+                    setTimeout(() => {
+                        document.querySelector('.slide-wrapper').scrollTo({ top: document.querySelector('.slide-wrapper').scrollHeight, behavior: 'smooth' });
+                    }, 50);
+                };
+
+                btnNav.addEventListener('click', showNav);
+                btnEarth.addEventListener('click', showEarth);
+
+                return () => {
+                    btnNav.removeEventListener('click', showNav);
+                    btnEarth.removeEventListener('click', showEarth);
+                };
+            }
+        }
+    ];
+
+    // Initialize Engine when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        Engine.init(lessonSlides);
+    });
+
+</script>
+</body>
+</html>
