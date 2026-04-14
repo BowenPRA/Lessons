@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework Review - 14 April 2026</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for rendering math equations easily -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Bible Standard) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Secondary Background */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Success/Acid Green */
+            --warning: #f59e0b;        /* Hazard Orange */
+            --danger: #ef4444;         /* Heat Red */
+            --cold: #0ea5e9;           /* Cold Blue */
+            --text-light: #f1f5f9;     /* Main Text */
+            --text-dim: #94a3b8;       /* Subtitles */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.15rem; line-height: 1.6; color: var(--text-dim); }
+
+        strong { color: var(--text-light); }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .mark-badge {
+            background: var(--accent);
+            color: var(--bg-deep);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            white-space: nowrap;
+            font-family: 'Outfit', sans-serif;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .tip-badge {
+            background: var(--warning);
+            color: var(--bg-deep);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        /* Questions and Reveal Buttons */
+        .question-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .btn-reveal {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-reveal:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .answer-content {
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1.2rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .grader-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.05rem;
+        }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        .math-text { font-size: 1.3rem; color: white; margin: 0.5rem 0; }
+        
+        table.math-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: rgba(0,0,0,0.2);
+        }
+        table.math-table th, table.math-table td {
+            border: 1px solid var(--text-dim);
+            padding: 10px;
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        table.math-table th { background: rgba(255,255,255,0.1); }
+        
+        /* Tree Diagram Styles */
+        .tree-line { stroke: var(--text-dim); stroke-width: 3; fill: none; }
+        .tree-node { fill: var(--bg-panel); stroke: var(--primary); stroke-width: 3; }
+        .tree-text { fill: white; font-family: 'Plus Jakarta Sans'; font-size: 14px; font-weight: 600; text-anchor: middle; alignment-baseline: middle;}
+        .tree-prob { fill: var(--accent); font-family: 'Outfit'; font-size: 16px; font-weight: 800; }
+        .tree-result { fill: white; font-family: 'Outfit'; font-size: 18px; font-weight: 700;}
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-check-double"></i> Review & Grade</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">Due 13 April 2026</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; color: var(--primary);">
+            Year 9 Math & Science
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    // Global function for revealing answers
+    window.revealAnswer = function(btn) {
+        btn.nextElementSibling.style.display = 'block';
+        btn.style.display = 'none';
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+    }
+
+    const state = {
+        currentSlide: 0,
+        slides: [],
+        cleanupFn: null
+    };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Instructions
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-clipboard-check delay-1" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Homework Review</h1>
+                    <h2 class="delay-1" style="color: var(--accent);">Solutions for 13 April Packet</h2>
+                    
+                    <div class="glass-card delay-2" style="max-width: 750px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--warning);">
+                        <h3 style="color: var(--warning);"><i class="fa-solid fa-pen-nib"></i> Grader Expectations</h3>
+                        <ol style="margin-left: 2rem; margin-top: 1rem; color: white; line-height: 2;">
+                            <li>Please <strong>swap papers</strong> with your assigned grading partner.</li>
+                            <li>Write your name on the front as the <strong>Grader</strong> using a coloured pen.</li>
+                            <li><strong>Math Sections:</strong> Check for correct Working Out! An answer with no working receives ZERO marks.</li>
+                            <li><strong>Science Sections:</strong> Use the "Grader Tips" on the slides to see exactly what key terms are required for full credit. This is how high school exams are marked!</li>
+                        </ol>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: Math - Fractions (Addition)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 1: Adding Fractions</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem; color: var(--text-dim);">Selected problems to check for clear steps.</p>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>Problem 1:</strong> Calculate \\( 2\\frac{3}{4} + 1\\frac{1}{3} \\)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Step-by-Step</button>
+                            <div class="answer-content">
+                                <div class="math-text"><strong>Step 1 (Improper):</strong> \\( \\frac{11}{4} + \\frac{4}{3} \\)</div>
+                                <div class="math-text"><strong>Step 2 (Common Denom 12):</strong> \\( \\frac{33}{12} + \\frac{16}{12} \\)</div>
+                                <div class="math-text"><strong>Step 3 (Add):</strong> \\( \\frac{49}{12} \\)</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-top: 1rem;">Final Answer: \\( 4\\frac{1}{12} \\)</div>
+                                <span class="mark-badge">3 marks</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>Problem 5:</strong> Calculate \\( 1\\frac{1}{3} + 2\\frac{1}{4} + \\frac{5}{6} \\)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Step-by-Step</button>
+                            <div class="answer-content">
+                                <div class="math-text"><strong>Step 1 (Improper):</strong> \\( \\frac{4}{3} + \\frac{9}{4} + \\frac{5}{6} \\)</div>
+                                <div class="math-text"><strong>Step 2 (Common Denom 12):</strong> \\( \\frac{16}{12} + \\frac{27}{12} + \\frac{10}{12} \\)</div>
+                                <div class="math-text"><strong>Step 3 (Add):</strong> \\( \\frac{53}{12} \\)</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-top: 1rem;">Final Answer: \\( 4\\frac{5}{12} \\)</div>
+                                <span class="mark-badge">4 marks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: Math - Fractions (Subtraction)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 1: Subtracting Fractions</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>Problem 7:</strong> Calculate \\( 4\\frac{1}{4} - 1\\frac{2}{3} \\)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Step-by-Step</button>
+                            <div class="answer-content">
+                                <div class="math-text"><strong>Step 1 (Improper):</strong> \\( \\frac{17}{4} - \\frac{5}{3} \\)</div>
+                                <div class="math-text"><strong>Step 2 (Common Denom 12):</strong> \\( \\frac{51}{12} - \\frac{20}{12} \\)</div>
+                                <div class="math-text"><strong>Step 3 (Subtract):</strong> \\( \\frac{31}{12} \\)</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-top: 1rem;">Final Answer: \\( 2\\frac{7}{12} \\)</div>
+                                <span class="mark-badge">3 marks</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>Problem 10:</strong> Calculate \\( 6\\frac{3}{8} - 2\\frac{5}{6} \\)</div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Step-by-Step</button>
+                            <div class="answer-content">
+                                <div class="math-text"><strong>Step 1 (Improper):</strong> \\( \\frac{51}{8} - \\frac{17}{6} \\)</div>
+                                <div class="math-text"><strong>Step 2 (Common Denom 24):</strong> \\( \\frac{153}{24} - \\frac{68}{24} \\)</div>
+                                <div class="math-text"><strong>Step 3 (Subtract):</strong> \\( \\frac{85}{24} \\)</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-top: 1rem;">Final Answer: \\( 3\\frac{13}{24} \\)</div>
+                                <span class="mark-badge">3 marks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: Math - Probability (Tree Diagram)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 2: Probability <span style="color: var(--text-dim);">|</span> The Commute</h2>
+                    
+                    <div class="question-box delay-1" style="max-width: 900px; margin: 0 auto; text-align: center;">
+                        <div class="question-text text-left"><strong>Q1(a) Draw a tree diagram. (b) Calculate the probability Sarah is late.</strong><br><br>
+                        <span style="font-size: 1rem; color: var(--text-dim);">Train on time: 0.7. If on time, late for work: 0.1. If train late, late for work: 0.8.</span></div>
+                        
+                        <button class="btn-reveal" style="margin-bottom: 1rem;" onclick="window.revealAnswer(this)"><i class="fa-solid fa-diagram-project"></i> Reveal Tree Diagram & Solution</button>
+                        
+                        <div class="answer-content" style="display: none; background: #0f172a; border: 1px solid rgba(255,255,255,0.2);">
+                            <!-- SVG Tree Diagram -->
+                            <svg width="100%" height="320" viewBox="0 0 800 320" style="margin: 0 auto; display: block; max-width: 800px;">
+                                <!-- Links from Root -->
+                                <line x1="100" y1="160" x2="350" y2="70" class="tree-line" />
+                                <line x1="100" y1="160" x2="350" y2="250" class="tree-line" />
+                                
+                                <!-- Links from Train On Time -->
+                                <line x1="350" y1="70" x2="600" y2="30" class="tree-line" />
+                                <line x1="350" y1="70" x2="600" y2="110" class="tree-line" />
+
+                                <!-- Links from Train Late -->
+                                <line x1="350" y1="250" x2="600" y2="210" class="tree-line" />
+                                <line x1="350" y1="250" x2="600" y2="290" class="tree-line" />
+
+                                <!-- Root Node -->
+                                <circle cx="100" cy="160" r="10" class="tree-node" />
+                                <text x="50" y="160" class="tree-text">Start</text>
+
+                                <!-- Level 1 Text (Train) -->
+                                <rect x="290" y="55" width="120" height="30" rx="5" fill="#1e293b" stroke="#8b5cf6" stroke-width="2"/>
+                                <text x="350" y="70" class="tree-text">Train On Time</text>
+                                <text x="210" y="100" class="tree-prob">0.7</text>
+
+                                <rect x="300" y="235" width="100" height="30" rx="5" fill="#1e293b" stroke="#8b5cf6" stroke-width="2"/>
+                                <text x="350" y="250" class="tree-text">Train Late</text>
+                                <text x="210" y="225" class="tree-prob">0.3</text>
+
+                                <!-- Level 2 Text (Sarah) -->
+                                <rect x="540" y="15" width="120" height="30" rx="5" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+                                <text x="600" y="30" class="tree-text">Sarah Late</text>
+                                <text x="460" y="40" class="tree-prob">0.1</text>
+                                <text x="730" y="30" class="tree-result">P = 0.07</text>
+
+                                <rect x="530" y="95" width="140" height="30" rx="5" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+                                <text x="600" y="110" class="tree-text">Sarah On Time</text>
+                                <text x="460" y="105" class="tree-prob">0.9</text>
+                                
+                                <rect x="540" y="195" width="120" height="30" rx="5" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+                                <text x="600" y="210" class="tree-text">Sarah Late</text>
+                                <text x="460" y="215" class="tree-prob">0.8</text>
+                                <text x="730" y="210" class="tree-result">P = 0.24</text>
+
+                                <rect x="530" y="275" width="140" height="30" rx="5" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+                                <text x="600" y="290" class="tree-text">Sarah On Time</text>
+                                <text x="460" y="275" class="tree-prob">0.2</text>
+                            </svg>
+                            
+                            <div style="text-align: left; margin-top: 1rem; border-top: 1px solid #334155; padding-top: 1rem;">
+                                <div class="math-text">To find the total probability Sarah is late, we add the two "Late" outcomes:</div>
+                                <div class="math-text">\\( P(\\text{Late}) = (0.7 \\times 0.1) + (0.3 \\times 0.8) \\)</div>
+                                <div class="math-text">\\( P(\\text{Late}) = 0.07 + 0.24 \\)</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-top: 0.5rem;">Answer: 0.31</div>
+                                <span class="mark-badge">3 marks (2 for tree, 1 for answer)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: Math - Probability (Marbles / Independent)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 2: Probability <span style="color: var(--text-dim);">|</span> Independent & Dependent</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>Q2: Marbles (Without Replacement)</strong><br>
+                            <span style="font-size: 1rem; color: var(--text-dim);">5 Red, 3 Blue. Draw 2. Probability both are same colour?</span></div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white; margin-bottom: 0.5rem;">Total Marbles = 8. We need P(Red, Red) + P(Blue, Blue)</p>
+                                <div class="math-text">\\( P(R,R) = \\frac{5}{8} \\times \\frac{4}{7} = \\frac{20}{56} \\)</div>
+                                <div class="math-text">\\( P(B,B) = \\frac{3}{8} \\times \\frac{2}{7} = \\frac{6}{56} \\)</div>
+                                <div class="math-text">Total: \\( \\frac{20}{56} + \\frac{6}{56} = \\frac{26}{56} \\)</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-top: 1rem;">Answer: \\( \\frac{13}{28} \\)</div>
+                                <span class="mark-badge">3 marks</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>Q3: Independent Events</strong><br>
+                            <span style="font-size: 1rem; color: var(--text-dim);">Pass Math: 0.8. Pass Science: 0.75. Probability passes both?</span></div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white; margin-bottom: 0.5rem;">For independent events, we MULTIPLY the probabilities.</p>
+                                <div class="math-text">\\( P(\\text{Both}) = 0.8 \\times 0.75 \\)</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-top: 1rem;">Answer: 0.6</div>
+                                <span class="mark-badge">2 marks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: Math - Rearranging Formulae
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 3: Rearranging Formulae</h2>
+                    <p class="text-center delay-1" style="color: var(--text-dim); margin-bottom: 1.5rem;">Check for correct algebraic isolation.</p>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>2) Make \\( m \\) the subject: \\( F = ma \\)</strong></div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">Divide both sides by \\( a \\).</p>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold;">\\( m = \\frac{F}{a} \\)</div>
+                                <span class="mark-badge">1 mark</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>4) Make \\( u \\) the subject: \\( v = u + at \\)</strong></div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">Subtract \\( at \\) from both sides.</p>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold;">\\( u = v - at \\)</div>
+                                <span class="mark-badge">1 mark</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>5) Make \\( m \\) the subject: \\( y = mx + c \\)</strong></div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">1. Subtract \\( c \\): \\( y - c = mx \\)</p>
+                                <p style="color: white;">2. Divide by \\( x \\): </p>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold;">\\( m = \\frac{y - c}{x} \\)</div>
+                                <span class="mark-badge">2 marks</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-3">
+                            <div class="question-text"><strong>12) Make \\( a \\) the subject: \\( v^2 = u^2 + 2as \\)</strong></div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <p style="color: white;">1. Subtract \\( u^2 \\): \\( v^2 - u^2 = 2as \\)</p>
+                                <p style="color: white;">2. Divide by \\( 2s \\): </p>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold;">\\( a = \\frac{v^2 - u^2}{2s} \\)</div>
+                                <span class="mark-badge">2 marks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: Science - Free Response (Part A)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 4: Science <span style="color: var(--text-dim);">|</span> Part A: Hydrogen</h2>
+                    
+                    <div class="question-box delay-1" style="max-width: 900px; margin: 0 auto;">
+                        <div class="question-text text-left"><strong>Why is the atomic weight of Hydrogen a decimal (1.008) and so incredibly close to 1?</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Perfect Answer & Rubric</button>
+                        
+                        <div class="answer-content">
+                            <p style="color: white; font-style: italic; font-size: 1.15rem;">"The atomic weight is a decimal because it is a <strong>weighted average</strong> of all the naturally occurring <strong>isotopes</strong> of Hydrogen. It is extremely close to 1 because the vast majority of Hydrogen atoms are Hydrogen-1 (which contains exactly 1 proton and 0 neutrons in its nucleus). Only trace amounts of heavier isotopes like Hydrogen-2 or Hydrogen-3 exist to pull the average up slightly."</p>
+                            
+                            <div class="grader-box">
+                                <div class="tip-badge"><i class="fa-solid fa-scale-balanced"></i> Grader Tip</div>
+                                <p style="color: var(--text-light); margin-bottom: 0.5rem;">To get full marks (3/3), the student MUST mention:</p>
+                                <ul style="color: white; margin-left: 1.5rem; line-height: 1.8;">
+                                    <li><strong>Isotopes</strong> (atoms with different neutron counts).</li>
+                                    <li>The mass is an <strong>Average</strong> (or weighted average).</li>
+                                    <li>The most common atom has exactly <strong>1 proton and 0 neutrons</strong>.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: Science - Free Response (Part B & C)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 4: Science <span style="color: var(--text-dim);">|</span> Parts B & C</h2>
+                    
+                    <div class="question-box delay-1">
+                        <div class="question-text"><strong>Part B: The Meteorite. Predict how an element with full outer electron shells will behave chemically.</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <p style="color: white;">It will be <strong>unreactive / inert</strong>. It will <strong>neither</strong> form ionic nor covalent bonds easily, because atoms only bond to achieve a full outer shell. Since it already has one (like a Noble Gas), it doesn't need to gain, lose, or share electrons.</p>
+                            <div class="grader-box" style="padding: 0.5rem 1rem;">
+                                <p style="color: white; font-size: 1rem;"><strong style="color: var(--warning);">Grader Tip:</strong> Must state it's unreactive and mention that bonding happens to fill electron shells.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-box delay-2">
+                        <div class="question-text"><strong>Part C: The Mystery Element. What 3 facts can you infer from an Atomic Weight of 35.45?</strong></div>
+                        <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                        <div class="answer-content">
+                            <ul style="color: white; margin-left: 2rem; line-height: 1.8;">
+                                <li><strong>Fact 1:</strong> This element has <strong>isotopes</strong> (because it's a decimal).</li>
+                                <li><strong>Fact 2:</strong> 35.45 is the <strong>weighted average</strong> mass of all its atoms.</li>
+                                <li><strong>Fact 3:</strong> The most abundant isotope likely has a mass number of 35, because the average is closer to 35 than 36.</li>
+                            </ul>
+                            <div class="grader-box" style="padding: 0.5rem 1rem;">
+                                <p style="color: white; font-size: 1rem;"><strong style="color: var(--warning);">Grader Tip:</strong> If they say "It's Chlorine", that's great, but they still need to list facts about the <em>mass</em> to get the points!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        
+        // SLIDE 9: Science - Bonus Questions
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Section 4: Science <span style="color: var(--text-dim);">|</span> Bonuses</h2>
+                    
+                    <div class="grid-2">
+                        <div class="question-box delay-1">
+                            <div class="question-text"><strong>Bonus: Critical Math</strong><br>
+                            <span style="font-size: 1rem; color: var(--text-dim);">1 proton = 1,836 electrons. How many electrons equal the mass of 8 protons?</span></div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <div class="math-text">\\( 8 \\times 1,836 \\)</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.5rem; margin-top: 1rem;">Answer: 14,688 electrons</div>
+                                <span class="mark-badge">+1 Bonus Point</span>
+                            </div>
+                        </div>
+
+                        <div class="question-box delay-2">
+                            <div class="question-text"><strong>Bonus 2: Scale of Atoms</strong><br>
+                            <span style="font-size: 1rem; color: var(--text-dim);">Atom diameter: \\( 1 \\times 10^{-10} \\). Nucleus diameter: \\( 1 \\times 10^{-15} \\). How many times larger?</span></div>
+                            <button class="btn-reveal" onclick="window.revealAnswer(this)"><i class="fa-solid fa-eye"></i> Show Answer</button>
+                            <div class="answer-content">
+                                <div class="math-text">Divide the atom by the nucleus:</div>
+                                <div class="math-text">\\( \\frac{1 \\times 10^{-10}}{1 \\times 10^{-15}} = 10^{-10 - (-15)} = 10^{5} \\)</div>
+                                <br>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.3rem;">Standard Form: \\( 1 \\times 10^5 \\)</div>
+                                <div class="math-text" style="color: var(--accent); font-weight: bold; font-size: 1.3rem;">Normal Number: 100,000 times larger</div>
+                                <span class="mark-badge">+2 Bonus Points</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 10: End Marking
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-handshake-angle delay-1" style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Marking Complete!</h1>
+                    
+                    <div class="glass-card delay-2" style="max-width: 650px; margin: 2rem auto; text-align: left; border-top: 4px solid var(--accent);">
+                        <ol style="margin-left: 1rem; color: white; font-size: 1.3rem; line-height: 2.2;">
+                            <li>Check that you wrote your name under "Grader" on the front page.</li>
+                            <li>Tally up the total marks they achieved.</li>
+                            <li>Leave <strong>one constructive comment</strong> at the top of their paper (e.g., "Great job on the probability tree!" or "Make sure to write out your steps for fractions.")</li>
+                            <li>Return the paper to its owner!</li>
+                        </ol>
+                    </div>
+                    
+                    <h2 class="delay-3" style="color: var(--text-dim);">Thank you for helping each other learn!</h2>
+                </div>
+            `
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        // Render HTML synchronously
+        container.innerHTML = slide.template();
+        
+        // Ensure MathJax renders any initial visible math immediately
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+        
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        // Update UI
+        document.getElementById('progress-bar').style.width = `${((state.currentSlide + 1) / state.slides.length) * 100}%`;
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
