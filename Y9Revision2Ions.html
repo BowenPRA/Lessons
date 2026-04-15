@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 9 Progression Review - Ions & Groups</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Bible Standard) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Secondary Background */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Success/Acid Green */
+            --warning: #f59e0b;        /* Hazard Orange */
+            --danger: #ef4444;         /* Heat Red */
+            --cold: #0ea5e9;           /* Cold Blue */
+            --text-light: #f1f5f9;     /* Main Text */
+            --text-dim: #94a3b8;       /* Subtitles */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.15rem; line-height: 1.6; color: var(--text-dim); }
+
+        strong { color: var(--text-light); }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Signposting System */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            animation: slideIn 0.5s ease;
+        }
+        .pedagogical-badge {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { background: rgba(139, 92, 246, 0.1); border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { background: rgba(16, 185, 129, 0.1); border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Reveal Card */
+        .reveal-card {
+            background: var(--bg-panel);
+            border: 2px dashed var(--primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .reveal-card:hover { background: rgba(139, 92, 246, 0.1); }
+        .reveal-content { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .reveal-card.revealed { border-style: solid; background: rgba(16, 185, 129, 0.1); border-color: var(--accent); cursor: default; }
+        .reveal-card.revealed .pre-reveal { display: none; }
+        .reveal-card.revealed .reveal-content { display: block; animation: fadeIn 0.4s ease; }
+
+        /* Quiz Component */
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-option:hover { background: rgba(255, 255, 255, 0.1); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--accent); }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-atom"></i> Year 9 Science</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">Ions & Groups</span>
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = { currentSlide: 0, slides: [], cleanupFn: null };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Title
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-bolt delay-1" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">Ions & Periodic Groups</h1>
+                    <h2 class="delay-1" style="color: var(--accent);">Making Sense of the Elements</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Today's Goals</div>
+                        <ul style="margin-left: 1rem; display: grid; gap: 1rem; list-style-type: none; padding: 0; margin-top: 0.5rem;">
+                            <li style="font-size: 1.1rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>1️⃣</span><span style="color: white; font-weight: 500;">Understand what an Ion is and why they form.</span>
+                            </li>
+                            <li style="font-size: 1.1rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>2️⃣</span><span style="color: white; font-weight: 500;">Learn what Groups are on the Periodic Table.</span>
+                            </li>
+                            <li style="font-size: 1.1rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>3️⃣</span><span style="color: white; font-weight: 500;">Explore Groups 1, 2, 7, and 8 specifically.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: The Golden Rule Reminder
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Recap: The Golden Rule of Chemistry</h2>
+                    
+                    <div class="glass-card text-center delay-1" style="max-width: 800px; margin: 2rem auto; border-top: 4px solid var(--primary);">
+                        <i class="fa-solid fa-star" style="font-size: 3rem; color: var(--warning); margin-bottom: 1.5rem;"></i>
+                        <h3 style="color: white; font-size: 1.8rem; margin-bottom: 1rem;">Atoms are lazy.</h3>
+                        <p style="font-size: 1.2rem; color: var(--text-light); margin-bottom: 1.5rem;">
+                            An atom is only happy and stable when its <strong>outermost electron shell is completely full</strong> (usually with 8 electrons).
+                        </p>
+                        <p style="font-size: 1.1rem; color: var(--text-dim);">
+                            If an atom does not have a full shell naturally, it will <strong>steal, give away, or share</strong> electrons until it does!
+                        </p>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: What is an Ion?
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">What is an Ion?</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 900px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Write This Down</div>
+                        <p style="color: white; font-size: 1.1rem;">An <strong>Ion</strong> is simply an atom that has <strong>gained or lost electrons</strong>, giving it an electrical charge.</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto;">
+                        <div class="glass-card text-center" style="border-top: 4px solid var(--accent);">
+                            <div style="background: rgba(16, 185, 129, 0.2); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: var(--accent); font-size: 1.5rem; font-weight: bold;">+</div>
+                            <h3 style="color: var(--accent);">Positive Ions (Cations)</h3>
+                            <p style="color: white; margin-bottom: 0.5rem;">Formed when an atom <strong>loses</strong> negative electrons.</p>
+                            <p style="font-size: 0.9rem;"><em>(Losing negativity makes you positive!)</em></p>
+                        </div>
+
+                        <div class="glass-card text-center" style="border-top: 4px solid var(--danger);">
+                            <div style="background: rgba(239, 68, 68, 0.2); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: var(--danger); font-size: 1.5rem; font-weight: bold;">-</div>
+                            <h3 style="color: var(--danger);">Negative Ions (Anions)</h3>
+                            <p style="color: white; margin-bottom: 0.5rem;">Formed when an atom <strong>gains</strong> extra negative electrons.</p>
+                            <p style="font-size: 0.9rem;"><em>(Gaining negativity makes you negative!)</em></p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: Periodic Table Groups
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">The Cheat Code: Periodic Groups</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">How do we know if an atom will gain or lose electrons?</p>
+
+                    <div class="glass-card delay-2" style="max-width: 800px; margin: 0 auto; border-left: 6px solid var(--primary);">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem;">
+                            <i class="fa-solid fa-arrows-up-down" style="font-size: 2.5rem; color: var(--primary);"></i>
+                            <div>
+                                <h3 style="color: var(--primary); margin: 0;">Groups = Columns</h3>
+                                <p style="color: white; font-size: 1.1rem;">The vertical columns on the Periodic Table are called Groups.</p>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 8px;">
+                            <p style="color: white; font-size: 1.15rem; font-weight: bold; margin-bottom: 0.5rem;">
+                                ✨ The Group Number tells you EXACTLY how many electrons are in the outer shell. ✨
+                            </p>
+                            <ul style="color: var(--text-dim); margin-left: 1.5rem; margin-top: 1rem;">
+                                <li>Group 1 elements have 1 outer electron.</li>
+                                <li>Group 7 elements have 7 outer electrons.</li>
+                                <li>Because they have the same outer electrons, elements in the same group react in similar ways!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: Group 1
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Group 1: The Alkali Metals</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 950px; margin: 2rem auto;">
+                        <div>
+                            <h3 style="color: var(--accent);"><i class="fa-solid fa-battery-full"></i> Very Reactive Metals</h3>
+                            <ul style="color: white; margin-left: 1.5rem; margin-bottom: 1.5rem; line-height: 1.8;">
+                                <li><strong>Outer Shell:</strong> 1 Electron</li>
+                                <li><strong>Goal:</strong> Get a full outer shell.</li>
+                                <li><strong>Easiest way:</strong> Throw away that 1 lonely electron!</li>
+                            </ul>
+                            <div class="pedagogical-note note-success" style="margin: 0; padding: 1rem;">
+                                <p style="color: white; font-size: 1.1rem;">Because they lose 1 negative electron, they form <strong>+1 Ions</strong>.</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card text-center" style="background: rgba(16, 185, 129, 0.05); border-color: var(--accent);">
+                            <h4 style="color: var(--text-dim); margin-bottom: 1rem;">Example: Sodium (Na)</h4>
+                            <div style="font-size: 2rem; color: white; font-weight: bold; margin: 1rem 0;">
+                                Na <i class="fa-solid fa-arrow-right" style="color: var(--text-dim); margin: 0 10px; font-size: 1.5rem;"></i> Na⁺
+                            </div>
+                            <p style="font-size: 0.9rem;">Sodium atom loses 1 electron to become a +1 Sodium Ion.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: Group 2
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Group 2: Alkaline Earth Metals</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 950px; margin: 2rem auto;">
+                        <div>
+                            <h3 style="color: var(--cold);"><i class="fa-solid fa-gem"></i> Reactive Metals</h3>
+                            <ul style="color: white; margin-left: 1.5rem; margin-bottom: 1.5rem; line-height: 1.8;">
+                                <li><strong>Outer Shell:</strong> 2 Electrons</li>
+                                <li><strong>Goal:</strong> Get a full outer shell.</li>
+                                <li><strong>Easiest way:</strong> Give away both of those 2 electrons!</li>
+                            </ul>
+                            <div class="pedagogical-note note-write" style="margin: 0; padding: 1rem; border-color: var(--cold); background: rgba(14, 165, 233, 0.1);">
+                                <p style="color: white; font-size: 1.1rem;">Because they lose 2 negative electrons, they form <strong>+2 Ions</strong>.</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card text-center" style="background: rgba(14, 165, 233, 0.05); border-color: var(--cold);">
+                            <h4 style="color: var(--text-dim); margin-bottom: 1rem;">Example: Magnesium (Mg)</h4>
+                            <div style="font-size: 2rem; color: white; font-weight: bold; margin: 1rem 0;">
+                                Mg <i class="fa-solid fa-arrow-right" style="color: var(--text-dim); margin: 0 10px; font-size: 1.5rem;"></i> Mg²⁺
+                            </div>
+                            <p style="font-size: 0.9rem;">Magnesium atom loses 2 electrons to become a +2 Magnesium Ion.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: Group 7
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Group 7: The Halogens</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 950px; margin: 2rem auto;">
+                        <div>
+                            <h3 style="color: var(--danger);"><i class="fa-solid fa-fire"></i> Highly Reactive Non-Metals</h3>
+                            <ul style="color: white; margin-left: 1.5rem; margin-bottom: 1.5rem; line-height: 1.8;">
+                                <li><strong>Outer Shell:</strong> 7 Electrons</li>
+                                <li><strong>Goal:</strong> Get a full outer shell (which needs 8).</li>
+                                <li><strong>Easiest way:</strong> Steal 1 electron from someone else!</li>
+                            </ul>
+                            <div class="pedagogical-note note-theory" style="margin: 0; padding: 1rem;">
+                                <p style="color: white; font-size: 1.1rem;">Because they gain 1 negative electron, they form <strong>-1 Ions</strong>.</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card text-center" style="background: rgba(239, 68, 68, 0.05); border-color: var(--danger);">
+                            <h4 style="color: var(--text-dim); margin-bottom: 1rem;">Example: Chlorine (Cl)</h4>
+                            <div style="font-size: 2rem; color: white; font-weight: bold; margin: 1rem 0;">
+                                Cl <i class="fa-solid fa-arrow-right" style="color: var(--text-dim); margin: 0 10px; font-size: 1.5rem;"></i> Cl⁻
+                            </div>
+                            <p style="font-size: 0.9rem;">Chlorine atom gains 1 electron to become a -1 Chloride Ion.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: Group 8
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Group 8 (or 0): The Noble Gases</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">The elites of the Periodic Table.</p>
+
+                    <div class="glass-card text-center delay-2" style="max-width: 800px; margin: 0 auto; border-top: 4px solid var(--primary);">
+                        <i class="fa-solid fa-shield-halved" style="font-size: 4rem; color: var(--primary); margin-bottom: 1.5rem;"></i>
+                        <h3 style="color: white; font-size: 1.8rem; margin-bottom: 1rem;">They are already full!</h3>
+                        
+                        <ul style="color: var(--text-light); text-align: left; max-width: 500px; margin: 0 auto 1.5rem auto; line-height: 1.8;">
+                            <li><strong>Outer Shell:</strong> Completely Full (8 electrons).</li>
+                            <li><strong>Action:</strong> Do nothing! They are completely stable.</li>
+                            <li><strong>Ions Formed:</strong> <strong>NONE.</strong> They do not gain or lose electrons.</li>
+                        </ul>
+                        
+                        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">
+                            <p style="font-size: 1rem; color: var(--text-dim);">Examples: Helium (He), Neon (Ne), Argon (Ar). They are unreactive (inert).</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 9: Summary Table
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>The Ion Cheat Sheet</h2>
+                    <p class="delay-1" style="margin-bottom: 2rem;">A quick summary of what we just covered.</p>
+
+                    <div class="glass-card delay-2" style="max-width: 900px; margin: 0 auto; padding: 1rem;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; color: white;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.2);">
+                                    <th style="padding: 1rem; color: var(--text-dim);">Group</th>
+                                    <th style="padding: 1rem; color: var(--text-dim);">Outer Electrons</th>
+                                    <th style="padding: 1rem; color: var(--text-dim);">Action Needed</th>
+                                    <th style="padding: 1rem; color: var(--text-dim);">Ion Formed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <td style="padding: 1rem; font-weight: bold; color: var(--accent);">Group 1</td>
+                                    <td style="padding: 1rem;">1</td>
+                                    <td style="padding: 1rem;">Lose 1</td>
+                                    <td style="padding: 1rem; font-weight: bold; color: var(--accent);">+1</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <td style="padding: 1rem; font-weight: bold; color: var(--cold);">Group 2</td>
+                                    <td style="padding: 1rem;">2</td>
+                                    <td style="padding: 1rem;">Lose 2</td>
+                                    <td style="padding: 1rem; font-weight: bold; color: var(--cold);">+2</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <td style="padding: 1rem; font-weight: bold; color: var(--danger);">Group 7</td>
+                                    <td style="padding: 1rem;">7</td>
+                                    <td style="padding: 1rem;">Gain 1</td>
+                                    <td style="padding: 1rem; font-weight: bold; color: var(--danger);">-1</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 1rem; font-weight: bold; color: var(--primary);">Group 8 (0)</td>
+                                    <td style="padding: 1rem;">Full</td>
+                                    <td style="padding: 1rem;">Do Nothing</td>
+                                    <td style="padding: 1rem; font-weight: bold; color: var(--primary);">0 (No Ion)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 10: Checkpoint Quiz
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Quick Checkpoint</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">Test your knowledge. Click the correct answer.</p>
+
+                    <div class="glass-card delay-2" style="max-width: 850px; margin: 0 auto; max-height: 500px; overflow-y: auto;">
+                        
+                        <h3 style="margin-bottom: 1rem; color: white; font-size: 1.1rem;">1. An element is in Group 1. What kind of ion will it form?</h3>
+                        <div class="quiz-group">
+                            <div class="quiz-option" data-correct="false"><i class="fa-regular fa-circle"></i> A -1 Ion</div>
+                            <div class="quiz-option" data-correct="true"><i class="fa-regular fa-circle"></i> A +1 Ion</div>
+                        </div>
+
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: white; font-size: 1.1rem;">2. Why does a Group 7 element (like Fluorine) form a -1 ion?</h3>
+                        <div class="quiz-group">
+                            <div class="quiz-option" data-correct="true"><i class="fa-regular fa-circle"></i> It gains 1 negative electron to complete its shell.</div>
+                            <div class="quiz-option" data-correct="false"><i class="fa-regular fa-circle"></i> It loses 1 negative electron.</div>
+                        </div>
+
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: white; font-size: 1.1rem;">3. Which group does NOT naturally form ions because their shells are already full?</h3>
+                        <div class="quiz-group">
+                            <div class="quiz-option" data-correct="false"><i class="fa-regular fa-circle"></i> Group 2 (Alkaline Earth Metals)</div>
+                            <div class="quiz-option" data-correct="true"><i class="fa-regular fa-circle"></i> Group 8 / 0 (Noble Gases)</div>
+                        </div>
+                        
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const options = container.querySelectorAll('.quiz-option');
+                const handlers = [];
+
+                options.forEach(opt => {
+                    const handler = function() {
+                        // Scope only to the specific question group so answering one doesn't clear the others
+                        const siblings = this.parentElement.querySelectorAll('.quiz-option');
+                        siblings.forEach(s => {
+                            s.classList.remove('correct', 'incorrect');
+                            s.querySelector('i').className = 'fa-regular fa-circle';
+                        });
+
+                        if (this.getAttribute('data-correct') === 'true') {
+                            this.classList.add('correct');
+                            this.querySelector('i').className = 'fa-solid fa-check-circle';
+                        } else {
+                            this.classList.add('incorrect');
+                            this.querySelector('i').className = 'fa-solid fa-xmark-circle';
+                        }
+                    };
+                    handlers.push({ element: opt, fn: handler });
+                    opt.addEventListener('click', handler);
+                });
+
+                return () => {
+                    handlers.forEach(h => h.element.removeEventListener('click', h.fn));
+                };
+            }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        container.innerHTML = slide.template();
+        
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        const progressPercentage = ((state.currentSlide + 1) / state.slides.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercentage + "%";
+        
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
