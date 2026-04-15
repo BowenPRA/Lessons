@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 9 Progression Review - States of Matter</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- DESIGN TOKENS (Cambridge Bible Standard) --- */
+        :root {
+            --bg-deep: #0f172a;        /* Deep Slate */
+            --bg-panel: #1e293b;       /* Secondary Background */
+            --primary: #8b5cf6;        /* Chemical Purple */
+            --accent: #10b981;         /* Success/Acid Green */
+            --warning: #f59e0b;        /* Hazard Orange */
+            --danger: #ef4444;         /* Heat Red */
+            --cold: #0ea5e9;           /* Cold Blue */
+            --text-light: #f1f5f9;     /* Main Text */
+            --text-dim: #94a3b8;       /* Subtitles */
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-light); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+        p, li { font-size: 1.15rem; line-height: 1.6; color: var(--text-dim); }
+
+        strong { color: var(--text-light); }
+        
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+        /* --- LAYOUT SHELL --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--cold), var(--primary));
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.4);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .slide-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 10;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Signposting System */
+        .pedagogical-note {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 5px solid;
+            animation: slideIn 0.5s ease;
+        }
+        .pedagogical-badge {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .note-write { background: rgba(139, 92, 246, 0.1); border-color: var(--primary); }
+        .note-write .pedagogical-badge { color: var(--primary); }
+        
+        .note-task { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
+        .note-task .pedagogical-badge { color: var(--warning); }
+        
+        .note-theory { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+        .note-theory .pedagogical-badge { color: var(--danger); }
+        
+        .note-success { background: rgba(16, 185, 129, 0.1); border-color: var(--accent); }
+        .note-success .pedagogical-badge { color: var(--accent); }
+
+        /* Quiz Component */
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-option:hover { background: rgba(255, 255, 255, 0.1); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--accent); }
+        .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); }
+
+        /* Navigation Buttons */
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-panel);
+            color: var(--text-light);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 2rem; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cold), var(--primary)); transition: width 0.3s ease; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .anim-enter { animation: fadeIn 0.6s ease-out; }
+        .delay-1 { animation: slideIn 0.6s ease-out 0.2s both; }
+        .delay-2 { animation: slideIn 0.6s ease-out 0.4s both; }
+        .delay-3 { animation: slideIn 0.6s ease-out 0.6s both; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill"><i class="fa-solid fa-temperature-half"></i> Year 9 Science</div>
+            <span style="font-weight: 700; color: var(--text-dim); font-size: 0.9rem;">States of Matter</span>
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slide content injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    /* --- BOWEN ENGINE CORE --- */
+    const state = { currentSlide: 0, slides: [], cleanupFn: null };
+
+    // --- SLIDE DEFINITIONS ---
+    state.slides = [
+        // SLIDE 1: Title
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <i class="fa-solid fa-cubes delay-1" style="font-size: 4rem; color: var(--cold); margin-bottom: 1rem;"></i>
+                    <h1 class="delay-1" style="font-size: 3.5rem;">States of Matter</h1>
+                    <h2 class="delay-1" style="color: var(--text-dim);">Particles, Energy, and the Periodic Table</h2>
+                    
+                    <div class="pedagogical-note note-success delay-2" style="max-width: 750px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objectives</div>
+                        <ul style="margin-left: 1rem; display: grid; gap: 1rem; list-style-type: none; padding: 0; margin-top: 0.5rem;">
+                            <li style="font-size: 1.1rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>1️⃣</span><span style="color: white; font-weight: 500;">Understand <strong>Particle Theory</strong> and how particles behave.</span>
+                            </li>
+                            <li style="font-size: 1.1rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>2️⃣</span><span style="color: white; font-weight: 500;">Clearly define State Transitions (Melting, Boiling, etc).</span>
+                            </li>
+                            <li style="font-size: 1.1rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>3️⃣</span><span style="color: white; font-weight: 500;">Learn how to read Melting & Boiling Points on a table.</span>
+                            </li>
+                            <li style="font-size: 1.1rem; display: flex; align-items: flex-start; gap: 10px;">
+                                <span>4️⃣</span><span style="color: white; font-weight: 500;">Connect states of matter to Periodic Table Groups.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 2: Particle Theory
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Particle Theory</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">Everything in the universe is made of tiny particles.</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto; align-items: stretch;">
+                        <div class="glass-card" style="border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary);">The Rules of Particles</h3>
+                            <ul style="color: white; margin-left: 1.5rem; line-height: 1.8;">
+                                <li>All matter is made of <strong>particles</strong> (atoms, ions, or molecules).</li>
+                                <li>These particles are <strong>always moving</strong>.</li>
+                                <li>There are <strong>forces of attraction</strong> between them, pulling them together.</li>
+                            </ul>
+                        </div>
+
+                        <div class="pedagogical-note note-theory" style="margin: 0; display: flex; flex-direction: column; justify-content: center;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-fire"></i> Heat = Movement</div>
+                            <p style="color: white; font-size: 1.1rem; line-height: 1.6;">
+                                The more <strong>heat energy</strong> particles have, the faster they move!<br><br>
+                                If they move fast enough, they can break the forces holding them together and change their state.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 3: The Three States
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">The Three States of Matter</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">How particles behave depending on their energy.</p>
+                    
+                    <div class="grid-3 delay-2" style="max-width: 1050px; margin: 0 auto;">
+                        <div class="glass-card" style="border-top: 4px solid var(--cold);">
+                            <div class="text-center"><i class="fa-solid fa-cube" style="font-size: 3rem; color: var(--cold); margin-bottom: 1rem;"></i></div>
+                            <h3 style="color: var(--cold); text-align: center;">Solid</h3>
+                            <ul style="color: white; font-size: 1rem; margin-left: 1rem; line-height: 1.6;">
+                                <li><strong>Arrangement:</strong> Tightly packed in a regular, neat pattern.</li>
+                                <li><strong>Movement:</strong> Vibrate on the spot. Cannot move past each other.</li>
+                                <li><strong>Properties:</strong> Fixed shape and fixed volume. Cannot be compressed.</li>
+                            </ul>
+                        </div>
+
+                        <div class="glass-card" style="border-top: 4px solid var(--accent);">
+                            <div class="text-center"><i class="fa-solid fa-droplet" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i></div>
+                            <h3 style="color: var(--accent); text-align: center;">Liquid</h3>
+                            <ul style="color: white; font-size: 1rem; margin-left: 1rem; line-height: 1.6;">
+                                <li><strong>Arrangement:</strong> Close together, but randomly arranged.</li>
+                                <li><strong>Movement:</strong> Can slide and flow past one another.</li>
+                                <li><strong>Properties:</strong> Takes the shape of the container. Fixed volume.</li>
+                            </ul>
+                        </div>
+
+                        <div class="glass-card" style="border-top: 4px solid var(--warning);">
+                            <div class="text-center"><i class="fa-solid fa-cloud" style="font-size: 3rem; color: var(--warning); margin-bottom: 1rem;"></i></div>
+                            <h3 style="color: var(--warning); text-align: center;">Gas</h3>
+                            <ul style="color: white; font-size: 1rem; margin-left: 1rem; line-height: 1.6;">
+                                <li><strong>Arrangement:</strong> Spread very far apart randomly.</li>
+                                <li><strong>Movement:</strong> Moving rapidly in all directions.</li>
+                                <li><strong>Properties:</strong> Fills entire container. Easily compressed.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 4: State Transitions Diagram
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">State Transitions</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 1.5rem;">What do we call the changes between these states?</p>
+
+                    <div class="glass-card delay-2" style="max-width: 1000px; margin: 0 auto; text-align: center; overflow-x: auto;">
+                        <svg width="800" height="300" viewBox="0 0 800 300" style="max-width: 100%; height: auto;">
+                            <!-- State Boxes -->
+                            <rect x="50" y="100" width="120" height="100" rx="15" fill="#1e293b" stroke="#0ea5e9" stroke-width="4"/>
+                            <text x="110" y="155" font-family="Outfit" font-size="22" font-weight="bold" fill="#f1f5f9" text-anchor="middle">SOLID</text>
+
+                            <rect x="340" y="100" width="120" height="100" rx="15" fill="#1e293b" stroke="#10b981" stroke-width="4"/>
+                            <text x="400" y="155" font-family="Outfit" font-size="22" font-weight="bold" fill="#f1f5f9" text-anchor="middle">LIQUID</text>
+
+                            <rect x="630" y="100" width="120" height="100" rx="15" fill="#1e293b" stroke="#f59e0b" stroke-width="4"/>
+                            <text x="690" y="155" font-family="Outfit" font-size="22" font-weight="bold" fill="#f1f5f9" text-anchor="middle">GAS</text>
+
+                            <!-- HEATING ARROWS (Top - Left to Right) -->
+                            <!-- Solid to Liquid -->
+                            <path d="M 120 90 Q 255 20 390 90" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="5,5"/>
+                            <polygon points="390,90 380,85 385,75" fill="#ef4444" />
+                            <text x="255" y="45" font-family="Plus Jakarta Sans" font-size="16" fill="#ef4444" text-anchor="middle" font-weight="bold">MELTING</text>
+
+                            <!-- Liquid to Gas -->
+                            <path d="M 410 90 Q 545 20 680 90" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="5,5"/>
+                            <polygon points="680,90 670,85 675,75" fill="#ef4444" />
+                            <text x="545" y="45" font-family="Plus Jakarta Sans" font-size="16" fill="#ef4444" text-anchor="middle" font-weight="bold">BOILING / EVAPORATING</text>
+
+                            <!-- COOLING ARROWS (Bottom - Right to Left) -->
+                            <!-- Gas to Liquid -->
+                            <path d="M 680 210 Q 545 280 410 210" fill="none" stroke="#0ea5e9" stroke-width="3" stroke-dasharray="5,5"/>
+                            <polygon points="410,210 420,215 415,225" fill="#0ea5e9" />
+                            <text x="545" y="265" font-family="Plus Jakarta Sans" font-size="16" fill="#0ea5e9" text-anchor="middle" font-weight="bold">CONDENSING</text>
+
+                            <!-- Liquid to Solid -->
+                            <path d="M 390 210 Q 255 280 120 210" fill="none" stroke="#0ea5e9" stroke-width="3" stroke-dasharray="5,5"/>
+                            <polygon points="120,210 130,215 125,225" fill="#0ea5e9" />
+                            <text x="255" y="265" font-family="Plus Jakarta Sans" font-size="16" fill="#0ea5e9" text-anchor="middle" font-weight="bold">FREEZING</text>
+
+                            <!-- Helper text -->
+                            <text x="400" y="20" font-family="Outfit" font-size="14" fill="#ef4444" text-anchor="middle"><i class="fa-solid fa-fire"></i> Heating (Gaining Energy)</text>
+                            <text x="400" y="290" font-family="Outfit" font-size="14" fill="#0ea5e9" text-anchor="middle"><i class="fa-solid fa-snowflake"></i> Cooling (Losing Energy)</text>
+                        </svg>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 5: Melting & Boiling Points Explained
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Melting & Boiling Points</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">Overcoming the forces of attraction.</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 900px; margin: 0 auto;">
+                        <div class="pedagogical-note note-write" style="margin: 0; border-color: var(--danger);">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-temperature-arrow-up"></i> Melting Point</div>
+                            <p style="color: white; font-size: 1.1rem; line-height: 1.6;">
+                                The specific temperature at which a <strong>Solid turns into a Liquid</strong>.<br><br>
+                                Particles gain enough energy to break free from their fixed positions and start sliding around.
+                            </p>
+                        </div>
+
+                        <div class="pedagogical-note note-write" style="margin: 0; border-color: var(--warning);">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-fire-burner"></i> Boiling Point</div>
+                            <p style="color: white; font-size: 1.1rem; line-height: 1.6;">
+                                The specific temperature at which a <strong>Liquid turns into a Gas</strong>.<br><br>
+                                Particles gain massive energy, completely breaking the forces holding them together, flying far apart.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 6: Data Table
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Reading Melting & Boiling Points</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">Let's look at real data for different elements.</p>
+
+                    <div class="glass-card delay-2" style="max-width: 900px; margin: 0 auto; padding: 1rem; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; color: white; min-width: 600px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.2);">
+                                    <th style="padding: 1rem; color: var(--text-dim);">Element</th>
+                                    <th style="padding: 1rem; color: var(--text-dim);">Group</th>
+                                    <th style="padding: 1rem; color: var(--text-dim);">State at 20°C</th>
+                                    <th style="padding: 1rem; color: var(--danger);">Melting Point</th>
+                                    <th style="padding: 1rem; color: var(--warning);">Boiling Point</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <td style="padding: 1rem; font-weight: bold; color: var(--text-light);">Sodium (Na)</td>
+                                    <td style="padding: 1rem; color: var(--accent);">1 (Metal)</td>
+                                    <td style="padding: 1rem;">Solid</td>
+                                    <td style="padding: 1rem; color: var(--danger);">98°C</td>
+                                    <td style="padding: 1rem; color: var(--warning);">883°C</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <td style="padding: 1rem; font-weight: bold; color: var(--text-light);">Chlorine (Cl)</td>
+                                    <td style="padding: 1rem; color: var(--danger);">7 (Non-Metal)</td>
+                                    <td style="padding: 1rem;">Gas</td>
+                                    <td style="padding: 1rem; color: var(--danger);">-101°C</td>
+                                    <td style="padding: 1rem; color: var(--warning);">-34°C</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 1rem; font-weight: bold; color: var(--text-light);">Neon (Ne)</td>
+                                    <td style="padding: 1rem; color: var(--primary);">8/0 (Noble Gas)</td>
+                                    <td style="padding: 1rem;">Gas</td>
+                                    <td style="padding: 1rem; color: var(--danger);">-248°C</td>
+                                    <td style="padding: 1rem; color: var(--warning);">-246°C</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="pedagogical-note note-theory delay-3" style="max-width: 900px; margin: 1.5rem auto 0 auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-lightbulb"></i> The Room Temperature Rule (20°C)</div>
+                        <p style="color: white; font-size: 1.05rem;">
+                            If room temperature is <strong>colder</strong> than the Melting Point, the substance hasn't melted yet (it's a <strong>Solid</strong>).<br>
+                            If room temperature is <strong>hotter</strong> than the Boiling Point, it has completely boiled off (it's a <strong>Gas</strong>).
+                        </p>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 7: Periodic Table placement 
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Periodic Groups & Their States</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">Why do metals and non-metals behave differently?</p>
+                    
+                    <div class="grid-2 delay-2" style="max-width: 950px; margin: 0 auto;">
+                        <div class="glass-card" style="border-top: 4px solid var(--accent); height: 100%;">
+                            <h3 style="color: var(--accent);"><i class="fa-solid fa-cubes"></i> Metals (Left Side)</h3>
+                            <p style="color: white; margin-bottom: 1rem;">Groups 1 and 2 are <strong>Metals</strong>.</p>
+                            <ul style="color: var(--text-dim); margin-left: 1.5rem; line-height: 1.6;">
+                                <li>Their atoms are held together by very strong metallic bonds.</li>
+                                <li>It takes immense heat to break these bonds.</li>
+                                <li><strong>Result:</strong> Very high melting/boiling points. Almost all are Solids at room temp.</li>
+                            </ul>
+                        </div>
+
+                        <div class="glass-card" style="border-top: 4px solid var(--primary); height: 100%;">
+                            <h3 style="color: var(--primary);"><i class="fa-solid fa-wind"></i> Non-Metals (Right Side)</h3>
+                            <p style="color: white; margin-bottom: 1rem;">Groups 7 and 8 are <strong>Non-Metals</strong>.</p>
+                            <ul style="color: var(--text-dim); margin-left: 1.5rem; line-height: 1.6;">
+                                <li>They have weak forces between their molecules.</li>
+                                <li><strong>Group 8 (Noble Gases)</strong> shells are already full, so they don't bond to each other at all!</li>
+                                <li><strong>Result:</strong> Very low melting/boiling points. Many are Gases at room temp.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 8: How they interact
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Interacting States: The Team-Up</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">What happens when a Solid Metal reacts with a Gas Non-Metal?</p>
+
+                    <div class="glass-card delay-2" style="max-width: 900px; margin: 0 auto; border-top: 4px solid var(--warning); text-align: center;">
+                        
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                            <div style="background: rgba(16, 185, 129, 0.1); border: 2px solid var(--accent); padding: 1.5rem; border-radius: 12px; width: 220px;">
+                                <h4 style="color: var(--accent); font-size: 1.3rem;">Group 1 Metal</h4>
+                                <p style="color: white; font-weight: bold; margin-top: 0.5rem;">(Solid State)</p>
+                                <p style="color: var(--text-dim); font-size: 0.9rem;">e.g., Sodium (Na)</p>
+                            </div>
+                            
+                            <i class="fa-solid fa-plus" style="font-size: 2rem; color: var(--text-dim);"></i>
+                            
+                            <div style="background: rgba(239, 68, 68, 0.1); border: 2px solid var(--danger); padding: 1.5rem; border-radius: 12px; width: 220px;">
+                                <h4 style="color: var(--danger); font-size: 1.3rem;">Group 7 Halogen</h4>
+                                <p style="color: white; font-weight: bold; margin-top: 0.5rem;">(Gas State)</p>
+                                <p style="color: var(--text-dim); font-size: 0.9rem;">e.g., Chlorine (Cl₂)</p>
+                            </div>
+
+                            <i class="fa-solid fa-arrow-right" style="font-size: 2rem; color: white;"></i>
+                            
+                            <div style="background: rgba(245, 158, 11, 0.1); border: 2px solid var(--warning); padding: 1.5rem; border-radius: 12px; width: 220px;">
+                                <h4 style="color: var(--warning); font-size: 1.3rem;">Ionic Compound</h4>
+                                <p style="color: white; font-weight: bold; margin-top: 0.5rem;">(Solid Lattice)</p>
+                                <p style="color: var(--text-dim); font-size: 0.9rem;">e.g., Salt (NaCl)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="pedagogical-note note-success" style="margin: 2rem auto 0 auto; max-width: 800px; text-align: left;">
+                            <p style="color: white; font-size: 1.1rem; line-height: 1.6;">
+                                When these elements react, they give and take electrons to form ions. The positive and negative ions lock together in a giant structure. Because this electrical attraction is so strong, <strong>Ionic Compounds have very high melting points and are Solids at room temperature!</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // SLIDE 9: Checkpoint Quiz
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 class="text-center">Final Checkpoint</h2>
+                    <p class="text-center delay-1" style="margin-bottom: 2rem;">Test your knowledge on states of matter.</p>
+
+                    <div class="glass-card delay-2" style="max-width: 850px; margin: 0 auto; max-height: 500px; overflow-y: auto;">
+                        
+                        <h3 style="margin-bottom: 1rem; color: white; font-size: 1.1rem;">1. According to particle theory, what happens when particles gain heat energy?</h3>
+                        <div class="quiz-group">
+                            <div class="quiz-option" data-correct="false"><i class="fa-regular fa-circle"></i> They slow down and become a solid.</div>
+                            <div class="quiz-option" data-correct="true"><i class="fa-regular fa-circle"></i> They move faster and can break the forces holding them together.</div>
+                        </div>
+
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: white; font-size: 1.1rem;">2. What is the transition from a Gas to a Liquid called?</h3>
+                        <div class="quiz-group">
+                            <div class="quiz-option" data-correct="true"><i class="fa-regular fa-circle"></i> Condensing</div>
+                            <div class="quiz-option" data-correct="false"><i class="fa-regular fa-circle"></i> Freezing</div>
+                        </div>
+
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: white; font-size: 1.1rem;">3. If an element has a Melting Point of 1,500°C, what state is it at room temp (20°C)?</h3>
+                        <div class="quiz-group">
+                            <div class="quiz-option" data-correct="true"><i class="fa-regular fa-circle"></i> Solid</div>
+                            <div class="quiz-option" data-correct="false"><i class="fa-regular fa-circle"></i> Liquid</div>
+                        </div>
+
+                        <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: white; font-size: 1.1rem;">4. Why are Noble Gases (Group 8/0) gases at room temperature?</h3>
+                        <div class="quiz-group">
+                            <div class="quiz-option" data-correct="false"><i class="fa-regular fa-circle"></i> They have very strong metallic bonds.</div>
+                            <div class="quiz-option" data-correct="true"><i class="fa-regular fa-circle"></i> Their outer shells are full, so they don't bond to each other, making them easy to separate.</div>
+                        </div>
+                        
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const options = container.querySelectorAll('.quiz-option');
+                const handlers = [];
+
+                options.forEach(opt => {
+                    const handler = function() {
+                        const siblings = this.parentElement.querySelectorAll('.quiz-option');
+                        siblings.forEach(s => {
+                            s.classList.remove('correct', 'incorrect');
+                            s.querySelector('i').className = 'fa-regular fa-circle';
+                        });
+
+                        if (this.getAttribute('data-correct') === 'true') {
+                            this.classList.add('correct');
+                            this.querySelector('i').className = 'fa-solid fa-check-circle';
+                        } else {
+                            this.classList.add('incorrect');
+                            this.querySelector('i').className = 'fa-solid fa-xmark-circle';
+                        }
+                    };
+                    handlers.push({ element: opt, fn: handler });
+                    opt.addEventListener('click', handler);
+                });
+
+                return () => {
+                    handlers.forEach(h => h.element.removeEventListener('click', h.fn));
+                };
+            }
+        }
+    ];
+
+    // --- RENDER LOGIC ---
+    function render() {
+        const container = document.getElementById('slide-container');
+        const slide = state.slides[state.currentSlide];
+        
+        if (state.cleanupFn) {
+            state.cleanupFn();
+            state.cleanupFn = null;
+        }
+
+        container.innerHTML = slide.template();
+        
+        if (slide.script) {
+            state.cleanupFn = slide.script(container);
+        }
+        
+        const progressPercentage = ((state.currentSlide + 1) / state.slides.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercentage + "%";
+        
+        document.getElementById('btn-prev').disabled = state.currentSlide === 0;
+        document.getElementById('btn-next').disabled = state.currentSlide === state.slides.length - 1;
+        document.getElementById('viewport').scrollTop = 0;
+    }
+
+    function changeSlide(dir) {
+        const next = state.currentSlide + dir;
+        if (next >= 0 && next < state.slides.length) {
+            state.currentSlide = next;
+            render();
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('btn-prev').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('btn-next').addEventListener('click', () => changeSlide(1));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Initialize
+    render();
+</script>
+
+</body>
+</html>
