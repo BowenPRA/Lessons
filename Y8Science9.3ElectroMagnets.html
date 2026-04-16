@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9.3 & 9.4 Electromagnets - Year 8 Science</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (BOWEN ENGINE) --- */
+        :root {
+            --bg-deep: #0f172a;        
+            --bg-panel: #1e293b;       
+            --primary: #8b5cf6;        
+            --primary-glow: rgba(139, 92, 246, 0.5);
+            --accent: #10b981;         
+            --warning: #f59e0b;        
+            --danger: #ef4444;         
+            --text-light: #f8fafc;     
+            --text-dim: #94a3b8;       
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            font-size: 18px; 
+            /* Premium Grid Background */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 35%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1), transparent 35%),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 20;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px var(--primary-glow);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-wrapper {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 4rem; 
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 20;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; letter-spacing: -0.5px; }
+        h1 { font-size: 4rem; margin-bottom: 1rem; text-shadow: 0 0 30px var(--primary-glow); }
+        h2 { font-size: 2.8rem; margin-bottom: 1.5rem; color: #c4b5fd; }
+        h3 { font-size: 1.8rem; margin-bottom: 1rem; color: white; }
+        p, li { line-height: 1.6; margin-bottom: 1rem; font-size: 1.3rem; }
+        ul, ol { margin-left: 2rem; margin-bottom: 1rem; }
+        strong { font-weight: 800; color: white; }
+
+        /* --- COMPONENTS --- */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+
+        /* Buttons */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        .btn:active { transform: scale(0.95); }
+        
+        .btn-nav {
+            width: 56px; height: 56px;
+            background: rgba(30, 41, 59, 0.8);
+            color: var(--text-light);
+            font-size: 1.4rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-action:hover { background: linear-gradient(135deg, #7c3aed, #5b21b6); transform: translateY(-2px); box-shadow: 0 12px 25px rgba(139, 92, 246, 0.4); }
+
+        /* Progress Bar */
+        .progress-container { flex: 1; margin: 0 3rem; height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), #a78bfa); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--primary-glow); }
+
+        /* --- SIGNPOSTING (PEDAGOGICAL NOTES) --- */
+        .pedagogical-note {
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid;
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .pedagogical-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 1.5px;
+        }
+
+        .note-write { border-left-color: #3b82f6; background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-write .pedagogical-badge { color: #60a5fa; }
+
+        .note-task { border-left-color: var(--warning); background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-task .pedagogical-badge { color: #fbbf24; }
+
+        .note-theory { border-left-color: var(--primary); background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-theory .pedagogical-badge { color: #a78bfa; }
+
+        .note-success { border-left-color: var(--accent); background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-success .pedagogical-badge { color: #34d399; }
+
+        /* --- INTERACTIVE TOOLS --- */
+        
+        /* Reveal Card */
+        .reveal-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .reveal-card:hover { border-color: var(--primary); box-shadow: 0 15px 40px rgba(139, 92, 246, 0.2); transform: translateY(-5px); }
+        .reveal-card .reveal-content { display: none; margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; }
+        .reveal-card.revealed .reveal-content { display: block; animation: slideDown 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .reveal-card.revealed .pre-reveal { opacity: 0.5; transform: scale(0.95); transition: all 0.4s ease; }
+
+        /* Summative Quiz */
+        .quiz-block {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .quiz-question { font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem; color: #cbd5e1; }
+        .quiz-option {
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.1);
+            padding: 1.2rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); transform: translateX(5px); }
+        .quiz-option.correct { border-color: var(--accent); background: rgba(16, 185, 129, 0.15); box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+        .quiz-option.incorrect { border-color: var(--danger); background: rgba(239, 68, 68, 0.15); }
+        .quiz-feedback { margin-top: 1rem; font-size: 1.3rem; font-weight: bold; min-height: 30px; display: none; }
+
+        /* Video Embed */
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseGlow { 0% { filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.4)); } 50% { filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.8)); } 100% { filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.4)); } }
+        
+        .anim-enter { animation: fadeIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+        .delay-1 { animation-delay: 0.15s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .delay-3 { animation-delay: 0.45s; }
+
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+
+    </style>
+</head>
+<body>
+
+<!-- GLOBAL SVG DEFS FOR HIGH-END GRAPHICS -->
+<svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+    <defs>
+        <linearGradient id="metal-nail" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#cbd5e1" />
+            <stop offset="20%" stop-color="#94a3b8" />
+            <stop offset="80%" stop-color="#475569" />
+            <stop offset="100%" stop-color="#1e293b" />
+        </linearGradient>
+        
+        <linearGradient id="copper-wire" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#fca5a5" />
+            <stop offset="40%" stop-color="#d97706" />
+            <stop offset="60%" stop-color="#b45309" />
+            <stop offset="100%" stop-color="#78350f" />
+        </linearGradient>
+
+        <linearGradient id="battery-body" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#10b981" />
+            <stop offset="100%" stop-color="#047857" />
+        </linearGradient>
+
+        <linearGradient id="metal-red" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#fca5a5" />
+            <stop offset="15%" stop-color="#ef4444" />
+            <stop offset="50%" stop-color="#b91c1c" />
+            <stop offset="85%" stop-color="#991b1b" />
+            <stop offset="100%" stop-color="#450a0a" />
+        </linearGradient>
+        
+        <!-- Glow Filters -->
+        <filter id="field-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+        <filter id="strong-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="12" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+        <filter id="drop-shadow-heavy" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#000000" flood-opacity="0.6"/>
+        </filter>
+    </defs>
+</svg>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 8 Science</div>
+            <span style="font-weight: 700; color: #cbd5e1; font-size: 1.2rem; letter-spacing: 0.5px;">9.3 & 9.4 Electromagnets</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            16 April 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slides injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    // --- THE BOWEN ENGINE ---
+
+    const Engine = {
+        currentSlide: 0,
+        cleanupFn: null,
+        slides: [],
+        
+        init(slides) {
+            this.slides = slides;
+            document.getElementById('btn-prev').addEventListener('click', () => this.navigate(-1));
+            document.getElementById('btn-next').addEventListener('click', () => this.navigate(1));
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') this.navigate(1);
+                if (e.key === 'ArrowLeft') this.navigate(-1);
+            });
+            
+            this.render();
+        },
+
+        navigate(dir) {
+            const next = this.currentSlide + dir;
+            if (next >= 0 && next < this.slides.length) {
+                this.currentSlide = next;
+                this.render();
+            }
+        },
+
+        render() {
+            if (this.cleanupFn && typeof this.cleanupFn === 'function') {
+                this.cleanupFn();
+                this.cleanupFn = null;
+            }
+
+            const container = document.getElementById('slide-container');
+            const slide = this.slides[this.currentSlide];
+            
+            container.innerHTML = slide.template();
+            
+            if (slide.script) {
+                this.cleanupFn = slide.script(container);
+            }
+
+            document.getElementById('progress-bar').style.width = `${((this.currentSlide + 1) / this.slides.length) * 100}%`;
+            document.getElementById('btn-prev').disabled = this.currentSlide === 0;
+            document.getElementById('btn-next').disabled = this.currentSlide === this.slides.length - 1;
+            
+            // Auto scroll to top of slide on render
+            const wrapper = document.querySelector('.slide-wrapper');
+            if(wrapper) wrapper.scrollTop = 0;
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([container]);
+            }
+        }
+    };
+
+    // --- LESSON CONTENT ---
+
+    const lessonSlides = [
+        // Slide 1: Objective
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <div style="position: relative; display: inline-block; margin-bottom: 2rem; animation: pulseGlow 4s infinite;">
+                        <svg viewBox="0 0 300 300" width="250" height="250" style="filter: drop-shadow(0 0 40px rgba(139, 92, 246, 0.3));">
+                            <!-- Background glow -->
+                            <circle cx="150" cy="150" r="100" fill="var(--primary-glow)" filter="url(#strong-glow)" opacity="0.4"/>
+                            
+                            <!-- Iron Nail -->
+                            <rect x="130" y="50" width="40" height="200" fill="url(#metal-nail)" rx="5" filter="url(#drop-shadow-heavy)"/>
+                            <polygon points="120,50 180,50 150,20" fill="url(#metal-nail)"/>
+                            <polygon points="130,250 170,250 150,280" fill="url(#metal-nail)"/>
+                            
+                            <!-- Coiled Wire (Copper) -->
+                            <path d="M 110 80 Q 150 100 190 80" fill="none" stroke="url(#copper-wire)" stroke-width="12" stroke-linecap="round"/>
+                            <path d="M 110 110 Q 150 130 190 110" fill="none" stroke="url(#copper-wire)" stroke-width="12" stroke-linecap="round"/>
+                            <path d="M 110 140 Q 150 160 190 140" fill="none" stroke="url(#copper-wire)" stroke-width="12" stroke-linecap="round"/>
+                            <path d="M 110 170 Q 150 190 190 170" fill="none" stroke="url(#copper-wire)" stroke-width="12" stroke-linecap="round"/>
+                            <path d="M 110 200 Q 150 220 190 200" fill="none" stroke="url(#copper-wire)" stroke-width="12" stroke-linecap="round"/>
+                            
+                            <!-- Electricity lines -->
+                            <path d="M 80 50 Q 110 80 90 110 T 110 170" fill="none" stroke="#38bdf8" stroke-width="3" filter="url(#field-glow)" stroke-dasharray="10 5">
+                                <animate attributeName="stroke-dashoffset" from="15" to="0" dur="0.5s" repeatCount="indefinite" />
+                            </path>
+                            <path d="M 220 50 Q 190 80 210 110 T 190 170" fill="none" stroke="#38bdf8" stroke-width="3" filter="url(#field-glow)" stroke-dasharray="10 5">
+                                <animate attributeName="stroke-dashoffset" from="15" to="0" dur="0.5s" repeatCount="indefinite" />
+                            </path>
+                        </svg>
+                    </div>
+                    <h1>9.3 Electromagnets</h1>
+                    
+                    <div class="pedagogical-note note-success delay-1" style="max-width: 850px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objective</div>
+                        <p style="font-size: 2.2rem; font-weight: 800; line-height: 1.3; margin: 0; color: white;">
+                            We will learn how electromagnets work and why they are useful.
+                        </p>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 2: The Hook (Warm Up)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>The Warm-up</h2>
+                    
+                    <div class="pedagogical-note note-task" style="padding: 3rem;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-user-group"></i> Discuss & Write</div>
+                        <h3 style="font-size: 2rem; color: var(--warning); margin-bottom: 1rem;">Can you turn off magnets?</h3>
+                        <p style="font-size: 1.4rem;">Can you think about any times it would be incredibly useful to turn a magnet <strong>ON</strong> and <strong>OFF</strong> at will?</p>
+                        <p style="font-size: 1.2rem; color: var(--text-dim); margin-top: 2rem; font-style: italic;">Discuss with your partner. Write down one real-world application in your notebook.</p>
+                    </div>
+
+                    <div class="text-center delay-1" style="margin-top: 3rem;">
+                        <button id="btn-reveal-ideas" class="btn btn-action"><i class="fa-solid fa-lightbulb"></i> Reveal Examples</button>
+                    </div>
+
+                    <div id="ideas-reveal" class="grid-2 hidden" style="margin-top: 3rem; align-items: stretch;">
+                        <div class="glass-card" style="border-left: 4px solid var(--primary); padding: 1.5rem;">
+                            <h4 style="color: var(--primary); font-size: 1.4rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-trash-can"></i> Scrapyards</h4>
+                            <p style="font-size: 1.1rem; margin: 0;">If a crane magnet couldn't turn off, it could pick up heavy metal but would never be able to drop it!</p>
+                        </div>
+                        <div class="glass-card" style="border-left: 4px solid var(--accent); padding: 1.5rem;">
+                            <h4 style="color: var(--accent); font-size: 1.4rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-door-open"></i> Fire Doors</h4>
+                            <p style="font-size: 1.1rem; margin: 0;">Heavy doors are held open by magnets. When the fire alarm triggers, the magnet turns off, snapping the door shut automatically.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-reveal-ideas');
+                const reveal = container.querySelector('#ideas-reveal');
+                
+                const showIdeas = () => {
+                    reveal.classList.remove('hidden');
+                    reveal.classList.add('anim-enter');
+                    btn.style.display = 'none';
+                    setTimeout(() => {
+                        const wrapper = document.querySelector('.slide-wrapper');
+                        wrapper.scrollTo({ top: wrapper.scrollHeight, behavior: 'smooth' });
+                    }, 50);
+                };
+
+                btn.addEventListener('click', showIdeas);
+                return () => btn.removeEventListener('click', showIdeas);
+            }
+        },
+
+        // Slide 3: Permanent Magnets
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Permanent Magnets</h2>
+                    
+                    <div class="grid-2" style="align-items: center;">
+                        <div class="delay-1">
+                            <div class="pedagogical-note note-write">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Vocabulary</div>
+                                <p style="font-size: 1.4rem; margin-bottom: 1rem;"><strong>Magnetised:</strong> Turned into a magnet. A magnetic material (like iron or steel) has been forced to produce its own magnetic field.</p>
+                            </div>
+                            
+                            <h3 style="color: #c4b5fd; margin-top: 2rem;">What is a Permanent Magnet?</h3>
+                            <p style="font-size: 1.3rem;">The magnets you use on the whiteboard or the spinning needle inside a compass are <strong>permanent magnets</strong>.</p>
+                            <p style="font-size: 1.3rem;">They have a magnetic field that is always there. You cannot switch their magnetic field off and on again.</p>
+                            
+                            <div class="pedagogical-note note-theory" style="margin-top: 1.5rem; border-left-color: var(--accent); background: rgba(16, 185, 129, 0.1);">
+                                <p style="font-size: 1.2rem; margin: 0;"><strong>How are they made?</strong> We make permanent magnets by magnetising magnetic materials, often by using a strong pulse of electricity!</p>
+                            </div>
+                        </div>
+
+                        <div class="text-center delay-2">
+                            <div class="glass-card" style="display: inline-block; padding: 3rem;">
+                                <!-- Simple Bar Magnet SVG -->
+                                <svg viewBox="0 0 300 150" width="100%" height="150" style="filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5));">
+                                    <rect x="20" y="40" width="130" height="70" fill="url(#metal-red)" rx="6"/>
+                                    <rect x="150" y="40" width="130" height="70" fill="#1e3a8a" rx="6"/>
+                                    <rect x="20" y="42" width="260" height="5" fill="rgba(255,255,255,0.3)" rx="2"/>
+                                    
+                                    <text x="85" y="85" fill="white" font-weight="bold" font-family="Outfit" font-size="30" text-anchor="middle">N</text>
+                                    <text x="215" y="85" fill="white" font-weight="bold" font-family="Outfit" font-size="30" text-anchor="middle">S</text>
+                                    
+                                    <!-- Always on field lines -->
+                                    <g fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-dasharray="6 6">
+                                        <path d="M 280 75 C 330 75, 330 10, 280 10 C 150 10, 20 10, 20 75" />
+                                        <path d="M 280 75 C 330 75, 330 140, 280 140 C 150 140, 20 140, 20 75" />
+                                    </g>
+                                </svg>
+                                <p style="font-size: 1.1rem; color: var(--text-dim); margin-top: 1.5rem; font-style: italic;">A permanent magnet's field is constantly active.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 4: History & Natural Magnets
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Natural & Historical Magnets</h2>
+                    <p style="font-size: 1.4rem; margin-bottom: 2rem;">Before we used electricity, where did magnets come from?</p>
+                    
+                    <div class="grid-2 delay-1" style="align-items: stretch; text-align: left;">
+                        <!-- Natural Magnets -->
+                        <div class="glass-card" style="border-top: 6px solid #10b981;">
+                            <h3 style="color: #34d399;"><i class="fa-solid fa-leaf"></i> Nature's Magnets</h3>
+                            <p style="font-size: 1.3rem;">Some rocks are naturally magnetised by the Earth's magnetic field over millions of years.</p>
+                            <p style="font-size: 1.3rem;">We call these rocks <strong>Lodestone</strong> (or magnetite). These were the very first magnets discovered by ancient people.</p>
+                        </div>
+
+                        <!-- Historical Method -->
+                        <div class="glass-card" style="border-top: 6px solid #fca5a5;">
+                            <h3 style="color: #fca5a5;"><i class="fa-solid fa-hand-sparkles"></i> The Old Method</h3>
+                            <p style="font-size: 1.3rem;">In the past, people made magnets by physically rubbing a piece of iron with a lodestone.</p>
+                            <p style="font-size: 1.3rem;">By stroking the iron repeatedly in <strong>one single direction</strong>, they forced the electrons inside to line up, turning the iron into a permanent magnet!</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 5: The Electromagnet Intro
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>The Electromagnet</h2>
+                    
+                    <div class="grid-2" style="align-items: center;">
+                        <div class="delay-1">
+                            <p style="font-size: 1.4rem; line-height: 1.6;">Stroking iron takes a long time. Today, we have a much faster way to magnetise materials: <strong>Electricity!</strong></p>
+                            
+                            <div class="pedagogical-note note-write" style="margin-top: 2rem;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-bolt"></i> Write This Down</div>
+                                <p style="font-size: 1.3rem;">An <strong>electromagnet</strong> is a magnet made by wrapping a wire around a magnetic material and passing electricity through it.</p>
+                                
+                                <ul style="font-size: 1.3rem; margin-top: 1rem; margin-bottom: 0;">
+                                    <li><strong>Core:</strong> The magnetic material in the middle (e.g., an iron nail).</li>
+                                    <li><strong>Coil:</strong> The insulated wire wrapped tightly around the core.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- High Quality Diagram -->
+                        <div class="text-center delay-2">
+                            <div class="glass-card" style="display: inline-block; padding: 2rem; position: relative;">
+                                <svg viewBox="0 0 400 250" width="100%" height="250" filter="drop-shadow(0 10px 20px rgba(0,0,0,0.5))">
+                                    <!-- Core (Nail) -->
+                                    <rect x="80" y="80" width="220" height="20" fill="url(#metal-nail)" rx="2"/>
+                                    <polygon points="300,80 340,90 300,100" fill="url(#metal-nail)"/>
+                                    <rect x="70" y="70" width="10" height="40" fill="url(#metal-nail)" rx="2"/>
+                                    
+                                    <!-- Coil -->
+                                    <g stroke="url(#copper-wire)" stroke-width="4" fill="none">
+                                        <path d="M 120 75 C 130 75, 130 105, 120 105" />
+                                        <path d="M 130 75 C 140 75, 140 105, 130 105" />
+                                        <path d="M 140 75 C 150 75, 150 105, 140 105" />
+                                        <path d="M 150 75 C 160 75, 160 105, 150 105" />
+                                        <path d="M 160 75 C 170 75, 170 105, 160 105" />
+                                        <path d="M 170 75 C 180 75, 180 105, 170 105" />
+                                        <path d="M 180 75 C 190 75, 190 105, 180 105" />
+                                        <path d="M 190 75 C 200 75, 200 105, 190 105" />
+                                        <path d="M 200 75 C 210 75, 210 105, 200 105" />
+                                        <path d="M 210 75 C 220 75, 220 105, 210 105" />
+                                        <path d="M 220 75 C 230 75, 230 105, 220 105" />
+                                        <path d="M 230 75 C 240 75, 240 105, 230 105" />
+                                    </g>
+                                    
+                                    <!-- Circuit lines -->
+                                    <polyline points="120,105 120,180 180,180" fill="none" stroke="white" stroke-width="2"/>
+                                    <polyline points="230,75 230,50 360,50 360,180 260,180" fill="none" stroke="white" stroke-width="2"/>
+                                    
+                                    <!-- Battery (Cell) -->
+                                    <rect x="180" y="160" width="80" height="40" fill="url(#battery-body)" rx="4"/>
+                                    <rect x="260" y="170" width="5" height="20" fill="grey"/>
+                                    <text x="195" y="186" fill="white" font-weight="bold" font-family="Outfit">-</text>
+                                    <text x="245" y="186" fill="white" font-weight="bold" font-family="Outfit">+</text>
+
+                                    <!-- Labels -->
+                                    <text x="350" y="85" fill="white" font-size="14" font-family="Plus Jakarta Sans">Iron Core</text>
+                                    <text x="175" y="60" fill="#fca5a5" font-size="14" font-family="Plus Jakarta Sans">Wire Coil</text>
+                                    <text x="220" y="220" fill="#10b981" font-size="14" font-family="Plus Jakarta Sans">Cell (Battery)</text>
+                                </svg>
+                                
+                                <div class="pedagogical-note note-task" style="text-align: left; margin: 1rem 0 0 0; padding: 1rem;">
+                                    <p style="margin: 0; font-size: 1.1rem;"><i class="fa-solid fa-pen-ruler"></i> <strong>Task:</strong> Quickly sketch this diagram in your book.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 6: Interactive Poles
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Poles of an Electromagnet</h2>
+                    <p style="font-size: 1.4rem; margin-bottom: 2rem;">Just like a permanent bar magnet, an electromagnet has a <strong>North</strong> and a <strong>South</strong> pole.</p>
+                    
+                    <div class="glass-card" style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+                        
+                        <!-- Interactive Area -->
+                        <div style="position: relative; height: 250px;">
+                            <svg viewBox="0 0 500 250" width="100%" height="100%">
+                                <!-- Field Lines (Animated via JS) -->
+                                <g id="mag-field" fill="none" stroke="rgba(139, 92, 246, 0.4)" stroke-width="3" stroke-dasharray="10 5" filter="url(#field-glow)">
+                                    <path d="M 380 90 C 450 -20, 50 -20, 120 90" />
+                                    <path d="M 380 110 C 450 220, 50 220, 120 110" />
+                                </g>
+
+                                <!-- Core (Nail) -->
+                                <rect x="100" y="90" width="300" height="20" fill="url(#metal-nail)" rx="2"/>
+                                <rect x="90" y="80" width="10" height="40" fill="url(#metal-nail)" rx="2"/>
+                                
+                                <!-- Coil -->
+                                <g stroke="url(#copper-wire)" stroke-width="6" fill="none">
+                                    <path d="M 150 85 C 160 85, 160 115, 150 115" />
+                                    <path d="M 170 85 C 180 85, 180 115, 170 115" />
+                                    <path d="M 190 85 C 200 85, 200 115, 190 115" />
+                                    <path d="M 210 85 C 220 85, 220 115, 210 115" />
+                                    <path d="M 230 85 C 240 85, 240 115, 230 115" />
+                                    <path d="M 250 85 C 260 85, 260 115, 250 115" />
+                                    <path d="M 270 85 C 280 85, 280 115, 270 115" />
+                                    <path d="M 290 85 C 300 85, 300 115, 290 115" />
+                                    <path d="M 310 85 C 320 85, 320 115, 310 115" />
+                                    <path d="M 330 85 C 340 85, 340 115, 330 115" />
+                                </g>
+                                
+                                <!-- Circuit lines -->
+                                <polyline id="wire-left" points="150,115 150,200 200,200" fill="none" stroke="white" stroke-width="3"/>
+                                <polyline id="wire-right" points="330,85 330,50 420,50 420,200 300,200" fill="none" stroke="white" stroke-width="3"/>
+                                
+                                <!-- Battery Group -->
+                                <g id="battery-group" style="transform-origin: 250px 200px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
+                                    <rect x="200" y="180" width="100" height="40" fill="url(#battery-body)" rx="4"/>
+                                    <rect x="300" y="190" width="6" height="20" fill="grey"/>
+                                    <text x="220" y="206" fill="white" font-weight="bold" font-family="Outfit" font-size="20">-</text>
+                                    <text x="280" y="206" fill="white" font-weight="bold" font-family="Outfit" font-size="20">+</text>
+                                </g>
+
+                                <!-- Pole Labels -->
+                                <text id="lbl-left" x="50" y="106" fill="white" font-size="28" font-family="Outfit" font-weight="bold" filter="drop-shadow(0 2px 4px black)">S</text>
+                                <text id="lbl-right" x="450" y="106" fill="white" font-size="28" font-family="Outfit" font-weight="bold" filter="drop-shadow(0 2px 4px black)">N</text>
+                            </svg>
+                        </div>
+                        
+                        <div style="margin-top: 1rem;">
+                            <button id="btn-reverse" class="btn btn-action" style="background: linear-gradient(135deg, var(--accent), #059669);"><i class="fa-solid fa-rotate"></i> Reverse Battery Connections</button>
+                        </div>
+
+                        <div class="pedagogical-note note-theory" style="text-align: left; margin: 2rem 0 0 0;">
+                            <p style="font-size: 1.3rem; margin: 0;">You can completely reverse the poles of an electromagnet by either <strong>wrapping the coil in the opposite direction</strong>, or by <strong>reversing the connections on the battery!</strong></p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-reverse');
+                const battery = container.querySelector('#battery-group');
+                const lblLeft = container.querySelector('#lbl-left');
+                const lblRight = container.querySelector('#lbl-right');
+                const magField = container.querySelector('#mag-field');
+                
+                let isReversed = false;
+                let animId;
+
+                const animateField = () => {
+                    const paths = magField.querySelectorAll('path');
+                    const speed = isReversed ? -1 : 1;
+                    let currentOffset = parseFloat(paths[0].getAttribute('stroke-dashoffset') || '0');
+                    
+                    currentOffset += speed;
+                    if (currentOffset > 15 || currentOffset < -15) currentOffset = 0;
+
+                    paths.forEach(p => p.setAttribute('stroke-dashoffset', currentOffset));
+                    
+                    animId = requestAnimationFrame(animateField);
+                };
+
+                animId = requestAnimationFrame(animateField);
+
+                const togglePoles = () => {
+                    isReversed = !isReversed;
+                    
+                    battery.style.transform = isReversed ? 'rotate(180deg)' : 'rotate(0deg)';
+                    
+                    if (isReversed) {
+                        lblLeft.textContent = 'N';
+                        lblRight.textContent = 'S';
+                        magField.setAttribute('stroke', 'rgba(16, 185, 129, 0.4)'); 
+                    } else {
+                        lblLeft.textContent = 'S';
+                        lblRight.textContent = 'N';
+                        magField.setAttribute('stroke', 'rgba(139, 92, 246, 0.4)'); 
+                    }
+                };
+
+                btn.addEventListener('click', togglePoles);
+
+                return () => {
+                    btn.removeEventListener('click', togglePoles);
+                    cancelAnimationFrame(animId);
+                };
+            }
+        },
+
+        // Slide 7: Applications of Electromagnets (Part 1)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Applications of Electromagnets</h2>
+                    <p style="font-size: 1.4rem; margin-bottom: 2rem;">Because we can switch them off and on, they are used everywhere!</p>
+                    
+                    <div class="grid-2">
+                        <!-- Scrap Metal -->
+                        <div class="glass-card delay-1" style="border-left: 5px solid #3b82f6;">
+                            <h3 style="color: #60a5fa;"><i class="fa-solid fa-dumpster"></i> Sorting Scrap Metal</h3>
+                            <p style="font-size: 1.2rem;">Cranes use giant electromagnets to attract iron and steel out of trash piles. They move the metal, then switch the power off to drop it.</p>
+                        </div>
+
+                        <!-- Fire Doors -->
+                        <div class="glass-card delay-1" style="border-left: 5px solid #ef4444;">
+                            <h3 style="color: #fca5a5;"><i class="fa-solid fa-door-open"></i> Fire Doors</h3>
+                            <p style="font-size: 1.2rem;">Heavy doors in schools are held open by an electromagnet. If the fire alarm sounds, the electricity is cut, turning off the magnet so the door swings shut.</p>
+                        </div>
+
+                        <!-- MRI Scanners -->
+                        <div class="glass-card delay-2" style="border-left: 5px solid #10b981; grid-column: 1 / -1;">
+                            <h3 style="color: #6ee7b7;"><i class="fa-solid fa-bed-pulse"></i> MRI Scanners</h3>
+                            <p style="font-size: 1.2rem;">Hospitals use massive, powerful electromagnets to produce detailed images from inside the human body without surgery. (MRI stands for Magnetic Resonance Imaging).</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 8: Applications of Electromagnets (Part 2)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>More Applications...</h2>
+                    
+                    <div class="grid-2">
+                        <!-- Toasters -->
+                        <div class="glass-card delay-1" style="border-left: 5px solid #f59e0b;">
+                            <h3 style="color: #fcd34d;"><i class="fa-solid fa-bread-slice"></i> Toasters</h3>
+                            <p style="font-size: 1.2rem;">When the handle is pushed down, an electromagnet holds the metal basket down. A timer turns the electromagnet off and the toast pops up!</p>
+                        </div>
+
+                        <!-- Electric Bells -->
+                        <div class="glass-card delay-1" style="border-left: 5px solid #8b5cf6;">
+                            <h3 style="color: #c4b5fd;"><i class="fa-solid fa-bell"></i> Electric Bells</h3>
+                            <p style="font-size: 1.2rem;">Used in fire alarms and school bells. An electromagnet rapidly pulls a metal hammer back and forth, breaking and completing the circuit to strike a metal dome.</p>
+                        </div>
+
+                        <!-- Electric Motors -->
+                        <div class="glass-card delay-2" style="border-left: 5px solid #06b6d4; grid-column: 1 / -1;">
+                            <h3 style="color: #67e8f9;"><i class="fa-solid fa-fan"></i> Electric Motors</h3>
+                            <p style="font-size: 1.2rem;">Electric motors use electromagnets to change electrical energy into kinetic (movement) energy. You'll find these in fans, cars, and appliances!</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 9: Real World Video
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Seeing it in Action</h2>
+                    
+                    <div class="glass-card delay-1" style="max-width: 900px; margin: 2rem auto; padding: 2rem;">
+                        <h3 style="margin-bottom: 1.5rem;"><i class="fa-brands fa-youtube" style="color: #ef4444;"></i> The Scrapyard Electromagnet</h3>
+                        
+                        <div class="video-wrapper">
+                            <iframe src="https://www.youtube.com/embed/XBWy9gzGGd4?autoplay=0&mute=0" title="Scrapyard Electromagnet" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        
+                        <div class="pedagogical-note note-task" style="text-align: left; margin: 2rem 0 0 0;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-eye"></i> Observation Task</div>
+                            <p style="margin: 0; font-size: 1.2rem;">Watch carefully. Notice how the crane operator waits until they are positioned over the truck bed before hitting the switch to cut the power, releasing the magnetic grip instantly.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 10: Summative Assessment
+        {
+            template: () => `
+                <div class="anim-enter" style="padding-bottom: 4rem;">
+                    <div class="pedagogical-note note-success text-center">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-clipboard-check"></i> Formative Assessment</div>
+                        <h2>Check Your Understanding</h2>
+                    </div>
+
+                    <div style="max-width: 900px; margin: 0 auto;">
+                        
+                        <!-- Question 1 -->
+                        <div class="quiz-block delay-1">
+                            <div class="quiz-question">1. Which two of these metals can be magnetised?</div>
+                            <div class="quiz-options-container">
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">A</span> Copper and Silver</div>
+                                <div class="quiz-option" data-correct="true"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">B</span> Iron and Steel</div>
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">C</span> Aluminium and Tin</div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="quiz-block delay-2">
+                            <div class="quiz-question">2. What is the main difference between an electromagnet and a permanent magnet?</div>
+                            <div class="quiz-options-container">
+                                <div class="quiz-option" data-correct="true"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">A</span> An electromagnet can be switched on and off using electricity. A permanent magnet cannot.</div>
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">B</span> An electromagnet only attracts copper, while a permanent magnet attracts iron.</div>
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">C</span> An electromagnet does not have a North or South pole.</div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="quiz-block delay-3">
+                            <div class="quiz-question">3. When making a simple electromagnet, what is the iron nail in the middle called?</div>
+                            <div class="quiz-options-container">
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">A</span> The Cell</div>
+                                <div class="quiz-option" data-correct="true"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">B</span> The Core</div>
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">C</span> The Coil</div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const quizBlocks = container.querySelectorAll('.quiz-block');
+                const handlers = [];
+
+                quizBlocks.forEach(block => {
+                    const options = block.querySelectorAll('.quiz-option');
+                    const feedback = block.querySelector('.quiz-feedback');
+
+                    const handleQuiz = (e) => {
+                        options.forEach(opt => {
+                            opt.classList.remove('correct', 'incorrect');
+                            opt.style.pointerEvents = 'none';
+                        });
+
+                        const selected = e.currentTarget;
+                        const isCorrect = selected.getAttribute('data-correct') === 'true';
+                        
+                        feedback.style.display = 'block';
+
+                        if (isCorrect) {
+                            selected.classList.add('correct');
+                            feedback.innerHTML = '<span style="color: var(--accent);"><i class="fa-solid fa-check-circle"></i> Correct! Well done.</span>';
+                        } else {
+                            selected.classList.add('incorrect');
+                            block.querySelector('[data-correct="true"]').classList.add('correct');
+                            feedback.innerHTML = '<span style="color: var(--danger);"><i class="fa-solid fa-times-circle"></i> Incorrect. Review the correct answer highlighted.</span>';
+                        }
+                    };
+
+                    options.forEach(opt => {
+                        opt.addEventListener('click', handleQuiz);
+                        handlers.push({ element: opt, handler: handleQuiz });
+                    });
+                });
+
+                return () => {
+                    handlers.forEach(({element, handler}) => {
+                        element.removeEventListener('click', handler);
+                    });
+                };
+            }
+        },
+
+        // Slide 11: Textbook Questions & Free Response
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Independent Practice</h2>
+                    
+                    <div class="grid-2" style="align-items: start;">
+                        <!-- Textbook Questions -->
+                        <div class="glass-card delay-1" style="padding: 2.5rem;">
+                            <h3 style="color: var(--warning); margin-bottom: 1.5rem;"><i class="fa-solid fa-book-open"></i> Textbook Questions</h3>
+                            <ol style="font-size: 1.2rem; margin-left: 1.5rem; text-align: left; line-height: 1.6;">
+                                <li style="margin-bottom: 1.2rem;">Which two of these metals can be magnetised?<br><span style="color: var(--text-dim); font-size: 1.1rem;">copper, iron, aluminium, steel, silver, tin</span></li>
+                                <li style="margin-bottom: 1.2rem;">Explain the difference between 'magnetic' and 'magnetised'.</li>
+                                <li style="margin-bottom: 1.2rem;">State <strong>one</strong> difference between an electromagnet and a permanent magnet.</li>
+                                <li style="margin-bottom: 1.2rem;">Draw a diagram to show how an electromagnet could be made from a cell, a switch, a coil of wire and an iron nail. Use circuit symbols.</li>
+                                <li><strong>a.</strong> List three applications of electromagnets.<br><strong>b.</strong> For one application, explain why a permanent magnet would not be suitable.</li>
+                            </ol>
+                        </div>
+                        
+                        <!-- Free Response -->
+                        <div class="delay-2">
+                            <div class="pedagogical-note note-write" style="background: rgba(30, 41, 59, 0.8);">
+                                <div class="pedagogical-badge" style="color: var(--primary);"><i class="fa-solid fa-pen-nib"></i> Free Response Task</div>
+                                <p style="font-size: 1.3rem; margin-top: 1rem;">Write a complete paragraph explaining <strong>how electromagnets work</strong> and <strong>why they are useful</strong>.</p>
+                                
+                                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 1.5rem; margin-top: 1.5rem;">
+                                    <p style="font-size: 1.2rem; color: var(--accent); font-weight: bold; margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> Success Criteria:</p>
+                                    <ul style="font-size: 1.1rem; margin-left: 1.5rem; margin-bottom: 0;">
+                                        <li>Write your answer in full English sentences in your notebook.</li>
+                                        <li>You MUST use at least <strong>two</strong> scientific concepts or vocabulary words from today's notes.</li>
+                                        <li style="list-style: none; margin-top: 0.8rem; color: var(--text-dim); font-size: 1rem;"><em>(Examples: core, coil, magnetised, magnetic field, switch, current)</em></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 12: Lab Proposal
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Planning Our Lab Investigation</h2>
+                    <p style="font-size: 1.4rem; margin-bottom: 2rem;">Next week, we are going to build our own electromagnets in class!</p>
+                    
+                    <div class="glass-card delay-1" style="max-width: 1000px; margin: 0 auto; border-color: var(--accent); padding: 3rem;">
+                        <i class="fa-solid fa-clipboard-list" style="font-size: 4rem; color: var(--accent); margin-bottom: 1.5rem;"></i>
+                        
+                        <div class="pedagogical-note note-task" style="text-align: left; margin-bottom: 2rem;">
+                            <div class="pedagogical-badge" style="color: var(--warning);"><i class="fa-solid fa-envelope-open-text"></i> Letter to Mr. Seth</div>
+                            <p style="font-size: 1.3rem;">We need to order supplies. In your notebook, write a proposal to Mr. Seth outlining exactly what we need and what we will do with it.</p>
+                        </div>
+
+                        <div class="grid-3 text-left">
+                            <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                                <h3 style="color: #38bdf8; font-size: 1.4rem;"><i class="fa-solid fa-box-open"></i> 1. Supply List</h3>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">List every item you need to build a complete working electromagnet circuit.</p>
+                            </div>
+                            
+                            <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                                <h3 style="color: var(--primary); font-size: 1.4rem;"><i class="fa-solid fa-wrench"></i> 2. The Process</h3>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">Write a short paragraph explaining exactly how you will assemble the parts.</p>
+                            </div>
+
+                            <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                                <h3 style="color: var(--warning); font-size: 1.4rem;"><i class="fa-solid fa-vial-circle-check"></i> 3. The Test</h3>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">How will you prove your magnet works? How will you measure its strength?</p>
+                            </div>
+                        </div>
+
+                        <p style="margin-top: 2rem; font-size: 1.3rem; color: var(--accent); font-weight: bold;">
+                            * The best, most scientifically accurate proposal will be sent directly to Mr. Seth!
+                        </p>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 13: Increasing Strength (9.4 Content)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Making Electromagnets Stronger</h2>
+                    <p style="font-size: 1.4rem; margin-bottom: 2rem;">If we want our lab magnet to pick up more paperclips, how can we increase its strength?</p>
+                    
+                    <div class="grid-2">
+                        <div class="delay-1">
+                            <div class="pedagogical-note note-theory" style="margin-bottom: 2rem;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-arrow-up-right-dots"></i> Three Ways to Increase Strength</div>
+                                <ol style="font-size: 1.3rem; margin-left: 1.5rem; line-height: 1.6;">
+                                    <li><strong>Increase the current:</strong> Add more cells (batteries) to the circuit to push more electricity through.</li>
+                                    <li><strong>Increase the number of turns:</strong> Wrap the wire coil around the core more times.</li>
+                                    <li><strong>Use an Iron Core:</strong> Ensure the material in the middle is a magnetic material like soft iron, rather than a non-magnetic material like wood or plastic.</li>
+                                </ol>
+                            </div>
+                            
+                            <p style="font-size: 1.2rem; color: var(--text-dim); font-style: italic;">Note: Adding more current will make the magnet stronger, but it will also make the wire very hot! We have to be careful not to overheat our circuits.</p>
+                        </div>
+                        
+                        <div class="text-center delay-2">
+                            <div class="glass-card" style="padding: 2rem;">
+                                <h3 style="color: var(--accent); margin-bottom: 1.5rem;">Weak vs. Strong</h3>
+                                
+                                <svg viewBox="0 0 400 200" width="100%" height="200" filter="drop-shadow(0 10px 20px rgba(0,0,0,0.5))">
+                                    <!-- WEAK -->
+                                    <text x="100" y="30" fill="white" font-weight="bold" font-family="Outfit" text-anchor="middle">Weak</text>
+                                    <rect x="50" y="50" width="100" height="15" fill="url(#metal-nail)" rx="2"/>
+                                    <g stroke="url(#copper-wire)" stroke-width="3" fill="none">
+                                        <path d="M 70 45 C 75 45, 75 70, 70 70" />
+                                        <path d="M 90 45 C 95 45, 95 70, 90 70" />
+                                        <path d="M 110 45 C 115 45, 115 70, 110 70" />
+                                        <path d="M 130 45 C 135 45, 135 70, 130 70" />
+                                    </g>
+                                    <rect x="80" y="100" width="40" height="20" fill="url(#battery-body)" rx="2"/>
+                                    <polyline points="70,45 70,110 80,110" fill="none" stroke="white" stroke-width="2"/>
+                                    <polyline points="130,70 130,110 120,110" fill="none" stroke="white" stroke-width="2"/>
+                                    <!-- 1 Paperclip -->
+                                    <path d="M 150 55 C 160 55, 160 65, 150 65" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+                                    
+                                    <!-- STRONG -->
+                                    <text x="300" y="30" fill="var(--accent)" font-weight="bold" font-family="Outfit" text-anchor="middle">Strong!</text>
+                                    <rect x="250" y="50" width="100" height="15" fill="url(#metal-nail)" rx="2"/>
+                                    <g stroke="url(#copper-wire)" stroke-width="3" fill="none">
+                                        <path d="M 260 45 C 265 45, 265 70, 260 70" />
+                                        <path d="M 270 45 C 275 45, 275 70, 270 70" />
+                                        <path d="M 280 45 C 285 45, 285 70, 280 70" />
+                                        <path d="M 290 45 C 295 45, 295 70, 290 70" />
+                                        <path d="M 300 45 C 305 45, 305 70, 300 70" />
+                                        <path d="M 310 45 C 315 45, 315 70, 310 70" />
+                                        <path d="M 320 45 C 325 45, 325 70, 320 70" />
+                                        <path d="M 330 45 C 335 45, 335 70, 330 70" />
+                                    </g>
+                                    <!-- 2 Cells -->
+                                    <rect x="260" y="100" width="40" height="20" fill="url(#battery-body)" rx="2"/>
+                                    <rect x="305" y="100" width="40" height="20" fill="url(#battery-body)" rx="2"/>
+                                    <polyline points="260,45 260,110 260,110" fill="none" stroke="white" stroke-width="2"/>
+                                    <polyline points="330,70 330,110 345,110" fill="none" stroke="white" stroke-width="2"/>
+                                    <line x1="300" y1="110" x2="305" y2="110" stroke="white" stroke-width="2"/>
+                                    <!-- Multiple Paperclips -->
+                                    <path d="M 350 50 C 360 50, 360 60, 350 60" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+                                    <path d="M 355 55 C 365 55, 365 65, 355 65" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+                                    <path d="M 348 62 C 358 62, 358 72, 348 72" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 14: Final Questions
+        {
+            template: () => `
+                <div class="anim-enter" style="padding-bottom: 4rem;">
+                    <div class="pedagogical-note note-success text-center">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-clipboard-check"></i> Final Check</div>
+                        <h2>Testing Your Knowledge</h2>
+                    </div>
+
+                    <div style="max-width: 900px; margin: 0 auto;">
+                        
+                        <!-- Question 1 -->
+                        <div class="quiz-block delay-1">
+                            <div class="quiz-question">1. Which of the following will NOT increase the strength of an electromagnet?</div>
+                            <div class="quiz-options-container">
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">A</span> Adding more turns of wire around the core.</div>
+                                <div class="quiz-option" data-correct="true"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">B</span> Reversing the connections on the battery.</div>
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">C</span> Adding another cell to increase the current.</div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="quiz-block delay-2">
+                            <div class="quiz-question">2. Why do we wrap the coil around an iron nail instead of a wooden stick?</div>
+                            <div class="quiz-options-container">
+                                <div class="quiz-option" data-correct="true"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">A</span> Iron is a magnetic material, which amplifies the magnetic field. Wood is non-magnetic.</div>
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">B</span> Wood is too light and will float away.</div>
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">C</span> Iron conducts electricity directly into the paperclips.</div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const quizBlocks = container.querySelectorAll('.quiz-block');
+                const handlers = [];
+
+                quizBlocks.forEach(block => {
+                    const options = block.querySelectorAll('.quiz-option');
+                    const feedback = block.querySelector('.quiz-feedback');
+
+                    const handleQuiz = (e) => {
+                        options.forEach(opt => {
+                            opt.classList.remove('correct', 'incorrect');
+                            opt.style.pointerEvents = 'none';
+                        });
+
+                        const selected = e.currentTarget;
+                        const isCorrect = selected.getAttribute('data-correct') === 'true';
+                        
+                        feedback.style.display = 'block';
+
+                        if (isCorrect) {
+                            selected.classList.add('correct');
+                            feedback.innerHTML = '<span style="color: var(--accent);"><i class="fa-solid fa-check-circle"></i> Correct!</span>';
+                        } else {
+                            selected.classList.add('incorrect');
+                            block.querySelector('[data-correct="true"]').classList.add('correct');
+                            feedback.innerHTML = '<span style="color: var(--danger);"><i class="fa-solid fa-times-circle"></i> Incorrect. Review the correct answer.</span>';
+                        }
+                    };
+
+                    options.forEach(opt => {
+                        opt.addEventListener('click', handleQuiz);
+                        handlers.push({ element: opt, handler: handleQuiz });
+                    });
+                });
+
+                return () => {
+                    handlers.forEach(({element, handler}) => {
+                        element.removeEventListener('click', handler);
+                    });
+                };
+            }
+        }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        Engine.init(lessonSlides);
+    });
+
+</script>
+</body>
+</html>
