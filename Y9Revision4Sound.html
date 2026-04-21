@@ -453,18 +453,14 @@
         // Slide 2: The Investigation (Interactive Oscilloscope)
         {
             template: () => `
-                <div class="anim-enter">
-                    <h2>Virtual Oscilloscope</h2>
-                    
-                    <div class="pedagogical-note note-task">
-                        <div class="pedagogical-badge"><i class="fa-solid fa-flask"></i> Investigation Task</div>
-                        <p style="font-size: 1.3rem;">Experiment with the sliders below. Observe how changing the Amplitude (Volume) and the Frequency (Pitch) changes the shape of the wave on the graph.</p>
-                    </div>
+                <div class="anim-enter text-center">
+                    <h2 style="margin-bottom: 0.5rem;">Virtual Oscilloscope</h2>
+                    <p style="font-size: 1.3rem; margin-bottom: 1.5rem; color: var(--text-dim);">Experiment with the Amplitude (Volume) and Frequency (Pitch) sliders to see how the wave changes.</p>
 
                     <div class="glass-card delay-1" style="padding: 2rem;">
                         
                         <!-- Canvas Container -->
-                        <div style="position: relative; width: 100%; max-width: 900px; margin: 0 auto; background: #020617; border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8);">
+                        <div style="position: relative; width: 100%; max-width: 1100px; margin: 0 auto; background: #020617; border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8);">
                             
                             <!-- Y-Axis Label -->
                             <div style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%) rotate(-90deg); transform-origin: left center; color: var(--text-dim); font-weight: bold; font-size: 1rem; letter-spacing: 1px;">
@@ -476,16 +472,16 @@
                                 Time (ms)
                             </div>
 
-                            <canvas id="waveCanvas" width="900" height="350" style="display: block; width: 100%;"></canvas>
+                            <canvas id="waveCanvas" width="1100" height="450" style="display: block; width: 100%;"></canvas>
                         </div>
 
                         <!-- Controls -->
-                        <div style="max-width: 800px; margin: 2rem auto 0 auto;">
+                        <div style="max-width: 800px; margin: 1.5rem auto 0 auto;">
                             <!-- Amplitude Slider -->
                             <div class="slider-container">
                                 <div class="slider-label"><i class="fa-solid fa-volume-high" style="color: var(--primary);"></i> Amplitude</div>
-                                <input type="range" id="ampSlider" min="0" max="150" value="80">
-                                <div class="val-badge" id="ampDisplay">8.0 cm</div>
+                                <input type="range" id="ampSlider" min="0" max="200" value="100">
+                                <div class="val-badge" id="ampDisplay">10.0 cm</div>
                             </div>
                             
                             <!-- Frequency Slider -->
@@ -495,7 +491,7 @@
                                 <div class="val-badge" id="freqDisplay" style="color: var(--accent);">440 Hz</div>
                             </div>
 
-                            <!-- NEW: Sound and Freeze Buttons -->
+                            <!-- Sound and Freeze Buttons -->
                             <div style="display: flex; gap: 1.5rem; justify-content: center; margin-top: 2rem;">
                                 <button id="btn-sound" class="btn btn-action" style="background: var(--primary);"><i class="fa-solid fa-volume-up"></i> Play Sound</button>
                                 <button id="btn-freeze" class="btn btn-action" style="background: var(--warning);"><i class="fa-solid fa-pause"></i> Freeze Wave</button>
@@ -597,7 +593,7 @@
                         btnSound.style.background = 'var(--primary)';
                     } else {
                         oscillator.frequency.setTargetAtTime(parseInt(freqSlider.value), audioCtx.currentTime, 0.01);
-                        const vol = (parseInt(ampSlider.value) / 150) * 0.3;
+                        const vol = (parseInt(ampSlider.value) / 200) * 0.3;
                         gainNode.gain.setTargetAtTime(vol, audioCtx.currentTime, 0.1);
                         btnSound.innerHTML = '<i class="fa-solid fa-volume-xmark"></i> Stop Sound';
                         btnSound.style.background = 'var(--danger)';
@@ -622,7 +618,7 @@
 
                 ampSlider.addEventListener('input', () => {
                     if (isPlaying && gainNode) {
-                        const vol = (parseInt(ampSlider.value) / 150) * 0.3;
+                        const vol = (parseInt(ampSlider.value) / 200) * 0.3;
                         gainNode.gain.setTargetAtTime(vol, audioCtx.currentTime, 0.1);
                     }
                 });
@@ -951,14 +947,14 @@
                         <button id="btn-sync" class="btn btn-action" style="background: var(--warning);"><i class="fa-solid fa-shuffle"></i> Out of Sync</button>
                     </div>
 
-                    <div class="grid-2" style="max-width: 1200px; margin: 0 auto; gap: 2rem; align-items: stretch;">
+                    <div class="grid-2" style="max-width: 1400px; margin: 0 auto; gap: 2rem; align-items: stretch;">
                         <div class="glass-card" style="padding: 1.5rem; text-align: left; margin: 0;">
                             <h3 style="color: #cbd5e1; margin-bottom: 1rem; font-size: 1.4rem;"><i class="fa-solid fa-wave-square"></i> Motion Visualizer</h3>
-                            <canvas id="interferenceCanvas" width="500" height="400" style="width: 100%; background: #020617; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);"></canvas>
+                            <canvas id="interferenceCanvas" width="600" height="500" style="width: 100%; background: #020617; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);"></canvas>
                         </div>
                         <div class="glass-card" style="padding: 1.5rem; text-align: left; margin: 0;">
                             <h3 style="color: #cbd5e1; margin-bottom: 1rem; font-size: 1.4rem;"><i class="fa-solid fa-camera"></i> Static Graph Snapshot</h3>
-                            <svg id="staticGraph" viewBox="0 0 500 400" style="width: 100%; background: #020617; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);">
+                            <svg id="staticGraph" viewBox="0 0 600 500" style="width: 100%; background: #020617; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);">
                                 <!-- Drawn by JS -->
                             </svg>
                         </div>
@@ -988,10 +984,10 @@
                     const { phase, freqB, color, label } = getWaveParams();
                     let pathA = '', pathB = '', pathC = '';
                     
-                    for(let x=0; x<=500; x+=2) {
-                        let yA = 70 + 40 * Math.sin(x*0.05);
-                        let yB = 200 + 40 * Math.sin(x*0.05 * freqB + phase);
-                        let yC = 330 + (40 * Math.sin(x*0.05) + 40 * Math.sin(x*0.05 * freqB + phase));
+                    for(let x=0; x<=600; x+=2) {
+                        let yA = 90 + 50 * Math.sin(x*0.05);
+                        let yB = 250 + 50 * Math.sin(x*0.05 * freqB + phase);
+                        let yC = 410 + (50 * Math.sin(x*0.05) + 50 * Math.sin(x*0.05 * freqB + phase));
                         
                         pathA += (x===0?'M':'L') + `${x},${yA} `;
                         pathB += (x===0?'M':'L') + `${x},${yB} `;
@@ -999,17 +995,17 @@
                     }
 
                     svg.innerHTML = `
-                        <line x1="0" y1="70" x2="500" y2="70" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4 4" />
-                        <line x1="0" y1="200" x2="500" y2="200" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4 4" />
-                        <line x1="0" y1="330" x2="500" y2="330" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
+                        <line x1="0" y1="90" x2="600" y2="90" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4 4" />
+                        <line x1="0" y1="250" x2="600" y2="250" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4 4" />
+                        <line x1="0" y1="410" x2="600" y2="410" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
                         
                         <path d="${pathA}" fill="none" stroke="#38bdf8" stroke-width="3"/>
                         <path d="${pathB}" fill="none" stroke="#f43f5e" stroke-width="3"/>
                         <path d="${pathC}" fill="none" stroke="${color}" stroke-width="4"/>
 
                         <text x="10" y="30" fill="#38bdf8" font-family="Outfit" font-size="16" font-weight="bold">Wave A</text>
-                        <text x="10" y="160" fill="#f43f5e" font-family="Outfit" font-size="16" font-weight="bold">Wave B</text>
-                        <text x="10" y="270" fill="${color}" font-family="Outfit" font-size="16" font-weight="bold">Result (A + B): ${label}</text>
+                        <text x="10" y="190" fill="#f43f5e" font-family="Outfit" font-size="16" font-weight="bold">Wave B</text>
+                        <text x="10" y="350" fill="${color}" font-family="Outfit" font-size="16" font-weight="bold">Result (A + B): ${label}</text>
                     `;
                 };
 
@@ -1018,29 +1014,29 @@
                     
                     ctx.strokeStyle = 'rgba(255,255,255,0.2)';
                     ctx.setLineDash([4, 4]);
-                    [70, 200].forEach(y => {
-                        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(500,y); ctx.stroke();
+                    [90, 250].forEach(y => {
+                        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(600,y); ctx.stroke();
                     });
                     ctx.setLineDash([]);
                     ctx.strokeStyle = 'rgba(255,255,255,0.3)';
                     ctx.lineWidth = 2;
-                    ctx.beginPath(); ctx.moveTo(0,330); ctx.lineTo(500,330); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(0,410); ctx.lineTo(600,410); ctx.stroke();
 
                     const { phase, freqB, color, label } = getWaveParams();
 
                     ctx.beginPath();
                     ctx.strokeStyle = '#38bdf8';
                     ctx.lineWidth = 3;
-                    for(let x=0; x<500; x+=2) {
-                        let y = 70 + 40 * Math.sin(x*0.05 - time);
+                    for(let x=0; x<600; x+=2) {
+                        let y = 90 + 50 * Math.sin(x*0.05 - time);
                         if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
                     }
                     ctx.stroke();
 
                     ctx.beginPath();
                     ctx.strokeStyle = '#f43f5e';
-                    for(let x=0; x<500; x+=2) {
-                        let y = 200 + 40 * Math.sin(x*0.05 * freqB - time + phase);
+                    for(let x=0; x<600; x+=2) {
+                        let y = 250 + 50 * Math.sin(x*0.05 * freqB - time + phase);
                         if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
                     }
                     ctx.stroke();
@@ -1048,10 +1044,10 @@
                     ctx.beginPath();
                     ctx.strokeStyle = color;
                     ctx.lineWidth = 4;
-                    for(let x=0; x<500; x+=2) {
-                        let valA = 40 * Math.sin(x*0.05 - time);
-                        let valB = 40 * Math.sin(x*0.05 * freqB - time + phase);
-                        let y = 330 + (valA + valB);
+                    for(let x=0; x<600; x+=2) {
+                        let valA = 50 * Math.sin(x*0.05 - time);
+                        let valB = 50 * Math.sin(x*0.05 * freqB - time + phase);
+                        let y = 410 + (valA + valB);
                         if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
                     }
                     ctx.stroke();
@@ -1060,9 +1056,9 @@
                     ctx.font = 'bold 16px Outfit';
                     ctx.fillText('Wave A', 10, 30);
                     ctx.fillStyle = '#f43f5e';
-                    ctx.fillText('Wave B', 10, 160);
+                    ctx.fillText('Wave B', 10, 190);
                     ctx.fillStyle = color;
-                    ctx.fillText('Result: ' + label, 10, 270);
+                    ctx.fillText('Result: ' + label, 10, 350);
 
                     time += 0.05;
                     animId = requestAnimationFrame(animate);
@@ -1190,7 +1186,7 @@
                         
                         <div class="pedagogical-note note-task">
                             <div class="pedagogical-badge"><i class="fa-solid fa-pen-nib"></i> Synthesis Paragraph</div>
-                            <p style="font-size: 1.4rem; margin-top: 1rem;">Imagine you are teaching a Year 7 student how to use an electronic synthesizer. Write a short paragraph explaining how they must adjust the sound waves to change a <strong>quiet, low-pitched rumble</strong> into a <strong>loud, high-pitched screech</strong>.</p>
+                            <p style="font-size: 1.4rem; margin-top: 1rem;">Imagine you are explaining an oscilloscope screen to a Year 7 student. Write a short paragraph describing exactly how the visible wave on the screen would change as a sound goes from a <strong>quiet, low-pitched rumble</strong> to a <strong>loud, high-pitched screech</strong>.</p>
                         </div>
 
                         <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 2rem; margin-top: 2rem;">
@@ -1201,6 +1197,28 @@
                                 <li>Use the term <strong>Hertz (Hz)</strong> correctly.</li>
                                 <li>Describe visually how the wave on the screen will look after the changes (e.g., taller, squished).</li>
                             </ul>
+                        </div>
+                        
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 12: Model Answer
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Model Answer: Final Task</h2>
+                    <p style="font-size: 1.4rem; margin-bottom: 3rem;">Compare your paragraph with this exemplary Year 9 response.</p>
+                    
+                    <div class="glass-card delay-1" style="max-width: 900px; margin: 0 auto; text-align: left; padding: 3rem; border-top: 6px solid var(--accent);">
+                        
+                        <div class="pedagogical-note note-success">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-star"></i> Exemplar Response</div>
+                            <p style="font-size: 1.3rem; line-height: 1.8; margin-top: 1rem; color: white;">
+                                "Initially, the quiet, low-pitched rumble would appear as a wave with a <strong>small amplitude</strong> (not very tall on the y-axis) because it has low volume. The peaks would also be spread far apart horizontally because it has a <strong>low frequency</strong> (a small number of Hertz, meaning fewer waves per second).<br><br>
+                                As the sound changes into a loud, high-pitched screech, the wave on the screen would undergo two major visual changes. First, the <strong>amplitude would increase significantly</strong>, making the wave much taller due to the increased volume. Secondly, the <strong>frequency would increase</strong> to a higher number of Hertz, which means the waves would look 'squished' together horizontally as many more complete cycles pass across the screen every second."
+                            </p>
                         </div>
                         
                     </div>
