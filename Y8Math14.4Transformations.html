@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14.4 Transformations - Year 8 Math</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (BOWEN ENGINE) --- */
+        :root {
+            --bg-deep: #0f172a;        
+            --bg-panel: #1e293b;       
+            --primary: #8b5cf6;        
+            --primary-glow: rgba(139, 92, 246, 0.5);
+            --accent: #10b981;         
+            --warning: #f59e0b;        
+            --danger: #ef4444;         
+            --text-light: #f8fafc;     
+            --text-dim: #94a3b8;       
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            font-size: 18px; 
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 35%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1), transparent 35%),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 20;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px var(--primary-glow);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-wrapper {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 4rem; 
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 20;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; letter-spacing: -0.5px; }
+        h1 { font-size: 4rem; margin-bottom: 1rem; text-shadow: 0 0 30px var(--primary-glow); }
+        h2 { font-size: 2.8rem; margin-bottom: 1.5rem; color: #c4b5fd; }
+        h3 { font-size: 1.8rem; margin-bottom: 1rem; color: white; }
+        p, li { line-height: 1.6; margin-bottom: 1rem; font-size: 1.3rem; }
+        ul, ol { margin-left: 2rem; margin-bottom: 1rem; }
+        strong { font-weight: 800; color: white; }
+
+        /* --- COMPONENTS --- */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+
+        /* Buttons */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        .btn:active { transform: scale(0.95); }
+        
+        .btn-nav {
+            width: 56px; height: 56px;
+            background: rgba(30, 41, 59, 0.8);
+            color: var(--text-light);
+            font-size: 1.4rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-action:hover { background: linear-gradient(135deg, #7c3aed, #5b21b6); transform: translateY(-2px); box-shadow: 0 12px 25px rgba(139, 92, 246, 0.4); }
+
+        /* Progress Bar */
+        .progress-container { flex: 1; margin: 0 3rem; height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), #a78bfa); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--primary-glow); }
+
+        /* --- SIGNPOSTING (PEDAGOGICAL NOTES) --- */
+        .pedagogical-note {
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid;
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .pedagogical-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 1.5px;
+        }
+        .note-write { border-left-color: #3b82f6; background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-write .pedagogical-badge { color: #60a5fa; }
+        .note-task { border-left-color: var(--warning); background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-task .pedagogical-badge { color: #fbbf24; }
+        .note-theory { border-left-color: var(--primary); background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-theory .pedagogical-badge { color: #a78bfa; }
+        .note-success { border-left-color: var(--accent); background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-success .pedagogical-badge { color: #34d399; }
+
+        /* Sliders */
+        .slider-container { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .slider-label { font-weight: 700; width: 120px; color: #cbd5e1; font-family: 'Outfit'; font-size: 1.2rem; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; outline: none; flex: 1; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--primary); cursor: pointer; box-shadow: 0 0 10px var(--primary-glow); }
+        input[type=range].accent-slider::-webkit-slider-thumb { background: var(--accent); box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+
+        /* Mathematical Column Vector Visual */
+        .column-vector {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 0.5rem 1.5rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2rem;
+            font-weight: bold;
+            line-height: 1.2;
+            color: white;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        .column-vector::before, .column-vector::after {
+            content: '';
+            position: absolute;
+            top: 5px; bottom: 5px;
+            width: 12px;
+            border: 3px solid var(--accent);
+            border-radius: 6px;
+        }
+        .column-vector::before { left: 5px; border-right: none; }
+        .column-vector::after { right: 5px; border-left: none; }
+
+        /* Summative Quiz */
+        .quiz-block { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--border-radius); padding: 2rem; margin-bottom: 2rem; }
+        .quiz-question { font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem; color: #cbd5e1; }
+        .quiz-option { background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.1); padding: 1.2rem 1.5rem; border-radius: 12px; margin-bottom: 0.8rem; cursor: pointer; transition: all 0.2s; font-size: 1.2rem; display: flex; align-items: center; gap: 1rem; }
+        .quiz-option:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); transform: translateX(5px); }
+        .quiz-option.correct { border-color: var(--accent); background: rgba(16, 185, 129, 0.15); box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+        .quiz-option.incorrect { border-color: var(--danger); background: rgba(239, 68, 68, 0.15); }
+        .quiz-feedback { margin-top: 1rem; font-size: 1.3rem; font-weight: bold; min-height: 30px; display: none; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes spinCW { 100% { transform: rotate(360deg); } }
+        @keyframes spinCCW { 100% { transform: rotate(-360deg); } }
+        
+        .spin-cw { animation: spinCW 3s linear infinite; transform-origin: 100px 100px; }
+        .spin-ccw { animation: spinCCW 3s linear infinite; transform-origin: 100px 100px; }
+
+        .anim-enter { animation: fadeIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+        .delay-1 { animation-delay: 0.15s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 8 Math</div>
+            <span style="font-weight: 700; color: #cbd5e1; font-size: 1.2rem; letter-spacing: 0.5px;">14.4 Transformations</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            21 April 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slides injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    // --- THE BOWEN ENGINE ---
+    const Engine = {
+        currentSlide: 0,
+        cleanupFn: null,
+        slides: [],
+        
+        init(slides) {
+            this.slides = slides;
+            document.getElementById('btn-prev').addEventListener('click', () => this.navigate(-1));
+            document.getElementById('btn-next').addEventListener('click', () => this.navigate(1));
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') this.navigate(1);
+                if (e.key === 'ArrowLeft') this.navigate(-1);
+            });
+            
+            this.render();
+        },
+
+        navigate(dir) {
+            const next = this.currentSlide + dir;
+            if (next >= 0 && next < this.slides.length) {
+                this.currentSlide = next;
+                this.render();
+            }
+        },
+
+        render() {
+            if (this.cleanupFn && typeof this.cleanupFn === 'function') {
+                this.cleanupFn();
+                this.cleanupFn = null;
+            }
+
+            const container = document.getElementById('slide-container');
+            const slide = this.slides[this.currentSlide];
+            
+            container.innerHTML = slide.template();
+            
+            if (slide.script) {
+                this.cleanupFn = slide.script(container);
+            }
+
+            document.getElementById('progress-bar').style.width = `${((this.currentSlide + 1) / this.slides.length) * 100}%`;
+            document.getElementById('btn-prev').disabled = this.currentSlide === 0;
+            document.getElementById('btn-next').disabled = this.currentSlide === this.slides.length - 1;
+            
+            const wrapper = document.querySelector('.slide-wrapper');
+            if(wrapper) wrapper.scrollTop = 0;
+
+            if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+                MathJax.typesetPromise([container]).catch(err => console.error('MathJax error:', err));
+            }
+        }
+    };
+
+    // Helper to generate SVG Grid Background
+    const generateGridSVG = (width, height, step) => {
+        let gridLines = '';
+        // Vertical lines
+        for(let x=0; x<=width; x+=step) {
+            const isAxis = (x === step * 2); // Put y-axis slightly inwards (for default origin at x=2)
+            gridLines += `<line x1="${x}" y1="0" x2="${x}" y2="${height}" stroke="${isAxis ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.15)'}" stroke-width="${isAxis ? '2' : '1'}"/>`;
+        }
+        // Horizontal lines
+        for(let y=0; y<=height; y+=step) {
+            const isAxis = (y === height - step * 2); // Put x-axis slightly up from bottom
+            gridLines += `<line x1="0" y1="${y}" x2="${width}" y2="${y}" stroke="${isAxis ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.15)'}" stroke-width="${isAxis ? '2' : '1'}"/>`;
+        }
+        return gridLines;
+    };
+
+    // Helper to generate a centered crosshair grid (for generic examples)
+    const generateCenterGridSVG = (width, height, step) => {
+        let gridLines = '';
+        const cx = width / 2;
+        const cy = height / 2;
+        for(let x=0; x<=width; x+=step) {
+            const isAxis = (x === cx);
+            gridLines += `<line x1="${x}" y1="0" x2="${x}" y2="${height}" stroke="${isAxis ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.15)'}" stroke-width="${isAxis ? '2' : '1'}"/>`;
+        }
+        for(let y=0; y<=height; y+=step) {
+            const isAxis = (y === cy);
+            gridLines += `<line x1="0" y1="${y}" x2="${width}" y2="${y}" stroke="${isAxis ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.15)'}" stroke-width="${isAxis ? '2' : '1'}"/>`;
+        }
+        return gridLines;
+    }
+
+    // --- LESSON CONTENT ---
+    const lessonSlides = [
+        // Slide 1: Objective
+        {
+            template: () => `
+                <div class="anim-enter text-center" style="display: flex; flex-direction: column; justify-content: center; height: 60vh;">
+                    <div style="font-size: 6rem; color: var(--primary); margin-bottom: 1rem; filter: drop-shadow(0 0 30px var(--primary-glow));">
+                        <i class="fa-solid fa-shapes"></i>
+                    </div>
+                    <h1>Transformations</h1>
+                    <h2 style="color: var(--text-dim); font-size: 2.2rem; margin-top: -1rem;">Translations, Reflections & Rotations</h2>
+                    
+                    <div class="pedagogical-note note-success delay-1" style="max-width: 800px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Lesson Objective</div>
+                        <p style="font-size: 2rem; font-weight: 800; line-height: 1.4; margin: 0; color: white;">
+                            To understand how to move, flip, and rotate shapes on a coordinate grid using vectors, mirror lines, and centres of rotation.
+                        </p>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 2: Interactive Translation
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Translations</h2>
+                    <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">A <strong>translation</strong> simply slides an object up, down, left, or right. Move the sliders to translate the <strong>Object (Triangle A)</strong> to create the <strong>Image (Triangle A')</strong>.</p>
+
+                    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem; align-items: stretch;" class="delay-1">
+                        <!-- Graph Canvas -->
+                        <div class="glass-card" style="padding: 1rem; background: #0f172a; margin-bottom: 0; display: flex; align-items: center; justify-content: center;">
+                            <svg id="trans-grid" viewBox="0 0 400 400" style="width: 100%; aspect-ratio: 1 / 1; max-height: 500px; background: #1e293b; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+                                <!-- Drawn via JS -->
+                            </svg>
+                        </div>
+
+                        <!-- Controls -->
+                        <div style="display: flex; flex-direction: column;">
+                            <div class="pedagogical-note note-theory" style="margin-bottom: 1.5rem; padding: 1.2rem;">
+                                <div class="pedagogical-badge" style="font-size: 0.9rem;"><i class="fa-solid fa-arrows-up-down-left-right"></i> Column Vectors</div>
+                                <p style="font-size: 1rem; margin-bottom: 0;">Translations are written as column vectors. Top number is horizontal ($x$), bottom is vertical ($y$).</p>
+                            </div>
+
+                            <div class="glass-card" style="text-align: center; border-left: 5px solid var(--accent); flex: 1; margin-bottom: 0; padding: 1.5rem;">
+                                <h3 style="color: var(--accent); margin-bottom: 1rem; font-size: 1.3rem;">Current Translation</h3>
+                                
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem;">
+                                    <span style="font-size: 1.2rem; font-family: 'Outfit';">Vector = </span>
+                                    <div class="column-vector" id="vector-display" style="font-size: 1.5rem; padding: 0.3rem 1rem;">
+                                        <div id="vec-x" style="color: #38bdf8;">2</div>
+                                        <div id="vec-y" style="color: #fca5a5;">2</div>
+                                    </div>
+                                </div>
+
+                                <div class="slider-container" style="margin-bottom: 1.5rem;">
+                                    <div class="slider-label" style="color: #38bdf8; font-size: 1rem; width: 100px;">X (Left/Right)</div>
+                                    <input type="range" id="slide-x" min="-4" max="6" value="2">
+                                </div>
+                                <div class="slider-container">
+                                    <div class="slider-label" style="color: #fca5a5; font-size: 1rem; width: 100px;">Y (Up/Down)</div>
+                                    <input type="range" id="slide-y" class="accent-slider" min="-5" max="5" value="2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const svg = container.querySelector('#trans-grid');
+                const slideX = container.querySelector('#slide-x');
+                const slideY = container.querySelector('#slide-y');
+                const vecX = container.querySelector('#vec-x');
+                const vecY = container.querySelector('#vec-y');
+
+                const step = 40;
+                const originX = 2 * step; 
+                const originY = 8 * step; 
+
+                const toX = (mathX) => originX + (mathX * step);
+                const toY = (mathY) => originY - (mathY * step);
+
+                const objA = [ {x: 1, y: 5}, {x: 1, y: 1}, {x: 3, y: 1} ];
+
+                const drawGrid = () => {
+                    let content = generateGridSVG(400, 400, step);
+                    
+                    content += `<text x="${toX(7.5)}" y="${toY(-0.5)}" fill="white" font-size="16" font-style="italic">x</text>`;
+                    content += `<text x="${toX(-0.5)}" y="${toY(7.5)}" fill="white" font-size="16" font-style="italic">y</text>`;
+                    content += `<text x="${toX(-0.5)}" y="${toY(-0.5)}" fill="rgba(255,255,255,0.6)" font-size="14">0</text>`;
+                    
+                    for(let i=2; i<=8; i+=2) {
+                        content += `<text x="${toX(i)}" y="${toY(-0.5)}" fill="rgba(255,255,255,0.6)" font-size="12" text-anchor="middle">${i}</text>`;
+                        content += `<text x="${toX(-0.5)}" y="${toY(i) + 4}" fill="rgba(255,255,255,0.6)" font-size="12" text-anchor="end">${i}</text>`;
+                    }
+
+                    const objPoints = objA.map(p => `${toX(p.x)},${toY(p.y)}`).join(' ');
+                    content += `
+                        <polygon points="${objPoints}" fill="rgba(148, 163, 184, 0.4)" stroke="#94a3b8" stroke-width="3"/>
+                        <text x="${toX(1.5)}" y="${toY(2.5)}" fill="white" font-family="Outfit" font-weight="bold" font-size="18">A</text>
+                        <text x="${toX(1.5)}" y="${toY(1.8)}" fill="#94a3b8" font-size="12">Object</text>
+                    `;
+
+                    content += `<polygon id="image-tri" fill="rgba(16, 185, 129, 0.4)" stroke="#10b981" stroke-width="3"/>`;
+                    content += `<text id="image-label" fill="white" font-family="Outfit" font-weight="bold" font-size="18">A'</text>`;
+                    content += `<text id="image-sublabel" fill="#10b981" font-size="12">Image</text>`;
+                    
+                    svg.innerHTML = content;
+                };
+
+                drawGrid();
+                const imageTri = svg.querySelector('#image-tri');
+                const imageLbl = svg.querySelector('#image-label');
+                const imageSubLbl = svg.querySelector('#image-sublabel');
+
+                const updateImage = () => {
+                    const dx = parseInt(slideX.value);
+                    const dy = parseInt(slideY.value);
+                    
+                    vecX.textContent = dx;
+                    vecY.textContent = dy;
+
+                    const imgPoints = objA.map(p => `${toX(p.x + dx)},${toY(p.y + dy)}`).join(' ');
+                    imageTri.setAttribute('points', imgPoints);
+                    
+                    imageLbl.setAttribute('x', toX(1.5 + dx));
+                    imageLbl.setAttribute('y', toY(2.5 + dy));
+                    
+                    imageSubLbl.setAttribute('x', toX(1.5 + dx));
+                    imageSubLbl.setAttribute('y', toY(1.8 + dy));
+                };
+
+                slideX.addEventListener('input', updateImage);
+                slideY.addEventListener('input', updateImage);
+                updateImage(); 
+
+                return () => {
+                    slideX.removeEventListener('input', updateImage);
+                    slideY.removeEventListener('input', updateImage);
+                };
+            }
+        },
+
+        // Slide 3: Translation Problem
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Finding the Translation Vector</h2>
+                    
+                    <div class="grid-2">
+                        <div class="delay-1">
+                            <div class="pedagogical-note note-task">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-calculator"></i> Problem Solving</div>
+                                <p style="font-size: 1.3rem;">Look at the graph. Triangle <strong>P</strong> has been translated to create its image, Triangle <strong>Q</strong>.</p>
+                                <p style="font-size: 1.3rem;">Determine the column vector that describes this translation.</p>
+                            </div>
+                            
+                            <div style="background: rgba(30, 41, 59, 0.8); padding: 1.5rem; border-radius: 12px; margin-top: 2rem;">
+                                <p style="color: var(--text-dim); margin-bottom: 0.5rem;"><i class="fa-solid fa-lightbulb"></i> <strong>Tip:</strong> Pick one corner of P and count how many squares right/left, then how many squares up/down to reach the exact same corner on Q.</p>
+                            </div>
+
+                            <button id="btn-reveal-ans" class="btn btn-action" style="margin-top: 2rem;"><i class="fa-solid fa-eye"></i> Reveal Answer</button>
+
+                            <div id="vector-ans" class="hidden" style="margin-top: 2rem;">
+                                <div class="glass-card" style="border-left: 5px solid var(--accent); padding: 1.5rem;">
+                                    <h4 style="color: var(--accent); font-size: 1.4rem; margin-bottom: 1rem;">Answer:</h4>
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <span style="font-size: 1.3rem;">Vector = </span>
+                                        <div class="column-vector">
+                                            <div style="color: white;">4</div>
+                                            <div style="color: white;">-3</div>
+                                        </div>
+                                        <span style="font-size: 1.2rem; color: var(--text-dim);">(4 right, 3 down)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center delay-2">
+                            <div class="glass-card" style="padding: 1rem; background: #0f172a;">
+                                <svg viewBox="0 0 400 400" width="100%" height="400" style="background: #1e293b; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+                                    ${generateGridSVG(400, 400, 40)}
+                                    <text x="310" y="310" fill="white" font-size="16" font-style="italic">x</text>
+                                    <text x="70" y="20" fill="white" font-size="16" font-style="italic">y</text>
+                                    
+                                    <polygon points="40,120 40,240 120,240" fill="rgba(139, 92, 246, 0.4)" stroke="var(--primary)" stroke-width="3"/>
+                                    <text x="60" y="210" fill="white" font-family="Outfit" font-weight="bold" font-size="18">P</text>
+                                    
+                                    <polygon points="200,240 200,360 280,360" fill="rgba(16, 185, 129, 0.4)" stroke="var(--accent)" stroke-width="3"/>
+                                    <text x="220" y="330" fill="white" font-family="Outfit" font-weight="bold" font-size="18">Q</text>
+                                    
+                                    <g id="ans-path" class="hidden">
+                                        <polyline points="40,120 200,120 200,240" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 8" marker-end="url(#arrow-accent)"/>
+                                        <text x="120" y="110" fill="#f59e0b" font-weight="bold">+4 (x)</text>
+                                        <text x="210" y="180" fill="#f59e0b" font-weight="bold">-3 (y)</text>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-reveal-ans');
+                const ansBox = container.querySelector('#vector-ans');
+                const ansPath = container.querySelector('#ans-path');
+                
+                const reveal = () => {
+                    ansBox.classList.remove('hidden');
+                    ansBox.classList.add('anim-enter');
+                    ansPath.classList.remove('hidden');
+                    btn.style.display = 'none';
+                };
+
+                btn.addEventListener('click', reveal);
+                return () => btn.removeEventListener('click', reveal);
+            }
+        },
+
+        // Slide 4: Reflections Intro
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">Intro to Reflections</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 900px; margin: 0 auto 3rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-book"></i> What is a reflection?</div>
+                        <p style="font-size: 1.4rem;">A <strong>reflection</strong> flips a shape across a specific line to create a mirror image. The line it flips across is called the <strong>mirror line</strong>. Reflections can happen horizontally, vertically, or even diagonally!</p>
+                    </div>
+
+                    <div class="grid-2 delay-2" style="max-width: 1000px; margin: 0 auto; gap: 4rem;">
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 5px solid var(--primary);">
+                            <h3 style="color: var(--primary); margin-bottom: 1rem;">Vertical Reflection</h3>
+                            <svg viewBox="0 0 200 200" width="100%" height="200" style="background: #0f172a; border-radius: 8px;">
+                                ${generateCenterGridSVG(200, 200, 20)}
+                                <!-- Mirror Line -->
+                                <line x1="100" y1="0" x2="100" y2="200" stroke="#fca5a5" stroke-width="4" stroke-dasharray="8 4"/>
+                                <!-- Object -->
+                                <polygon points="40,60 80,60 80,140" fill="rgba(148, 163, 184, 0.4)" stroke="#94a3b8" stroke-width="2"/>
+                                <!-- Image -->
+                                <polygon points="160,60 120,60 120,140" fill="rgba(139, 92, 246, 0.4)" stroke="var(--primary)" stroke-width="2"/>
+                                
+                                <path d="M 60 100 Q 100 60 140 100" fill="none" stroke="white" stroke-width="2" stroke-dasharray="4 4"/>
+                                <polygon points="135,95 140,100 135,105" fill="white"/>
+                            </svg>
+                            <p style="font-size: 1rem; color: var(--text-dim); margin-top: 1rem;">The shape flips left-to-right over a vertical mirror.</p>
+                        </div>
+                        
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 5px solid var(--accent);">
+                            <h3 style="color: var(--accent); margin-bottom: 1rem;">Horizontal Reflection</h3>
+                            <svg viewBox="0 0 200 200" width="100%" height="200" style="background: #0f172a; border-radius: 8px;">
+                                ${generateCenterGridSVG(200, 200, 20)}
+                                <!-- Mirror Line -->
+                                <line x1="0" y1="100" x2="200" y2="100" stroke="#fca5a5" stroke-width="4" stroke-dasharray="8 4"/>
+                                <!-- Object -->
+                                <polygon points="60,40 140,40 140,80" fill="rgba(148, 163, 184, 0.4)" stroke="#94a3b8" stroke-width="2"/>
+                                <!-- Image -->
+                                <polygon points="60,160 140,160 140,120" fill="rgba(16, 185, 129, 0.4)" stroke="var(--accent)" stroke-width="2"/>
+                                
+                                <path d="M 100 60 Q 140 100 100 140" fill="none" stroke="white" stroke-width="2" stroke-dasharray="4 4"/>
+                                <polygon points="105,135 100,140 95,135" fill="white"/>
+                            </svg>
+                            <p style="font-size: 1rem; color: var(--text-dim); margin-top: 1rem;">The shape flips top-to-bottom over a horizontal mirror.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 5: Naming Mirror Lines (EXPLICIT CLARITY)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 style="text-align: center; margin-bottom: 1.5rem;">Naming Mirror Lines</h2>
+                    <p style="text-align: center; font-size: 1.3rem; margin-bottom: 2.5rem; color: #cbd5e1;">The names of mirror lines can seem counter-intuitive. Let's clear up the confusion.</p>
+
+                    <div class="grid-2 delay-1" style="align-items: stretch;">
+                        <div class="glass-card" style="padding: 2rem;">
+                            <h3 style="color: #38bdf8; margin-bottom: 1rem;">Vertical Lines are $x = c$</h3>
+                            <p style="font-size: 1.15rem; line-height: 1.6; margin-bottom: 1.5rem;">Wait, isn't $x$ horizontal? Yes! <br><br>The line <strong>$x = 3$</strong> means "EVERY point where the x-coordinate is exactly 3". Connecting all these points creates a straight <strong>vertical</strong> line!</p>
+                            
+                            <svg viewBox="0 0 300 250" width="100%" height="250" style="background: #0f172a; border-radius: 8px;">
+                                ${generateGridSVG(300, 250, 30)}
+                                <text x="240" y="235" fill="white" font-style="italic">x</text>
+                                
+                                <!-- x=3 (Px: 60 + 3*30 = 150) -->
+                                <line x1="150" y1="0" x2="150" y2="250" stroke="#38bdf8" stroke-width="4"/>
+                                <text x="160" y="30" fill="#38bdf8" font-weight="bold" font-size="18">x = 3</text>
+                                
+                                <circle cx="150" cy="90" r="5" fill="white"/>
+                                <text x="160" y="85" fill="white" font-size="14">(3, 5)</text>
+                                
+                                <circle cx="150" cy="180" r="5" fill="white"/>
+                                <text x="160" y="175" fill="white" font-size="14">(3, 2)</text>
+                            </svg>
+                        </div>
+
+                        <div class="glass-card" style="padding: 2rem;">
+                            <h3 style="color: #fca5a5; margin-bottom: 1rem;">Horizontal Lines are $y = c$</h3>
+                            <p style="font-size: 1.15rem; line-height: 1.6; margin-bottom: 1.5rem;">Similarly, the line <strong>$y = 2$</strong> means "EVERY point where the y-coordinate is exactly 2". Connecting all points that are exactly 2 units up creates a straight <strong>horizontal</strong> line!</p>
+                            
+                            <svg viewBox="0 0 300 250" width="100%" height="250" style="background: #0f172a; border-radius: 8px;">
+                                ${generateGridSVG(300, 250, 30)}
+                                <text x="50" y="20" fill="white" font-style="italic">y</text>
+                                
+                                <!-- y=2 (Px: 250-20 - 2*30 = 230-60 = 170) -> Wait, let's use fixed coords -->
+                                <!-- Origin is at x=60, y=200 -->
+                                <line x1="0" y1="140" x2="300" y2="140" stroke="#fca5a5" stroke-width="4"/>
+                                <text x="240" y="130" fill="#fca5a5" font-weight="bold" font-size="18">y = 2</text>
+                                
+                                <circle cx="120" cy="140" r="5" fill="white"/>
+                                <text x="100" y="125" fill="white" font-size="14">(2, 2)</text>
+                                
+                                <circle cx="210" cy="140" r="5" fill="white"/>
+                                <text x="190" y="125" fill="white" font-size="14">(5, 2)</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 6: Animated Reflection Rule
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>How Reflections Work</h2>
+                    
+                    <div class="pedagogical-note note-theory delay-1" style="max-width: 900px; margin: 0 auto 2rem auto; text-align: left; border-left-color: var(--accent); background: rgba(16, 185, 129, 0.1);">
+                        <p style="font-size: 1.3rem; margin: 0;"><strong>The Equal Distance Rule:</strong> Every point on the <em>image</em> must be exactly the same distance from the mirror line as the matching point on the <em>original object</em>!</p>
+                    </div>
+
+                    <div class="glass-card delay-2" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+                        <svg viewBox="0 0 500 300" width="100%" height="300" style="background: #1e293b; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+                            ${generateCenterGridSVG(500, 300, 50)}
+                            
+                            <!-- Mirror Line x = center -->
+                            <line x1="250" y1="0" x2="250" y2="300" stroke="#fca5a5" stroke-width="4" stroke-dasharray="10 5"/>
+                            <text x="260" y="30" fill="#fca5a5" font-weight="bold" font-family="Outfit" font-size="18">Mirror Line</text>
+                            
+                            <!-- Static Object A (ALWAYS STAYS) -->
+                            <polygon points="100,100 150,100 150,200" fill="rgba(148, 163, 184, 0.8)" stroke="#94a3b8" stroke-width="3"/>
+                            <text x="110" y="160" fill="white" font-family="Outfit" font-weight="bold" font-size="20">A</text>
+
+                            <!-- Image A' (Hidden Initially) -->
+                            <!-- Starts at Object position, then CSS animates to Image position using scaleX(-1) relative to the mirror line -->
+                            <g id="anim-img" style="opacity: 0; transition: transform 1s ease-in-out, opacity 0.5s ease-in-out; transform-origin: 250px center; transform: scaleX(1);">
+                                <polygon points="100,100 150,100 150,200" fill="rgba(16, 185, 129, 0.8)" stroke="#10b981" stroke-width="3"/>
+                                <!-- The text will be backwards if we scaleX(-1), so we draw the polygon and text separately or counter-flip the text -->
+                                <text x="110" y="160" fill="white" font-family="Outfit" font-weight="bold" font-size="20" style="transform-origin: 125px center; transform: scaleX(-1);">A'</text>
+                            </g>
+
+                            <!-- Distance Lines (Hidden Initially) -->
+                            <g id="distance-lines" style="opacity: 0; transition: opacity 1s;">
+                                <!-- Top line -->
+                                <line x1="150" y1="100" x2="250" y2="100" stroke="white" stroke-dasharray="6 4" stroke-width="2"/>
+                                <line x1="250" y1="100" x2="350" y2="100" stroke="white" stroke-dasharray="6 4" stroke-width="2"/>
+                                <text x="200" y="90" fill="white" font-size="14" text-anchor="middle">2 units</text>
+                                <text x="300" y="90" fill="white" font-size="14" text-anchor="middle">2 units</text>
+
+                                <!-- Bottom line -->
+                                <line x1="150" y1="200" x2="250" y2="200" stroke="white" stroke-dasharray="6 4" stroke-width="2"/>
+                                <line x1="250" y1="200" x2="350" y2="200" stroke="white" stroke-dasharray="6 4" stroke-width="2"/>
+                                <text x="200" y="190" fill="white" font-size="14" text-anchor="middle">2 units</text>
+                                <text x="300" y="190" fill="white" font-size="14" text-anchor="middle">2 units</text>
+                            </g>
+                        </svg>
+                        
+                        <div style="margin-top: 2rem;">
+                            <button id="btn-animate-ref" class="btn btn-action"><i class="fa-solid fa-play"></i> Watch Reflection</button>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnAnim = container.querySelector('#btn-animate-ref');
+                const animImg = container.querySelector('#anim-img');
+                const distLines = container.querySelector('#distance-lines');
+
+                const playAnim = () => {
+                    // Make image visible and flip it across the mirror line
+                    animImg.style.opacity = '1';
+                    animImg.style.transform = 'scaleX(-1)';
+                    
+                    // Show distance lines after flip finishes
+                    setTimeout(() => {
+                        distLines.style.opacity = '1';
+                    }, 1000);
+
+                    btnAnim.disabled = true;
+                    btnAnim.style.opacity = '0.5';
+                };
+
+                btnAnim.addEventListener('click', playAnim);
+                return () => btnAnim.removeEventListener('click', playAnim);
+            }
+        },
+
+        // Slide 7: More Reflection Examples
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">More Examples of Reflection</h2>
+
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; gap: 4rem;">
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 5px solid var(--accent);">
+                            <h3 style="color: var(--accent); margin-bottom: 1rem;">Horizontal Mirror ($y = 2$)</h3>
+                            <svg viewBox="0 0 200 200" width="100%" height="200" style="background: #0f172a; border-radius: 8px;">
+                                ${generateCenterGridSVG(200, 200, 20)}
+                                <!-- Mirror Line y=2 -->
+                                <line x1="0" y1="120" x2="200" y2="120" stroke="#fca5a5" stroke-width="4" stroke-dasharray="8 4"/>
+                                <text x="160" y="110" fill="#fca5a5" font-weight="bold">y=2</text>
+                                
+                                <!-- Object -->
+                                <polygon points="40,20 100,20 60,80" fill="rgba(148, 163, 184, 0.4)" stroke="#94a3b8" stroke-width="2"/>
+                                <!-- Image -->
+                                <polygon points="40,220 100,220 60,160" fill="rgba(16, 185, 129, 0.4)" stroke="var(--accent)" stroke-width="2"/>
+                                
+                                <line x1="60" y1="80" x2="60" y2="120" stroke="white" stroke-dasharray="3 3"/>
+                                <line x1="60" y1="120" x2="60" y2="160" stroke="white" stroke-dasharray="3 3"/>
+                            </svg>
+                            <p style="font-size: 1rem; color: var(--text-dim); margin-top: 1rem;">Reflecting vertically over a horizontal line.</p>
+                        </div>
+
+                        <div class="glass-card" style="padding: 1.5rem; text-align: center; border-top: 5px solid var(--warning);">
+                            <h3 style="color: var(--warning); margin-bottom: 1rem;">Crossing the Mirror Line</h3>
+                            <svg viewBox="0 0 200 200" width="100%" height="200" style="background: #0f172a; border-radius: 8px;">
+                                ${generateCenterGridSVG(200, 200, 20)}
+                                <!-- Mirror Line x=0 -->
+                                <line x1="100" y1="0" x2="100" y2="200" stroke="#fca5a5" stroke-width="4" stroke-dasharray="8 4"/>
+                                
+                                <!-- Object (overlaps mirror) -->
+                                <polygon points="80,60 140,60 140,140" fill="rgba(148, 163, 184, 0.4)" stroke="#94a3b8" stroke-width="2"/>
+                                
+                                <!-- Image (also overlaps) -->
+                                <polygon points="120,60 60,60 60,140" fill="rgba(245, 158, 11, 0.4)" stroke="var(--warning)" stroke-width="2"/>
+                            </svg>
+                            <p style="font-size: 1rem; color: var(--text-dim); margin-top: 1rem;">If the object is on the mirror line, the image will overlap it!</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 8: Reflection Practice
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Practice: Reflections</h2>
+                    <p style="font-size: 1.4rem; margin-bottom: 2rem;">Apply the equal distance rule to draw an image.</p>
+
+                    <div class="glass-card delay-1" style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+                        
+                        <div class="pedagogical-note note-task text-left">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pen-ruler"></i> Drawing Task</div>
+                            <p style="font-size: 1.2rem; margin: 0;">1. Identify the mirror line $y = 3$.<br>2. Work out where Triangle E will flip to. Reflect Triangle E in the line $y = 3$ to create the image.</p>
+                        </div>
+
+                        <div style="position: relative; max-width: 500px; margin: 2rem auto;">
+                            <svg viewBox="0 0 400 400" width="100%" height="400" style="background: #1e293b; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+                                ${generateGridSVG(400, 400, 40)}
+                                <text x="310" y="310" fill="white" font-size="16" font-style="italic">x</text>
+                                <text x="70" y="20" fill="white" font-size="16" font-style="italic">y</text>
+                                
+                                <!-- Mirror line y = 3 -> Pixel y = 320 - (3*40) = 200 -->
+                                <line id="mirror-y3" x1="0" y1="200" x2="400" y2="200" stroke="#fca5a5" stroke-width="4" stroke-dasharray="10 5" opacity="0.2"/>
+                                <text id="mirror-lbl" x="350" y="190" fill="#fca5a5" font-weight="bold" font-family="Outfit" font-size="16" opacity="0.2">y = 3</text>
+
+                                <!-- Object E -->
+                                <polygon points="200,120 280,120 240,40" fill="rgba(139, 92, 246, 0.4)" stroke="var(--primary)" stroke-width="3"/>
+                                <text x="235" y="100" fill="white" font-family="Outfit" font-weight="bold" font-size="18">E</text>
+
+                                <!-- Image E' -->
+                                <polygon id="ans-reflect" points="200,280 280,280 240,360" fill="rgba(16, 185, 129, 0.4)" stroke="var(--accent)" stroke-width="3" class="hidden"/>
+                                <text id="ans-lbl" x="235" y="300" fill="white" font-family="Outfit" font-weight="bold" font-size="18" class="hidden">E'</text>
+                            </svg>
+                        </div>
+                        
+                        <button id="btn-show-mirror" class="btn btn-action" style="margin-right: 1rem;"><i class="fa-solid fa-magnifying-glass"></i> 1. Show Mirror Line</button>
+                        <button id="btn-show-reflect" class="btn btn-action" style="background: var(--accent);" disabled><i class="fa-solid fa-eye"></i> 2. Reveal Image</button>
+                        
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnMirror = container.querySelector('#btn-show-mirror');
+                const btnReflect = container.querySelector('#btn-show-reflect');
+                
+                const mirrorLine = container.querySelector('#mirror-y3');
+                const mirrorLbl = container.querySelector('#mirror-lbl');
+                const ansReflect = container.querySelector('#ans-reflect');
+                const ansLbl = container.querySelector('#ans-lbl');
+
+                const showMirror = () => {
+                    mirrorLine.style.opacity = '1';
+                    mirrorLbl.style.opacity = '1';
+                    btnMirror.disabled = true;
+                    btnMirror.style.opacity = '0.5';
+                    btnReflect.disabled = false;
+                };
+
+                const showReflect = () => {
+                    ansReflect.classList.remove('hidden');
+                    ansReflect.classList.add('anim-enter');
+                    ansLbl.classList.remove('hidden');
+                    ansLbl.classList.add('anim-enter');
+                    btnReflect.disabled = true;
+                    btnReflect.style.opacity = '0.5';
+                };
+
+                btnMirror.addEventListener('click', showMirror);
+                btnReflect.addEventListener('click', showReflect);
+
+                return () => {
+                    btnMirror.removeEventListener('click', showMirror);
+                    btnReflect.removeEventListener('click', showReflect);
+                };
+            }
+        },
+
+        // Slide 9: Intro to Rotations
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">Intro to Rotations</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 900px; margin: 0 auto 3rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-rotate"></i> What is a rotation?</div>
+                        <p style="font-size: 1.4rem;">A <strong>rotation</strong> turns a shape around a fixed point. The shape stays the exact same size and doesn't flip—it just turns like a wheel.</p>
+                    </div>
+                    
+                    <div class="glass-card delay-2" style="max-width: 800px; margin: 0 auto; text-align: left; border-left: 6px solid #c4b5fd;">
+                        <h3 style="color: #c4b5fd; margin-bottom: 1.5rem;">The 3 Rules of Rotation</h3>
+                        <p style="font-size: 1.3rem; margin-bottom: 1rem;">To accurately describe a rotation, you MUST give three pieces of information:</p>
+                        <ol style="font-size: 1.4rem; line-height: 1.8; margin-left: 2.5rem; color: white;">
+                            <li><strong>The Angle:</strong> How far it turns (e.g., $90^\\circ$, $180^\\circ$).</li>
+                            <li><strong>The Direction:</strong> Either Clockwise or Anticlockwise.</li>
+                            <li><strong>The Centre of Rotation:</strong> The exact coordinate $(x, y)$ that acts as the pivot point.</li>
+                        </ol>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 10: Clockwise vs Counter Clockwise
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">Direction of Rotation</h2>
+                    
+                    <div class="grid-2 delay-1" style="max-width: 1000px; margin: 0 auto; gap: 4rem;">
+                        <!-- Clockwise -->
+                        <div class="glass-card" style="padding: 3rem; text-align: center; border-top: 5px solid #38bdf8;">
+                            <h3 style="color: #38bdf8; margin-bottom: 2rem; font-size: 2rem;">Clockwise (CW)</h3>
+                            
+                            <svg viewBox="0 0 200 200" width="100%" height="200">
+                                <g class="spin-cw">
+                                    <path d="M 100 20 A 80 80 0 1 1 20 100" fill="none" stroke="#38bdf8" stroke-width="10" stroke-linecap="round" />
+                                    <!-- Arrow head at (20, 100) -->
+                                    <polygon points="10,85 30,85 20,110" fill="#38bdf8" />
+                                </g>
+                            </svg>
+                            
+                            <p style="margin-top: 2rem; font-size: 1.3rem; color: var(--text-light);">Turns in the same direction as a clock's hands.</p>
+                        </div>
+
+                        <!-- Counter-Clockwise -->
+                        <div class="glass-card" style="padding: 3rem; text-align: center; border-top: 5px solid #f43f5e;">
+                            <h3 style="color: #f43f5e; margin-bottom: 2rem; font-size: 2rem;">Anticlockwise (CCW)</h3>
+                            
+                            <svg viewBox="0 0 200 200" width="100%" height="200">
+                                <g class="spin-ccw">
+                                    <path d="M 100 20 A 80 80 0 1 0 180 100" fill="none" stroke="#f43f5e" stroke-width="10" stroke-linecap="round" />
+                                    <!-- Arrow head at (180, 100) -->
+                                    <polygon points="170,85 190,85 180,110" fill="#f43f5e" />
+                                </g>
+                            </svg>
+                            
+                            <p style="margin-top: 2rem; font-size: 1.3rem; color: var(--text-light);">Turns the opposite way to a clock.<br><span style="color:var(--text-dim); font-size:1.1rem;">(Also called counter-clockwise).</span></p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 11: Rotation on a corner
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Rotation on a Corner</h2>
+                    <p style="font-size: 1.4rem; margin-bottom: 2rem;">What happens if the centre of rotation is actually <strong>on</strong> the shape itself?</p>
+
+                    <div class="glass-card delay-1" style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+                        
+                        <div class="pedagogical-note note-task text-left">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-rotate-right"></i> Transformation Task</div>
+                            <p style="font-size: 1.2rem; margin: 0;">We will rotate Triangle B by <strong>$90^\\circ$ Clockwise</strong> with the centre of rotation at <strong>(4, 4)</strong>. Notice that (4,4) is the bottom-left corner of the triangle!</p>
+                        </div>
+
+                        <div style="position: relative; max-width: 500px; margin: 2rem auto;">
+                            <svg viewBox="0 0 400 400" width="100%" height="400" style="background: #1e293b; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+                                ${generateGridSVG(400, 400, 40)}
+                                <text x="310" y="310" fill="white" font-style="italic">x</text>
+                                <text x="70" y="20" fill="white" font-style="italic">y</text>
+                                
+                                <!-- Centre of rotation dot at (4,4) -> Px: (240, 160) -->
+                                <circle cx="240" cy="160" r="6" fill="#f59e0b" style="z-index: 10; position: relative;"/>
+                                <text x="250" y="150" fill="#f59e0b" font-size="14" font-weight="bold">(4,4)</text>
+
+                                <!-- Static Object B (Always visible) -->
+                                <polygon points="240,160 320,160 240,40" fill="rgba(148, 163, 184, 0.8)" stroke="#94a3b8" stroke-width="3"/>
+                                <text x="255" y="140" fill="white" font-family="Outfit" font-weight="bold" font-size="18">B</text>
+
+                                <!-- Animated Image B' (Starts hidden) -->
+                                <g id="corner-img-group" style="opacity: 0; transform-origin: 240px 160px; transition: transform 1.5s ease-in-out, opacity 0.5s;">
+                                    <polygon points="240,160 320,160 240,40" fill="rgba(16, 185, 129, 0.8)" stroke="#10b981" stroke-width="3"/>
+                                    <!-- The text will rotate, we need to counter-rotate it so it's readable -->
+                                    <text x="255" y="140" fill="white" font-family="Outfit" font-weight="bold" font-size="18" style="transform-origin: 255px 135px; transform: rotate(-90deg);">B'</text>
+                                </g>
+                            </svg>
+                        </div>
+                        
+                        <button id="btn-rot-corner" class="btn btn-action" style="background: var(--accent);"><i class="fa-solid fa-play"></i> Watch Rotation</button>
+                        <p id="corner-obs" class="hidden" style="color: var(--accent); font-size: 1.2rem; margin-top: 1rem; font-weight: bold;">Notice: The corner exactly at the centre of rotation (4,4) didn't move at all!</p>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnRotate = container.querySelector('#btn-rot-corner');
+                const animGroup = container.querySelector('#corner-img-group');
+                const obs = container.querySelector('#corner-obs');
+
+                const playRot = () => {
+                    // Make image visible and then rotate it out from the original shape
+                    animGroup.style.opacity = '1';
+                    
+                    // Slight delay to ensure opacity transition kicks in before transform
+                    setTimeout(() => {
+                        animGroup.style.transform = "rotate(90deg)";
+                    }, 50);
+
+                    // Show observation text after animation completes
+                    setTimeout(() => {
+                        obs.classList.remove('hidden');
+                        obs.classList.add('anim-enter');
+                    }, 1500);
+
+                    btnRotate.disabled = true;
+                    btnRotate.style.opacity = '0.5';
+                };
+
+                btnRotate.addEventListener('click', playRot);
+                return () => btnRotate.removeEventListener('click', playRot);
+            }
+        },
+
+        // Slide 12: Rotations Practice Origin
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Rotation about the Origin</h2>
+                    <p style="font-size: 1.4rem; margin-bottom: 2rem;">Now let's see a rotation where the centre is far away from the shape.</p>
+
+                    <div class="glass-card delay-1" style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+                        
+                        <div class="pedagogical-note note-task text-left">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-rotate-right"></i> Transformation Task</div>
+                            <p style="font-size: 1.2rem; margin: 0;">We want to perform a <strong>Rotation of $90^\\circ$ clockwise, centre $(0, 0)$</strong> on Triangle A.</p>
+                        </div>
+
+                        <div style="position: relative; max-width: 500px; margin: 2rem auto;">
+                            <svg viewBox="0 0 400 400" width="100%" height="400" style="background: #1e293b; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+                                ${generateGridSVG(400, 400, 40)}
+                                <text x="310" y="310" fill="white" font-style="italic">x</text>
+                                <text x="70" y="20" fill="white" font-style="italic">y</text>
+                                
+                                <!-- Centre of rotation dot at (0,0) -> Px: (80, 320) -->
+                                <circle cx="80" cy="320" r="5" fill="#fca5a5"/>
+                                <text x="60" y="340" fill="#fca5a5" font-size="14" font-weight="bold">(0,0)</text>
+
+                                <!-- Static Object A (stays grey) -->
+                                <polygon points="120,120 200,120 120,160" fill="rgba(148, 163, 184, 0.8)" stroke="#94a3b8" stroke-width="3"/>
+                                <text x="135" y="145" fill="white" font-family="Outfit" font-weight="bold" font-size="18">A</text>
+
+                                <!-- Animated Image A' (Starts hidden) -->
+                                <g id="origin-img-group" style="opacity: 0; transform-origin: 80px 320px; transition: transform 1.5s ease-in-out, opacity 0.5s;">
+                                    <polygon points="120,120 200,120 120,160" fill="rgba(16, 185, 129, 0.8)" stroke="#10b981" stroke-width="3"/>
+                                    <!-- Connecting sweep line drawn ON the animated layer so it rotates with it -->
+                                    <line x1="80" y1="320" x2="120" y2="160" stroke="rgba(16, 185, 129, 0.8)" stroke-width="2" stroke-dasharray="6 4" />
+                                    
+                                    <text x="135" y="145" fill="white" font-family="Outfit" font-weight="bold" font-size="18" style="transform-origin: 140px 140px; transform: rotate(-90deg);">A'</text>
+                                </g>
+                            </svg>
+                        </div>
+                        
+                        <button id="btn-show-origin-rot" class="btn btn-action" style="background: var(--accent);"><i class="fa-solid fa-play"></i> Watch Rotation</button>
+                        
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btnRotate = container.querySelector('#btn-show-origin-rot');
+                const animGroup = container.querySelector('#origin-img-group');
+
+                const showRotation = () => {
+                    animGroup.style.opacity = '1';
+                    
+                    setTimeout(() => {
+                        animGroup.style.transform = "rotate(90deg)";
+                    }, 50); 
+
+                    btnRotate.disabled = true;
+                    btnRotate.style.opacity = '0.5';
+                };
+
+                btnRotate.addEventListener('click', showRotation);
+
+                return () => {
+                    btnRotate.removeEventListener('click', showRotation);
+                };
+            }
+        },
+
+        // Slide 13: Summative Quiz
+        {
+            template: () => `
+                <div class="anim-enter" style="padding-bottom: 4rem;">
+                    <div class="pedagogical-note note-success text-center">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-clipboard-check"></i> Final Assessment</div>
+                        <h2>Check Your Understanding</h2>
+                    </div>
+
+                    <div style="max-width: 900px; margin: 0 auto;">
+                        
+                        <div class="quiz-block delay-1">
+                            <div class="quiz-question">1. What kind of mirror line is $y = -4$ on a coordinate grid?</div>
+                            <div class="quiz-options-container">
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">A</span> A vertical line.</div>
+                                <div class="quiz-option" data-correct="true"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">B</span> A horizontal line.</div>
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">C</span> A diagonal line.</div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <div class="quiz-block delay-2">
+                            <div class="quiz-question">2. When rotating a shape, which of these is NOT required to describe the transformation?</div>
+                            <div class="quiz-options-container">
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">A</span> The centre of rotation coordinate.</div>
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">B</span> The angle (e.g. $90^\\circ$).</div>
+                                <div class="quiz-option" data-correct="true"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">C</span> A column vector.</div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <div class="quiz-block delay-3">
+                            <div class="quiz-question">3. What does the "Equal Distance Rule" mean for reflections?</div>
+                            <div class="quiz-options-container">
+                                <div class="quiz-option" data-correct="true"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">A</span> Every point on the image is the same distance from the mirror line as the matching point on the original object.</div>
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">B</span> The image must be an equal distance away from the y-axis.</div>
+                                <div class="quiz-option" data-correct="false"><span style="background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">C</span> The shape stays the same size but moves to the right.</div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const quizBlocks = container.querySelectorAll('.quiz-block');
+                const handlers = [];
+
+                quizBlocks.forEach(block => {
+                    const options = block.querySelectorAll('.quiz-option');
+                    const feedback = block.querySelector('.quiz-feedback');
+
+                    const handleQuiz = (e) => {
+                        options.forEach(opt => {
+                            opt.classList.remove('correct', 'incorrect');
+                            opt.style.pointerEvents = 'none';
+                        });
+
+                        const selected = e.currentTarget;
+                        const isCorrect = selected.getAttribute('data-correct') === 'true';
+                        
+                        feedback.style.display = 'block';
+
+                        if (isCorrect) {
+                            selected.classList.add('correct');
+                            feedback.innerHTML = '<span style="color: var(--accent);"><i class="fa-solid fa-check-circle"></i> Correct!</span>';
+                        } else {
+                            selected.classList.add('incorrect');
+                            block.querySelector('[data-correct="true"]').classList.add('correct');
+                            feedback.innerHTML = '<span style="color: var(--danger);"><i class="fa-solid fa-times-circle"></i> Incorrect. Review the highlighted answer.</span>';
+                        }
+                    };
+
+                    options.forEach(opt => {
+                        opt.addEventListener('click', handleQuiz);
+                        handlers.push({ element: opt, handler: handleQuiz });
+                    });
+                });
+
+                return () => {
+                    handlers.forEach(({element, handler}) => {
+                        element.removeEventListener('click', handler);
+                    });
+                };
+            }
+        },
+
+        // Slide 14: Exit Ticket
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <h2>Exit Ticket</h2>
+                    <p style="font-size: 1.4rem; margin-bottom: 3rem;">Complete this final task to check your notes.</p>
+                    
+                    <div class="glass-card delay-1" style="max-width: 900px; margin: 0 auto; text-align: left; padding: 3rem; border-top: 6px solid var(--primary);">
+                        
+                        <div class="pedagogical-note note-write">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-pen-nib"></i> Explaining Transformations</div>
+                            <p style="font-size: 1.4rem; margin-top: 1rem;">A classmate was absent today and missed the lesson. Write two short paragraphs to help them catch up:</p>
+                        </div>
+
+                        <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 8px; padding: 2rem; margin-top: 2rem;">
+                            <h3 style="color: var(--primary); margin-bottom: 1rem;"><i class="fa-solid fa-list-check"></i> Required Content:</h3>
+                            <ul style="font-size: 1.2rem; line-height: 1.8;">
+                                <li><strong>Paragraph 1 (Translation):</strong> Explain what the column vector $\\begin{pmatrix} -3 \\\\ 5 \\end{pmatrix}$ means and exactly how to move a shape using it.</li>
+                                <li><strong>Paragraph 2 (Reflection):</strong> Explain the "Equal Distance Rule" for reflecting a shape across a mirror line so they don't make mistakes.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 15: Workbook Task
+        {
+            template: () => `
+                <div class="anim-enter text-center" style="display: flex; flex-direction: column; justify-content: center; height: 60vh;">
+                    <div style="font-size: 5rem; color: var(--warning); margin-bottom: 2rem;">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h2>Independent Practice</h2>
+                    
+                    <div class="glass-card delay-1" style="max-width: 600px; margin: 2rem auto; text-align: center; padding: 3rem; border-top: 6px solid var(--warning);">
+                        <p style="font-size: 1.6rem; margin-bottom: 1rem;">Please open your Math Workbooks.</p>
+                        <p style="font-size: 1.8rem; font-weight: bold; color: white;">
+                            Complete Sections <span style="color: var(--warning);">14.4</span> and <span style="color: var(--warning);">14.5</span>
+                        </p>
+                        <p style="font-size: 1.2rem; color: var(--text-dim); margin-top: 2rem;">
+                            Raise your hand if you need assistance tracing your mirror lines or finding the centre of rotation!
+                        </p>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        Engine.init(lessonSlides);
+    });
+</script>
+</body>
+</html>
