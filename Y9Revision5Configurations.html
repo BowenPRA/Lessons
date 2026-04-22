@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry: Atomic Structure and Periodic Trends - Year 9 Science</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (BOWEN ENGINE) --- */
+        :root {
+            --bg-deep: #0f172a;        
+            --bg-panel: #1e293b;       
+            --primary: #8b5cf6;        
+            --primary-glow: rgba(139, 92, 246, 0.5);
+            --accent: #10b981;         
+            --warning: #f59e0b;        
+            --danger: #ef4444;         
+            --text-light: #f8fafc;     
+            --text-dim: #94a3b8;       
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            font-size: 18px; 
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 35%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1), transparent 35%),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 20;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px var(--primary-glow);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-wrapper {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 4rem; 
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 20;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; letter-spacing: -0.5px; }
+        h1 { font-size: 4rem; margin-bottom: 1rem; text-shadow: 0 0 30px var(--primary-glow); }
+        h2 { font-size: 2.8rem; margin-bottom: 1.5rem; color: #c4b5fd; }
+        h3 { font-size: 1.8rem; margin-bottom: 1rem; color: white; }
+        h4 { font-family: 'Outfit', sans-serif; font-size: 1.4rem; color: var(--accent); margin-bottom: 0.5rem; }
+        p, li { line-height: 1.6; margin-bottom: 1rem; font-size: 1.2rem; }
+        ul, ol { margin-left: 2rem; margin-bottom: 1rem; }
+        strong { font-weight: 800; color: white; }
+
+        /* --- COMPONENTS --- */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; align-items: stretch; }
+
+        /* Tables */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden; }
+        .data-table th, .data-table td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .data-table th { background: rgba(255,255,255,0.05); color: var(--primary); font-family: 'Outfit'; font-weight: bold; }
+        .data-table tr:last-child td { border-bottom: none; }
+
+        /* Buttons */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        .btn:active { transform: scale(0.95); }
+        
+        .btn-nav {
+            width: 56px; height: 56px;
+            background: rgba(30, 41, 59, 0.8);
+            color: var(--text-light);
+            font-size: 1.4rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-action:hover { background: linear-gradient(135deg, #7c3aed, #5b21b6); transform: translateY(-2px); box-shadow: 0 12px 25px rgba(139, 92, 246, 0.4); }
+
+        /* Progress Bar */
+        .progress-container { flex: 1; margin: 0 3rem; height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), #a78bfa); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--primary-glow); }
+
+        /* --- SIGNPOSTING (PEDAGOGICAL NOTES) --- */
+        .pedagogical-note {
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid;
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .pedagogical-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 1.5px;
+        }
+
+        .note-write { border-left-color: #3b82f6; background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-write .pedagogical-badge { color: #60a5fa; }
+        .note-task { border-left-color: var(--warning); background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-task .pedagogical-badge { color: #fbbf24; }
+        .note-theory { border-left-color: var(--primary); background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-theory .pedagogical-badge { color: #a78bfa; }
+        .note-success { border-left-color: var(--accent); background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-success .pedagogical-badge { color: #34d399; }
+
+        /* --- Q&A ACCORDION STYLES --- */
+        .qa-container { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+        .qa-item { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; }
+        .qa-header { padding: 1.2rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+        .qa-question { font-size: 1.2rem; font-weight: 600; color: var(--text-light); }
+        .qa-body { padding: 0 1.2rem; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; background: rgba(16, 185, 129, 0.1); border-top: 1px solid transparent; }
+        .qa-item.expanded .qa-body { padding: 1.2rem; max-height: 500px; border-color: rgba(16, 185, 129, 0.3); }
+        .qa-answer { color: #34d399; font-weight: bold; font-size: 1.2rem; margin: 0; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseGlow { 0% { filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.4)); } 50% { filter: drop-shadow(0 0 35px rgba(139, 92, 246, 0.8)); } 100% { filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.4)); } }
+        
+        .anim-enter { animation: fadeIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+        .delay-1 { animation-delay: 0.15s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .delay-3 { animation-delay: 0.45s; }
+
+        .text-center { text-align: center; }
+        .hidden { display: none !important; }
+
+        /* SVG Element Cell Styles */
+        .atom-shell { fill: none; stroke: rgba(255,255,255,0.3); stroke-width: 1.5; }
+        .atom-nucleus { fill: #334155; stroke: var(--primary); stroke-width: 2; }
+        .atom-text { font-family: 'Outfit', sans-serif; fill: var(--text-light); font-size: 11px; font-weight: bold; text-anchor: middle; }
+    </style>
+</head>
+<body>
+
+<!-- GLOBAL SVG DEFS for Electrons -->
+<svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+    <defs>
+        <!-- The X representation of an electron -->
+        <g id="electron-x" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round">
+            <line x1="-4" y1="-4" x2="4" y2="4" />
+            <line x1="-4" y1="4" x2="4" y2="-4" />
+        </g>
+    </defs>
+</svg>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Year 9 Science</div>
+            <span style="font-weight: 700; color: #cbd5e1; font-size: 1.2rem; letter-spacing: 0.5px;">Atomic Structure & Periodic Trends</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            Learner Book Revision
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slides injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    // --- THE BOWEN ENGINE ---
+    const Engine = {
+        currentSlide: 0,
+        cleanupFn: null,
+        slides: [],
+        
+        init(slides) {
+            this.slides = slides;
+            document.getElementById('btn-prev').addEventListener('click', () => this.navigate(-1));
+            document.getElementById('btn-next').addEventListener('click', () => this.navigate(1));
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') this.navigate(1);
+                if (e.key === 'ArrowLeft') this.navigate(-1);
+            });
+            
+            this.render();
+        },
+
+        navigate(dir) {
+            const next = this.currentSlide + dir;
+            if (next >= 0 && next < this.slides.length) {
+                this.currentSlide = next;
+                this.render();
+            }
+        },
+
+        render() {
+            if (this.cleanupFn && typeof this.cleanupFn === 'function') {
+                this.cleanupFn();
+                this.cleanupFn = null;
+            }
+
+            const container = document.getElementById('slide-container');
+            const slide = this.slides[this.currentSlide];
+            
+            container.innerHTML = slide.template();
+            
+            if (slide.script) {
+                this.cleanupFn = slide.script(container);
+            }
+
+            document.getElementById('progress-bar').style.width = `${((this.currentSlide + 1) / this.slides.length) * 100}%`;
+            document.getElementById('btn-prev').disabled = this.currentSlide === 0;
+            document.getElementById('btn-next').disabled = this.currentSlide === this.slides.length - 1;
+            
+            const wrapper = document.querySelector('.slide-wrapper');
+            if(wrapper) wrapper.scrollTop = 0;
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([container]);
+            }
+        }
+    };
+
+    // --- LESSON CONTENT ---
+
+    const lessonSlides = [
+        // Slide 1: Objective & Title
+        {
+            template: () => `
+                <div class="anim-enter text-center">
+                    <div style="position: relative; display: inline-block; margin-bottom: 2rem; animation: pulseGlow 4s infinite;">
+                        <i class="fa-solid fa-atom" style="font-size: 6rem; color: var(--primary);"></i>
+                    </div>
+                    <h1>Properties of Materials</h1>
+                    <h2 style="color: var(--text-dim); font-size: 2rem; margin-top: -1rem;">Atomic Structure & The Periodic Table</h2>
+                    
+                    <div class="pedagogical-note note-success delay-1" style="max-width: 900px; margin: 3rem auto; text-align: left;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-bullseye"></i> Revision Objectives</div>
+                        <p style="font-size: 1.5rem; font-weight: 600; line-height: 1.4; margin: 0; color: white;">
+                            Review the structure of the atom, electron configurations, and decode the properties of Groups 1, 7, and 8 in the Periodic Table.
+                        </p>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 2: Mass, Density & Atomic Structure
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>1. Mass, Density & Arranging Electrons</h2>
+                    
+                    <div class="grid-2">
+                        <div class="delay-1">
+                            <div class="glass-card">
+                                <h3>Mass & Density</h3>
+                                <p>The higher the <strong>mass number</strong>, the more mass the atom has. E.g., Carbon (mass 12) is 12 times heavier than Hydrogen (mass 1).</p>
+                                <p>The measure of mass for a fixed volume is called <strong>density</strong>.</p>
+                                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; text-align: center; margin: 1rem 0;">
+                                    <span style="font-size: 1.5rem; color: var(--accent);">$$ \mathrm{Density} = \frac{\mathrm{Mass\ (g)}}{\mathrm{Volume\ (cm^3)}} $$</span>
+                                </div>
+                                <p style="font-size: 1.1rem; color: var(--text-dim);">E.g., Iron (7.87 g/cm<sup>3</sup>) is much denser than Sodium (0.97 g/cm<sup>3</sup>).</p>
+                            </div>
+                        </div>
+
+                        <div class="delay-2">
+                            <div class="pedagogical-note note-theory" style="margin: 0;">
+                                <div class="pedagogical-badge"><i class="fa-solid fa-circle-nodes"></i> Arranging Electrons</div>
+                                <p>In 1913, Niels Bohr developed Rutherford's model. He proved that electrons move in different <strong>electron shells</strong> (energy levels) around the nucleus.</p>
+                                <ul style="margin-top: 1rem;">
+                                    <li>Electrons are held in place by <strong>electrostatic forces</strong>.</li>
+                                    <li><strong>1st Shell:</strong> Max 2 electrons.</li>
+                                    <li><strong>2nd & 3rd Shells:</strong> Max 8 electrons.</li>
+                                </ul>
+                                <p style="font-size: 1.1rem; color: var(--accent);">Example: Boron has 5 electrons. Its electronic structure is written as <strong>2,3</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 3: Drawing Electron Shells (Theory/Observation)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>2. Drawing Electron Structures</h2>
+                    <p style="color: var(--text-dim); margin-bottom: 2rem;">Electrons are conventionally represented as crosses (<span style="color: var(--primary); font-weight:bold;">x</span>) placed on concentric circles.</p>
+
+                    <div class="pedagogical-note note-task delay-1" style="max-width: 1000px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-pencil"></i> Student Task</div>
+                        <p style="font-size: 1.3rem; margin: 0;"><strong>Copy these two diagrams into your exercise book exactly as they appear below.</strong> Ensure you label the nucleus with the correct protons (p) and neutrons (n), and place the crosses carefully on the shells.</p>
+                    </div>
+
+                    <div class="grid-2 text-center delay-2" style="max-width: 1000px; margin: 0 auto;">
+                        
+                        <!-- Lithium Diagram -->
+                        <div class="glass-card">
+                            <h3 style="color: white; margin-bottom: 1.5rem;">Lithium (Li)</h3>
+                            <svg width="220" height="220" viewBox="0 0 200 200" style="margin: 0 auto;">
+                                <circle cx="100" cy="100" r="18" class="atom-nucleus" />
+                                <text x="100" y="97" class="atom-text">3p</text>
+                                <text x="100" y="109" class="atom-text">4n</text>
+                                
+                                <circle cx="100" cy="100" r="40" class="atom-shell" />
+                                <circle cx="100" cy="100" r="75" class="atom-shell" />
+                                
+                                <!-- Shell 1 (2 e-) -->
+                                <use href="#electron-x" x="100" y="60" />
+                                <use href="#electron-x" x="100" y="140" />
+                                
+                                <!-- Shell 2 (1 e-) -->
+                                <use href="#electron-x" x="100" y="25" />
+                            </svg>
+                            <p style="margin-top: 1rem; color: var(--accent); font-size: 1.2rem; font-weight: bold;">Electronic Structure: 2, 1</p>
+                        </div>
+
+                        <!-- Sodium Diagram -->
+                        <div class="glass-card">
+                            <h3 style="color: white; margin-bottom: 1.5rem;">Sodium (Na)</h3>
+                            <svg width="220" height="220" viewBox="0 0 200 200" style="margin: 0 auto;">
+                                <circle cx="100" cy="100" r="18" class="atom-nucleus" />
+                                <text x="100" y="97" class="atom-text">11p</text>
+                                <text x="100" y="109" class="atom-text">12n</text>
+                                
+                                <circle cx="100" cy="100" r="30" class="atom-shell" />
+                                <circle cx="100" cy="100" r="55" class="atom-shell" />
+                                <circle cx="100" cy="100" r="80" class="atom-shell" />
+                                
+                                <!-- Shell 1 (2 e-) -->
+                                <use href="#electron-x" x="100" y="70" />
+                                <use href="#electron-x" x="100" y="130" />
+                                
+                                <!-- Shell 2 (8 e- in compass pairs) -->
+                                <use href="#electron-x" x="94" y="46" />
+                                <use href="#electron-x" x="106" y="46" />
+                                <use href="#electron-x" x="94" y="154" />
+                                <use href="#electron-x" x="106" y="154" />
+                                <use href="#electron-x" x="46" y="94" />
+                                <use href="#electron-x" x="46" y="106" />
+                                <use href="#electron-x" x="154" y="94" />
+                                <use href="#electron-x" x="154" y="106" />
+
+                                <!-- Shell 3 (1 e-) -->
+                                <use href="#electron-x" x="100" y="20" />
+                            </svg>
+                            <p style="margin-top: 1rem; color: var(--accent); font-size: 1.2rem; font-weight: bold;">Electronic Structure: 2, 8, 1</p>
+                        </div>
+
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 4: Student Practice (Your Turn)
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>3. Your Turn: Draw the Atoms</h2>
+                    
+                    <div class="pedagogical-note note-write delay-1" style="max-width: 1000px; margin: 0 auto 2rem auto;">
+                        <div class="pedagogical-badge"><i class="fa-solid fa-graduation-cap"></i> Apply your knowledge</div>
+                        <p style="font-size: 1.2rem; margin: 0;">Use the <strong>Atomic Number</strong> to determine the number of protons (and electrons), and the <strong>Mass Number</strong> to calculate the neutrons. Draw the electron shell diagrams for these two elements in your book.</p>
+                    </div>
+
+                    <div class="grid-2 text-center delay-2" style="max-width: 1000px; margin: 0 auto;">
+                        
+                        <!-- Oxygen Challenge -->
+                        <div class="glass-card" style="border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary);">Oxygen (O)</h3>
+                            <p style="font-size: 1.3rem; margin: 1rem 0;">Atomic Number: <strong>8</strong></p>
+                            <p style="font-size: 1.3rem; margin-bottom: 2rem;">Mass Number: <strong>16</strong></p>
+                            
+                            <div class="reveal-container-1 hidden">
+                                <svg width="220" height="220" viewBox="0 0 200 200" style="margin: 0 auto;">
+                                    <circle cx="100" cy="100" r="18" class="atom-nucleus" />
+                                    <text x="100" y="97" class="atom-text">8p</text>
+                                    <text x="100" y="109" class="atom-text">8n</text>
+                                    
+                                    <circle cx="100" cy="100" r="35" class="atom-shell" />
+                                    <circle cx="100" cy="100" r="70" class="atom-shell" />
+                                    
+                                    <!-- Shell 1 (2 e-) -->
+                                    <use href="#electron-x" x="100" y="65" />
+                                    <use href="#electron-x" x="100" y="135" />
+                                    
+                                    <!-- Shell 2 (6 e- in compass layout) -->
+                                    <use href="#electron-x" x="94" y="31" />
+                                    <use href="#electron-x" x="106" y="31" />
+                                    <use href="#electron-x" x="94" y="169" />
+                                    <use href="#electron-x" x="106" y="169" />
+                                    <use href="#electron-x" x="30" y="100" />
+                                    <use href="#electron-x" x="170" y="100" />
+                                </svg>
+                                <p style="margin-top: 1rem; color: var(--accent); font-weight: bold;">Structure: 2, 6</p>
+                            </div>
+                        </div>
+
+                        <!-- Magnesium Challenge -->
+                        <div class="glass-card" style="border-top: 4px solid var(--warning);">
+                            <h3 style="color: var(--warning);">Magnesium (Mg)</h3>
+                            <p style="font-size: 1.3rem; margin: 1rem 0;">Atomic Number: <strong>12</strong></p>
+                            <p style="font-size: 1.3rem; margin-bottom: 2rem;">Mass Number: <strong>24</strong></p>
+                            
+                            <div class="reveal-container-2 hidden">
+                                <svg width="220" height="220" viewBox="0 0 200 200" style="margin: 0 auto;">
+                                    <circle cx="100" cy="100" r="18" class="atom-nucleus" />
+                                    <text x="100" y="97" class="atom-text">12p</text>
+                                    <text x="100" y="109" class="atom-text">12n</text>
+                                    
+                                    <circle cx="100" cy="100" r="30" class="atom-shell" />
+                                    <circle cx="100" cy="100" r="55" class="atom-shell" />
+                                    <circle cx="100" cy="100" r="80" class="atom-shell" />
+                                    
+                                    <!-- Shell 1 (2 e-) -->
+                                    <use href="#electron-x" x="100" y="70" />
+                                    <use href="#electron-x" x="100" y="130" />
+                                    
+                                    <!-- Shell 2 (8 e- in compass pairs) -->
+                                    <use href="#electron-x" x="94" y="46" />
+                                    <use href="#electron-x" x="106" y="46" />
+                                    <use href="#electron-x" x="94" y="154" />
+                                    <use href="#electron-x" x="106" y="154" />
+                                    <use href="#electron-x" x="46" y="94" />
+                                    <use href="#electron-x" x="46" y="106" />
+                                    <use href="#electron-x" x="154" y="94" />
+                                    <use href="#electron-x" x="154" y="106" />
+
+                                    <!-- Shell 3 (2 e-) -->
+                                    <use href="#electron-x" x="100" y="20" />
+                                    <use href="#electron-x" x="100" y="180" />
+                                </svg>
+                                <p style="margin-top: 1rem; color: var(--accent); font-weight: bold;">Structure: 2, 8, 2</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div class="text-center" style="margin-top: -1rem;">
+                        <button id="btn-reveal-atoms" class="btn btn-action delay-3"><i class="fa-solid fa-eye"></i> Show Correct Diagrams</button>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const btn = container.querySelector('#btn-reveal-atoms');
+                const rev1 = container.querySelector('.reveal-container-1');
+                const rev2 = container.querySelector('.reveal-container-2');
+                
+                const showAnswers = () => {
+                    rev1.classList.remove('hidden');
+                    rev2.classList.remove('hidden');
+                    rev1.classList.add('anim-enter');
+                    rev2.classList.add('anim-enter');
+                    btn.style.display = 'none';
+                };
+
+                btn.addEventListener('click', showAnswers);
+                return () => btn.removeEventListener('click', showAnswers);
+            }
+        },
+
+        // Slide 5: Group 1 - The Alkali Metals
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>4. Group 1: The Alkali Metals</h2>
+                    <p style="color: var(--text-dim); margin-bottom: 2rem;">Lithium, Sodium, and Potassium share common properties and structures.</p>
+
+                    <div class="grid-2" style="align-items: stretch;">
+                        <div class="glass-card delay-1" style="border-top: 4px solid var(--danger);">
+                            <h3 style="color: var(--danger);"><i class="fa-solid fa-arrow-trend-down"></i> Trends in Group 1</h3>
+                            
+                            <table class="data-table" style="margin-bottom: 1.5rem;">
+                                <tr><th>Element</th><th>Structure</th><th>MP (°C)</th><th>BP (°C)</th></tr>
+                                <tr><td>Lithium (Li)</td><td>2, 1</td><td>180</td><td>1360</td></tr>
+                                <tr><td>Sodium (Na)</td><td>2, 8, 1</td><td>98</td><td>900</td></tr>
+                                <tr><td>Potassium (K)</td><td>2, 8, 8, 1</td><td>63</td><td>777</td></tr>
+                            </table>
+
+                            <ul style="color: white;">
+                                <li><strong>Structure:</strong> All have exactly <strong>1 electron</strong> in their outermost shell.</li>
+                                <li><strong>Size:</strong> As you go down the group, the atom size <em>increases</em>.</li>
+                                <li><strong>Melting/Boiling Points:</strong> MP and BP <em>decrease</em> as you go down the group.</li>
+                            </ul>
+                        </div>
+
+                        <div class="pedagogical-note note-task delay-2" style="margin: 0; display: flex; flex-direction: column;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-flask"></i> Think like a scientist</div>
+                            <h4>Reactions with Water</h4>
+                            <p>When placed in a trough of water, Group 1 metals react vigorously!</p>
+                            <ul style="color: white; margin-bottom: 1rem;">
+                                <li>Requires safety glasses and a safety screen.</li>
+                                <li>Stored safely (e.g. under oil) and cut with a scalpel.</li>
+                                <li>They produce effervescence (fizzing), move around the surface, and eventually disappear.</li>
+                            </ul>
+                            <p style="font-size: 1.1rem; color: var(--warning); margin-top: auto;"><em>Rubidium is further down the group and is not used in schools because it is too reactive and dangerous!</em></p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 6: Group 7 - The Halogens
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>5. Group 7: The Halogens</h2>
+                    <p style="color: var(--text-dim); margin-bottom: 2rem;">Fluorine, Chlorine, and Bromine are reactive non-metals.</p>
+
+                    <div class="grid-2">
+                        <div class="delay-1">
+                            <div class="glass-card" style="border-top: 4px solid var(--warning);">
+                                <h3 style="color: var(--warning);"><i class="fa-solid fa-vial"></i> Halogen Properties</h3>
+                                
+                                <table class="data-table" style="font-size: 0.95rem; margin-bottom: 1.5rem;">
+                                    <tr><th>Element</th><th>Structure</th><th>Colour</th><th>MP/BP (°C)</th></tr>
+                                    <tr><td>Fluorine (F)</td><td>2, 7</td><td>Pale yellow</td><td>-220 / -188</td></tr>
+                                    <tr><td>Chlorine (Cl)</td><td>2, 8, 7</td><td>Yellow-green</td><td>-101 / -34</td></tr>
+                                    <tr><td>Bromine (Br)</td><td>2, 8, 18, 7</td><td>Brown</td><td>-7 / 59</td></tr>
+                                </table>
+
+                                <ul>
+                                    <li><strong>State at Room Temp:</strong> F and Cl are gases. Bromine is a liquid.</li>
+                                    <li><strong>Structure:</strong> All have <strong>7 electrons</strong> in their outer shell.</li>
+                                    <li><strong>Reactivity:</strong> The <em>most</em> reactive is Fluorine, becoming <em>less</em> reactive as you go down.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="delay-2 text-center">
+                            <h3 style="color: white; margin-bottom: 2rem;">Structure Visualization</h3>
+                            <div style="display: flex; justify-content: center; gap: 2rem;">
+                                <!-- Fluorine SVG -->
+                                <svg width="180" height="180" viewBox="0 0 200 200">
+                                    <circle cx="100" cy="100" r="18" class="atom-nucleus" />
+                                    <text x="100" y="97" class="atom-text">9p</text>
+                                    <text x="100" y="109" class="atom-text">10n</text>
+                                    
+                                    <circle cx="100" cy="100" r="45" class="atom-shell" />
+                                    <circle cx="100" cy="100" r="85" class="atom-shell" />
+                                    
+                                    <!-- Shell 1 (2 e-) -->
+                                    <use href="#electron-x" x="100" y="55" />
+                                    <use href="#electron-x" x="100" y="145" />
+                                    
+                                    <!-- Shell 2 (7 e- in compass pairs) -->
+                                    <use href="#electron-x" x="94" y="16" />
+                                    <use href="#electron-x" x="106" y="16" />
+                                    <use href="#electron-x" x="94" y="184" />
+                                    <use href="#electron-x" x="106" y="184" />
+                                    <use href="#electron-x" x="16" y="94" />
+                                    <use href="#electron-x" x="16" y="106" />
+                                    <use href="#electron-x" x="185" y="100" />
+                                </svg>
+                            </div>
+                            <p style="margin-top: 1rem; color: var(--primary); font-weight: bold;">Fluorine (2, 7)</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 7: Group 8 - The Noble Gases
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>6. Group 8: The Noble Gases</h2>
+                    <p style="color: var(--text-dim); margin-bottom: 2rem;">Helium, Neon, and Argon. The untouchables of the Periodic Table.</p>
+
+                    <div class="grid-2" style="align-items: stretch;">
+                        <div class="glass-card delay-1" style="border-top: 4px solid var(--primary);">
+                            <h3 style="color: var(--primary);"><i class="fa-solid fa-shield-halved"></i> Inert and Unreactive</h3>
+                            
+                            <table class="data-table" style="margin-bottom: 1.5rem;">
+                                <tr><th>Element</th><th>Structure</th><th>MP (°C)</th><th>BP (°C)</th></tr>
+                                <tr><td>Helium (He)</td><td>2</td><td>-270</td><td>-269</td></tr>
+                                <tr><td>Neon (Ne)</td><td>2, 8</td><td>-249</td><td>-246</td></tr>
+                                <tr><td>Argon (Ar)</td><td>2, 8, 8</td><td>-189</td><td>-186</td></tr>
+                            </table>
+
+                            <ul style="color: white;">
+                                <li>All elements in Group 8 are <strong>gases</strong> at room temperature.</li>
+                                <li>Unlike other groups, they are <strong>inert</strong> (unreactive) and do not form compounds.</li>
+                                <li>Melting and boiling points <em>increase</em> slightly as you go down the group.</li>
+                            </ul>
+                        </div>
+
+                        <div class="pedagogical-note note-success delay-2" style="margin: 0; display: flex; flex-direction: column; justify-content: center;">
+                            <div class="pedagogical-badge"><i class="fa-solid fa-key"></i> The Secret to Stability</div>
+                            <h4 style="font-size: 1.6rem; margin-top: 1rem;">Full Outer Shells</h4>
+                            <p style="font-size: 1.2rem;">
+                                Helium's first shell is completely full with 2 electrons.<br><br>
+                                Neon and Argon have exactly 8 electrons in their highest energy level.<br><br>
+                                Because their shells are perfectly full, they do not need to give, take, or share electrons with any other elements!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 8: All Textbook Questions
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Learner Book Questions</h2>
+                    <p style="color: var(--text-dim); margin-bottom: 1rem;">Review the questions from pages 51 to 59. Attempt to answer them mentally before proceeding to the next slide.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-height: 500px; overflow-y: auto; padding-right: 1rem;">
+                        
+                        <!-- Page 51 -->
+                        <div class="glass-card" style="padding: 1.5rem; margin-bottom: 0;">
+                            <h4 style="color: var(--primary);">Atomic Structure (Pg 51)</h4>
+                            <ol style="font-size: 1rem; color: #cbd5e1; padding-left: 1.2rem; margin-bottom: 0;">
+                                <li>How many electrons are there in an atom of carbon?</li>
+                                <li>How many protons are there in an atom of beryllium?</li>
+                                <li>How many neutrons are there in an atom of boron?</li>
+                                <li>Draw a diagram to show the structure of an atom of magnesium.</li>
+                                <li>What is the name of the element that has the electronic structure 2,8,3?</li>
+                                <li>Draw a labelled atomic diagram of the element fluorine.</li>
+                                <li>How is the model of the atom we use today different from the Rutherford model?</li>
+                            </ol>
+                        </div>
+
+                        <!-- Page 54/55 -->
+                        <div class="glass-card" style="padding: 1.5rem; margin-bottom: 0;">
+                            <h4 style="color: var(--danger);">Group 1 Metals (Pg 54-56)</h4>
+                            <ol style="font-size: 1rem; color: #cbd5e1; padding-left: 1.2rem; margin-bottom: 0;">
+                                <li>Where in the Periodic Table do you find the metals?</li>
+                                <li>What is the trend in the boiling points of Group 1 elements?</li>
+                                <li>What prediction can you make about the boiling point of rubidium?</li>
+                                <li>How many more electrons than lithium does sodium have?</li>
+                                <li>What happens to the size of the atoms as you go down this group?</li>
+                                <li>What similarity is there in the structure of these atoms?</li>
+                                <li>Suggest why this group of metals is called Group 1.</li>
+                                <li>What are the trends in the structure and behaviour of these elements?</li>
+                            </ol>
+                        </div>
+
+                        <!-- Page 57/58 -->
+                        <div class="glass-card" style="padding: 1.5rem; margin-bottom: 0;">
+                            <h4 style="color: var(--warning);">Group 7 Halogens (Pg 57-58)</h4>
+                            <ol style="font-size: 1rem; color: #cbd5e1; padding-left: 1.2rem; margin-bottom: 0;" start="9">
+                                <li>Are the halogens metals or non-metals?</li>
+                                <li>What is the trend in melting/boiling points in Group 7?</li>
+                                <li>What is the trend in colour in Group 7?</li>
+                                <li>What would you predict about the BP/MP of iodine?</li>
+                                <li>Would you expect iodine to be more or less reactive than bromine?</li>
+                                <li>Predict the electrons in the outer shell of Bromine.</li>
+                                <li>What happens to the size of atoms down Group 7?</li>
+                                <li>Why is this group called Group 7?</li>
+                            </ol>
+                        </div>
+
+                        <!-- Page 59 -->
+                        <div class="glass-card" style="padding: 1.5rem; margin-bottom: 0;">
+                            <h4 style="color: var(--accent);">Group 8 Noble Gases (Pg 59)</h4>
+                            <ol style="font-size: 1rem; color: #cbd5e1; padding-left: 1.2rem; margin-bottom: 0;" start="19">
+                                <li>What trend in melting points can be seen in Group 8?</li>
+                                <li>What happens to the size of the atoms as you go down Group 8?</li>
+                                <li>What similarity is there in the structure of these atoms?</li>
+                                <li>Suggest why this group is called Group 8.</li>
+                                <li>What predictions can you make about the MP/BP of krypton?</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 9: Interactive Answer Key
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Learner Book Answers</h2>
+                    <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Click the buttons to reveal the answers for each section.</p>
+                    
+                    <div style="max-height: 550px; overflow-y: auto; padding-right: 1rem;">
+                        <div class="qa-container" id="qa-list">
+                            <!-- Injected by script -->
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: (container) => {
+                const qaData = [
+                    {
+                        section: "Section 1: Atomic Structure (Pg 51)",
+                        color: "var(--primary)",
+                        answers: [
+                            "1. 6 electrons.",
+                            "2. 4 protons.",
+                            "3. 6 neutrons (Mass 11 - 5 protons).",
+                            "4. (Self Check) 12p, 12n in nucleus. Shells: 2, 8, 2.",
+                            "5. Aluminium.",
+                            "6. (Self Check) 9p, 10n in nucleus. Shells: 2, 7.",
+                            "7. Bohr added electron shells (energy levels) instead of random orbits."
+                        ]
+                    },
+                    {
+                        section: "Section 2: Group 1 Alkali Metals (Pg 54-56)",
+                        color: "var(--danger)",
+                        answers: [
+                            "1. On the left side of the Periodic Table.",
+                            "2. They decrease as you go down the group.",
+                            "3. It will be lower than 777 °C (Potassium's BP).",
+                            "4. Sodium has 8 more electrons than Lithium (11 vs 3).",
+                            "5. The atoms increase in size.",
+                            "6. They all have 1 electron in their outer shell.",
+                            "7. Because they possess 1 outer electron.",
+                            "8. Atoms get larger, they have 1 outer electron, and they become more reactive."
+                        ]
+                    },
+                    {
+                        section: "Section 3: Group 7 Halogens (Pg 57-58)",
+                        color: "var(--warning)",
+                        answers: [
+                            "9. Non-metals.",
+                            "10/12. MP and BP increase as you go down the group.",
+                            "11. The colours get darker as you go down.",
+                            "13. Iodine will have a higher MP and BP than bromine.",
+                            "14. Less reactive.",
+                            "15. 7 electrons in the outer shell.",
+                            "16. Atom size increases.",
+                            "17/18. They all have 7 outer electrons, which is why it is called Group 7."
+                        ]
+                    },
+                    {
+                        section: "Section 4: Group 8 Noble Gases (Pg 59)",
+                        color: "var(--accent)",
+                        answers: [
+                            "19. Melting points increase slightly as you go down the group.",
+                            "20. The size of the atoms increases.",
+                            "21. They all have completely full outer electron shells.",
+                            "22. Because they generally have 8 electrons in their outer shell (except He, which has 2, but is full).",
+                            "23. Krypton will have a higher MP and BP than Argon."
+                        ]
+                    }
+                ];
+
+                const qaList = container.querySelector('#qa-list');
+                
+                qaData.forEach((block, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'qa-item delay-' + (index + 1);
+                    
+                    const answerHtml = block.answers.map(a => `<p class="qa-answer" style="margin-bottom: 0.5rem; color: ${block.color};"><i class="fa-solid fa-arrow-right" style="font-size:0.9rem; margin-right: 0.5rem;"></i> ${a}</p>`).join('');
+
+                    item.innerHTML = `
+                        <div class="qa-header">
+                            <div class="qa-question" style="color: ${block.color};">${block.section}</div>
+                            <button class="btn btn-action" style="padding: 0.5rem 1rem; font-size: 0.9rem; background: rgba(255,255,255,0.1); box-shadow: none;">Reveal Answers</button>
+                        </div>
+                        <div class="qa-body" style="background: rgba(0,0,0,0.3);">
+                            ${answerHtml}
+                        </div>
+                    `;
+
+                    const btn = item.querySelector('.btn');
+                    btn.addEventListener('click', () => {
+                        const isExpanded = item.classList.contains('expanded');
+                        if (isExpanded) {
+                            item.classList.remove('expanded');
+                            btn.innerText = "Reveal Answers";
+                            btn.style.background = "rgba(255,255,255,0.1)";
+                        } else {
+                            item.classList.add('expanded');
+                            btn.innerText = "Hide Answers";
+                            btn.style.background = block.color;
+                        }
+                    });
+
+                    qaList.appendChild(item);
+                });
+
+                return () => {}; // Cleanup not strictly necessary for simple DOM elements recreated on render
+            }
+        }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        Engine.init(lessonSlides);
+    });
+
+</script>
+</body>
+</html>
