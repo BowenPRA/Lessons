@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Review - Cambridge Math</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- DESIGN TOKENS (BOWEN ENGINE) --- */
+        :root {
+            --bg-deep: #0f172a;        
+            --bg-panel: #1e293b;       
+            --primary: #8b5cf6;        
+            --primary-glow: rgba(139, 92, 246, 0.5);
+            --accent: #10b981;         
+            --warning: #f59e0b;        
+            --danger: #ef4444;         
+            --text-light: #f8fafc;     
+            --text-dim: #94a3b8;       
+            
+            --header-h: 70px;
+            --footer-h: 80px;
+            --border-radius: 16px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            font-size: 18px; 
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 35%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1), transparent 35%),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+        }
+
+        /* --- LAYOUT --- */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+        .header {
+            height: var(--header-h);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 20;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .brand-pill {
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px var(--primary-glow);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .viewport {
+            flex: 1;
+            position: relative;
+            overflow-y: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-wrapper {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 4rem; 
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .footer {
+            height: var(--footer-h);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 20;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.2; letter-spacing: -0.5px; }
+        h1 { font-size: 4rem; margin-bottom: 1rem; text-shadow: 0 0 30px var(--primary-glow); }
+        h2 { font-size: 2.8rem; margin-bottom: 1.5rem; color: #c4b5fd; text-align: center; }
+        h3 { font-size: 1.8rem; margin-bottom: 1rem; color: white; }
+        p, li { line-height: 1.6; margin-bottom: 1rem; }
+        strong { font-weight: 800; color: white; }
+
+        /* --- COMPONENTS --- */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        /* Buttons & Navigation */
+        .btn-nav {
+            width: 56px; height: 56px;
+            background: rgba(30, 41, 59, 0.8);
+            color: var(--text-light);
+            font-size: 1.4rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .progress-container { flex: 1; margin: 0 3rem; height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), #a78bfa); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--primary-glow); }
+
+        /* --- ACCORDION QUESTION SYSTEM --- */
+        .question-group { margin-bottom: 1rem; }
+        
+        .question-btn {
+            width: 100%;
+            text-align: left;
+            background: linear-gradient(90deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 1.2rem 1.8rem;
+            border-radius: 12px;
+            cursor: pointer;
+            color: white;
+            font-size: 1.2rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .question-btn:hover {
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), rgba(30, 41, 59, 0.9));
+            border-color: var(--primary);
+        }
+        .question-btn .chevron {
+            transition: transform 0.3s ease;
+            color: var(--accent);
+            font-size: 1.4rem;
+        }
+        
+        .answer-panel {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            background: rgba(0,0,0,0.3);
+            border-radius: 0 0 12px 12px;
+            margin-top: -8px;
+            border: 1px solid transparent;
+            border-top: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        .answer-panel.open {
+            padding: 2rem;
+            max-height: 1200px;
+            opacity: 1;
+            border-color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .math-working {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            font-size: 1.3rem;
+            margin: 1rem 0;
+        }
+        .final-answer {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            border: 2px solid var(--accent);
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            color: #34d399;
+            font-weight: bold;
+            font-size: 1.4rem;
+            margin-top: 1rem;
+        }
+
+        /* Cambridge Mark Scheme Styling */
+        .mark-scheme {
+            background: rgba(245, 158, 11, 0.08);
+            border-left: 4px solid var(--warning);
+            padding: 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            color: #f8fafc;
+        }
+        .mark-scheme-title {
+            color: var(--warning);
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .mark-badge {
+            display: inline-block;
+            background: var(--warning);
+            color: #0f172a;
+            font-weight: 900;
+            padding: 0.1rem 0.6rem;
+            border-radius: 4px;
+            margin-right: 0.8rem;
+            font-size: 0.95rem;
+            min-width: 40px;
+            text-align: center;
+        }
+        .mark-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.6rem;
+        }
+
+        /* Pedagogical Note */
+        .pedagogical-note {
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid;
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .pedagogical-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 1.5px;
+        }
+        .note-success { border-left-color: var(--accent); background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(30, 41, 59, 0.8)); }
+        .note-success .pedagogical-badge { color: #34d399; }
+
+        /* SVG Graph styling */
+        .graph-container {
+            background: #0f172a;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-enter { animation: fadeIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+        .delay-1 { animation-delay: 0.15s; }
+        .text-center { text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="brand-pill">Cambridge Math</div>
+            <span style="font-weight: 700; color: #cbd5e1; font-size: 1.2rem; letter-spacing: 0.5px;">Assessment Review</span>
+        </div>
+        <div style="font-family: 'Outfit'; font-weight: 700; font-size: 1.2rem; color: var(--accent);">
+            23 April 2026
+        </div>
+    </header>
+
+    <main class="viewport" id="viewport">
+        <div id="slide-container" class="slide-wrapper" aria-live="polite">
+            <!-- Slides injected here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <button class="btn btn-nav" id="btn-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <button class="btn btn-nav" id="btn-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </footer>
+</div>
+
+<script>
+    // --- THE BOWEN ENGINE ---
+    const Engine = {
+        currentSlide: 0,
+        cleanupFn: null,
+        slides: [],
+        
+        init(slides) {
+            this.slides = slides;
+            document.getElementById('btn-prev').addEventListener('click', () => this.navigate(-1));
+            document.getElementById('btn-next').addEventListener('click', () => this.navigate(1));
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') this.navigate(1);
+                if (e.key === 'ArrowLeft') this.navigate(-1);
+            });
+            
+            this.render();
+        },
+
+        navigate(dir) {
+            const next = this.currentSlide + dir;
+            if (next >= 0 && next < this.slides.length) {
+                this.currentSlide = next;
+                this.render();
+            }
+        },
+
+        render() {
+            if (this.cleanupFn && typeof this.cleanupFn === 'function') {
+                this.cleanupFn();
+                this.cleanupFn = null;
+            }
+
+            const container = document.getElementById('slide-container');
+            const slide = this.slides[this.currentSlide];
+            
+            container.innerHTML = slide.template();
+            
+            if (slide.script) {
+                this.cleanupFn = slide.script(container);
+            }
+
+            document.getElementById('progress-bar').style.width = `${((this.currentSlide + 1) / this.slides.length) * 100}%`;
+            document.getElementById('btn-prev').disabled = this.currentSlide === 0;
+            document.getElementById('btn-next').disabled = this.currentSlide === this.slides.length - 1;
+            
+            const wrapper = document.querySelector('.slide-wrapper');
+            if(wrapper) wrapper.scrollTop = 0;
+
+            if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+                MathJax.typesetPromise([container]).catch(err => console.error('MathJax error:', err));
+            }
+        }
+    };
+
+    // Shared Accordion Script for Slides
+    const initAccordions = (container) => {
+        const btns = container.querySelectorAll('.question-btn');
+        const handlers = [];
+
+        btns.forEach(btn => {
+            const handler = function() {
+                const targetId = this.getAttribute('data-target');
+                const panel = container.querySelector('#' + targetId);
+                const icon = this.querySelector('.chevron');
+                
+                if (panel.classList.contains('open')) {
+                    panel.classList.remove('open');
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    panel.classList.add('open');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            };
+            btn.addEventListener('click', handler);
+            handlers.push({ btn, handler });
+        });
+
+        return () => {
+            handlers.forEach(h => h.btn.removeEventListener('click', h.handler));
+        };
+    };
+
+    // Helper: Generate clean SVG background grids for mathematical graphs
+    const generateGraphSVG = (xMin, xMax, yMin, yMax, stepSize = 30) => {
+        const width = (xMax - xMin) * stepSize;
+        const height = (yMax - yMin) * stepSize;
+        const originX = Math.abs(xMin) * stepSize;
+        const originY = Math.abs(yMax) * stepSize; 
+
+        let svg = `<svg viewBox="0 0 ${width} ${height}" width="100%" style="max-width: ${width}px; background: #1e293b;">`;
+        
+        for(let x=0; x<=width; x+=stepSize) {
+            svg += `<line x1="${x}" y1="0" x2="${x}" y2="${height}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`;
+        }
+        for(let y=0; y<=height; y+=stepSize) {
+            svg += `<line x1="0" y1="${y}" x2="${width}" y2="${y}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`;
+        }
+        
+        svg += `<line x1="${originX}" y1="0" x2="${originX}" y2="${height}" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>`;
+        svg += `<line x1="0" y1="${originY}" x2="${width}" y2="${originY}" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>`;
+        svg += `<text x="${originX - 12}" y="${originY + 15}" fill="rgba(255,255,255,0.6)" font-size="12">0</text>`;
+
+        return { svg, originX, originY, stepSize };
+    };
+
+    // --- LESSON CONTENT ---
+    const lessonSlides = [
+        // Slide 1: Objective
+        {
+            template: () => `
+                <div class="anim-enter text-center" style="display: flex; flex-direction: column; justify-content: center; height: 60vh;">
+                    <div style="font-size: 6rem; color: var(--accent); margin-bottom: 1rem; filter: drop-shadow(0 0 30px rgba(16,185,129,0.5));">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <h1>Assessment Review</h1>
+                    <h2 style="color: var(--text-dim); font-size: 2.2rem; margin-top: -1rem;">Solutions & Corrections</h2>
+                    
+                    <div class="glass-card delay-1" style="max-width: 800px; margin: 3rem auto; text-align: center; border-top: 5px solid var(--accent);">
+                        <p style="font-size: 1.6rem; font-weight: 500; line-height: 1.6; margin: 0;">
+                            We will go through the solutions for our recent assessment. <br>Click on each part of the questions to reveal the correct working out, final answers, and the <strong>Cambridge Marking Guidelines</strong>. 
+                        </p>
+                    </div>
+                </div>
+            `
+        },
+
+        // Slide 2: Section 1
+        {
+            template: () => {
+                const grid = generateGraphSVG(-6, 6, -7, 5, 30);
+                const tX = (x) => grid.originX + (x * grid.stepSize);
+                const tY = (y) => grid.originY - (y * grid.stepSize);
+
+                return `
+                <div class="anim-enter">
+                    <h2>Section 1: Coordinate Graphing & Midpoints</h2>
+                    
+                    <div class="glass-card delay-1">
+                        <!-- Part A & B -->
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-1ab">
+                                <div><strong>(a) & (b)</strong> Plot $A(-4, 2)$ and $B(2, -6)$. Find the midpoint $M$.</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-1ab" class="answer-panel">
+                                <div style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
+                                    <div class="graph-container">
+                                        ${grid.svg}
+                                            <circle cx="${tX(-4)}" cy="${tY(2)}" r="5" fill="var(--primary)"/>
+                                            <text x="${tX(-4)-15}" y="${tY(2)-10}" fill="white" font-weight="bold">A</text>
+                                            
+                                            <circle cx="${tX(2)}" cy="${tY(-6)}" r="5" fill="var(--primary)"/>
+                                            <text x="${tX(2)+15}" y="${tY(-6)+10}" fill="white" font-weight="bold">B</text>
+                                            
+                                            <line x1="${tX(-4)}" y1="${tY(2)}" x2="${tX(2)}" y2="${tY(-6)}" stroke="rgba(255,255,255,0.3)" stroke-dasharray="4 4" />
+                                            <circle cx="${tX(-1)}" cy="${tY(-2)}" r="6" fill="var(--accent)"/>
+                                            <text x="${tX(-1)+15}" y="${tY(-2)}" fill="var(--accent)" font-weight="bold">M</text>
+                                        </svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 300px;">
+                                        <p style="font-size: 1.2rem;">To find the midpoint mathematically, we average the $x$ values and average the $y$ values:</p>
+                                        <div class="math-working">
+                                            $M = \\left( \\frac{x_1 + x_2}{2}, \\frac{y_1 + y_2}{2} \\right)$<br><br>
+                                            $M = \\left( \\frac{-4 + 2}{2}, \\frac{2 + (-6)}{2} \\right)$<br><br>
+                                            $M = \\left( \\frac{-2}{2}, \\frac{-4}{2} \\right)$
+                                        </div>
+                                        <div class="final-answer">Answer: (-1, -2)</div>
+                                        
+                                        <div class="mark-scheme">
+                                            <div class="mark-scheme-title">Marking Guidelines (4 marks)</div>
+                                            <div class="mark-row"><span class="mark-badge">B1</span> <div>Plotting point A correctly on the grid.</div></div>
+                                            <div class="mark-row"><span class="mark-badge">B1</span> <div>Plotting point B correctly on the grid.</div></div>
+                                            <div class="mark-row"><span class="mark-badge">M1</span> <div>Evidence of correctly substituting into the midpoint formula.</div></div>
+                                            <div class="mark-row"><span class="mark-badge">A1</span> <div>Correct final midpoint coordinates $(-1, -2)$.</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Part C -->
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-1c">
+                                <div><strong>(c)</strong> Segment $PQ$ has midpoint $M(1, 1)$. If $P$ is $(-3, 4)$, find $Q$.</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-1c" class="answer-panel">
+                                <p style="font-size: 1.2rem;">We know the midpoint formula. Let $Q$ be $(x, y)$. We work backwards:</p>
+                                <div class="math-working">
+                                    <strong>For the x-coordinate:</strong><br>
+                                    $\\frac{-3 + x}{2} = 1 \\implies -3 + x = 2 \\implies x = 5$<br><br>
+                                    <strong>For the y-coordinate:</strong><br>
+                                    $\\frac{4 + y}{2} = 1 \\implies 4 + y = 2 \\implies y = -2$
+                                </div>
+                                <div class="final-answer">Answer: (5, -2)</div>
+                                
+                                <div class="mark-scheme">
+                                    <div class="mark-scheme-title">Marking Guidelines (3 marks)</div>
+                                    <div class="mark-row"><span class="mark-badge">M1</span> <div>Setting up a correct algebraic equation for either $x$ or $y$.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">A1</span> <div>Correct calculation of the $x$ coordinate $(5)$.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">A1</span> <div>Correct calculation of the $y$ coordinate $(-2)$.</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Part D & E -->
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-1de">
+                                <div><strong>(d) & (e)</strong> Equations for horizontal line through $A(-4, 2)$ and vertical through $B(2, -6)$.</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-1de" class="answer-panel">
+                                <p style="font-size: 1.2rem;">Remember: Horizontal lines are $y = c$. Vertical lines are $x = c$.</p>
+                                <div class="math-working">
+                                    <strong>(d)</strong> Horizontal line through $A(-4, \\mathbf{2})$ must lock the y-value.<br>
+                                    <span style="color: var(--accent); font-weight: bold;">Answer: $y = 2$</span><br><br>
+                                    <strong>(e)</strong> Vertical line through $B(\\mathbf{2}, -6)$ must lock the x-value.<br>
+                                    <span style="color: var(--accent); font-weight: bold;">Answer: $x = 2$</span>
+                                </div>
+
+                                <div class="mark-scheme">
+                                    <div class="mark-scheme-title">Marking Guidelines (3 marks)</div>
+                                    <div class="mark-row"><span class="mark-badge">B1</span> <div>Correct equation $y = 2$ (must include '$y=$').</div></div>
+                                    <div class="mark-row"><span class="mark-badge">B2</span> <div>Correct equation $x = 2$ (must include '$x=$', 2 marks for precision).</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;},
+            script: initAccordions
+        },
+
+        // Slide 3: Section 2
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Section 2: Fraction Order of Operations</h2>
+                    
+                    <div class="glass-card delay-1">
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-2a">
+                                <div><strong>(a)</strong> $\\displaystyle \\frac{3}{4} + \\frac{1}{2} \\times \\frac{2}{5}$</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-2a" class="answer-panel">
+                                <p>By BIDMAS/PEMDAS, we must multiply before we add.</p>
+                                <div class="math-working">
+                                    $= \\frac{3}{4} + \\left( \\frac{1 \\times 2}{2 \\times 5} \\right)$<br><br>
+                                    $= \\frac{3}{4} + \\frac{2}{10}$ $\\quad \\text{(Simplify: } \\frac{2}{10} = \\frac{1}{5} \\text{)}$<br><br>
+                                    $= \\frac{3}{4} + \\frac{1}{5}$ $\\quad \\text{(Common denominator is 20)}$<br><br>
+                                    $= \\frac{15}{20} + \\frac{4}{20}$
+                                </div>
+                                <div class="final-answer">Answer: $\\displaystyle \\frac{19}{20}$</div>
+                                
+                                <div class="mark-scheme">
+                                    <div class="mark-scheme-title">Marking Guidelines (2 marks)</div>
+                                    <div class="mark-row"><span class="mark-badge">M1</span> <div>Correctly prioritizing multiplication and finding common denominator.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">A1</span> <div>Correct final simplified fraction $\\frac{19}{20}$.</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-2b">
+                                <div><strong>(b)</strong> $\\displaystyle \\left( 1\\frac{1}{3} - \\frac{5}{6} \\right) \\div \\frac{3}{4}$</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-2b" class="answer-panel">
+                                <p>Solve inside the brackets first, converting mixed numbers to improper fractions.</p>
+                                <div class="math-working">
+                                    $= \\left( \\frac{4}{3} - \\frac{5}{6} \\right) \\div \\frac{3}{4}$<br><br>
+                                    $= \\left( \\frac{8}{6} - \\frac{5}{6} \\right) \\div \\frac{3}{4}$<br><br>
+                                    $= \\frac{3}{6} \\div \\frac{3}{4}$ $\\quad \\text{(Keep, Change, Flip!)}$<br><br>
+                                    $= \\frac{1}{2} \\times \\frac{4}{3} = \\frac{4}{6}$
+                                </div>
+                                <div class="final-answer">Answer: $\\displaystyle \\frac{2}{3}$</div>
+
+                                <div class="mark-scheme">
+                                    <div class="mark-scheme-title">Marking Guidelines (2 marks)</div>
+                                    <div class="mark-row"><span class="mark-badge">M1</span> <div>Solving bracket accurately to get $\\frac{3}{6}$ or $\\frac{1}{2}$.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">A1</span> <div>Correctly multiplying by the reciprocal to get $\\frac{2}{3}$.</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-2c">
+                                <div><strong>(c)</strong> $\\displaystyle \\frac{2}{5} \\times \\sqrt{\\frac{25}{16}} + 1\\frac{1}{2}$</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-2c" class="answer-panel">
+                                <p>Calculate indices/roots first, then multiply, then add.</p>
+                                <div class="math-working">
+                                    $= \\frac{2}{5} \\times \\left(\\frac{5}{4}\\right) + \\frac{3}{2}$<br><br>
+                                    $= \\frac{10}{20} + \\frac{3}{2}$ $\\quad \\text{(Simplify: } \\frac{10}{20} = \\frac{1}{2} \\text{)}$<br><br>
+                                    $= \\frac{1}{2} + \\frac{3}{2}$<br><br>
+                                    $= \\frac{4}{2}$
+                                </div>
+                                <div class="final-answer">Answer: 2</div>
+
+                                <div class="mark-scheme">
+                                    <div class="mark-scheme-title">Marking Guidelines (3 marks)</div>
+                                    <div class="mark-row"><span class="mark-badge">M1</span> <div>Correctly evaluating the square root to $\\frac{5}{4}$.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">M1</span> <div>Correctly multiplying fractions to get $\\frac{10}{20}$ or $\\frac{1}{2}$.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">A1</span> <div>Correct final integer value of $2$.</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-2d">
+                                <div><strong>(d)</strong> $\\displaystyle \\frac{2\\frac{1}{4} \\div \\left( \\frac{1}{2} \\right)^2}{3}$</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-2d" class="answer-panel">
+                                <p>Solve the complex numerator first before dividing by 3.</p>
+                                <div class="math-working">
+                                    Numerator: $\\frac{9}{4} \\div \\left(\\frac{1}{4}\\right)$<br><br>
+                                    $= \\frac{9}{4} \\times \\frac{4}{1} = \\frac{36}{4} = 9$<br><br>
+                                    Put it back over the denominator: $\\frac{9}{3}$
+                                </div>
+                                <div class="final-answer">Answer: 3</div>
+
+                                <div class="mark-scheme">
+                                    <div class="mark-scheme-title">Marking Guidelines (3 marks)</div>
+                                    <div class="mark-row"><span class="mark-badge">M1</span> <div>Evaluating the exponent to $\\frac{1}{4}$ AND converting to improper fraction $\\frac{9}{4}$.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">M1</span> <div>Evaluating the numerator completely to equal $9$.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">A1</span> <div>Correct final division by 3 to get $3$.</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            script: initAccordions
+        },
+
+        // Slide 4: Section 3
+        {
+            template: () => {
+                const grid = generateGraphSVG(-6, 6, -2, 6, 35);
+                const tX = (x) => grid.originX + (x * grid.stepSize);
+                const tY = (y) => grid.originY - (y * grid.stepSize);
+
+                return `
+                <div class="anim-enter">
+                    <h2>Section 3: Translation of Shapes</h2>
+                    
+                    <div class="glass-card delay-1">
+                        <!-- Part A -->
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-3a">
+                                <div><strong>(a)</strong> Translate Triangle T by vector $\\begin{pmatrix} -5 \\\\ 2 \\end{pmatrix}$ to create U.</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-3a" class="answer-panel">
+                                <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+                                    <div class="graph-container">
+                                        ${grid.svg}
+                                            <polygon points="${tX(1)},${tY(1)} ${tX(4)},${tY(1)} ${tX(1)},${tY(3)}" fill="rgba(56, 189, 248, 0.3)" stroke="#38bdf8" stroke-width="2"/>
+                                            <text x="${tX(1.5)}" y="${tY(1.3)}" fill="white" font-weight="bold">T</text>
+                                            
+                                            <path d="M ${tX(1)} ${tY(1)} L ${tX(-4)} ${tY(1)} L ${tX(-4)} ${tY(3)}" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4"/>
+                                            
+                                            <polygon points="${tX(-4)},${tY(3)} ${tX(-1)},${tY(3)} ${tX(-4)},${tY(5)}" fill="rgba(16, 185, 129, 0.5)" stroke="var(--accent)" stroke-width="2"/>
+                                            <text x="${tX(-3.5)}" y="${tY(3.3)}" fill="white" font-weight="bold">U</text>
+                                        </svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 300px;">
+                                        <p style="font-size: 1.2rem;">The vector means <strong>5 units left</strong> and <strong>2 units up</strong>. Apply this mapping to every corner of T.</p>
+                                        
+                                        <div class="mark-scheme">
+                                            <div class="mark-scheme-title">Marking Guidelines (3 marks)</div>
+                                            <div class="mark-row"><span class="mark-badge">M1</span> <div>Translating at least one vertex correctly by the vector.</div></div>
+                                            <div class="mark-row"><span class="mark-badge">A2</span> <div>Fully correct Triangle U drawn in the correct position (deduct 1 mark if orientation/size changed).</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Part B & C -->
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-3bc">
+                                <div><strong>(b) & (c)</strong> Reversing and Combining Translations.</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-3bc" class="answer-panel">
+                                <div class="math-working">
+                                    <strong>(b) Map U back to T:</strong> We do the exact opposite of the original vector.<br>
+                                    <span style="color: var(--accent); font-weight: bold;">Answer: Translation by $\\begin{pmatrix} 5 \\\\ -2 \\end{pmatrix}$</span><br><br>
+                                    
+                                    <strong>(c) Combine $\\begin{pmatrix} 2 \\\\ -7 \\end{pmatrix}$ and $\\begin{pmatrix} -4 \\\\ 3 \\end{pmatrix}$:</strong> Simply add the vectors together!<br>
+                                    Top: $2 + (-4) = -2$<br>
+                                    Bottom: $-7 + 3 = -4$<br>
+                                    <span style="color: var(--accent); font-weight: bold;">Answer: $\\begin{pmatrix} -2 \\\\ -4 \\end{pmatrix}$</span>
+                                </div>
+
+                                <div class="mark-scheme">
+                                    <div class="mark-scheme-title">Marking Guidelines (4 marks)</div>
+                                    <div class="mark-row"><span class="mark-badge">B1</span> <div>(b) Stating the transformation is a "Translation".</div></div>
+                                    <div class="mark-row"><span class="mark-badge">B1</span> <div>(b) Stating the correct reversed vector.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">M1</span> <div>(c) Evidence of adding the $x$ and $y$ components.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">A1</span> <div>(c) Correct combined vector.</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Part D -->
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-3d">
+                                <div><strong>(d)</strong> Point $R$ translated by $\\begin{pmatrix} 3 \\\\ -1 \\end{pmatrix}$ goes to $R'(2, 5)$. Find $R$.</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-3d" class="answer-panel">
+                                <p style="font-size: 1.2rem;">Set up simple equations to work backwards. Let original $R$ be $(x, y)$.</p>
+                                <div class="math-working">
+                                    $x + 3 = 2 \\implies x = 2 - 3 = -1$<br><br>
+                                    $y - 1 = 5 \\implies y = 5 + 1 = 6$
+                                </div>
+                                <div class="final-answer">Answer: (-1, 6)</div>
+
+                                <div class="mark-scheme">
+                                    <div class="mark-scheme-title">Marking Guidelines (3 marks)</div>
+                                    <div class="mark-row"><span class="mark-badge">M1</span> <div>Setting up equations (e.g. $x+3=2$) OR explicitly subtracting the vector from the final point.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">A1</span> <div>Correct original $x$ coordinate $(-1)$.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">A1</span> <div>Correct original $y$ coordinate $(6)$.</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;},
+            script: initAccordions
+        },
+
+        // Slide 5: Section 4
+        {
+            template: () => {
+                const grid = generateGraphSVG(-6, 6, -4, 6, 30);
+                const tX = (x) => grid.originX + (x * grid.stepSize);
+                const tY = (y) => grid.originY - (y * grid.stepSize);
+
+                return `
+                <div class="anim-enter">
+                    <h2>Section 4: Reflections</h2>
+                    
+                    <div class="glass-card delay-1">
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-4graph">
+                                <div><strong>(a) - (d)</strong> Drawing lines and reflecting Triangles A $\\rightarrow$ B $\\rightarrow$ C.</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-4graph" class="answer-panel">
+                                <div style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
+                                    <div class="graph-container">
+                                        ${grid.svg}
+                                            <polygon points="${tX(1)},${tY(2)} ${tX(3)},${tY(2)} ${tX(3)},${tY(4)}" fill="rgba(139, 92, 246, 0.4)" stroke="var(--primary)" stroke-width="2"/>
+                                            <text x="${tX(2)}" y="${tY(2.8)}" fill="white" font-weight="bold">A</text>
+                                            
+                                            <line x1="0" y1="${tY(1)}" x2="100%" y2="${tY(1)}" stroke="#fca5a5" stroke-width="2" stroke-dasharray="4 4"/>
+                                            <text x="${tX(5)}" y="${tY(1)-5}" fill="#fca5a5" font-weight="bold">y=1</text>
+                                            
+                                            <polygon points="${tX(1)},${tY(0)} ${tX(3)},${tY(0)} ${tX(3)},${tY(-2)}" fill="rgba(56, 189, 248, 0.4)" stroke="#38bdf8" stroke-width="2"/>
+                                            <text x="${tX(2)}" y="${tY(-0.8)}" fill="white" font-weight="bold">B</text>
+
+                                            <line x1="${tX(-1)}" y1="0" x2="${tX(-1)}" y2="100%" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4"/>
+                                            <text x="${tX(-1)+5}" y="${tY(5)}" fill="#f59e0b" font-weight="bold">x=-1</text>
+
+                                            <polygon points="${tX(-3)},${tY(0)} ${tX(-5)},${tY(0)} ${tX(-5)},${tY(-2)}" fill="rgba(16, 185, 129, 0.5)" stroke="var(--accent)" stroke-width="2"/>
+                                            <text x="${tX(-4)}" y="${tY(-0.8)}" fill="white" font-weight="bold">C</text>
+                                        </svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 300px;">
+                                        <p style="font-size: 1.2rem;"><strong>Golden Rule:</strong> Every point is the exact same distance from the mirror line as the original.</p>
+                                        <ul style="font-size: 1.1rem; color: var(--text-dim);">
+                                            <li>Notice how $A$ is 1 unit above $y=1$, so $B$ is 1 unit below it.</li>
+                                            <li>Notice how $B$ is 2 units right of $x=-1$, so $C$ is 2 units left of it.</li>
+                                        </ul>
+
+                                        <div class="mark-scheme">
+                                            <div class="mark-scheme-title">Marking Guidelines (8 marks)</div>
+                                            <div class="mark-row"><span class="mark-badge">B1</span> <div>Drawing the correct horizontal line $y=1$.</div></div>
+                                            <div class="mark-row"><span class="mark-badge">B2</span> <div>Triangle B drawn in perfectly correct position.</div></div>
+                                            <div class="mark-row"><span class="mark-badge">B1</span> <div>Drawing the correct vertical line $x=-1$.</div></div>
+                                            <div class="mark-row"><span class="mark-badge">B2</span> <div>Triangle C drawn in perfectly correct position.</div></div>
+                                            <div class="mark-row"><span class="mark-badge">+2</span> <div>Awarded automatically if all vertices are pin-point accurate.</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Part E -->
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-4e">
+                                <div><strong>(e)</strong> Point $P(4, 5)$ is reflected in the x-axis. Find image $P'$.</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-4e" class="answer-panel">
+                                <p style="font-size: 1.2rem;">Reflecting in the x-axis means flipping vertically. The x-coordinate stays the same, but the y-coordinate changes sign.</p>
+                                <div class="math-working">
+                                    $(x, y) \\rightarrow (x, -y)$<br>
+                                    $(4, 5) \\rightarrow (4, -5)$
+                                </div>
+                                <div class="final-answer">Answer: (4, -5)</div>
+
+                                <div class="mark-scheme">
+                                    <div class="mark-scheme-title">Marking Guidelines (2 marks)</div>
+                                    <div class="mark-row"><span class="mark-badge">M1</span> <div>Recognising that the x-axis corresponds to $y=0$ and only the y-value flips.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">A1</span> <div>Correct coordinates $(4, -5)$.</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;},
+            script: initAccordions
+        },
+
+        // Slide 6: Section 5
+        {
+            template: () => {
+                const grid = generateGraphSVG(-6, 6, -6, 6, 25);
+                const tX = (x) => grid.originX + (x * grid.stepSize);
+                const tY = (y) => grid.originY - (y * grid.stepSize);
+
+                return `
+                <div class="anim-enter">
+                    <h2>Section 5: Rotations</h2>
+                    
+                    <div class="glass-card delay-1">
+                        <!-- Part A & B Graph -->
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-5ab">
+                                <div><strong>(a) & (b)</strong> Rotate Shape S ($90^\\circ$ CW, Origin) $\\rightarrow$ T. Rotate T ($180^\\circ$, (1,-1)) $\\rightarrow$ U.</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-5ab" class="answer-panel">
+                                <div style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
+                                    <div class="graph-container">
+                                        ${grid.svg}
+                                            <polygon points="${tX(-1)},${tY(1)} ${tX(-3)},${tY(1)} ${tX(-3)},${tY(2)} ${tX(-2)},${tY(2)} ${tX(-2)},${tY(4)} ${tX(-1)},${tY(4)}" fill="rgba(245, 158, 11, 0.3)" stroke="var(--warning)" stroke-width="2"/>
+                                            <text x="${tX(-2)}" y="${tY(2.5)}" fill="white" font-weight="bold">S</text>
+                                            
+                                            <polygon points="${tX(1)},${tY(1)} ${tX(1)},${tY(3)} ${tX(2)},${tY(3)} ${tX(2)},${tY(2)} ${tX(4)},${tY(2)} ${tX(4)},${tY(1)}" fill="rgba(56, 189, 248, 0.4)" stroke="#38bdf8" stroke-width="2"/>
+                                            <text x="${tX(2.5)}" y="${tY(1.8)}" fill="white" font-weight="bold">T</text>
+
+                                            <polygon points="${tX(1)},${tY(-3)} ${tX(1)},${tY(-5)} ${tX(0)},${tY(-5)} ${tX(0)},${tY(-4)} ${tX(-2)},${tY(-4)} ${tX(-2)},${tY(-3)}" fill="rgba(16, 185, 129, 0.5)" stroke="var(--accent)" stroke-width="2"/>
+                                            <text x="${tX(0)}" y="${tY(-3.5)}" fill="white" font-weight="bold">U</text>
+                                            
+                                            <circle cx="${tX(1)}" cy="${tY(-1)}" r="4" fill="white"/>
+                                            <text x="${tX(1.5)}" y="${tY(-1)}" fill="white" font-size="10">(1,-1)</text>
+                                        </svg>
+                                    </div>
+                                    <div style="flex: 1; min-width: 300px;">
+                                        <p style="font-size: 1.1rem;"><strong>(a)</strong> Rotate $90^\\circ$ CW around $(0,0)$. The mapping is $(x, y) \\rightarrow (y, -x)$.</p>
+                                        <p style="font-size: 1.1rem;"><strong>(b)</strong> Rotate $180^\\circ$ around $(1,-1)$. Think of $180^\\circ$ as drawing a straight line from the corner, through the centre, to an equal distance on the other side.</p>
+                                        
+                                        <div class="mark-scheme">
+                                            <div class="mark-scheme-title">Marking Guidelines (6 marks)</div>
+                                            <div class="mark-row"><span class="mark-badge">B3</span> <div>Shape T correct. Deduct 1 for wrong centre, deduct 1 for wrong orientation (e.g. rotated CCW).</div></div>
+                                            <div class="mark-row"><span class="mark-badge">B3</span> <div>Shape U correct. Deduct 1 for wrong centre.</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Part C & D -->
+                        <div class="question-group">
+                            <button class="question-btn" data-target="ans-5cd">
+                                <div><strong>(c) & (d)</strong> Combined Rotations and Properties.</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-5cd" class="answer-panel">
+                                <div class="math-working">
+                                    <strong>(c) Combine two $90^\\circ$ anticlockwise rotations:</strong><br>
+                                    $90^\\circ + 90^\\circ = 180^\\circ$. The direction doesn't matter for $180^\\circ$.<br>
+                                    <span style="color: var(--accent); font-weight: bold;">Answer: A single rotation of $180^\\circ$ about the origin.</span><br><br>
+                                    
+                                    <strong>(d) True or False: Distance to centre changes?</strong><br>
+                                    <span style="color: var(--accent); font-weight: bold;">Answer: False.</span><br>
+                                    Explanation: Rotation moves a shape along a circular path around the centre. The radius of a circle is constant, so the distance never changes.
+                                </div>
+
+                                <div class="mark-scheme">
+                                    <div class="mark-scheme-title">Marking Guidelines (4 marks)</div>
+                                    <div class="mark-row"><span class="mark-badge">B1</span> <div>(c) States the transformation is a "Rotation".</div></div>
+                                    <div class="mark-row"><span class="mark-badge">B1</span> <div>(c) Mentions "$180^\\circ$" and "centre (0,0) or origin".</div></div>
+                                    <div class="mark-row"><span class="mark-badge">B1</span> <div>(d) Correctly identifies statement as "False".</div></div>
+                                    <div class="mark-row"><span class="mark-badge">B1</span> <div>(d) Valid explanation regarding circular paths or constant radii.</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;},
+            script: initAccordions
+        },
+
+        // Slide 7: Section 6
+        {
+            template: () => `
+                <div class="anim-enter">
+                    <h2>Section 6: Percentages in Real Life</h2>
+                    
+                    <div class="glass-card delay-1" style="max-width: 1000px; padding: 3rem;">
+                        <p style="font-size: 1.3rem; margin-bottom: 2rem;"><strong>The Problem:</strong> Mr. Bowen loses 50% of his strength, then gains 50% back from the new amount. Is he back to where he started?</p>
+                        
+                        <div class="question-group">
+                            <button class="question-btn" style="background: linear-gradient(90deg, rgba(245, 158, 11, 0.2), rgba(15, 23, 42, 0.9)); border-color: var(--warning);" data-target="ans-6">
+                                <div><i class="fa-solid fa-lightbulb" style="color: var(--warning);"></i> Reveal the Proof & Exemplar Response</div>
+                                <i class="fa-solid fa-chevron-down chevron"></i>
+                            </button>
+                            <div id="ans-6" class="answer-panel">
+                                
+                                <div class="pedagogical-note note-success" style="background: rgba(16, 185, 129, 0.1); border-color: var(--accent);">
+                                    <div class="pedagogical-badge"><i class="fa-solid fa-star"></i> Exemplar Response</div>
+                                    <p style="font-size: 1.3rem; line-height: 1.8; margin-top: 1rem; color: white;">
+                                        Mr. Bowen is incorrect. If we assume his starting maximum lift was <strong>100 kg</strong>, taking a break and losing 50% of his strength means he lost 50 kg ($100 \\times 0.5 = 50$). His new maximum is now <strong>50 kg</strong>. <br><br>
+                                        When he returns to the gym and his strength increases by 50%, the increase is calculated from his <em>new</em>, lower weight of 50 kg. Half of 50 kg is 25 kg ($50 \\times 0.5 = 25$), bringing his final maximum lift to <strong>75 kg</strong>. <br><br>
+                                        Since 75 kg is less than his original 100 kg, he has not returned to his original strength.
+                                    </p>
+                                </div>
+                                
+                                <div class="mark-scheme" style="margin-top: 2rem; background: rgba(15, 23, 42, 0.8);">
+                                    <div class="mark-scheme-title">Marking Guidelines (10 Marks Total)</div>
+                                    <div class="mark-row"><span class="mark-badge">B2</span> <div>Clearly stating that Mr. Bowen is incorrect.</div></div>
+                                    <div class="mark-row"><span class="mark-badge">M3</span> <div>Correctly calculating the 50% decrease of a chosen example value (e.g., $100 - 50 = 50$).</div></div>
+                                    <div class="mark-row"><span class="mark-badge">M3</span> <div>Correctly calculating the 50% increase from the <em>new</em> lower value (e.g., $50 + 25 = 75$).</div></div>
+                                    <div class="mark-row"><span class="mark-badge">A2</span> <div>Clear final concluding sentence accurately comparing the final calculated weight to the original starting weight.</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `,
+            script: initAccordions
+        }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        Engine.init(lessonSlides);
+    });
+</script>
+</body>
+</html>
