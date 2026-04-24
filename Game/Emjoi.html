@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Emoji Reading: Decode the famous titles. A fun literacy game.">
+    <title>Emoji Reading</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* --- COLOR PALETTE: Sunny & Playful (ChalkMan Style) --- */
+            --bg-main: #e0f2fe; /* Light sky blue */
+            --bg-pattern: #bae6fd;
+            
+            /* UI Elements */
+            --panel-bg: rgba(255, 255, 255, 0.95);
+            --panel-border: #bae6fd;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+
+            /* Interactive Colors */
+            --tile-bg: #ffffff;
+            --tile-border: #cbd5e1;
+            --tile-shadow: #94a3b8;
+            --tile-hover: #f8fafc;
+
+            /* Keyboard States */
+            --key-bg: #ffffff;
+            --key-hover: #f1f5f9;
+            --key-active: #e2e8f0;
+
+            /* Accents */
+            --accent-primary: #0ea5e9;
+            --accent-success: #10b981;
+            --accent-error: #ef4444;
+            --accent-hint: #f59e0b;
+            --accent-active: #fcd34d;
+
+            /* Dimensions */
+            --sidebar-width: 280px;
+            --max-board-width: 900px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-main);
+            background-image: radial-gradient(var(--bg-pattern) 20%, transparent 20%), radial-gradient(var(--bg-pattern) 20%, transparent 20%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            color: var(--text-primary);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* --- LAYOUT --- */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--panel-bg);
+            border-right: 4px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            gap: 1.5rem;
+            z-index: 20;
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+        }
+
+        .sidebar::-webkit-scrollbar { width: 8px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .sidebar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .brand {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            line-height: 1.1;
+            color: #f59e0b; /* Amber */
+            text-align: center;
+            text-shadow: 2px 2px 0px #fde68a;
+            margin-bottom: 0.5rem;
+        }
+        .brand span { color: #8b5cf6; text-shadow: 2px 2px 0px #ddd6fe;}
+
+        .level-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .level-btn {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px;
+            border-radius: 16px;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            color: var(--text-secondary);
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            font-size: 1.05rem;
+            width: 100%;
+            box-shadow: 0 4px 0px #cbd5e1;
+        }
+
+        .level-btn .btn-num { 
+            background: #cbd5e1; color: white; border-radius: 50%; width: 28px; height: 28px; 
+            display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800;
+            flex-shrink: 0;
+        }
+        
+        .level-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0px #cbd5e1; background: #e2e8f0; }
+        .level-btn:active { transform: translateY(2px); box-shadow: 0 2px 0px #cbd5e1; }
+
+        .level-btn.active {
+            background: #fffbeb;
+            border: 2px solid #fcd34d;
+            color: #b45309;
+            box-shadow: 0 4px 0px #fcd34d;
+        }
+        .level-btn.active .btn-num { background: #f59e0b; }
+        .level-btn.completed .btn-num { background: var(--accent-success); }
+
+        /* --- MAIN ARENA --- */
+        .arena {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem; 
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .game-board-wrapper {
+            width: 100%;
+            max-width: var(--max-board-width);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: auto; 
+            margin-bottom: auto;
+            background: var(--panel-bg);
+            padding: 2rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05), 0 0 0 4px #fff inset;
+            border: 2px solid var(--panel-border);
+        }
+
+        @keyframes bounceIn { 
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); } 
+            100% { opacity: 1; transform: scale(1) translateY(0); } 
+        }
+
+        /* Game Header */
+        .game-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 5px;
+            border-bottom: 3px dashed #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        .instruction { color: #64748b; font-weight: 700; margin: 0; font-size: 1.1rem; }
+        .instruction span { color: var(--accent-primary); }
+
+        .hint-btn {
+            background: #fffbeb; border: 2px solid #fcd34d; color: #d97706;
+            padding: 10px 20px; border-radius: 20px; font-family: 'Fredoka', sans-serif;
+            font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;
+            transition: all 0.2s; box-shadow: 0 4px 0 #fcd34d;
+        }
+        .hint-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #fcd34d; }
+        .hint-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #fcd34d; }
+
+        /* Words Container */
+        .puzzle-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px 40px;
+            justify-content: center;
+            width: 100%;
+            margin: 2rem 0;
+            min-height: 150px;
+        }
+
+        .word-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .word-emoji {
+            font-size: clamp(2.5rem, 4vw, 4rem);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .word-group {
+            display: flex;
+            gap: 6px;
+            padding: 12px;
+            border-radius: 16px;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f8fafc;
+        }
+
+        .word-group.active {
+            border-color: var(--accent-active);
+            background: #fffbeb;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.15);
+        }
+
+        .word-group.locked {
+            border-color: #34d399;
+            background: #ecfdf5;
+            pointer-events: none;
+        }
+
+        .letter-slot {
+            width: clamp(35px, 5vw, 45px);
+            height: clamp(45px, 6vw, 55px);
+            background: white;
+            border: 2px solid var(--tile-border);
+            border-bottom: 5px solid var(--tile-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(1.5rem, 2.5vw, 2rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .word-group.active .letter-slot.cursor-target {
+            border-color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(14, 165, 233, 0.2);
+        }
+
+        .letter-slot.hinted { color: var(--accent-hint); }
+
+        .word-group.locked .letter-slot {
+            border-color: var(--accent-success);
+            border-bottom-color: var(--accent-success);
+            color: var(--accent-success);
+        }
+
+        .word-group.shake { animation: shakeError 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        .word-group.shake .letter-slot { border-color: var(--accent-error); border-bottom-color: var(--accent-error); color: var(--accent-error); }
+
+        @keyframes shakeError { 
+            10%, 90% { transform: translate3d(-2px, 0, 0); } 
+            20%, 80% { transform: translate3d(4px, 0, 0); } 
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); } 
+            40%, 60% { transform: translate3d(6px, 0, 0); } 
+        }
+
+        .pop { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0.8); } 100% { transform: scale(1); } }
+
+        /* Keyboard */
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .kb-row { display: flex; justify-content: center; gap: 8px; }
+
+        .key {
+            background: var(--tile-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--tile-border);
+            border-radius: 12px;
+            min-width: clamp(30px, 4.5vw, 45px);
+            height: clamp(45px, 6vw, 55px);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            flex: 1;
+            max-width: 65px;
+            box-shadow: 0 4px 0 var(--tile-shadow);
+        }
+
+        .key.wide { flex: 2; max-width: 110px; font-size: 1rem; background: #e0f2fe; border-color: #bae6fd; box-shadow: 0 4px 0 #7dd3fc; color: #0284c7;}
+        .key.wide.enter { background: #d1fae5; border-color: #a7f3d0; box-shadow: 0 4px 0 #6ee7b7; color: #059669;}
+
+        .key:hover:not(:disabled):not(.pressed) { transform: translateY(-2px); box-shadow: 0 6px 0 var(--tile-shadow); background: var(--tile-hover); }
+        .key.wide:hover:not(:disabled):not(.pressed) { box-shadow: 0 6px 0 #7dd3fc; }
+        .key.wide.enter:hover:not(:disabled):not(.pressed) { box-shadow: 0 6px 0 #6ee7b7; }
+
+        .key:active:not(:disabled), .key.pressed { transform: translateY(4px); box-shadow: 0 0 0 transparent !important; }
+
+        /* --- MODALS & EFFECTS --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center; z-index: 2100;
+        }
+        .modal-card {
+            background: #fff; color: #0f172a; padding: 3rem; border-radius: 32px;
+            text-align: center; max-width: 450px; width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 4px solid #f1f5f9;
+        }
+        .modal-card h2 { font-family: 'Fredoka'; font-size: 2.5rem; margin-bottom: 0.5rem; color: #0ea5e9; }
+        .modal-card p { font-size: 1.2rem; color: #64748b; font-weight: 600; margin-bottom: 25px; }
+        
+        .modal-btn {
+            padding: 16px; border-radius: 16px; border: none;
+            font-family: 'Fredoka'; font-weight: 700; font-size: 1.2rem; cursor: pointer;
+            width: 100%; transition: all 0.2s;
+            background: #10b981; color: white; box-shadow: 0 6px 0 #059669;
+        }
+        .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #059669; }
+        .modal-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #059669; }
+
+        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1500; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; }
+            .sidebar { 
+                width: 100%; padding: 1rem; border-right: none; border-bottom: 4px solid var(--panel-border);
+                flex-direction: row; align-items: center; overflow-x: auto;
+            }
+            .brand { font-size: 1.5rem; margin-bottom: 0; margin-right: 1rem; }
+            .level-list { flex-direction: row; width: max-content; gap: 8px;}
+            .level-btn { width: auto; white-space: nowrap; padding: 10px 14px; }
+            
+            .arena { padding: 1rem; display: block;}
+            .game-board-wrapper { padding: 1.5rem; border-radius: 20px;}
+            .game-header { flex-direction: column; text-align: center; gap: 12px; }
+            
+            .puzzle-container { gap: 20px; }
+            .word-emoji { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti"></canvas>
+
+    <div class="app-container">
+        
+        <nav class="sidebar" aria-label="Levels">
+            <div class="brand">Emoji<br><span>Reading</span></div>
+            <div class="level-list" id="level-list">
+                <!-- Populated by JS -->
+            </div>
+        </nav>
+
+        <main class="arena">
+            <div class="game-board-wrapper" id="board-wrapper">
+                
+                <header class="game-header">
+                    <p class="instruction">Type to fill the highlighted word. Press <span>ENTER</span> to test it.</p>
+                    <button class="hint-btn" onclick="useHint()"><i class="fa-solid fa-lightbulb"></i> Hint</button>
+                </header>
+
+                <div class="puzzle-container" id="puzzle-board">
+                    <!-- Words and Emojis go here -->
+                </div>
+                
+                <div class="keyboard" id="keyboard">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="end-modal">
+        <div class="modal-card">
+            <h2>Awesome Job!</h2>
+            <p id="modal-msg">You correctly decoded the title.</p>
+            <button class="modal-btn" id="btn-next">Next Level</button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Emoji Reading
+         * Maps one emoji to each specific word with ChalkMan-inspired playful UI.
+         */
+
+        // --- GAME DATA: 1 Emoji per Word ---
+        const LEVELS = [
+            { 
+                words: [{text: "HARRY", emoji: "💇", revealed: [4]}, {text: "POTTER", emoji: "🪴", revealed: [3, 4, 5]}] 
+            },
+            { 
+                words: [{text: "CAPTAIN", emoji: "👨‍✈️", revealed: [0, 4]}, {text: "UNDERPANTS", emoji: "🩲", revealed: [0, 5, 9]}] 
+            },
+            { 
+                words: [{text: "MINE", emoji: "⛏️", revealed: [0, 3]}, {text: "CRAFT", emoji: "🛠️", revealed: [0, 4]}] 
+            },
+            { 
+                words: [{text: "SPIDER", emoji: "🕷️"}, {text: "MAN", emoji: "👨"}] 
+            },
+            { 
+                words: [{text: "KPOP", emoji: "🎤", revealed: [0]}, {text: "DEMON", emoji: "😈"}, {text: "HUNTERS", emoji: "🏹"}] 
+            },
+            { 
+                words: [{text: "STAR", emoji: "⭐"}, {text: "WARS", emoji: "⚔️"}] 
+            },
+            { 
+                words: [{text: "LION", emoji: "🦁"}, {text: "THE", emoji: "➡️", revealed: [0, 1, 2]}, {text: "WITCH", emoji: "🧙‍♀️"}, {text: "AND", emoji: "➕", revealed: [0, 1, 2]}, {text: "THE", emoji: "➡️", revealed: [0, 1, 2]}, {text: "WARDROBE", emoji: "🚪"}] 
+            },
+            { 
+                words: [{text: "JURASSIC", emoji: "🦖"}, {text: "PARK", emoji: "🏞️"}] 
+            },
+            { 
+                words: [{text: "TOY", emoji: "🧸"}, {text: "STORY", emoji: "📖"}] 
+            },
+            { 
+                words: [{text: "BAT", emoji: "🦇"}, {text: "MAN", emoji: "👨"}] 
+            }
+        ];
+
+        // --- STATE ---
+        const state = {
+            currentLevel: 0,
+            words: [],          // Array of target word strings
+            typed: [],          // Array of arrays (user's inputted chars per word)
+            hints: [],          // Array of booleans indicating if a char was revealed by hint
+            locked: [],         // Array of booleans indicating if a word is successfully solved
+            activeW: 0,         // Index of currently active word
+            isAnimating: false,
+            completedLevels: new Set()
+        };
+
+        // --- DOM REFERENCES ---
+        const DOM = {
+            levelList: document.getElementById('level-list'),
+            puzzleBoard: document.getElementById('puzzle-board'),
+            keyboard: document.getElementById('keyboard'),
+            boardWrapper: document.getElementById('board-wrapper'),
+            modal: document.getElementById('end-modal'),
+            modalMsg: document.getElementById('modal-msg'),
+            btnNext: document.getElementById('btn-next'),
+            confetti: document.getElementById('confetti')
+        };
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            buildSidebar();
+            buildKeyboard();
+            initLevel(0);
+            setupEventListeners();
+            setupConfettiResize();
+        });
+
+        function setupEventListeners() {
+            DOM.btnNext.addEventListener('click', () => {
+                hideModal();
+                let next = (state.currentLevel + 1) % LEVELS.length;
+                initLevel(next);
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (state.isAnimating || DOM.modal.style.display === 'flex') return;
+                
+                const key = e.key.toUpperCase();
+                
+                if (/^[A-Z]$/.test(key)) {
+                    triggerKeyVisual(key);
+                    handleLetter(key);
+                } else if (key === 'BACKSPACE') {
+                    triggerKeyVisual('BACKSPACE');
+                    handleBackspace();
+                } else if (key === 'ENTER') {
+                    triggerKeyVisual('ENTER');
+                    handleEnter();
+                } else if (e.code === 'Space') {
+                    e.preventDefault();
+                    moveToNextUnlockedWord();
+                }
+            });
+        }
+
+        // --- UI BUILDERS ---
+        function buildSidebar() {
+            DOM.levelList.innerHTML = '';
+            LEVELS.forEach((level, index) => {
+                const btn = document.createElement('button');
+                btn.className = `level-btn`;
+                btn.id = `nav-lvl-${index}`;
+                btn.innerHTML = `<div class="btn-num">${index + 1}</div> Level ${index + 1}`;
+                btn.onclick = () => { if(!state.isAnimating) initLevel(index); };
+                DOM.levelList.appendChild(btn);
+            });
+        }
+
+        function buildKeyboard() {
+            const layout = [
+                ["Q","W","E","R","T","Y","U","I","O","P"],
+                ["A","S","D","F","G","H","J","K","L"],
+                ["ENTER","Z","X","C","V","B","N","M","BACKSPACE"]
+            ];
+
+            DOM.keyboard.innerHTML = '';
+            layout.forEach(row => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'kb-row';
+                row.forEach(key => {
+                    const btn = document.createElement('button');
+                    btn.className = 'key' + (key === 'ENTER' ? ' wide enter' : key === 'BACKSPACE' ? ' wide' : '');
+                    btn.id = `key-${key}`;
+                    btn.innerHTML = key === 'BACKSPACE' ? '<i class="fa-solid fa-delete-left"></i>' : key;
+                    
+                    btn.onclick = () => {
+                        if (state.isAnimating) return;
+                        if (key === 'ENTER') handleEnter();
+                        else if (key === 'BACKSPACE') handleBackspace();
+                        else handleLetter(key);
+                    };
+                    rowDiv.appendChild(btn);
+                });
+                DOM.keyboard.appendChild(rowDiv);
+            });
+        }
+
+        // --- GAME LOGIC ---
+        function initLevel(index) {
+            state.currentLevel = index;
+            const levelData = LEVELS[index];
+            
+            state.words = levelData.words.map(w => w.text.toUpperCase());
+            
+            // Reset state arrays
+            state.typed = state.words.map(w => new Array(w.length).fill(""));
+            state.hints = state.words.map(w => new Array(w.length).fill(false));
+            state.locked = state.words.map(() => false);
+
+            // Apply pre-revealed letters
+            levelData.words.forEach((wData, wIdx) => {
+                if (wData.revealed) {
+                    wData.revealed.forEach(charIdx => {
+                        if (charIdx < state.words[wIdx].length) {
+                            state.hints[wIdx][charIdx] = true;
+                            state.typed[wIdx][charIdx] = state.words[wIdx][charIdx];
+                        }
+                    });
+                }
+
+                // Lock word if fully revealed initially (like "THE" or "AND")
+                if (state.typed[wIdx].join('') === state.words[wIdx]) {
+                    state.locked[wIdx] = true;
+                }
+            });
+
+            // Start on the first unlocked word
+            let firstUnlocked = state.locked.findIndex(l => !l);
+            state.activeW = firstUnlocked !== -1 ? firstUnlocked : 0;
+            
+            state.isAnimating = false;
+
+            updateSidebarNav();
+            renderBoard();
+
+            // Pop in animation
+            DOM.boardWrapper.style.animation = 'none';
+            DOM.boardWrapper.offsetHeight; 
+            DOM.boardWrapper.style.animation = 'bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        }
+
+        function updateSidebarNav() {
+            const btns = DOM.levelList.querySelectorAll('.level-btn');
+            btns.forEach((btn, idx) => {
+                btn.classList.remove('active');
+                if (idx === state.currentLevel) {
+                    btn.classList.add('active');
+                    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+                if (state.completedLevels.has(idx)) {
+                    btn.classList.add('completed');
+                }
+            });
+        }
+
+        function renderBoard() {
+            DOM.puzzleBoard.innerHTML = '';
+            const levelData = LEVELS[state.currentLevel];
+            
+            state.words.forEach((word, wIdx) => {
+                const colDiv = document.createElement('div');
+                colDiv.className = 'word-column';
+
+                // Render Emoji Top
+                const emojiDiv = document.createElement('div');
+                emojiDiv.className = 'word-emoji';
+                emojiDiv.innerText = levelData.words[wIdx].emoji;
+                
+                // Render Word Group Bottom
+                const groupDiv = document.createElement('div');
+                groupDiv.className = `word-group`;
+                
+                if (state.locked[wIdx]) groupDiv.classList.add('locked');
+                else if (wIdx === state.activeW) groupDiv.classList.add('active');
+
+                // Allow clicking to change active word
+                groupDiv.onclick = () => {
+                    if (!state.locked[wIdx] && !state.isAnimating) {
+                        state.activeW = wIdx;
+                        renderBoard();
+                    }
+                };
+
+                let cursorTarget = state.typed[wIdx].findIndex(char => char === "");
+                if (cursorTarget === -1) cursorTarget = word.length - 1;
+
+                for (let i = 0; i < word.length; i++) {
+                    const slot = document.createElement('div');
+                    slot.className = 'letter-slot';
+                    
+                    if (state.hints[wIdx][i]) slot.classList.add('hinted');
+                    if (wIdx === state.activeW && i === cursorTarget && !state.locked[wIdx]) {
+                        slot.classList.add('cursor-target');
+                    }
+
+                    slot.innerText = state.typed[wIdx][i];
+                    groupDiv.appendChild(slot);
+                }
+
+                colDiv.appendChild(emojiDiv);
+                colDiv.appendChild(groupDiv);
+                DOM.puzzleBoard.appendChild(colDiv);
+            });
+        }
+
+        function handleLetter(char) {
+            const w = state.activeW;
+            if (state.locked[w]) return;
+
+            const firstEmpty = state.typed[w].findIndex(c => c === "");
+            if (firstEmpty !== -1) {
+                state.typed[w][firstEmpty] = char;
+                renderBoard();
+            }
+        }
+
+        function handleBackspace() {
+            const w = state.activeW;
+            if (state.locked[w]) return;
+
+            let lastFilled = -1;
+            for (let i = state.typed[w].length - 1; i >= 0; i--) {
+                if (state.typed[w][i] !== "" && !state.hints[w][i]) {
+                    lastFilled = i;
+                    break;
+                }
+            }
+
+            if (lastFilled !== -1) {
+                state.typed[w][lastFilled] = "";
+                renderBoard();
+            }
+        }
+
+        function handleEnter() {
+            const w = state.activeW;
+            if (state.locked[w]) return;
+
+            const typedWord = state.typed[w].join('');
+            const targetWord = state.words[w];
+
+            if (typedWord.length < targetWord.length) {
+                shakeWord(w);
+                return;
+            }
+
+            if (typedWord === targetWord) {
+                // Correct
+                state.locked[w] = true;
+                playPopAnimation(w);
+                
+                if (state.locked.every(l => l)) {
+                    handleWin();
+                } else {
+                    moveToNextUnlockedWord();
+                }
+            } else {
+                // Wrong
+                shakeWord(w, true);
+            }
+        }
+
+        function moveToNextUnlockedWord() {
+            let nextW = state.locked.findIndex(l => !l);
+            if (nextW !== -1) {
+                state.activeW = nextW;
+                renderBoard();
+            }
+        }
+
+        function useHint() {
+            if (state.isAnimating) return;
+
+            let w = state.locked[state.activeW] ? state.locked.findIndex(l => !l) : state.activeW;
+            if (w === -1) return; // All done
+
+            let available = [];
+            for (let i = 0; i < state.words[w].length; i++) {
+                if (!state.hints[w][i]) available.push(i);
+            }
+
+            if (available.length > 0) {
+                const rIdx = available[Math.floor(Math.random() * available.length)];
+                state.hints[w][rIdx] = true;
+                state.typed[w][rIdx] = state.words[w][rIdx];
+                renderBoard();
+                
+                if (state.typed[w].join('') === state.words[w]) {
+                    handleEnter();
+                }
+            }
+        }
+
+        // --- ANIMATIONS & EFFECTS ---
+        function shakeWord(wIndex, eraseAfter = false) {
+            state.isAnimating = true;
+            const groups = DOM.puzzleBoard.querySelectorAll('.word-group');
+            if(groups[wIndex]) {
+                groups[wIndex].classList.add('shake');
+                
+                setTimeout(() => {
+                    groups[wIndex].classList.remove('shake');
+                    if (eraseAfter) {
+                        for(let i=0; i<state.typed[wIndex].length; i++) {
+                            if(!state.hints[wIndex][i]) state.typed[wIndex][i] = "";
+                        }
+                    }
+                    state.isAnimating = false;
+                    renderBoard();
+                }, 400); 
+            }
+        }
+
+        function playPopAnimation(wIndex) {
+            const groups = DOM.puzzleBoard.querySelectorAll('.word-group');
+            if(groups[wIndex]) {
+                const slots = groups[wIndex].querySelectorAll('.letter-slot');
+                slots.forEach((slot, i) => {
+                    setTimeout(() => slot.classList.add('pop'), i * 50);
+                });
+            }
+        }
+
+        function triggerKeyVisual(key) {
+            const btn = document.getElementById(`key-${key}`);
+            if (btn) {
+                btn.classList.add('pressed');
+                setTimeout(() => btn.classList.remove('pressed'), 150);
+            }
+        }
+
+        function handleWin() {
+            state.completedLevels.add(state.currentLevel);
+            updateSidebarNav();
+            
+            const fullTitle = state.words.join(" ");
+            
+            setTimeout(() => {
+                startConfetti();
+                DOM.modalMsg.innerHTML = `You correctly decoded:<br><strong style="color:#0ea5e9; font-size:1.6rem; display:block; margin-top:10px;">${fullTitle}</strong>`;
+                DOM.modal.style.display = 'flex';
+            }, 800);
+        }
+
+        function hideModal() { DOM.modal.style.display = 'none'; }
+
+        // --- CONFETTI (ChalkMan Style) ---
+        function startConfetti() {
+            const canvas = DOM.confetti;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particles = [];
+            const colors = ['#fde047', '#38bdf8', '#4ade80', '#f472b6', '#f87171'];
+            
+            for(let i=0; i<150; i++) {
+                particles.push({
+                    x: canvas.width / 2, 
+                    y: canvas.height / 2 + 100, 
+                    vx: (Math.random() - 0.5) * 25, 
+                    vy: (Math.random() - 1) * 25 - 5, 
+                    size: Math.random() * 8 + 6, 
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rot: Math.random() * 360,
+                    rotSpeed: (Math.random() - 0.5) * 10
+                });
+            }
+            
+            function loop() {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                let active = false;
+                particles.forEach(p => {
+                    p.x += p.vx; 
+                    p.y += p.vy; 
+                    p.vy += 0.6; 
+                    p.vx *= 0.96; 
+                    p.rot += p.rotSpeed;
+                    
+                    if (p.y < canvas.height + 20) active = true;
+                    
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.color; 
+                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                    ctx.restore();
+                });
+                if(active) requestAnimationFrame(loop);
+                else ctx.clearRect(0,0,canvas.width,canvas.height); 
+            }
+            loop();
+        }
+
+        function setupConfettiResize() {
+            window.addEventListener('resize', () => {
+                DOM.confetti.width = window.innerWidth;
+                DOM.confetti.height = window.innerHeight;
+            });
+        }
+    </script>
+</body>
+</html>
