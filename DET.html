@@ -17,7 +17,7 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- INLINE SVG ICONS (Replaces lucide-react to prevent module resolution errors on GitHub Pages) ---
+        // --- INLINE SVG ICONS ---
         const IconBase = ({ viewBox = "0 0 24 24", className = "", children, ...props }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox={viewBox} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
                 {children}
@@ -34,13 +34,14 @@
         const BookOpen = (props) => <IconBase {...props}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></IconBase>;
         const Clock = (props) => <IconBase {...props}><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></IconBase>;
         const NotebookPen = (props) => <IconBase {...props}><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"></path><path d="M2 6h4"></path><path d="M2 10h4"></path><path d="M2 14h4"></path><path d="M2 18h4"></path><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"></path></IconBase>;
+        const FastForward = (props) => <IconBase {...props}><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></IconBase>;
 
 
         // --- DATA PARSING ---
-        // 100 Real Words extracted from the study guide
+        // 100 Real Words (Sentences edited to use exact root words for seamless blanks)
         const rawRealWords = [
             ["Accurate", "Exactly correct.", "The weather forecast was very accurate.", "Chính xác"],
-            ["Acquire", "To get or learn something.", "She acquired many new skills at her job.", "Giành được, thu được, học được"],
+            ["Acquire", "To get or learn something.", "She managed to acquire many new skills at her job.", "Giành được, thu được, học được"],
             ["Adequate", "Enough for what you need.", "We have an adequate amount of food for the trip.", "Đầy đủ, tương xứng"],
             ["Analyze", "To study something closely and carefully.", "The scientist will analyze the data tomorrow.", "Phân tích"],
             ["Anticipate", "To expect something to happen.", "We did not anticipate such a large crowd.", "Dự đoán, lường trước"],
@@ -48,11 +49,11 @@
             ["Assess", "To judge or evaluate something.", "The teacher will assess the students' reading levels.", "Đánh giá"],
             ["Benefit", "A good result / To help.", "Eating vegetables has many health benefits.", "Lợi ích / Có lợi cho"],
             ["Capacity", "The maximum amount something can hold or do.", "The room has a seating capacity of 50 people.", "Sức chứa, năng lực"],
-            ["Cease", "To stop happening.", "The rain finally ceased in the afternoon.", "Ngừng, dứt"],
+            ["Cease", "To stop happening.", "The rain will finally cease in the afternoon.", "Ngừng, dứt"],
             ["Clarify", "To make something easier to understand.", "Could you clarify what you mean by that?", "Làm rõ, giải thích rõ"],
             ["Coherent", "Logical and clear.", "He was too tired to give a coherent answer.", "Mạch lạc, chặt chẽ"],
-            ["Collapse", "To fall down suddenly.", "The old bridge collapsed during the storm.", "Sụp đổ"],
-            ["Commit", "To promise to do something, or to do something wrong.", "She committed to working there for two years.", "Cam kết, phạm lỗi"],
+            ["Collapse", "To fall down suddenly.", "The old bridge might collapse during the storm.", "Sụp đổ"],
+            ["Commit", "To promise to do something, or to do something wrong.", "She decided to commit to working there for two years.", "Cam kết, phạm lỗi"],
             ["Complex", "Having many parts; not simple.", "English grammar can be very complex.", "Phức tạp"],
             ["Comprehend", "To fully understand something.", "I cannot comprehend this math problem.", "Hiểu, lĩnh hội"],
             ["Conclude", "To finish or to decide after thinking.", "We can conclude that the project was a success.", "Kết luận, kết thúc"],
@@ -74,7 +75,7 @@
             ["Context", "The situation in which something happens.", "You have to look at the word in context.", "Bối cảnh, ngữ cảnh"],
             ["Contract", "A legal, written agreement.", "She signed a one-year contract with the company.", "Hợp đồng"],
             ["Contradict", "To say the opposite of something.", "His actions contradict his words.", "Mâu thuẫn, trái ngược"],
-            ["Contribute", "To give something to help a cause.", "She contributed fifty dollars to the charity.", "Đóng góp"],
+            ["Contribute", "To give something to help a cause.", "She will contribute fifty dollars to the charity.", "Đóng góp"],
             ["Controversy", "A strong public disagreement.", "The new law caused a lot of controversy.", "Sự tranh cãi"],
             ["Convene", "To come together for a meeting.", "The committee will convene tomorrow morning.", "Triệu tập, họp lại"],
             ["Convert", "To change from one form to another.", "We need to convert dollars into euros.", "Chuyển đổi"],
@@ -88,7 +89,7 @@
             ["Data", "Facts and information collected for analysis.", "We are still collecting data for the research.", "Dữ liệu"],
             ["Debate", "A formal discussion of opposing views.", "There was a long debate about the new policy.", "Cuộc tranh luận"],
             ["Decade", "A period of ten years.", "The war lasted for a decade.", "Thập kỷ"],
-            ["Decline", "To go down, or to politely say no.", "Sales declined during the winter.", "Suy giảm, từ chối"],
+            ["Decline", "To go down, or to politely say no.", "Sales usually decline during the winter.", "Suy giảm, từ chối"],
             ["Deduce", "To reach an answer by thinking carefully.", "The police could deduce who the killer was.", "Suy luận, suy ra"],
             ["Define", "To explain the meaning of a word or idea.", "Please define this difficult word for me.", "Định nghĩa"],
             ["Definite", "Certain and clear.", "We need a definite answer by tomorrow.", "Rõ ràng, chắc chắn"],
@@ -96,7 +97,7 @@
             ["Denote", "To be a sign of something; to mean.", "A red traffic light denotes that you must stop.", "Biểu thị, có nghĩa là"],
             ["Deny", "To say that something is not true.", "The criminal denied stealing the money.", "Phủ nhận"],
             ["Depress", "To make someone feel very sad.", "The bad news will depress her.", "Làm chán nản, làm buồn"],
-            ["Derive", "To get something from a source.", "Many medicines are derived from plants.", "Bắt nguồn từ, lấy từ"],
+            ["Derive", "To get something from a source.", "Scientists derive many medicines from plants.", "Bắt nguồn từ, lấy từ"],
             ["Design", "A plan or drawing / To plan something.", "She wants to design clothes in the future.", "Thiết kế"],
             ["Despite", "Without being affected by; even though.", "We went for a walk despite the rain.", "Mặc dù"],
             ["Detect", "To discover or notice something hidden.", "The machine can detect a small amount of smoke.", "Phát hiện"],
@@ -108,11 +109,11 @@
             ["Diminish", "To become smaller or less.", "The pain will diminish after you take the pill.", "Giảm bớt, thu nhỏ lại"],
             ["Discrete", "Separate and different from each other.", "The company is divided into discrete units.", "Riêng biệt, rời rạc"],
             ["Discriminate", "To treat a person or group unfairly.", "It is illegal to discriminate against employees based on age.", "Phân biệt đối xử"],
-            ["Displace", "To force something out of its usual place.", "The floods displaced thousands of people.", "Dời chỗ, buộc phải rời đi"],
+            ["Displace", "To force something out of its usual place.", "The floods can displace thousands of people.", "Dời chỗ, buộc phải rời đi"],
             ["Display", "To show something so others can see it.", "The museum will display the new painting tomorrow.", "Trưng bày, hiển thị"],
             ["Dispose", "To throw away or get rid of something.", "Please dispose of your trash safely.", "Vứt bỏ, xử lý"],
             ["Distinct", "Clearly different or easily noticed.", "There is a distinct smell of gas in here.", "Khác biệt, rõ ràng"],
-            ["Distort", "To change the shape or meaning of something to make it false.", "The newspaper distorted the truth about the accident.", "Xuyên tạc, bóp méo"],
+            ["Distort", "To change the shape or meaning of something to make it false.", "Do not distort the truth about the accident.", "Xuyên tạc, bóp méo"],
             ["Distribute", "To give things to a group of people.", "The teacher will distribute the test papers now.", "Phân phát"],
             ["Diverse", "Very different from each other; having variety.", "New York is a very diverse city.", "Đa dạng"],
             ["Document", "An official piece of paper with information.", "You must sign the legal document.", "Tài liệu, văn bản"],
@@ -127,11 +128,11 @@
             ["Edit", "To correct or make changes to text/video.", "I need to edit my video before posting it.", "Chỉnh sửa"],
             ["Element", "An important part of something.", "Trust is a key element of a good relationship.", "Yếu tố, thành phần"],
             ["Eliminate", "To completely remove or get rid of something.", "We must eliminate plastic waste to save the ocean.", "Loại bỏ"],
-            ["Emerge", "To come out into view.", "The sun finally emerged from behind the clouds.", "Xuất hiện, nhô lên"],
+            ["Emerge", "To come out into view.", "The sun will finally emerge from behind the clouds.", "Xuất hiện, nhô lên"],
             ["Emphasis", "Special attention or importance given to something.", "The school places a heavy emphasis on math.", "Sự nhấn mạnh, sự chú trọng"],
             ["Empirical", "Based on testing and experience, not just ideas.", "They need empirical evidence to prove the theory.", "Dựa trên thực nghiệm"],
             ["Enable", "To make it possible for someone to do something.", "The internet enables us to work from home.", "Cho phép, tạo điều kiện"],
-            ["Encounter", "To meet someone or experience something unexpectedly.", "We encountered a small problem during the project.", "Chạm trán, bắt gặp"],
+            ["Encounter", "To meet someone or experience something unexpectedly.", "We might encounter a small problem during the project.", "Chạm trán, bắt gặp"],
             ["Energy", "The power needed to do work or be active.", "Children have so much energy in the morning.", "Năng lượng"],
             ["Enforce", "To make people follow a rule or law.", "The police enforce the traffic laws.", "Thi hành, bắt buộc tuân theo"],
             ["Enhance", "To improve the quality of something.", "You can enhance your English by watching movies.", "Nâng cao, tăng cường"],
@@ -175,10 +176,29 @@
             const [p2Words, setP2Words] = useState([]);
             const [wordIndex, setWordIndex] = useState(0);
             const [scores, setScores] = useState({});
+            const [roundScores, setRoundScores] = useState({}); // Stores scores out of 40 per round
             const [timer, setTimer] = useState(5);
             const [userAnswer, setUserAnswer] = useState(null);
             const [p2Input, setP2Input] = useState('');
             const inputRef = useRef(null);
+
+            // Calculate score when entering Summary screen
+            useEffect(() => {
+                if (gameState === 'SUMMARY') {
+                    let p1Score = 0;
+                    let p2Score = 0;
+                    
+                    currentPool.forEach(wordObj => {
+                        // Phase 1 correct: 1 pt each (Max 20 pts)
+                        if (scores[wordObj.word]?.p1) p1Score += 1;
+                        // Phase 2 correct: 2 pts each (Max 20 pts)
+                        if (wordObj.isReal && scores[wordObj.word]?.p2) p2Score += 2;
+                    });
+                    
+                    const totalScore = p1Score + p2Score;
+                    setRoundScores(prev => ({ ...prev, [roundIndex]: totalScore }));
+                }
+            }, [gameState]);
 
             const startRound = (rIndex) => {
                 const realStart = (rIndex * 10) % REAL_WORDS.length;
@@ -189,7 +209,13 @@
                 
                 const combined = [...roundReal, ...roundFake].sort(() => Math.random() - 0.5);
                 
+                setRoundIndex(rIndex);
                 setCurrentPool(combined);
+                
+                // Pre-calculate P2 words to ensure summary doesn't break if skipped
+                const realOnly = combined.filter(w => w.isReal);
+                setP2Words(realOnly);
+
                 setWordIndex(0);
                 setTimer(5);
                 setScores({});
@@ -227,8 +253,6 @@
                     setTimer(5);
                     setGameState('P1_Q');
                 } else {
-                    const realOnly = currentPool.filter(w => w.isReal);
-                    setP2Words(realOnly);
                     setWordIndex(0);
                     setGameState('P2_Q');
                 }
@@ -277,6 +301,10 @@
                     setGameState('SUMMARY');
                 }
             };
+
+            const handleSkipToEnd = () => {
+                setGameState('SUMMARY');
+            }
 
             const renderSentenceWithBlanks = (wordObj, inputValue, isAnswered) => {
                 if (!wordObj) return null;
@@ -365,7 +393,7 @@
                 );
             };
 
-            const TopBar = ({ showTimer }) => (
+            const TopBar = ({ showTimer, onSkip }) => (
                 <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-white shadow-sm z-20 relative">
                     <div className="flex items-center text-gray-700 font-bold text-lg">
                         {showTimer ? (
@@ -381,9 +409,16 @@
                             </div>
                         )}
                     </div>
-                    <button onClick={() => setGameState('START')} className="text-gray-400 hover:text-gray-600 transition-colors">
-                        <XIcon className="w-8 h-8" />
-                    </button>
+                    <div className="flex items-center">
+                        {onSkip && (
+                            <button onClick={onSkip} className="flex items-center text-gray-400 hover:text-gray-600 mr-4 font-bold text-sm uppercase tracking-wider transition-colors active:scale-95">
+                                Skip <FastForward className="w-5 h-5 ml-1" />
+                            </button>
+                        )}
+                        <button onClick={() => setGameState('START')} className="text-gray-400 hover:text-[#EA4335] transition-colors bg-gray-50 hover:bg-red-50 p-1.5 rounded-full">
+                            <XIcon className="w-6 h-6" />
+                        </button>
+                    </div>
                 </div>
             );
 
@@ -433,34 +468,58 @@
                 <div className="min-h-screen bg-[#FFFFFF] text-[#3F3F3F] font-sans overflow-hidden flex flex-col relative selection:bg-blue-100">
                     
                     {gameState === 'START' && (
-                        <div className="flex-1 flex flex-col items-center justify-center p-6 bg-gray-50">
-                            <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+                        <div className="flex-1 flex flex-col items-center justify-center p-6 bg-gray-50 overflow-y-auto">
+                            <div className="max-w-4xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 my-8">
                                 <div className="bg-[#1CB0F6] p-10 text-center text-white">
-                                    <BookOpen className="w-20 h-20 mx-auto mb-6 opacity-90" />
-                                    <h1 className="text-4xl font-black mb-4">DET Vocabulary Builder</h1>
-                                    <p className="text-lg opacity-90">Master high-frequency vocabulary for the Duolingo English Test.</p>
+                                    <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-90" />
+                                    <h1 className="text-3xl sm:text-4xl font-black mb-2">DET Vocabulary Builder</h1>
+                                    <p className="text-lg opacity-90">Master all 200 high-frequency words for the Duolingo English Test.</p>
                                 </div>
-                                <div className="p-10 space-y-8">
-                                    <div className="flex items-start">
-                                        <div className="bg-blue-100 p-3 rounded-full mr-4 text-[#1CB0F6]">1</div>
-                                        <div>
-                                            <h3 className="text-xl font-bold mb-1">Phase 1: Read & Select</h3>
-                                            <p className="text-gray-500">Quickly identify if the word on the screen is a real English word. Watch out for fake DET traps!</p>
+                                <div className="p-6 sm:p-10 space-y-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="flex items-start bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                                            <div className="bg-white p-2 rounded-full mr-4 text-[#1CB0F6] shadow-sm font-bold">P1</div>
+                                            <div>
+                                                <h3 className="text-lg font-bold mb-1">Read & Select</h3>
+                                                <p className="text-gray-500 text-sm">Quickly identify if the word is a real English word. Watch out for fake DET traps!</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start bg-green-50 p-4 rounded-2xl border border-green-100">
+                                            <div className="bg-white p-2 rounded-full mr-4 text-[#58A700] shadow-sm font-bold">P2</div>
+                                            <div>
+                                                <h3 className="text-lg font-bold mb-1">Fill in the Blanks</h3>
+                                                <p className="text-gray-500 text-sm">Read the sentence and definition, then type the missing letters to complete the target word.</p>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="flex items-start">
-                                        <div className="bg-green-100 p-3 rounded-full mr-4 text-[#58A700]">2</div>
-                                        <div>
-                                            <h3 className="text-xl font-bold mb-1">Phase 2: Fill in the Blanks</h3>
-                                            <p className="text-gray-500">Read the sentence and definition, then type the missing letters to complete the target word.</p>
-                                        </div>
+
+                                    <h3 className="text-xl font-bold text-gray-700 text-center uppercase tracking-widest pt-4 border-t border-gray-100">Select a Round</h3>
+                                    
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                                        {Array.from({ length: 10 }).map((_, i) => {
+                                            const score = roundScores[i];
+                                            const hasScore = score !== undefined;
+                                            const pct = hasScore ? Math.round((score / 40) * 100) : 0;
+                                            
+                                            return (
+                                                <button 
+                                                    key={i} 
+                                                    onClick={() => startRound(i)} 
+                                                    className={`p-4 rounded-2xl border-b-4 transition-all flex flex-col items-center justify-center ${hasScore ? 'bg-green-50 border-green-200 hover:bg-green-100' : 'bg-white border-gray-200 hover:border-[#1CB0F6] hover:shadow-md'}`}
+                                                >
+                                                    <span className="font-bold text-lg text-gray-700 mb-1">Round {i + 1}</span>
+                                                    {hasScore ? (
+                                                        <div className="text-center">
+                                                            <div className="text-[#58A700] font-black text-xl">{score} <span className="text-xs font-bold text-gray-400">/ 40</span></div>
+                                                            <div className="text-xs text-green-600 font-bold bg-green-100 px-2 py-0.5 rounded-full mt-1">{pct}%</div>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-gray-400 text-xs font-bold uppercase mt-2">Not Played</span>
+                                                    )}
+                                                </button>
+                                            );
+                                        })}
                                     </div>
-                                    <button 
-                                        onClick={() => startRound(roundIndex)}
-                                        className="w-full bg-[#1CB0F6] hover:bg-[#1899D6] border-b-4 border-[#1899D6] text-white font-bold text-xl py-4 rounded-2xl transition-all transform hover:translate-y-1 shadow-lg flex justify-center items-center"
-                                    >
-                                        Start Round {roundIndex + 1} <Play className="w-6 h-6 ml-2" />
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -468,7 +527,7 @@
 
                     {(gameState === 'P1_Q' || gameState === 'P1_A') && (
                         <div className="flex-1 flex flex-col relative bg-white">
-                            <TopBar showTimer={gameState === 'P1_Q'} />
+                            <TopBar showTimer={gameState === 'P1_Q'} onSkip={handleSkipToEnd} />
                             
                             <div className="flex-1 flex flex-col items-center justify-center p-6 pb-40">
                                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-700 mb-8 sm:mb-12">Is this a real English word?</h2>
@@ -504,7 +563,7 @@
 
                     {(gameState === 'P2_Q' || gameState === 'P2_A') && (
                         <div className="flex-1 flex flex-col relative bg-white">
-                            <TopBar showTimer={false} />
+                            <TopBar showTimer={false} onSkip={handleSkipToEnd} />
                             
                             <div className="flex-1 flex flex-col items-center justify-center p-6 pb-48 max-w-4xl mx-auto w-full">
                                 <h2 className="text-2xl sm:text-[28px] font-bold text-[#4b4b4b] mb-12 text-center w-full">
@@ -556,7 +615,10 @@
                                 <div className="bg-white rounded-3xl shadow-lg border border-gray-200 overflow-hidden">
                                     <div className="bg-[#1CB0F6] p-8 text-white text-center">
                                         <h2 className="text-3xl font-black mb-2">Round {roundIndex + 1} Complete!</h2>
-                                        <p className="text-lg opacity-90">Review your words and add mistakes to your notebook.</p>
+                                        <div className="flex items-center justify-center space-x-2 mt-2">
+                                            <span className="text-lg opacity-90">Your Score:</span>
+                                            <span className="text-3xl font-bold bg-white text-[#1CB0F6] px-4 py-1 rounded-full shadow-sm">{roundScores[roundIndex]} / 40</span>
+                                        </div>
                                     </div>
                                     
                                     <div className="p-0 sm:p-6 overflow-x-auto">
@@ -573,7 +635,7 @@
                                                 {currentPool.map((wordObj, i) => {
                                                     const p1Correct = scores[wordObj.word]?.p1;
                                                     const p2Correct = scores[wordObj.word]?.p2;
-                                                    const needsReview = p1Correct === false || p2Correct === false;
+                                                    const needsReview = p1Correct === false || p2Correct === false || p1Correct === undefined;
                                                     
                                                     return (
                                                         <tr key={i} className={`border-b border-gray-100 last:border-0 ${needsReview ? 'bg-red-50/50' : 'hover:bg-gray-50'}`}>
@@ -615,16 +677,22 @@
                                         </table>
                                     </div>
 
-                                    <div className="p-8 bg-gray-50 border-t border-gray-100 flex justify-center">
+                                    <div className="p-8 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
                                         <button 
-                                            onClick={() => {
-                                                setRoundIndex(prev => prev + 1);
-                                                startRound(roundIndex + 1);
-                                            }}
-                                            className="bg-[#1CB0F6] hover:bg-[#1899D6] border-b-4 border-[#1899D6] text-white font-bold text-xl px-12 py-4 rounded-2xl transition-all transform hover:scale-105 shadow-md flex items-center"
+                                            onClick={() => setGameState('START')}
+                                            className="bg-white border-2 border-gray-200 hover:border-gray-300 text-gray-700 font-bold text-lg px-8 py-4 rounded-2xl transition-all shadow-sm flex items-center justify-center"
                                         >
-                                            Start Round {roundIndex + 2} <ArrowRight className="w-6 h-6 ml-2" />
+                                            Back to Home
                                         </button>
+                                        
+                                        {roundIndex < 9 && (
+                                            <button 
+                                                onClick={() => startRound(roundIndex + 1)}
+                                                className="bg-[#1CB0F6] hover:bg-[#1899D6] border-b-4 border-[#1899D6] text-white font-bold text-lg px-8 py-4 rounded-2xl transition-all transform hover:scale-105 shadow-md flex items-center justify-center"
+                                            >
+                                                Start Round {roundIndex + 2} <ArrowRight className="w-6 h-6 ml-2" />
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             </div>
