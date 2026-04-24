@@ -122,7 +122,7 @@
             ["Dominate", "To control or have a lot of power over something.", "The strong team will dominate the game.", "Thống trị, chi phối"],
             ["Draft", "A first or early version of a piece of writing.", "I am working on the first draft of my essay.", "Bản nháp"],
             ["Drama", "An exciting or emotional situation, or a play/movie.", "I prefer reading comedy over drama.", "Kịch, sự việc kịch tính"],
-            ["Duration", "The length of time something lasts.", "Please stay seated for the duration of the flight.", "Khoảng thời gian"],
+            ["Duration", "The length of time something lasts.", "Please stay stay seated for the duration of the flight.", "Khoảng thời gian"],
             ["Dynamic", "Always active or changing.", "The business environment is very dynamic right now.", "Năng động, luôn biến đổi"],
             ["Economy", "The system of how money is made and used in a country.", "A strong economy provides many jobs.", "Nền kinh tế"],
             ["Edit", "To correct or make changes to text/video.", "I need to edit my video before posting it.", "Chỉnh sửa"],
@@ -176,11 +176,29 @@
             const [p2Words, setP2Words] = useState([]);
             const [wordIndex, setWordIndex] = useState(0);
             const [scores, setScores] = useState({});
-            const [roundScores, setRoundScores] = useState({}); // Stores scores out of 40 per round
             const [timer, setTimer] = useState(5);
             const [userAnswer, setUserAnswer] = useState(null);
             const [p2Input, setP2Input] = useState('');
             const inputRef = useRef(null);
+
+            // Load saved scores from local storage on initial mount
+            const [roundScores, setRoundScores] = useState(() => {
+                const saved = localStorage.getItem('detVocabScores');
+                if (saved) {
+                    try {
+                        return JSON.parse(saved);
+                    } catch (e) {
+                        console.error('Failed to parse saved scores', e);
+                        return {};
+                    }
+                }
+                return {};
+            });
+
+            // Save scores to local storage whenever they change
+            useEffect(() => {
+                localStorage.setItem('detVocabScores', JSON.stringify(roundScores));
+            }, [roundScores]);
 
             // Calculate score when entering Summary screen
             useEffect(() => {
@@ -520,6 +538,22 @@
                                             );
                                         })}
                                     </div>
+                                    
+                                    {Object.keys(roundScores).length > 0 && (
+                                        <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+                                            <button 
+                                                onClick={() => {
+                                                    if (window.confirm('Are you sure you want to reset all your progress? This cannot be undone.')) {
+                                                        setRoundScores({});
+                                                        localStorage.removeItem('detVocabScores');
+                                                    }
+                                                }}
+                                                className="text-gray-400 hover:text-red-500 font-bold text-sm uppercase tracking-wider transition-colors"
+                                            >
+                                                Reset All Progress
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
