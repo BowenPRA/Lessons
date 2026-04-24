@@ -422,9 +422,11 @@
     </div>
 
     <script>
+        "use strict";
         /**
          * Emoji Reading
          * Maps one emoji to each specific word with ChalkMan-inspired playful UI.
+         * Production Ready: Includes UX fallbacks, cleanup timers, and strict error handling.
          */
 
         // --- GAME DATA: 1 Emoji per Word ---
@@ -474,13 +476,14 @@
         // --- STATE ---
         const state = {
             currentLevel: 0,
-            words: [],          // Array of target word strings
-            typed: [],          // Array of arrays (user's inputted chars per word)
-            hints: [],          // Array of booleans indicating if a char was revealed by hint
-            locked: [],         // Array of booleans indicating if a word is successfully solved
-            activeW: 0,         // Index of currently active word
+            words: [],          
+            typed: [],          
+            hints: [],          
+            locked: [],         
+            activeW: 0,         
             isAnimating: false,
-            completedLevels: new Set()
+            completedLevels: new Set(),
+            confettiFrame: null
         };
 
         // --- DOM REFERENCES ---
@@ -506,13 +509,21 @@
 
         function setupEventListeners() {
             DOM.btnNext.addEventListener('click', () => {
-                hideModal();
                 let next = (state.currentLevel + 1) % LEVELS.length;
                 initLevel(next);
             });
 
             document.addEventListener('keydown', (e) => {
-                if (state.isAnimating || DOM.modal.style.display === 'flex') return;
+                // Feature: Rapid Enter/Space handling to continue to next level from the win screen
+                if (DOM.modal.style.display === 'flex') {
+                    if (e.key === 'Enter' || e.code === 'Space') {
+                        e.preventDefault();
+                        DOM.btnNext.click();
+                    }
+                    return;
+                }
+
+                if (state.isAnimating) return;
                 
                 const key = e.key.toUpperCase();
                 
@@ -576,34 +587,37 @@
 
         // --- GAME LOGIC ---
         function initLevel(index) {
+            hideModal();
+            stopConfetti();
+
             state.currentLevel = index;
             const levelData = LEVELS[index];
             
             state.words = levelData.words.map(w => w.text.toUpperCase());
             
-            // Reset state arrays
+            // Deep clear/reset arrays explicitly per iteration based on precise word lengths
             state.typed = state.words.map(w => new Array(w.length).fill(""));
             state.hints = state.words.map(w => new Array(w.length).fill(false));
             state.locked = state.words.map(() => false);
 
-            // Apply pre-revealed letters
+            // Apply pre-revealed letters strictly
             levelData.words.forEach((wData, wIdx) => {
                 if (wData.revealed) {
                     wData.revealed.forEach(charIdx => {
-                        if (charIdx < state.words[wIdx].length) {
+                        if (charIdx >= 0 && charIdx < state.words[wIdx].length) {
                             state.hints[wIdx][charIdx] = true;
                             state.typed[wIdx][charIdx] = state.words[wIdx][charIdx];
                         }
                     });
                 }
 
-                // Lock word if fully revealed initially (like "THE" or "AND")
+                // Auto-lock word if it comes fully revealed by design (like "THE" or "AND")
                 if (state.typed[wIdx].join('') === state.words[wIdx]) {
                     state.locked[wIdx] = true;
                 }
             });
 
-            // Start on the first unlocked word
+            // Anchor view onto the first actually unsolved word automatically
             let firstUnlocked = state.locked.findIndex(l => !l);
             state.activeW = firstUnlocked !== -1 ? firstUnlocked : 0;
             
@@ -612,7 +626,7 @@
             updateSidebarNav();
             renderBoard();
 
-            // Pop in animation
+            // Refresh entrance animation
             DOM.boardWrapper.style.animation = 'none';
             DOM.boardWrapper.offsetHeight; 
             DOM.boardWrapper.style.animation = 'bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
@@ -640,19 +654,17 @@
                 const colDiv = document.createElement('div');
                 colDiv.className = 'word-column';
 
-                // Render Emoji Top
                 const emojiDiv = document.createElement('div');
                 emojiDiv.className = 'word-emoji';
                 emojiDiv.innerText = levelData.words[wIdx].emoji;
                 
-                // Render Word Group Bottom
                 const groupDiv = document.createElement('div');
                 groupDiv.className = `word-group`;
                 
                 if (state.locked[wIdx]) groupDiv.classList.add('locked');
                 else if (wIdx === state.activeW) groupDiv.classList.add('active');
 
-                // Allow clicking to change active word
+                // Permit cursor adjustment via visual clicking
                 groupDiv.onclick = () => {
                     if (!state.locked[wIdx] && !state.isAnimating) {
                         state.activeW = wIdx;
@@ -724,7 +736,7 @@
             }
 
             if (typedWord === targetWord) {
-                // Correct
+                // Complete correct word mapping
                 state.locked[w] = true;
                 playPopAnimation(w);
                 
@@ -734,7 +746,7 @@
                     moveToNextUnlockedWord();
                 }
             } else {
-                // Wrong
+                // Incorrect Word logic: Shake & clear (preserving hints)
                 shakeWord(w, true);
             }
         }
@@ -751,7 +763,7 @@
             if (state.isAnimating) return;
 
             let w = state.locked[state.activeW] ? state.locked.findIndex(l => !l) : state.activeW;
-            if (w === -1) return; // All done
+            if (w === -1) return; // All words completed
 
             let available = [];
             for (let i = 0; i < state.words[w].length; i++) {
@@ -780,7 +792,7 @@
                 setTimeout(() => {
                     groups[wIndex].classList.remove('shake');
                     if (eraseAfter) {
-                        for(let i=0; i<state.typed[wIndex].length; i++) {
+                        for(let i = 0; i < state.typed[wIndex].length; i++) {
                             if(!state.hints[wIndex][i]) state.typed[wIndex][i] = "";
                         }
                     }
@@ -821,10 +833,23 @@
             }, 800);
         }
 
-        function hideModal() { DOM.modal.style.display = 'none'; }
+        function hideModal() { 
+            DOM.modal.style.display = 'none'; 
+        }
 
-        // --- CONFETTI (ChalkMan Style) ---
+        // --- CONFETTI ENGINE (ChalkMan Style) ---
+        function stopConfetti() {
+            if (state.confettiFrame) {
+                cancelAnimationFrame(state.confettiFrame);
+                state.confettiFrame = null;
+            }
+            const canvas = DOM.confetti;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
         function startConfetti() {
+            stopConfetti(); // Prevent overlap loops if triggered heavily
             const canvas = DOM.confetti;
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
@@ -847,7 +872,7 @@
             }
             
             function loop() {
-                ctx.clearRect(0,0,canvas.width,canvas.height);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 let active = false;
                 particles.forEach(p => {
                     p.x += p.vx; 
@@ -865,8 +890,12 @@
                     ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
                     ctx.restore();
                 });
-                if(active) requestAnimationFrame(loop);
-                else ctx.clearRect(0,0,canvas.width,canvas.height); 
+                
+                if(active) {
+                    state.confettiFrame = requestAnimationFrame(loop);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                }
             }
             loop();
         }
